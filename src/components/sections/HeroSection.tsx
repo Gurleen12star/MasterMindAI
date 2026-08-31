@@ -18,15 +18,7 @@ declare global {
   }
 }
 
-declare global {
-  interface Window {
-    UnicornStudio: any;
-  }
-}
-
 export default function HeroSection() {
-  const backgroundRef = useRef<HTMLDivElement>(null);
-
   const backgroundRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -57,24 +49,6 @@ export default function HeroSection() {
   }, []);
 
   useEffect(() => {
-    if (backgroundRef.current) {
-      window.UnicornStudio?.addScene({
-        elementId: 'hero-background',
-        projectId: '1gY80LcIkYtWkoIA4cVK',
-        fps: 60,
-        scale: 1,
-        dpi: 1.5,
-        lazyLoad: false,
-        fixed: true,
-      });
-    }
-
-    return () => {
-      window.UnicornStudio?.destroy();
-    };
-  }, []);
-
-  useEffect(() => {
     if (backgroundRef.current && window.UnicornStudio) {
       window.UnicornStudio.addScene({
         elementId: 'unicorn-background',
@@ -97,10 +71,9 @@ export default function HeroSection() {
       <div 
         ref={backgroundRef}
         id="unicorn-background" 
-        className="absolute inset-0 w-full h-full -z-10"
+        className="absolute inset-0 w-full h-full -z-10 pointer-events-none"
         style={{ minHeight: '900px' }}
       />
-      <div ref={backgroundRef} id="hero-background" className="absolute inset-0 w-full h-full -z-10" />
       <div className="absolute inset-0 overflow-hidden">
         {[...Array(20)].map((_, i) => (
           <div
