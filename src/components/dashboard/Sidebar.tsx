@@ -79,7 +79,7 @@ export default function Sidebar({ onNavigate }: SidebarProps) {
       items: [
         { icon: Compass, label: 'Explore Hub', href: '/dashboard/explore' },
         { icon: BookOpen, label: 'Learning Paths', href: '/dashboard/paths' },
-        { icon: Search, label: 'Smart Search', href: '/dashboard/search' },
+        { icon: Search, label: 'Deep Research', href: '/dashboard/research' },
         { icon: Network, label: 'Knowledge Map', href: '/dashboard/knowledge-map' },
         { icon: Newspaper, label: 'Daily Digest', href: '/dashboard/digest', badge: 'New' }
       ]
