@@ -30,7 +30,7 @@ const personas = [
 
 const TavusConversation = () => {
   const { toast } = useToast();
-  const [context, setContext] = useState('');
+  const [context, setContext] = useState(() => localStorage.getItem("convoAiContext") || '');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [conversationUrl, setConversationUrl] = useState<string | null>(null);
@@ -56,6 +56,19 @@ const TavusConversation = () => {
       document.body.style.overflow = 'unset';
     };
   }, [showVideo]);
+
+  // Check for imported text from StudyPlatform
+  useEffect(() => {
+    const importedText = localStorage.getItem("convoAiContext");
+    if (importedText) {
+      setContext(importedText);
+      localStorage.removeItem("convoAiContext");
+      toast({
+        title: "Text Imported",
+        description: "Content from personalized learning has been imported",
+      });
+    }
+  }, [toast]);
 
   const handleStartConversation = async () => {
     if (!context.trim()) {

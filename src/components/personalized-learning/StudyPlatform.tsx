@@ -1,6 +1,7 @@
 'use client';
 
 import { useCallback, useEffect, useRef, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { useAppContext } from "@/contexts/PersonalizedLearningContext";
 import { addStoriesChat, generateModule, generateModules, pageTransition, pageVariants, resetContext, validateJSON } from "@/lib/personalized-learning/utilFunctions";
 import { Button } from "@/components/ui/button";
@@ -8,11 +9,18 @@ import Typed from "typed.js";
 import { AnimatePresence, motion } from "framer-motion";
 import prompts from "@/lib/personalized-learning/prompts";
 import interactionGemini from "@/lib/personalized-learning/geminiClient";
-import { Award, ArrowLeft, ArrowRight, Loader2 } from "lucide-react";
-import { Card, CardContent } from "@/components/ui/card";
+import { Award, ArrowLeft, ArrowRight, Loader2, Copy, SendToBack, SelectAll, MessageSquare } from "lucide-react";
+import { Card } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import {
+  ContextMenu,
+  ContextMenuContent,
+  ContextMenuItem,
+  ContextMenuTrigger,
+} from "@/components/ui/context-menu";
 import { supabase } from "@/lib/supabase";
 import { useAuth } from "@/components/auth/SupabaseAuthProvider";
+import { useToast } from "@/hooks/use-toast";
 
 const StudyPlatformLoading = () => {
     const studyPlatformLoadingEl = useRef<HTMLDivElement>(null);
@@ -74,11 +82,56 @@ const StudyPlatformInitial = ({ handleGetModule }: { handleGetModule: () => Prom
 const StudyPlatform = () => {
     const { introduction, setIntroduction, personality, studyMaterial, generationHistory, setGenerationHistory, studyPlatform, setStudyPlatform, currentSessionId, setCurrentSessionId } = useAppContext();
     const { user } = useAuth();
+    const { toast } = useToast();
+    const navigate = useNavigate();
+    const contentRef = useRef<HTMLDivElement>(null);
+    const [selectedText, setSelectedText] = useState<string>("");
     const [modulo, setModulo] = useState<number>(studyPlatform.actModule);
     const [actualModuleRes, setActualModuleRes] = useState<string>("");
     const [timeModule, setTimeModule] = useState<boolean>(false);
 
     const delay = (ms: number) => new Promise(res => setTimeout(res, ms));
+
+    const handleSelection = () => {
+        const selection = window.getSelection();
+        if (selection && selection.toString()) {
+            setSelectedText(selection.toString());
+        }
+    };
+
+    const handleCopyText = () => {
+        if (selectedText) {
+            navigator.clipboard.writeText(selectedText);
+            toast({
+                title: "Copied to clipboard",
+                description: "Selected text has been copied",
+            });
+        }
+    };
+
+    const handleSelectAll = () => {
+        if (contentRef.current) {
+            const range = document.createRange();
+            range.selectNodeContents(contentRef.current);
+            const selection = window.getSelection();
+            if (selection) {
+                selection.removeAllRanges();
+                selection.addRange(range);
+                setSelectedText(selection.toString());
+            }
+        }
+    };
+
+    const handleSendToConvoAI = () => {
+        if (selectedText) {
+            localStorage.setItem("convoAiContext", selectedText);
+            toast({
+                title: "Text sent to Convo AI",
+                description: "Navigating to Convo AI page...",
+            });
+            navigate("/dashboard/convo-ai");
+        }
+    };
 
     const handleGetModules = useCallback(async () => {
         if (!studyMaterial) return;
@@ -257,29 +310,57 @@ const StudyPlatform = () => {
                                         <CardContent className="p-6 studyPlatform-content">
                                         {studyPlatform.modulos[studyPlatform.actModule] && 
                                          studyPlatform.modulos[studyPlatform.actModule].content && 
-                                         studyPlatform.modulos[studyPlatform.actModule].content.map((item, index) => {
-                                            const key = `modulo-${studyPlatform.actModule}-content-${index}`;
-                                            const htmlContent = item.html;
-                                            
-                                            if (htmlContent.includes('<!DOCTYPE>') || htmlContent.includes('<!DOCTYPE html>')) {
-                                                return (
-                                                    <iframe
-                                                        key={key}
-                                                        srcDoc={htmlContent}
-                                                        title={key}
-                                                        className="mb-6 w-full h-[400px] border-none rounded-lg"
-                                                    />
-                                                );
-                                            } else {
-                                                return (
-                                                    <div
-                                                        key={key}
-                                                        className="mb-4"
-                                                        dangerouslySetInnerHTML={{ __html: htmlContent }}
-                                                    />
-                                                );
-                                            }
-                                        })}
+                                         <ContextMenu>
+                                             <ContextMenuTrigger>
+                                                 <div
+                                                     ref={contentRef}
+                                                     className="studyPlatform-content-wrapper"
+                                                     onMouseUp={handleSelection}
+                                                     onMouseDown={() => setSelectedText("")}
+                                                 >
+                                                     {studyPlatform.modulos[studyPlatform.actModule].content.map((item, index) => {
+                                                         const key = `modulo-${studyPlatform.actModule}-content-${index}`;
+                                                         const htmlContent = item.html;
+                                                         
+                                                         if (htmlContent.includes('<!DOCTYPE>') || htmlContent.includes('<!DOCTYPE html>')) {
+                                                             return (
+                                                                 <iframe
+                                                                     key={key}
+                                                                     srcDoc={htmlContent}
+                                                                     title={key}
+                                                                     className="mb-6 w-full h-[400px] border-none rounded-lg"
+                                                                 />
+                                                             );
+                                                         } else {
+                                                             return (
+                                                                 <div
+                                                                     key={key}
+                                                                     className="mb-4"
+                                                                     dangerouslySetInnerHTML={{ __html: htmlContent }}
+                                                                 />
+                                                             );
+                                                         }
+                                                     })}
+                                                 </div>
+                                             </ContextMenuTrigger>
+                                             {selectedText && (
+                                                 <ContextMenuContent>
+                                                     <ContextMenuItem onClick={handleCopyText} className="gap-2">
+                                                         <Copy className="h-4 w-4" />
+                                                         Copy
+                                                     </ContextMenuItem>
+                                                     <ContextMenuItem onClick={handleSelectAll} className="gap-2">
+                                                         <SelectAll className="h-4 w-4" />
+                                                         Select All
+                                                     </ContextMenuItem>
+                                                     <ContextMenuItem onClick={handleSendToConvoAI} className="gap-2">
+                                                         <MessageSquare className="h-4 w-4" />
+                                                         Send to Convo AI
+                                                     </ContextMenuItem>
+                                                 </ContextMenuContent>
+                                             )}
+                                         </ContextMenu>
+                                         )}
                                         </CardContent>
                                     </ScrollArea>
                                 </Card>
