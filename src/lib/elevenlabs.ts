@@ -51,9 +51,26 @@ export async function generateAudio(options: TextToSpeechOptions): Promise<strin
     
     console.log('Audio generated successfully');
     return audioUrl;
-  } catch (error) {
+  } catch (error: any) {
     console.error('Error generating audio with ElevenLabs:', error);
-    const errorMessage = error instanceof Error ? error.message : String(error);
+    
+    // Enhanced error handling for different types of errors
+    if (error?.status === 403 || error?.statusCode === 403) {
+      throw new Error('Authentication failed. Please check your ElevenLabs API key and ensure your account has sufficient credits.');
+    } else if (error?.status === 401 || error?.statusCode === 401) {
+      throw new Error('Invalid API key. Please verify your ElevenLabs API key is correct.');
+    } else if (error?.status === 429 || error?.statusCode === 429) {
+      throw new Error('Rate limit exceeded. Please wait a moment and try again.');
+    } else if (error?.status === 402 || error?.statusCode === 402) {
+      throw new Error('Insufficient credits. Please add credits to your ElevenLabs account.');
+    } else if (error?.status >= 500 || error?.statusCode >= 500) {
+      throw new Error('ElevenLabs service is temporarily unavailable. Please try again later.');
+    } else if (error?.message?.includes('fetch')) {
+      throw new Error('Network error. Please check your internet connection and try again.');
+    }
+    
+    // Generic error message for other cases
+    const errorMessage = error?.message || error?.toString() || 'Unknown error occurred';
     throw new Error(`Failed to generate audio: ${errorMessage}`);
   }
 }
