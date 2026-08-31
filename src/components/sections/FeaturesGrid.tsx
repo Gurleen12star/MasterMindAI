@@ -31,9 +31,9 @@ export default function FeaturesGrid() {
               <div className="relative mb-6 inline-flex h-16 w-16 items-center justify-center rounded-2xl bg-white/20 backdrop-blur-sm shadow-lg">
                 <Brain className="h-8 w-8 text-white" />
               </div>
-              <h3 className="mb-4 text-3xl font-bold tracking-tight text-white">AI-Driven Content</h3>
+              <h3 className="mb-4 text-3xl font-bold tracking-tight text-white">AI-Powered Personalized Learning</h3>
               <p className="text-white/90 text-lg leading-relaxed">
-                Discover personalized content recommendations powered by advanced AI algorithms that adapt to your learning style.
+                Experience fully customized learning sessions with AI teachers that adapt their personality and teaching style to match your preferences and learning goals.
               </p>
             </div>
           </BentoBox>
