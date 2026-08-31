@@ -10,6 +10,8 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } f
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/lib/supabase';
 import { useAuth } from '@/components/auth/SupabaseAuthProvider';
+import { useAppContext } from '@/contexts/PersonalizedLearningContext';
+import { addHistoryChat } from '@/lib/personalized-learning/utilFunctions';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import AnimatedLoadingText from '@/components/ui/AnimatedLoadingText';
@@ -52,7 +54,9 @@ const mockProgressSteps: Omit<ResearchProgress, 'depth'>[] = [
 ];
 
 export default function DeepResearchPage() {
+  const navigate = useNavigate();
   const { toast } = useToast();
+  const { setInitialConvoMessage } = useAppContext();
   const { user, session } = useAuth();
 
   const [topic, setTopic] = useState('');
@@ -61,6 +65,13 @@ export default function DeepResearchPage() {
   const [result, setResult] = useState<ResearchResult | null>(null);
   const [progress, setProgress] = useState<ResearchProgress[]>([]);
   const [activeTab, setActiveTab] = useState('report');
+  const [selectedText, setSelectedText] = useState('');
+  const [contextMenu, setContextMenu] = useState({ visible: false, x: 0, y: 0 });
+  const [isGeneratingAudio, setIsGeneratingAudio] = useState(false);
+  const [audioUrl, setAudioUrl] = useState<string | null>(null);
+  const [isExpanding, setIsExpanding] = useState(false);
+  const reportRef = useRef<HTMLDivElement>(null);
+  const contextMenuRef = useRef<HTMLDivElement>(null);
   const [showHistoryDialog, setShowHistoryDialog] = useState(false);
   const [researchHistory, setResearchHistory] = useState<DeepResearchHistory[]>([]);
   const [isLoadingHistory, setIsLoadingHistory] = useState(false);
@@ -73,6 +84,16 @@ export default function DeepResearchPage() {
 
   useEffect(() => {
     const scrollToBottom = () => {
+    
+    // Add click listener to hide context menu
+    const handleClick = (e: MouseEvent) => {
+      if (contextMenuRef.current && !contextMenuRef.current.contains(e.target as Node)) {
+        setContextMenu({ visible: false, x: 0, y: 0 });
+      }
+    };
+    
+    document.addEventListener('click', handleClick);
+    return () => document.removeEventListener('click', handleClick);
       if (progressRef.current) {
         progressRef.current.scrollTop = progressRef.current.scrollHeight;
       }
