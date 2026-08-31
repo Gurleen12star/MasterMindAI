@@ -282,26 +282,6 @@ div[style*="z-index: 999999"] {
     min-height: 25%;
   }
 }
-  left: 50%;
-  transform: translateX(-50%);
-  font-size: clamp(2rem, 5vw, 4rem);
-  font-weight: 700;
-  color: hsl(var(--card-foreground));
-  text-align: center;
-  z-index: 1;
-  width: 80%;
-}
-
-.hero-content {
-  position: absolute;
-  bottom: 15%;
-  left: 50%;
-  transform: translateX(-50%);
-  display: flex;
-  gap: 1rem;
-  z-index: 1;
-}
-
 @media (max-width: 768px) {
   .hero-card {
     min-height: 400px;
