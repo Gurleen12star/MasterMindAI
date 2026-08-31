@@ -6,73 +6,45 @@ import {
   CardContent, 
   CardDescription, 
   CardHeader, 
-  CardTitle,
+    replica_id: 'rc2146c13e81',
+    description: 'Learn sales techniques and practice pitches'
   CardFooter 
 } from '@/components/ui/card';
 import { 
   Select, 
-  SelectContent,
+    replica_id: 'r6ae5b6efc9d',
+    description: 'Discuss historical events and concepts'
   SelectItem, 
   SelectTrigger, 
   SelectValue 
 } from '@/components/ui/select';
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+    replica_id: 'r9d30b0e55ac',
+    description: 'Practice job interviews and get feedback'
 import { supabase } from '@/lib/supabase';
 import { useToast } from '@/hooks/use-toast';
 import {
   Video,
+    replica_id: 'rf4703150052',
+    description: 'Explore research topics in depth'
   Loader2,
   BotMessageSquare,
   AlertCircle,
   ExternalLink,
-  MessageSquare,
-  Info
+    replica_id: 'r4317e64d25a',
+    description: 'Practice patient intake conversations'
 } from 'lucide-react';
 import AnimatedLoadingText from '@/components/ui/AnimatedLoadingText';
 
 const personas = [
-  { 
-    name: 'Academic Tutor', 
-    persona_id: 'rfb51183fe',
     replica_id: 'rfb51183fe',
     description: 'Get help with academic subjects'
-  },
-  { 
-    name: 'History Teacher', 
-    persona_id: 'pc55154f229a', 
-    replica_id: 'r6ae5b6efc9d',
-    description: 'Discuss historical events and concepts'
-  },
-  { 
-    name: 'AI Interviewer', 
-    persona_id: 'pe13ed370726', 
-    replica_id: 'r9d30b0e55ac',
-    description: 'Practice job interviews and get feedback'
-  },
-  { 
-    name: 'Tavus Researcher', 
-    persona_id: 'p48fdf065d6b', 
-    replica_id: 'rf4703150052',
-    description: 'Explore research topics in depth'
-  },
-  { 
-    name: 'Healthcare Intake Assistant', 
-    persona_id: 'p5d11710002a', 
-    replica_id: 'r4317e64d25a',
-    description: 'Practice patient intake conversations'
-  },
-  { 
-    name: 'Sales Coach', 
-    persona_id: 'rc2146c13e81', 
-    replica_id: 'rc2146c13e81',
-    description: 'Learn sales techniques and practice pitches'
-  },
-  { 
-    name: 'Corporate Trainer', 
-    persona_id: 'p7fb0be3', 
+  { name: 'History Teacher', persona_id: 'pc55154f229a', replica_id: 'r6ae5b6efc9d' },
+  { name: 'AI Interviewer', persona_id: 'pe13ed370726', replica_id: 'r9d30b0e55ac' },
+  { name: 'Tavus Researcher', persona_id: 'p48fdf065d6b', replica_id: 'rf4703150052' },
+  { name: 'Healthcare Intake Assistant', persona_id: 'p5d11710002a', replica_id: 'r4317e64d25a' },
     replica_id: 'ra54d1d861',
     description: 'Practice corporate training and presentations'
-  }
+  { name: 'Corporate Trainer', persona_id: 'p7fb0be3', replica_id: 'ra54d1d861' },
 ];
 
 const TavusConversation = () => {
