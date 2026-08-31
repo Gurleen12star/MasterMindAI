@@ -208,16 +208,31 @@ div[style*="z-index: 999999"] {
   content: '';
   position: absolute;
   left: -4px;
-  top: -2px;
   width: calc(100% + 8px);
-  height: calc(100% + 4px);
+  height: 100%;
   border: 2px solid rgb(255, 98, 0);
   z-index: -1;
   transition: all 0.3s ease;
 }
 
+.hero-highlight::before {
+  content: '';
+  position: absolute;
+  right: -12px;
+  bottom: -4px;
+  width: 8px;
+  height: 8px;
+  border-right: 2px solid rgb(255, 98, 0);
+  border-bottom: 2px solid rgb(255, 98, 0);
+  transform: rotate(-45deg);
+}
+
 .hero-highlight:hover::after {
   transform: scale(1.05);
+  border-width: 3px;
+}
+
+.hero-highlight:hover::before {
   border-width: 3px;
 }
 
