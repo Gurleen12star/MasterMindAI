@@ -45,7 +45,7 @@ export const logoPaths: LogoPath[] = [
   {
     title: 'Tavus',
     type: 'file',
-    file: '/logo-netlify-small-fullcolor-lightmode.svg',
+    file: '/Tavus-logo.svg',
   }
    // {
   //   title: 'Cisco',
