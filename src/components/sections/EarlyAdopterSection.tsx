@@ -1,9 +1,7 @@
 import { BentoBox } from '@/components/ui/BentoBox';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
 import { Sparkles, Check } from 'lucide-react';
 import { useState } from 'react';
-import { motion } from 'framer-motion';
 
 export default function EarlyAdopterSection() {
   const [email, setEmail] = useState('');
