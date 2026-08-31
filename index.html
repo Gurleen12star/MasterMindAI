@@ -9,8 +9,227 @@
     <script type="text/javascript">
       !function(){if(!window.UnicornStudio){window.UnicornStudio={isInitialized:!1};var i=document.createElement("script");i.src="https://cdn.jsdelivr.net/gh/hiunicornstudio/unicornstudio.js@v1.4.25/dist/unicornStudio.umd.js",i.onload=function(){window.UnicornStudio.isInitialized||(UnicornStudio.init(),window.UnicornStudio.isInitialized=!0)},(document.head || document.body).appendChild(i)}}();
     </script>
+    <style>
+      /* Initial pre-loader styles - inline to ensure immediate visibility */
+      #initial-loader {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 50%, #16213e 100%);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        z-index: 9999;
+        transition: opacity 0.8s ease-out, visibility 0.8s ease-out;
+      }
+      
+      #initial-loader.hidden {
+        opacity: 0;
+        visibility: hidden;
+      }
+      
+      .loader-logo {
+        width: 80px;
+        height: 80px;
+        margin-bottom: 2rem;
+        border-radius: 20px;
+        background: linear-gradient(135deg, #a855f7 0%, #8b5cf6 50%, #7c3aed 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 20px 40px rgba(168, 85, 247, 0.3);
+        animation: logoFloat 3s ease-in-out infinite;
+      }
+      
+      .loader-logo::before {
+        content: '';
+        width: 40px;
+        height: 40px;
+        background: white;
+        border-radius: 8px;
+        opacity: 0.9;
+      }
+      
+      .loader-text {
+        font-family: 'Inter', system-ui, sans-serif;
+        font-size: 1.5rem;
+        font-weight: 700;
+        background: linear-gradient(135deg, #a855f7, #8b5cf6);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        margin-bottom: 1rem;
+        animation: textGlow 2s ease-in-out infinite alternate;
+      }
+      
+      .loader-subtitle {
+        font-family: 'Inter', system-ui, sans-serif;
+        font-size: 0.875rem;
+        color: rgba(255, 255, 255, 0.6);
+        margin-bottom: 2rem;
+        animation: fadeInOut 2s ease-in-out infinite;
+      }
+      
+      .loader-spinner {
+        width: 60px;
+        height: 60px;
+        border: 3px solid rgba(168, 85, 247, 0.2);
+        border-top: 3px solid #a855f7;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+        box-shadow: 0 0 20px rgba(168, 85, 247, 0.3);
+      }
+      
+      .loader-dots {
+        display: flex;
+        gap: 8px;
+        margin-top: 1.5rem;
+      }
+      
+      .loader-dot {
+        width: 8px;
+        height: 8px;
+        background: #a855f7;
+        border-radius: 50%;
+        animation: dotPulse 1.5s ease-in-out infinite;
+        box-shadow: 0 0 10px rgba(168, 85, 247, 0.5);
+      }
+      
+      .loader-dot:nth-child(2) {
+        animation-delay: 0.2s;
+      }
+      
+      .loader-dot:nth-child(3) {
+        animation-delay: 0.4s;
+      }
+      
+      @keyframes logoFloat {
+        0%, 100% {
+          transform: translateY(0px) scale(1);
+        }
+        50% {
+          transform: translateY(-10px) scale(1.05);
+        }
+      }
+      
+      @keyframes textGlow {
+        0% {
+          filter: brightness(1);
+        }
+        100% {
+          filter: brightness(1.2);
+        }
+      }
+      
+      @keyframes fadeInOut {
+        0%, 100% {
+          opacity: 0.6;
+        }
+        50% {
+          opacity: 1;
+        }
+      }
+      
+      @keyframes spin {
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+      
+      @keyframes dotPulse {
+        0%, 100% {
+          transform: scale(1);
+          opacity: 0.7;
+        }
+        50% {
+          transform: scale(1.2);
+          opacity: 1;
+        }
+      }
+      
+      /* Particle background effect */
+      .loader-particles {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        z-index: -1;
+      }
+      
+      .particle {
+        position: absolute;
+        width: 4px;
+        height: 4px;
+        background: rgba(168, 85, 247, 0.6);
+        border-radius: 50%;
+        animation: particleFloat 8s linear infinite;
+      }
+      
+      @keyframes particleFloat {
+        0% {
+          transform: translateY(100vh) translateX(0);
+          opacity: 0;
+        }
+        10% {
+          opacity: 1;
+        }
+        90% {
+          opacity: 1;
+        }
+        100% {
+          transform: translateY(-100px) translateX(100px);
+          opacity: 0;
+        }
+      }
+    </style>
   </head>
   <body>
+    <!-- Initial Pre-loader -->
+    <div id="initial-loader">
+      <div class="loader-particles">
+        <!-- Particles will be added via JavaScript -->
+      </div>
+      
+      <div class="loader-logo"></div>
+      
+      <div class="loader-text">EchoVerse</div>
+      
+      <div class="loader-subtitle">AI-Powered Learning Hub</div>
+      
+      <div class="loader-spinner"></div>
+      
+      <div class="loader-dots">
+        <div class="loader-dot"></div>
+        <div class="loader-dot"></div>
+        <div class="loader-dot"></div>
+      </div>
+    </div>
+    
+    <script>
+      // Create floating particles for the pre-loader
+      (function() {
+        const particlesContainer = document.querySelector('.loader-particles');
+        const particleCount = 15;
+        
+        for (let i = 0; i < particleCount; i++) {
+          const particle = document.createElement('div');
+          particle.className = 'particle';
+          particle.style.left = Math.random() * 100 + '%';
+          particle.style.animationDelay = Math.random() * 8 + 's';
+          particle.style.animationDuration = (8 + Math.random() * 4) + 's';
+          particlesContainer.appendChild(particle);
+        }
+      })();
+    </script>
+
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
