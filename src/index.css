@@ -200,9 +200,15 @@
   left: 0;
   will-change: transform;
   transition: opacity 0.2s ease;
-  opacity: 1 !important;
-  visibility: visible !important;
-  display: block !important;
+  opacity: 0;
+  visibility: hidden;
+  display: block;
+}
+
+/* Show cursor only when custom cursor is enabled */
+html.custom-cursor-enabled .curzr-arrow-pointer {
+  opacity: 1;
+  visibility: visible;
 }
 
 .curzr-arrow-pointer svg {
@@ -244,9 +250,6 @@
 
 /* Ensure cursor is ALWAYS visible and on top */
 body .curzr-arrow-pointer {
-  opacity: 1 !important;
-  visibility: visible !important;
-  display: block !important;
   z-index: 9999999 !important;
   position: fixed !important;
   pointer-events: none !important;

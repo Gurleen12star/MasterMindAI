@@ -2,7 +2,6 @@ import { useEffect, useRef, useState } from 'react';
 
 export default function CustomCursor() {
   const cursorRef = useRef<HTMLDivElement>(null);
-  const [isVisible, setIsVisible] = useState(true);
   const [isHoveringClickable, setIsHoveringClickable] = useState(false);
 
   useEffect(() => {
@@ -32,9 +31,6 @@ export default function CustomCursor() {
       mouseX = e.clientX;
       mouseY = e.clientY;
       
-      // Ensure cursor is visible when moving
-      setIsVisible(true);
-      
       // Check if hovering over clickable elements
       const target = e.target as HTMLElement;
       const isClickable = target && (
@@ -51,54 +47,15 @@ export default function CustomCursor() {
       setIsHoveringClickable(isClickable);
     };
 
-    // Mouse enter/leave handlers
-    const handleMouseEnter = () => setIsVisible(true);
-    const handleMouseLeave = () => setIsVisible(false);
-
     // Start animation loop
     updateCursorPosition();
 
     // Add event listeners to document (works for all elements including modals)
     document.addEventListener('mousemove', handleMouseMove, { passive: true });
-    document.addEventListener('mouseenter', handleMouseEnter);
-    document.addEventListener('mouseleave', handleMouseLeave);
-
-    // Ensure cursor is always visible in custom cursor mode
-    const ensureVisibility = () => {
-      if (document.documentElement.classList.contains('custom-cursor-enabled')) {
-        if (cursor) {
-          cursor.style.opacity = '1';
-          cursor.style.visibility = 'visible';
-          cursor.style.display = 'block';
-          cursor.style.pointerEvents = 'none';
-          cursor.style.zIndex = '9999999';
-        }
-      }
-    };
-
-    // Run visibility check immediately and periodically
-    ensureVisibility();
-    const visibilityInterval = setInterval(ensureVisibility, 500);
-
-    // Observer to watch for DOM changes (like modals opening)
-    const observer = new MutationObserver(() => {
-      ensureVisibility();
-    });
-    
-    observer.observe(document.body, {
-      childList: true,
-      subtree: true,
-      attributes: true,
-      attributeFilter: ['style', 'class']
-    });
 
     return () => {
       cancelAnimationFrame(animationFrameId);
       document.removeEventListener('mousemove', handleMouseMove);
-      document.removeEventListener('mouseenter', handleMouseEnter);
-      document.removeEventListener('mouseleave', handleMouseLeave);
-      clearInterval(visibilityInterval);
-      observer.disconnect();
     };
   }, []);
 
@@ -119,8 +76,6 @@ export default function CustomCursor() {
         height: '24px',
         pointerEvents: 'none',
         zIndex: 9999999,
-        opacity: isVisible ? 1 : 0,
-        visibility: isVisible ? 'visible' : 'hidden',
         transition: 'opacity 0.2s ease',
         willChange: 'transform',
       }}
