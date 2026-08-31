@@ -25,20 +25,48 @@ function App() {
   useEffect(() => {
     document.title = 'EchoVerse - AI-Powered Learning Hub';
     
-    // Enable custom cursor by default
-    document.documentElement.classList.add('custom-cursor-enabled');
+    // Enable custom cursor by default and ensure it's always visible
+    const enableCustomCursor = () => {
+      document.documentElement.classList.add('custom-cursor-enabled');
+      // Force cursor visibility
+      document.documentElement.style.setProperty('--cursor-visibility', 'visible');
+    };
+    
+    enableCustomCursor();
     
     // Add keyboard shortcut (Escape) to toggle custom cursor for accessibility
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
-        document.documentElement.classList.toggle('custom-cursor-enabled');
+        const isEnabled = document.documentElement.classList.contains('custom-cursor-enabled');
+        if (isEnabled) {
+          document.documentElement.classList.remove('custom-cursor-enabled');
+        } else {
+          enableCustomCursor();
+        }
       }
     };
     
     window.addEventListener('keydown', handleKeyDown);
     
+    // Ensure cursor remains visible when navigating between pages/components
+    const ensureCursorVisibility = () => {
+      if (document.documentElement.classList.contains('custom-cursor-enabled')) {
+        const cursor = document.querySelector('.curzr-arrow-pointer') as HTMLElement;
+        if (cursor) {
+          cursor.style.opacity = '1';
+          cursor.style.visibility = 'visible';
+          cursor.style.display = 'block';
+        }
+      }
+    };
+    
+    // Run visibility check periodically
+    const visibilityInterval = setInterval(ensureCursorVisibility, 1000);
+    
     const handlePathChange = () => {
       setCurrentPath(window.location.pathname);
+      // Ensure cursor visibility after navigation
+      setTimeout(ensureCursorVisibility, 100);
     };
 
     window.addEventListener('popstate', handlePathChange);
@@ -46,6 +74,7 @@ function App() {
     return () => {
       window.removeEventListener('popstate', handlePathChange);
       window.removeEventListener('keydown', handleKeyDown);
+      clearInterval(visibilityInterval);
     };
   }, []);
 

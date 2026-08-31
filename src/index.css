@@ -199,6 +199,7 @@
   top: 0;
   left: 0;
   will-change: transform;
+  transition: opacity 0.2s ease;
 }
 
 .curzr-arrow-pointer svg {
@@ -207,7 +208,9 @@
 }
 
 .curzr-arrow-pointer .inner {
-  fill: hsl(var(--background));
+  fill: white;
+  stroke: currentColor;
+  stroke-width: 1;
 }
 
 .curzr-arrow-pointer .outer {
@@ -215,21 +218,30 @@
   transition: fill var(--cursor-transition-duration) var(--cursor-transition-timing);
 }
 
-/* Interactive elements cursor color change - using event bubbling */
-.custom-cursor-enabled a:hover ~ .curzr-arrow-pointer .outer,
-.custom-cursor-enabled button:hover ~ .curzr-arrow-pointer .outer,
-.custom-cursor-enabled [role="button"]:hover ~ .curzr-arrow-pointer .outer,
-.custom-cursor-enabled input:hover ~ .curzr-arrow-pointer .outer,
-.custom-cursor-enabled select:hover ~ .curzr-arrow-pointer .outer,
-.custom-cursor-enabled textarea:hover ~ .curzr-arrow-pointer .outer,
-.custom-cursor-enabled label:hover ~ .curzr-arrow-pointer .outer,
-.custom-cursor-enabled [data-interactive]:hover ~ .curzr-arrow-pointer .outer,
-.custom-cursor-enabled [tabindex="0"]:hover ~ .curzr-arrow-pointer .outer {
-  fill: var(--cursor-color-clickable) !important;
+/* Cursor color change when hovering clickable elements */
+.curzr-arrow-pointer.hovering-clickable .outer {
+  fill: hsl(var(--primary)) !important;
 }
 
-.curzr-arrow-pointer.hovering-clickable .outer {
-  fill: hsl(var(--primary)); /* Use the primary color (purple) when hovering clickables */
+/* Ensure cursor is visible in all contexts */
+.custom-cursor-enabled .curzr-arrow-pointer {
+  opacity: 1 !important;
+  visibility: visible !important;
+  display: block !important;
+}
+
+/* Override any potential hiding in dialogs, modals, etc. */
+[data-radix-dialog-overlay] .curzr-arrow-pointer,
+[data-radix-dialog-content] .curzr-arrow-pointer,
+[data-radix-popover-content] .curzr-arrow-pointer,
+[data-radix-dropdown-menu-content] .curzr-arrow-pointer,
+.modal .curzr-arrow-pointer,
+.popup .curzr-arrow-pointer,
+.overlay .curzr-arrow-pointer {
+  opacity: 1 !important;
+  visibility: visible !important;
+  display: block !important;
+  z-index: 9999999 !important;
 }
 
 /* Navbar Background Styles */
