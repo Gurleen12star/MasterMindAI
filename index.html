@@ -6,6 +6,30 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
     <title>EchoVerse AI Learning Hub Landing Page</title>
+    
+    <!-- SVG Filter for Grain Effect -->
+    <svg width="0" height="0" style="position: absolute;">
+      <defs>
+        <filter id="grain" x="0%" y="0%" width="100%" height="100%">
+          <feTurbulence baseFrequency="0.9" numOctaves="4" result="noise" seed="2"/>
+          <feColorMatrix in="noise" type="saturate" values="0"/>
+          <feComponentTransfer in="noise" result="grain">
+            <feFuncA type="discrete" tableValues="0.1 0.2 0.3 0.4 0.5"/>
+          </feComponentTransfer>
+          <feBlend in="SourceGraphic" in2="grain" mode="multiply"/>
+        </filter>
+        
+        <filter id="subtle-grain" x="0%" y="0%" width="100%" height="100%">
+          <feTurbulence baseFrequency="0.65" numOctaves="3" result="noise" seed="5"/>
+          <feColorMatrix in="noise" type="saturate" values="0"/>
+          <feComponentTransfer in="noise" result="grain">
+            <feFuncA type="discrete" tableValues="0.02 0.04 0.06 0.08"/>
+          </feComponentTransfer>
+          <feBlend in="SourceGraphic" in2="grain" mode="overlay"/>
+        </filter>
+      </defs>
+    </svg>
+    
     <script type="text/javascript">
       !function(){if(!window.UnicornStudio){window.UnicornStudio={isInitialized:!1};var i=document.createElement("script");i.src="https://cdn.jsdelivr.net/gh/hiunicornstudio/unicornstudio.js@v1.4.25/dist/unicornStudio.umd.js",i.onload=function(){window.UnicornStudio.isInitialized||(UnicornStudio.init(),window.UnicornStudio.isInitialized=!0)},(document.head || document.body).appendChild(i)}}();
     </script>
@@ -229,6 +253,9 @@
         <span>L</span><span>o</span><span>a</span><span>d</span><span>i</span><span>n</span><span>g</span><span> </span><span>E</span><span>c</span><span>h</span><span>o</span><span>V</span><span>e</span><span>r</span><span>s</span><span>e</span><span>.</span><span>.</span><span>.</span>
       </div>
     </div>
+    
+    <!-- Global Visual Overlay - Above all content but allows interaction -->
+    <div id="global-overlay"></div>
     
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>

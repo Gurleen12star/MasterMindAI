@@ -86,6 +86,154 @@
   --mermaid-orange-darker: hsl(25 84% 45%);
 }
 
+/* Global Visual Overlay - Layered above all content but allows interaction */
+#global-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 9999;
+  pointer-events: none; /* Critical: allows interaction with elements below */
+  opacity: 0.6;
+  
+  /* Grain texture filter */
+  filter: url(#subtle-grain);
+  
+  /* Multiple layered backgrounds for depth and texture */
+  background-image: 
+    /* Dot pattern overlay */
+    radial-gradient(circle at 25% 25%, rgba(147, 51, 234, 0.03) 1px, transparent 1px),
+    radial-gradient(circle at 75% 75%, rgba(59, 130, 246, 0.02) 1px, transparent 1px),
+    radial-gradient(circle at 50% 10%, rgba(236, 72, 153, 0.02) 1px, transparent 1px),
+    radial-gradient(circle at 10% 90%, rgba(34, 197, 94, 0.02) 1px, transparent 1px),
+    
+    /* Mesh overlay patterns */
+    linear-gradient(90deg, rgba(147, 51, 234, 0.01) 1px, transparent 1px),
+    linear-gradient(0deg, rgba(147, 51, 234, 0.01) 1px, transparent 1px),
+    
+    /* Diagonal mesh for depth */
+    linear-gradient(45deg, rgba(59, 130, 246, 0.008) 1px, transparent 1px),
+    linear-gradient(-45deg, rgba(236, 72, 153, 0.008) 1px, transparent 1px),
+    
+    /* Large geometric shapes for structure */
+    radial-gradient(ellipse at top left, rgba(147, 51, 234, 0.015) 0%, transparent 50%),
+    radial-gradient(ellipse at bottom right, rgba(59, 130, 246, 0.015) 0%, transparent 50%),
+    radial-gradient(ellipse at center, rgba(236, 72, 153, 0.01) 0%, transparent 70%),
+    
+    /* Subtle gradient overlay for cohesion */
+    linear-gradient(135deg, 
+      rgba(147, 51, 234, 0.02) 0%, 
+      rgba(59, 130, 246, 0.015) 25%, 
+      rgba(236, 72, 153, 0.01) 50%, 
+      rgba(34, 197, 94, 0.015) 75%, 
+      rgba(147, 51, 234, 0.02) 100%
+    );
+  
+  /* Background sizes for different pattern scales */
+  background-size: 
+    20px 20px,    /* Small dots */
+    30px 30px,    /* Medium dots */
+    40px 40px,    /* Larger dots */
+    25px 25px,    /* Corner dots */
+    60px 60px,    /* Vertical mesh */
+    60px 60px,    /* Horizontal mesh */
+    80px 80px,    /* Diagonal mesh 1 */
+    80px 80px,    /* Diagonal mesh 2 */
+    100% 100%,    /* Large shapes */
+    100% 100%,    /* Large shapes */
+    100% 100%,    /* Large shapes */
+    100% 100%;    /* Gradient overlay */
+  
+  /* Background positions for pattern variation */
+  background-position: 
+    0 0,          /* Small dots */
+    10px 10px,    /* Medium dots offset */
+    20px 20px,    /* Larger dots offset */
+    5px 5px,      /* Corner dots offset */
+    0 0,          /* Vertical mesh */
+    0 0,          /* Horizontal mesh */
+    0 0,          /* Diagonal mesh 1 */
+    0 0,          /* Diagonal mesh 2 */
+    0 0,          /* Large shapes */
+    0 0,          /* Large shapes */
+    0 0,          /* Large shapes */
+    0 0;          /* Gradient overlay */
+  
+  /* Animation for subtle movement */
+  animation: overlay-float 20s ease-in-out infinite;
+}
+
+/* Subtle floating animation for the overlay */
+@keyframes overlay-float {
+  0%, 100% { 
+    transform: translate(0, 0) scale(1);
+    opacity: 0.6;
+  }
+  25% { 
+    transform: translate(1px, -1px) scale(1.001);
+    opacity: 0.65;
+  }
+  50% { 
+    transform: translate(-1px, 1px) scale(0.999);
+    opacity: 0.7;
+  }
+  75% { 
+    transform: translate(1px, 1px) scale(1.001);
+    opacity: 0.65;
+  }
+}
+
+/* Responsive adjustments for the overlay */
+@media (max-width: 768px) {
+  #global-overlay {
+    opacity: 0.4; /* Reduce opacity on mobile for better readability */
+    background-size: 
+      15px 15px,    /* Smaller patterns on mobile */
+      20px 20px,
+      25px 25px,
+      18px 18px,
+      40px 40px,
+      40px 40px,
+      50px 50px,
+      50px 50px,
+      100% 100%,
+      100% 100%,
+      100% 100%,
+      100% 100%;
+  }
+}
+
+/* Dark mode adjustments for the overlay */
+.dark #global-overlay {
+  opacity: 0.8;
+  
+  /* Adjusted colors for dark mode */
+  background-image: 
+    radial-gradient(circle at 25% 25%, rgba(147, 51, 234, 0.05) 1px, transparent 1px),
+    radial-gradient(circle at 75% 75%, rgba(59, 130, 246, 0.04) 1px, transparent 1px),
+    radial-gradient(circle at 50% 10%, rgba(236, 72, 153, 0.04) 1px, transparent 1px),
+    radial-gradient(circle at 10% 90%, rgba(34, 197, 94, 0.04) 1px, transparent 1px),
+    
+    linear-gradient(90deg, rgba(147, 51, 234, 0.02) 1px, transparent 1px),
+    linear-gradient(0deg, rgba(147, 51, 234, 0.02) 1px, transparent 1px),
+    
+    linear-gradient(45deg, rgba(59, 130, 246, 0.015) 1px, transparent 1px),
+    linear-gradient(-45deg, rgba(236, 72, 153, 0.015) 1px, transparent 1px),
+    
+    radial-gradient(ellipse at top left, rgba(147, 51, 234, 0.025) 0%, transparent 50%),
+    radial-gradient(ellipse at bottom right, rgba(59, 130, 246, 0.025) 0%, transparent 50%),
+    radial-gradient(ellipse at center, rgba(236, 72, 153, 0.02) 0%, transparent 70%),
+    
+    linear-gradient(135deg, 
+      rgba(147, 51, 234, 0.03) 0%, 
+      rgba(59, 130, 246, 0.025) 25%, 
+      rgba(236, 72, 153, 0.02) 50%, 
+      rgba(34, 197, 94, 0.025) 75%, 
+      rgba(147, 51, 234, 0.03) 100%
+    );
+}
+
 /* Enhanced Mermaid Diagram Styles */
 .mermaid-diagram-wrapper {
   background: hsl(var(--background));
