@@ -12,7 +12,9 @@ import {
   LogOut,
   Rocket,
   Users,
+  Video,
   MessageSquare,
+  LineChart,
   GitBranch,
   ChevronLeft,
   ChevronRight
