@@ -12,7 +12,8 @@ import {
   Sparkles,
   Rocket,
   Users,
-  MessageSquare
+  MessageSquare,
+  GitBranch
 } from 'lucide-react';
 
 export default function Sidebar() {
@@ -24,6 +25,7 @@ export default function Sidebar() {
       items: [
         { icon: LayoutDashboard, label: 'Overview', href: '/dashboard' },
         { icon: BookOpen, label: 'My Courses', href: '/dashboard/courses', badge: '8' },
+        { icon: GitBranch, label: 'Roadmap Generator', href: '/dashboard/roadmap-generator' },
         { icon: History, label: 'Learning History', href: '/dashboard/history' },
         { icon: Rocket, label: 'Goals', href: '/dashboard/goals', badge: 'New' }
       ]
