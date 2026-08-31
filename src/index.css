@@ -119,6 +119,25 @@
   --shine-duration: 1.5s;
 }
 
+/* Scrolling Banner Animation */
+@keyframes scroll-right-to-left {
+  0% {
+    transform: translateX(100%);
+  }
+  100% {
+    transform: translateX(-100%);
+  }
+}
+
+.scrolling-text {
+  animation: scroll-right-to-left 20s linear infinite;
+  transition: animation-play-state 0.3s ease;
+}
+
+.animation-paused {
+  animation-play-state: paused !important;
+}
+
 /* Enhanced Mermaid Diagram Styles */
 .mermaid-diagram-wrapper {
   background: hsl(var(--background));
