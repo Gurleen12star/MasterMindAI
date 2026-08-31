@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import robotImage from '@/assets/robot.png';
+import robotImage from '/robot.png';
 
 export default function HeroSection() {
   useEffect(() => {
@@ -38,7 +38,8 @@ export default function HeroSection() {
             <img 
               src={robotImage}
               alt="Floating Icon"
-              className="foreground transition-transform duration-300 w-[800px] h-[675px]"
+              className="foreground transition-transform duration-300"
+              style={{ width: "800px", height: "675px" }}
             />
           </div>
           <div className="hero-content">
