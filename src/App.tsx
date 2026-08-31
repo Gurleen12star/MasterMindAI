@@ -24,12 +24,28 @@ function App() {
   useEffect(() => {
     document.title = 'EchoVerse - AI-Powered Learning Hub';
     
+    // Enable custom cursor by default
+    document.documentElement.classList.add('custom-cursor-enabled');
+    
+    // Add keyboard shortcut (Escape) to toggle custom cursor for accessibility
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        document.documentElement.classList.toggle('custom-cursor-enabled');
+      }
+    };
+    
+    window.addEventListener('keydown', handleKeyDown);
+    
     const handlePathChange = () => {
       setCurrentPath(window.location.pathname);
     };
 
     window.addEventListener('popstate', handlePathChange);
-    return () => window.removeEventListener('popstate', handlePathChange);
+    
+    return () => {
+      window.removeEventListener('popstate', handlePathChange);
+      window.removeEventListener('keydown', handleKeyDown);
+    };
   }, []);
 
   if (!isLoaded) {

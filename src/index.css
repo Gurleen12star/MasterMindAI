@@ -6,7 +6,7 @@
   font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
   font-weight: 400;
-  cursor: none;
+  /* Custom cursor is now class-based for better accessibility */
 
   --background: 0 0% 100%;
   --foreground: 0 0% 3.9%;
@@ -70,13 +70,15 @@
   --mermaid-orange-darker: hsl(25 84% 45%);
 }
 
-/* Custom Cursor Styles */
-* {
-  cursor: none !important;
+/* Custom Cursor Styles - Now opt-in with class .custom-cursor-enabled */
+.custom-cursor-enabled {
+  cursor: none;
 }
 
-a, button, [role="button"] {
-  cursor: none !important;
+.custom-cursor-enabled a,
+.custom-cursor-enabled button,
+.custom-cursor-enabled [role="button"] {
+  cursor: none;
 }
 
 .curzr-arrow-pointer {

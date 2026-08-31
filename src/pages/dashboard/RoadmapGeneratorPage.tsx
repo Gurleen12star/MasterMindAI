@@ -3,7 +3,7 @@ import { useUser } from '@clerk/clerk-react';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { useToast } from '@/hooks/use-toast';
-import { supabaseAdmin, getUserIdForSupabase } from '@/lib/supabase-admin';
+import { supabaseClient } from '@/lib/supabase-admin';
 import { generateRoadmapMermaid } from '@/lib/gemini';
 import { MermaidDiagram } from '@/components/ui/mermaid-diagram';
 import { Card } from '@/components/ui/card';
@@ -50,8 +50,8 @@ export default function RoadmapGeneratorPage() {
     try {
       setIsLoading(true);
       
-      // Using admin client to bypass RLS
-      const { data, error } = await supabaseAdmin
+      // Use the standard client with user_id filter for RLS
+      const { data, error } = await supabaseClient
         .from('roadmaps')
         .select('*')
         .eq('user_id', user.id)
@@ -150,7 +150,7 @@ export default function RoadmapGeneratorPage() {
         console.log("Attempting to save roadmap to Supabase for user:", user.id);
         
         // First, check if we can connect to the database
-        const { error: pingError } = await supabaseAdmin
+        const { error: pingError } = await supabaseClient
           .from('roadmaps')
           .select('id')
           .limit(1);
@@ -161,7 +161,7 @@ export default function RoadmapGeneratorPage() {
         }
         
         // Then try the actual insert
-        const { data, error } = await supabaseAdmin
+        const { data, error } = await supabaseClient
           .from('roadmaps')
           .insert([newRoadmap])
           .select();
@@ -174,7 +174,7 @@ export default function RoadmapGeneratorPage() {
           
           toast({
             title: 'Warning',
-            description: `Could not save to database: ${error.message}. Check that your service role key is configured correctly.`,
+            description: `Could not save to database: ${error.message}`,
             variant: 'destructive',
           });
         } else if (data && data.length > 0) {
