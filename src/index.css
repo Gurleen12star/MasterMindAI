@@ -851,7 +851,9 @@ html {
   font-size: 16px;
   font-family: 'Open Sans', sans-serif;
   font-weight: 600;
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
+  line-height: 1;
 }
 
 .animated-loading-text span {
@@ -859,6 +861,8 @@ html {
   display: inline-block;
   animation: glow 2.6s ease infinite;
   letter-spacing: 0.01em;
+  vertical-align: baseline;
+  line-height: 1;
 }
 
 @keyframes glow {
@@ -868,7 +872,7 @@ html {
     text-shadow: 0 0 0 hsl(var(--muted-foreground) / 0);
   }
   13% {
-    transform: translate3d(1px,-1px,0) scale(1.2);
+    transform: translate3d(0,0,0) scale(1.2);
     color: hsl(var(--foreground));
   }
   16% {

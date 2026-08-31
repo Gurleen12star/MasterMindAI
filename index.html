@@ -120,6 +120,10 @@
         font-family: 'Open Sans', sans-serif;
         font-weight: 600;
         margin-top: 1rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        line-height: 1;
       }
 
       #animatedText span {
@@ -127,6 +131,8 @@
         display: inline-block;
         animation: glow 2.6s ease infinite;
         letter-spacing: 0.01em;
+        vertical-align: baseline;
+        line-height: 1;
       }
 
       #animatedText span:nth-child(1) { animation-delay: 0s; }
@@ -158,7 +164,7 @@
           text-shadow: 0 0 0 hsl(var(--muted-foreground) / 0);
         }
         13% {
-          transform: translate3d(1px,-1px,0) scale(1.2);
+          transform: translate3d(0,0,0) scale(1.2);
           color: hsl(var(--foreground));
         }
         16% {
