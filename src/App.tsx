@@ -94,6 +94,17 @@ function App() {
 
   return (
     <ThemeProvider defaultTheme="dark" storageKey="echoverse-theme">
+      {/* SVG Filter for Grainy Effect */}
+      <svg width="0" height="0" aria-hidden="true" className="fixed">
+        <defs>
+          <filter id="grainy" x="0" y="0" width="100%" height="100%">
+            <feTurbulence type="fractalNoise" baseFrequency="0.537" />
+            <feColorMatrix type="saturate" values="0" />
+            <feBlend mode="multiply" in="SourceGraphic" />
+          </filter>
+        </defs>
+      </svg>
+      
       <div className="min-h-screen relative bg-transparent antialiased overflow-x-hidden">
         <CustomCursor />
         {renderContent()}
