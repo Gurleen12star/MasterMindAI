@@ -69,9 +69,26 @@ export default function AnimationStudioPage() {
       setVideoHistory(files);
     } catch (error) {
       console.error('Error loading video history:', error);
-      const errorMessage = error instanceof Error ? error.message : 'Failed to load video history';
+      let errorMessage = 'Failed to load video history';
+      let errorTitle = 'Error';
+      
+      if (error instanceof Error) {
+        errorMessage = error.message;
+        
+        // Provide more specific titles for different error types
+        if (error.message.includes('configuration') || error.message.includes('not configured')) {
+          errorTitle = 'Configuration Error';
+        } else if (error.message.includes('network') || error.message.includes('connect')) {
+          errorTitle = 'Connection Error';
+        } else if (error.message.includes('permission') || error.message.includes('Access denied')) {
+          errorTitle = 'Permission Error';
+        } else if (error.message.includes('not found')) {
+          errorTitle = 'Resource Not Found';
+        }
+      }
+      
       toast({
-        title: 'Error',
+        title: errorTitle,
         description: errorMessage,
         variant: 'destructive',
       });

@@ -105,48 +105,124 @@ export function getFileUrl(bucketId: string, fileId: string): string {
 
 export async function listVideoFiles(): Promise<any[]> {
   try {
-    // Validate configuration before attempting to connect
-    const endpoint = import.meta.env.VITE_APPWRITE_ENDPOINT;
-    const projectId = import.meta.env.VITE_APPWRITE_PROJECT_ID;
-    
-    if (!endpoint || !projectId || projectId === 'your_project_id_here') {
-      throw new Error('Appwrite configuration is missing. Please check your .env file and ensure VITE_APPWRITE_ENDPOINT and VITE_APPWRITE_PROJECT_ID are properly set.');
+    // Validate configuration with detailed error messages
+    const configValidation = await validateAppwriteConfig();
+    if (!configValidation.isValid) {
+      throw new Error(configValidation.error);
     }
-    
-    await initializeAppwriteSession();
-    const response = await storage.listFiles(FINAL_VIDEOS_BUCKET_ID);
-    return response.files;
+
+    try {
+      await initializeAppwriteSession();
+    } catch (sessionError) {
+      console.error('Session initialization failed:', sessionError);
+      throw new Error('Failed to initialize Appwrite session. Please check your configuration.');
+    }
+
+    try {
+      const response = await storage.listFiles(FINAL_VIDEOS_BUCKET_ID);
+      return response.files || [];
+    } catch (storageError: any) {
+      console.error('Storage operation failed:', storageError);
+      
+      // Handle specific Appwrite error types
+      if (storageError.code === 404) {
+        throw new Error(`Storage bucket '${FINAL_VIDEOS_BUCKET_ID}' not found. Please ensure the bucket exists in your Appwrite project.`);
+      } else if (storageError.code === 401) {
+        throw new Error('Authentication failed. Please check your Appwrite configuration and permissions.');
+      } else if (storageError.code === 403) {
+        throw new Error(`Access denied to storage bucket '${FINAL_VIDEOS_BUCKET_ID}'. Please check bucket permissions.`);
+      } else if (storageError.message?.includes('CORS')) {
+        throw new Error('CORS error: Please add your domain to the Appwrite project\'s allowed origins.');
+      } else if (storageError.message?.includes('network') || storageError.message?.includes('fetch')) {
+        throw new Error('Network error: Unable to connect to Appwrite. Please check your internet connection and Appwrite endpoint.');
+      }
+      
+      throw new Error(`Storage operation failed: ${storageError.message || 'Unknown error'}`);
+    }
   } catch (error) {
     console.error('Failed to list video files:', error);
-    // Re-throw with more specific error information
-    if (error instanceof Error) {
-      throw new Error(`Failed to list video files: ${error.message}`);
-    }
-    throw new Error('Failed to list video files: Unknown error occurred');
+    throw error; // Re-throw the original error with detailed message
   }
 }
 
+// Add validation function for Appwrite configuration
+async function validateAppwriteConfig(): Promise<{ isValid: boolean; error?: string }> {
+  const endpoint = import.meta.env.VITE_APPWRITE_ENDPOINT;
+  const projectId = import.meta.env.VITE_APPWRITE_PROJECT_ID;
+  
+  if (!endpoint) {
+    return {
+      isValid: false,
+      error: 'VITE_APPWRITE_ENDPOINT is not configured. Please add it to your .env file.'
+    };
+  }
+  
+  if (!projectId || projectId === 'your_project_id_here') {
+    return {
+      isValid: false,
+      error: 'VITE_APPWRITE_PROJECT_ID is not configured or using placeholder value. Please add your actual Appwrite project ID to your .env file.'
+    };
+  }
+  
+  // Validate endpoint format
+  try {
+    new URL(endpoint);
+  } catch {
+    return {
+      isValid: false,
+      error: 'VITE_APPWRITE_ENDPOINT is not a valid URL. Please check your configuration.'
+    };
+  }
+  
+  return { isValid: true };
+}
 export async function testConnection(): Promise<{
   success: boolean;
   error?: string;
   endpoint?: string;
   projectId?: string;
+  details?: string;
 }> {
   try {
     const endpoint = import.meta.env.VITE_APPWRITE_ENDPOINT;
     const projectId = import.meta.env.VITE_APPWRITE_PROJECT_ID;
     
-    if (!endpoint || !projectId) {
-      throw new Error('Missing Appwrite configuration');
+    const configValidation = await validateAppwriteConfig();
+    if (!configValidation.isValid) {
+      return {
+        success: false,
+        error: configValidation.error,
+        endpoint,
+        projectId,
+        details: 'Configuration validation failed'
+      };
     }
     
-    return { success: true, endpoint, projectId };
+    // Test actual connection
+    try {
+      await initializeAppwriteSession();
+      return { 
+        success: true, 
+        endpoint, 
+        projectId,
+        details: 'Connection successful'
+      };
+    } catch (connectionError: any) {
+      return {
+        success: false,
+        error: `Connection test failed: ${connectionError.message || 'Unknown error'}`,
+        endpoint,
+        projectId,
+        details: 'Failed to establish connection to Appwrite'
+      };
+    }
   } catch (error) {
     return {
       success: false,
-      error: error instanceof Error ? error.message : 'Configuration error',
+      error: error instanceof Error ? error.message : 'Unknown configuration error',
       endpoint: import.meta.env.VITE_APPWRITE_ENDPOINT,
-      projectId: import.meta.env.VITE_APPWRITE_PROJECT_ID
+      projectId: import.meta.env.VITE_APPWRITE_PROJECT_ID,
+      details: 'Test connection failed'
     };
   }
 }
