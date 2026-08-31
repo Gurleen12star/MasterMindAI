@@ -1,4 +1,4 @@
-import { useUser } from '@clerk/clerk-react';
+import { useAuth } from '@/components/auth/SupabaseAuthProvider';
 import { Bell, Search, Settings } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -6,7 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 
 export default function DashboardHeader({ children }: { children?: React.ReactNode }) {
-  const { user } = useUser();
+  const { user } = useAuth();
   
   return (
     <header className="h-16 border-b border-border/30 bg-background/95 backdrop-blur-xl supports-[backdrop-filter]:bg-background/80 shadow-sm">
@@ -26,7 +26,7 @@ export default function DashboardHeader({ children }: { children?: React.ReactNo
         </div>
         
         <div className="flex items-center gap-4">
-          <Popover className="hidden md:block">
+          <Popover>
             <PopoverTrigger asChild>
               <Button variant="ghost" size="icon" className="relative hover:bg-primary/10 transition-all duration-300 rounded-xl">
                 <Bell className="h-5 w-5" />
@@ -71,10 +71,9 @@ export default function DashboardHeader({ children }: { children?: React.ReactNo
             <PopoverTrigger asChild>
               <Button variant="ghost" className="relative h-8 w-8 rounded-full hover:ring-2 hover:ring-primary/20 transition-all duration-300">
                 <Avatar className="h-8 w-8 ring-2 ring-border/30 hover:ring-primary/40 transition-all duration-300">
-                  <AvatarImage src={user?.imageUrl} />
+                  <AvatarImage src={user?.user_metadata?.avatar_url} />
                   <AvatarFallback className="bg-gradient-to-br from-primary/20 to-primary/10 text-primary font-semibold">
-                    {user?.firstName?.charAt(0)}
-                    {user?.lastName?.charAt(0)}
+                    {user?.email?.charAt(0)?.toUpperCase() || 'U'}
                   </AvatarFallback>
                 </Avatar>
               </Button>
@@ -83,15 +82,14 @@ export default function DashboardHeader({ children }: { children?: React.ReactNo
               <div className="space-y-3">
                 <div className="flex items-center gap-3 p-2">
                   <Avatar className="h-10 w-10 ring-2 ring-border/30">
-                    <AvatarImage src={user?.imageUrl} />
+                    <AvatarImage src={user?.user_metadata?.avatar_url} />
                     <AvatarFallback className="bg-gradient-to-br from-primary/20 to-primary/10 text-primary font-semibold">
-                      {user?.firstName?.charAt(0)}
-                      {user?.lastName?.charAt(0)}
+                      {user?.email?.charAt(0)?.toUpperCase() || 'U'}
                     </AvatarFallback>
                   </Avatar>
                   <div>
-                    <p className="text-sm font-medium text-foreground">{user?.fullName}</p>
-                    <p className="text-xs text-muted-foreground">{user?.primaryEmailAddress?.emailAddress}</p>
+                    <p className="text-sm font-medium text-foreground">{user?.user_metadata?.full_name || user?.email}</p>
+                    <p className="text-xs text-muted-foreground">{user?.email}</p>
                   </div>
                 </div>
                 <div className="border-t border-border/30" />

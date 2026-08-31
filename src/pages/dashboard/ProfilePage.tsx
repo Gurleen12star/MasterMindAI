@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useUser } from '@clerk/clerk-react';
+import { useAuth } from '@/components/auth/SupabaseAuthProvider';
 import { motion } from 'framer-motion';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -33,7 +33,7 @@ import {
 } from 'lucide-react';
 
 export default function ProfilePage() {
-  const { user } = useUser();
+  const { user } = useAuth();
   const { profile, saveProfile, isSaving } = useProfile();
   const [isEditing, setIsEditing] = useState(false);
   const [editData, setEditData] = useState<ProfileFormData | null>(null);

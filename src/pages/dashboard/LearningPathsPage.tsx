@@ -13,9 +13,7 @@ import { generateLearningPath, generateLearningPathMermaid } from '@/lib/gemini'
 import { supabaseClient } from '@/lib/supabase-admin';
 import { useToast } from '@/hooks/use-toast';
 import { BookOpen, Loader2, FileText, BarChart as FlowChart, Maximize2, History, Clock } from 'lucide-react';
-import { useUser } from '@clerk/clerk-react';
-import { useSupabaseAuth } from '@/components/auth/ClerkSupabaseProvider';
-import { getUserIdForSupabase } from '@/lib/supabase-admin';
+import { useAuth } from '@/components/auth/SupabaseAuthProvider';
 import AnimatedLoadingText from '@/components/ui/AnimatedLoadingText';
 
 type DifficultyLevel = 'beginner' | 'intermediate' | 'advanced';
@@ -31,8 +29,7 @@ interface LearningPath {
 
 export default function LearningPathsPage() {
   const { toast } = useToast();
-  const { user } = useUser();
-  const { isSupabaseReady } = useSupabaseAuth();
+  const { user } = useAuth();
   const [topic, setTopic] = useState('');
   const [level, setLevel] = useState<DifficultyLevel>('intermediate');
   const [additionalInfo, setAdditionalInfo] = useState('');
@@ -48,22 +45,12 @@ export default function LearningPathsPage() {
   const fetchLearningPathHistory = async () => {
     if (!user?.id) return;
 
-    if (!isSupabaseReady) {
-      toast({
-        title: 'Connection not ready',
-        description: 'Please wait a moment for the database connection to be established.',
-        variant: 'destructive',
-      });
-      return;
-    }
-
     setIsLoadingHistory(true);
     try {
-      const supabaseUserId = getUserIdForSupabase(user.id);
-      const { data, error } = await supabaseClient
+              const { data, error } = await supabaseClient
         .from('learning_paths')
         .select('*')
-        .eq('user_id', supabaseUserId)
+        .eq('user_id', user.id)
         .order('created_at', { ascending: false });
 
       if (error) throw error;
@@ -129,18 +116,6 @@ export default function LearningPathsPage() {
       // Save to database if user is authenticated
       if (user?.id) {
         try {
-          // Check if Supabase auth is ready
-          if (!isSupabaseReady) {
-            console.warn('Supabase authentication not ready, skipping database save');
-            toast({
-              title: 'Authentication Not Ready',
-              description: 'Learning path generated but not saved to your account. Please refresh and try again.',
-              variant: 'destructive',
-            });
-            return;
-          }
-          
-          const supabaseUserId = getUserIdForSupabase(user.id);
           const { error } = await supabaseClient
             .from('learning_paths')
             .insert([{
@@ -148,7 +123,7 @@ export default function LearningPathsPage() {
               mermaid_code: diagram,
               markdown_content: path,
               level,
-              user_id: supabaseUserId
+              user_id: user.id
             }]);
 
           if (error) {
@@ -305,17 +280,12 @@ export default function LearningPathsPage() {
               className="w-full"
               size="lg"
               onClick={handleGenerate}
-              disabled={isGenerating || !topic || !isSupabaseReady}
+              disabled={isGenerating || !topic}
             >
               {isGenerating ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                   Generating...
-                </>
-              ) : !isSupabaseReady ? (
-                <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Initializing Secure Connection...
                 </>
               ) : (
                 'Generate Learning Path'

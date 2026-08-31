@@ -1,11 +1,11 @@
 import { useState, useEffect } from 'react';
-import { useUser } from '@clerk/clerk-react';
-import { supabaseClient } from '@/lib/supabase-admin';
+import { useAuth } from '@/components/auth/SupabaseAuthProvider';
+import { supabase } from '@/lib/supabase';
 import { StudentProfile, ProfileFormData } from '@/types/profile';
 import { useToast } from '@/hooks/use-toast';
 
 export function useProfile() {
-  const { user } = useUser();
+  const { user } = useAuth();
   const { toast } = useToast();
   const [profile, setProfile] = useState<StudentProfile | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -22,7 +22,7 @@ export function useProfile() {
 
     try {
       setIsLoading(true);
-      const { data, error } = await supabaseClient
+      const { data, error } = await supabase
         .from('student_profiles')
         .select('*')
         .eq('user_id', user.id)
@@ -60,11 +60,11 @@ export function useProfile() {
       const profilePayload = {
         ...profileData,
         user_id: user.id,
-        email: user.primaryEmailAddress?.emailAddress || profileData.email,
+        email: user.email || profileData.email,
         updated_at: new Date().toISOString(),
       };
 
-      const { data, error } = await supabaseClient
+      const { data, error } = await supabase
         .from('student_profiles')
         .upsert(profilePayload, {
           onConflict: 'user_id',

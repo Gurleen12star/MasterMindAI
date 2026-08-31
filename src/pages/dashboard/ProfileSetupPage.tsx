@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useUser } from '@clerk/clerk-react';
+import { useAuth } from '@/components/auth/SupabaseAuthProvider';
 import { motion } from 'framer-motion';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -37,7 +37,7 @@ const STEPS = [
 ];
 
 export default function ProfileSetupPage() {
-  const { user } = useUser();
+  const { user } = useAuth();
   const { profile, saveProfile, isSaving } = useProfile();
   const { toast } = useToast();
   const [currentStep, setCurrentStep] = useState(0);

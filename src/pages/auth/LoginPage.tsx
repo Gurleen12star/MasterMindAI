@@ -1,81 +1,60 @@
 import { useEffect, useState } from 'react';
-import { useAuth, useSignIn } from '@clerk/clerk-react';
+import { useAuth } from '@/components/auth/SupabaseAuthProvider';
 import AuthForm from '@/components/auth/AuthForm';
-import { ArrowLeft, Sparkles } from 'lucide-react';
+import EchoVerseLogo from '@/components/ui/EchoVerseLogo';
+import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
+import { ArrowUp } from 'lucide-react';
 
 export default function LoginPage() {
-  const { isSignedIn } = useAuth();
+  const { user } = useAuth();
   const [mounted, setMounted] = useState(false);
   
   useEffect(() => {
     setMounted(true);
-    if (isSignedIn) {
+    if (user) {
       window.location.href = '/dashboard';
     }
-  }, [isSignedIn]);
+  }, [user]);
 
   if (!mounted) {
     return null;
   }
 
   return (
-    <div className="relative min-h-screen flex">
-      <Button
-        variant="ghost"
-        className="absolute left-4 top-4 md:left-8 md:top-8"
-        onClick={() => window.location.href = '/'}
-      >
-        <ArrowLeft className="mr-2 h-4 w-4" />
-        Back
-      </Button>
-      
-      <div className="relative hidden w-1/2 lg:block">
-        <div className="absolute inset-0">
-          <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/20 via-purple-500/20 to-pink-500/20 backdrop-blur-xl" />
-          <div className="absolute inset-0 bg-grid-white/[0.02]" />
-          <div className="absolute inset-0 bg-gradient-to-t from-background via-background/80 to-background/0" />
-          <div className="absolute bottom-0 left-0 right-0 p-20">
-            <blockquote className="space-y-6">
-              <p className="text-3xl font-light text-foreground/80">
-                "EchoVerse has revolutionized my learning journey. The AI-powered recommendations are incredibly accurate and personalized."
-              </p>
-              <footer className="text-lg">
-                <cite className="font-medium text-foreground">Sarah Chen</cite>
-                <p className="mt-1 text-muted-foreground">Software Engineer at Google</p>
-              </footer>
-            </blockquote>
+    <div className="min-h-screen w-full flex bg-[#111]">
+      {/* Left side: Login form */}
+      <div className="w-full md:w-1/2 p-8 md:p-12 lg:p-16 flex flex-col justify-center">
+        <div className="max-w-sm mx-auto w-full">
+          <div className="mb-8">
+            <a href="/">
+              <EchoVerseLogo className="h-10 w-auto text-primary" />
+            </a>
           </div>
-        </div>
-      </div>
-      
-      <div className="flex w-full lg:w-1/2 items-center justify-center p-8">
-        <div className="mx-auto w-full max-w-md space-y-6">
-          <div className="flex items-center justify-center space-x-2">
-            <Sparkles className="h-6 w-6 text-primary" />
-            <span className="text-2xl font-bold bg-gradient-to-r from-indigo-500 to-purple-500 bg-clip-text text-transparent">
-              EchoVerse
-            </span>
-          </div>
-          
-          <div className="text-center space-y-2">
-            <h1 className="text-2xl font-semibold tracking-tight">Welcome back</h1>
-            <p className="text-sm text-muted-foreground">
-              Sign in to your account to continue learning
-            </p>
-          </div>
+          <h1 className="text-3xl font-bold text-white mb-6">Log in</h1>
           
           <AuthForm mode="login" />
-          
-          <p className="text-center text-sm text-muted-foreground">
-            Don't have an account?{" "}
-            <a 
-              href="/signup" 
-              className="font-medium text-primary hover:text-primary/80 transition-colors"
-            >
-              Sign up
+
+          <p className="text-sm text-gray-400 mt-6 text-center">
+            <a href="#" className="font-medium text-white hover:underline">
+              Continue with SSO
             </a>
           </p>
+        </div>
+      </div>
+
+      {/* Right side: Gradient panel */}
+      <div className="hidden md:flex md:w-1/2 bg-gradient-to-br from-[#1E1E3F] via-[#242A4E] to-[#4C3A5A] items-center justify-center p-8 rounded-l-2xl">
+        <div className="w-full max-w-md">
+          <div className="relative">
+            <Input
+              placeholder="Ask EchoVerse to build your..."
+              className="w-full h-14 bg-white/10 backdrop-blur-sm text-white placeholder:text-gray-300 border-white/20 rounded-full px-6 pr-16"
+            />
+            <Button size="icon" className="absolute right-2 top-1/2 -translate-y-1/2 h-10 w-10 rounded-full bg-white text-black hover:bg-gray-200">
+              <ArrowUp className="h-5 w-5" />
+            </Button>
+          </div>
         </div>
       </div>
     </div>

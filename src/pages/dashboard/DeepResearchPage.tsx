@@ -8,8 +8,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { useToast } from '@/hooks/use-toast';
-import { supabaseClient } from '@/lib/supabase-admin';
-import { useUser, useSession } from '@clerk/clerk-react';
+import { supabase } from '@/lib/supabase';
+import { useAuth } from '@/components/auth/SupabaseAuthProvider';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import AnimatedLoadingText from '@/components/ui/AnimatedLoadingText';
@@ -40,10 +40,8 @@ interface DeepResearchHistory { id: string; topic: string; report: string; sourc
 
 export default function DeepResearchPage() {
   const { toast } = useToast();
-  const { user, isLoaded: isClerkLoaded } = useUser();
-  const { session: clerkSession } = useSession();
+  const { user, session } = useAuth();
 
-  const [isFullyAuthenticated, setIsFullyAuthenticated] = useState(false);
   const [topic, setTopic] = useState('');
   const [maxDepth, setMaxDepth] = useState(3);
   const [isResearching, setIsResearching] = useState(false);
@@ -55,55 +53,17 @@ export default function DeepResearchPage() {
   const [isLoadingHistory, setIsLoadingHistory] = useState(false);
   const [selectedHistoryItem, setSelectedHistoryItem] = useState<DeepResearchHistory | null>(null);
   const progressRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    // This correctly enables the UI button once Clerk has a session.
-    if (isClerkLoaded && clerkSession) {
-      setIsFullyAuthenticated(true);
-      console.log("✅ Clerk is loaded and has a session. UI is now enabled.");
-    } else {
-      setIsFullyAuthenticated(false);
-    }
-  }, [isClerkLoaded, clerkSession]);
-
-  // **THE DEFINITIVE FIX: A helper function to proactively refresh the Supabase token.**
-  const ensureFreshSupabaseToken = async () => {
-    if (!clerkSession) {
-      throw new Error("Clerk session not found.");
-    }
-    try {
-      const supabaseToken = await clerkSession.getToken({ template: 'supabase' });
-      if (!supabaseToken) {
-        throw new Error("Could not get Supabase token from Clerk.");
-      }
-      // Manually set the session on the Supabase client to ensure it's fresh.
-      await supabaseClient.auth.setSession({
-        access_token: supabaseToken,
-        refresh_token: supabaseToken, // Using the same token is acceptable here
-      });
-      console.log("Supabase token has been refreshed proactively.");
-    } catch (error) {
-      console.error("Failed to refresh Supabase token:", error);
-      throw new Error("Failed to sync authentication session.");
-    }
-  };
+  
+  const isFullyAuthenticated = !!session;
 
   const saveResearchToHistory = async (researchData: ResearchResult) => {
-    if (!isFullyAuthenticated) return;
+    if (!isFullyAuthenticated || !user) return;
 
     try {
-      await ensureFreshSupabaseToken(); // Pre-flight check
-      
-      const { data: { session: supabaseSession } } = await supabaseClient.auth.getSession();
-      if (!supabaseSession) throw new Error("No active Supabase session after refresh.");
-      
-      const supabaseUserId = supabaseSession.user.id;
-      console.log(`Saving research with fresh Supabase UUID: ${supabaseUserId}`);
-
-      const { error } = await supabaseClient
+      const { error } = await supabase
         .from('deep_research_history')
         .insert([{
-          user_id: supabaseUserId,
+          user_id: user.id,
           topic: topic.trim(),
           report: researchData.report,
           sources: researchData.sources || [],
@@ -124,19 +84,14 @@ export default function DeepResearchPage() {
   };
 
   const fetchResearchHistory = async () => {
-    if (!isFullyAuthenticated) return;
+    if (!isFullyAuthenticated || !user) return;
     
     setIsLoadingHistory(true);
     try {
-      await ensureFreshSupabaseToken(); // Pre-flight check
-
-      const { data: { session } } = await supabaseClient.auth.getSession();
-      if (!session) throw new Error("No active session to fetch history.");
-
-      const { data, error } = await supabaseClient
+      const { data, error } = await supabase
         .from('deep_research_history')
         .select('*')
-        .eq('user_id', session.user.id)
+        .eq('user_id', user.id)
         .order('created_at', { ascending: false });
 
       if (error) throw error;
@@ -161,8 +116,7 @@ export default function DeepResearchPage() {
   const deleteHistoryItem = async (id: string) => {
     if (!isFullyAuthenticated) return;
     try {
-      await ensureFreshSupabaseToken(); // Pre-flight check
-      const { error } = await supabaseClient.from('deep_research_history').delete().eq('id', id);
+      const { error } = await supabase.from('deep_research_history').delete().eq('id', id);
       if (error) throw error;
       setResearchHistory(prev => prev.filter(item => item.id !== id));
       toast({ title: 'Deleted', description: 'Research history item deleted.' });
@@ -190,7 +144,7 @@ export default function DeepResearchPage() {
 
     try {
       setProgress([{ step: 'starting', message: 'Initializing deep research agent...', depth: 0 }]);
-      const { data, error } = await supabaseClient.functions.invoke('deep-research-agent', {
+      const { data, error } = await supabase.functions.invoke('deep-research-agent', {
         body: { topic: topic.trim(), maxDepth: Math.min(Math.max(1, maxDepth), 5) },
       });
 

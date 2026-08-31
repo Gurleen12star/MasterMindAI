@@ -1,3 +1,7 @@
+/// <reference types="https://esm.sh/@supabase/functions-js@2.4.1/src/edge-runtime.d.ts" />
+
+import { serve } from "https://deno.land/std@0.177.0/http/server.ts";
+
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
@@ -76,55 +80,29 @@ async function firecrawlSearch(topic: string) {
 
 async function firecrawlExtract(urls: string[], prompt: string) {
   const apiKey = Deno.env.get('FIRECRAWL_API_KEY');
-  if (!apiKey) {
-    throw new Error('FIRECRAWL_API_KEY environment variable is not set');
-  }
+  if (!apiKey) throw new Error('FIRECRAWL_API_KEY not set');
 
-  try {
-    const response = await fetch('https://api.firecrawl.dev/v1/batch/scrape', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${apiKey}`,
-      },
-      body: JSON.stringify({
-        urls: urls,
-        formats: ['extract'],
-        extract: {
-          prompt: prompt,
-          schema: {
-            type: 'object',
-            properties: {
-              content: {
-                type: 'string',
-                description: 'Extracted content based on the prompt'
-              }
-            },
-            required: ['content']
-          }
-        },
-      }),
-    });
-
-    if (!response.ok) {
-      const errorText = await response.text();
-      throw new Error(`Firecrawl extract failed: ${response.status} - ${errorText}`);
+  const results: any[] = [];
+  for (const url of urls) {
+    try {
+      const response = await fetch('https://api.firecrawl.dev/v1/scrape', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${apiKey}` },
+        body: JSON.stringify({ url, formats: ['markdown'] }),
+      });
+      if (!response.ok) {
+        console.error('Firecrawl scrape error', url, await response.text());
+        continue;
+      }
+      const data = await response.json();
+      if (data.success) {
+        results.push({ url, content: data.data.markdown || '' });
+      }
+    } catch (err) {
+      console.error('Firecrawl scrape exception', url, err);
     }
-
-    const data = await response.json();
-    
-    if (!data.success) {
-      throw new Error(`Firecrawl extract unsuccessful: ${data.error || 'Unknown error'}`);
-    }
-
-    return {
-      success: true,
-      data: data.data || [],
-    };
-  } catch (error) {
-    console.error('Firecrawl extract error:', error);
-    throw error;
   }
+  return { success: true, data: results };
 }
 
 // Real Gemini implementation
@@ -229,7 +207,7 @@ async function runDeepResearch(
 ) {
   console.log('🚀 Starting deep research for topic:', topic, 'with max depth:', maxDepth);
   
-  const researchState: ResearchState = {
+  let researchState: ResearchState = {
     findings: [],
     summaries: [],
     gaps: [topic], // Start with the initial topic as the first gap
@@ -243,207 +221,119 @@ async function runDeepResearch(
   });
 
   for (let depth = 0; depth < maxDepth; depth++) {
-    console.log(`🔄 Research cycle ${depth + 1}/${maxDepth}`);
-    console.log('📋 Current gaps to investigate:', researchState.gaps);
-    
     if (researchState.gaps.length === 0) {
       console.log('✅ No more gaps to investigate. Finishing research.');
-      progressCallback?.({
-        step: 'completion',
-        message: 'No more gaps to investigate. Finishing research.',
-        depth
-      });
       break;
     }
-
-    const currentTopic = researchState.gaps.shift()!; // Get the next topic to research
-    console.log('🎯 Researching current topic:', currentTopic);
     
+    const currentGaps = researchState.gaps.join(' ');
     progressCallback?.({
       step: 'searching',
-      message: `Researching: "${currentTopic}"`,
+      message: `Searching for information about "${currentGaps}"...`,
       depth: depth + 1,
-      currentTopic
+      currentTopic: currentGaps
     });
 
-    try {
-      // 1. Search for relevant information using Firecrawl
-      console.log('🔍 Calling firecrawlSearch for:', currentTopic);
-      const searchResult = await firecrawlSearch(currentTopic);
-      console.log('📊 Search result success:', searchResult.success);
-      console.log('📊 Search result data length:', searchResult.data?.length || 0);
+    const searchResults = await firecrawlSearch(currentGaps);
+    const newSources = searchResults.data.map((result: any) => ({
+      url: result.url,
+      title: result.title,
+      description: result.raw_content ? result.raw_content.substring(0, 200) : ''
+    }));
+    
+    // Avoid adding duplicate sources
+    const uniqueNewSources = newSources.filter((source: any) => !researchState.sources.some(s => s.url === source.url));
+    researchState.sources.push(...uniqueNewSources);
 
-      if (!searchResult.success || searchResult.data.length === 0) {
-        console.warn('⚠️ Search failed or returned no results for topic:', currentTopic);
-        progressCallback?.({
-          step: 'error',
-          message: 'Search failed or returned no results.',
-          depth: depth + 1
-        });
-        continue;
-      }
+    progressCallback?.({
+      step: 'extracting',
+      message: 'Extracting content from relevant sources...',
+      depth: depth + 1,
+      sourcesFound: uniqueNewSources.length
+    });
+
+    const urlsToCrawl = uniqueNewSources.map((s: any) => s.url).filter(Boolean);
+    if (urlsToCrawl.length > 0) {
+      console.log('🔥 Crawling URLs:', urlsToCrawl);
+      const extractionPrompt = `Based on the following content, extract key findings, data points, and potential areas for further research related to the topic: "${topic}". Focus on factual information and novel insights.`;
+      const extractedData = await firecrawlExtract(urlsToCrawl, extractionPrompt);
       
-      // Collect sources
-      const newSources = searchResult.data.map((result: any) => ({
-        url: result.url,
-        title: result.title || 'Untitled',
-        description: result.description || result.content || 'No description available',
-      }));
-      console.log('📚 Adding', newSources.length, 'new sources to research state');
-      researchState.sources.push(...newSources);
+      const MAX_CONTENT_LENGTH_PER_SOURCE = 4000;
+      const extractedContentWithSources = extractedData.data.map((d: any) => ({
+        source: d.url,
+        content: d.content ? d.content.substring(0, MAX_CONTENT_LENGTH_PER_SOURCE) : ''
+      })).filter((item: any) => item.content);
 
-      progressCallback?.({
-        step: 'extracting',
-        message: `Found ${searchResult.data.length} sources, extracting content...`,
-        depth: depth + 1,
-        sourcesFound: searchResult.data.length
-      });
+      const analysisPrompt = `
+        Previous Findings: ${JSON.stringify(researchState.findings)}
+        New Content: ${JSON.stringify(extractedContentWithSources)}
+        
+        Based on the new content (provided with sources), identify:
+        1. New, non-redundant findings (findings) as an array of objects. Each object should have a 'text' property with the finding and a 'source' property with the URL it came from.
+        2. Key questions that remain unanswered (gaps) as an array of strings.
+        3. A brief summary of the new information (summaries) as an array of strings.
+        
+        Return a JSON object with keys: "findings", "gaps", "summaries".
+      `;
 
-      // 2. Extract detailed information from the top 3-5 search results
-      const urlsToExtract = searchResult.data.slice(0, Math.min(5, searchResult.data.length)).map((result: any) => result.url);
-
-      if (urlsToExtract.length > 0) {
-        try {
-          const extractResult = await firecrawlExtract(
-            urlsToExtract,
-            `Extract key facts, data, statistics, expert opinions, and comprehensive information about "${currentTopic}". Focus on factual content, research findings, and authoritative insights. Be detailed and thorough.`
-          );
-          
-          if (extractResult.success && extractResult.data.length > 0) {
-            extractResult.data.forEach((item: any, index: number) => {
-              if (item.extract && item.extract.content) {
-                researchState.findings.push({ 
-                  text: item.extract.content, 
-                  source: urlsToExtract[index] || 'Unknown source'
-                });
-              }
-            });
-          }
-        } catch (extractError) {
-          console.error('Extract error:', extractError);
-          // Continue with search results as fallback
-          searchResult.data.slice(0, 3).forEach((result: any) => {
-            if (result.content) {
-              researchState.findings.push({
-                text: result.content,
-                source: result.url
-              });
-            }
-          });
-        }
-      }
+      console.log('🧠 Sending prompt to Gemini for analysis:', analysisPrompt);
+      progressCallback?.({ step: 'analyzing', message: 'Analyzing findings and identifying knowledge gaps...', depth: depth + 2 });
+      const analysisResult = await geminiAnalysis(analysisPrompt);
+      console.log('✨ Gemini Analysis Result:', JSON.stringify(analysisResult, null, 2));
       
-      // 3. Analyze and Plan with Gemini
-      progressCallback?.({
-        step: 'analyzing',
-        message: 'Analyzing findings and planning next steps...',
-        depth: depth + 1
-      });
-
-      const analysisPrompt = `You are a research analyst. Based on the initial topic "${topic}" and the following findings, please perform an analysis.
-
-Current Findings:
-${researchState.findings.map(f => `[Source: ${f.source}]:\n${f.text}`).join('\n\n')}
-
-Previous Summaries:
-${researchState.summaries.join('\n\n')}
-
-Your task is to:
-1. Briefly summarize what has been learned so far about "${topic}".
-2. Identify the most critical remaining knowledge gaps. These should be specific questions or subtopics that need investigation.
-3. Decide if the research should continue. It should only stop if the topic is well-covered or if we've reached sufficient depth.
-
-Respond in the following JSON format:
-{
-  "summary": "A concise summary of the key findings so far.",
-  "gaps": ["specific gap 1 as a question", "specific gap 2 as a question", "specific gap 3 as a question"],
-  "shouldContinue": true
-}
-
-Make sure the gaps are specific, actionable research questions that would add value to understanding "${topic}".`;
-
-      const analysis = await geminiAnalysis(analysisPrompt);
-      
-      researchState.summaries.push(analysis.summary);
-      
-      // Add new, unique gaps to the list
-      if (analysis.gaps && Array.isArray(analysis.gaps)) {
-        analysis.gaps.forEach((gap: string) => {
-          if (!researchState.gaps.includes(gap) && gap.trim().length > 0) {
-            researchState.gaps.push(gap);
-          }
-        });
-      }
-
-      if (!analysis.shouldContinue || depth >= maxDepth - 1) {
-        progressCallback?.({
-          step: 'completion',
-          message: 'Analysis indicates research is complete.',
-          depth: depth + 1
-        });
-        break;
-      }
-
-    } catch (e) {
-      console.error("Error during research cycle:", e);
-      progressCallback?.({
-        step: 'error',
-        message: `Error during research: ${e instanceof Error ? e.message : 'Unknown error'}`,
-        depth: depth + 1
-      });
-      
-      // Continue with next gap if available, don't break entirely
-      if (researchState.gaps.length === 0) {
-        break;
-      }
+      researchState = {
+        findings: [...researchState.findings, ...(analysisResult.findings || [])],
+        summaries: [...researchState.summaries, ...(analysisResult.summaries || [])],
+        gaps: analysisResult.gaps || [],
+        sources: researchState.sources,
+      };
     }
   }
 
-  // 4. Final Synthesis
   progressCallback?.({
     step: 'synthesizing',
-    message: 'Generating comprehensive final report...',
+    message: 'Generating comprehensive research report...',
     depth: maxDepth
   });
 
-  const finalPrompt = `Based on all the information gathered, write a comprehensive and detailed research report on the topic: "${topic}".
+  const finalReportPrompt = `
+    Generate a comprehensive research report on the topic: "${topic}".
+    Use the following findings and summaries to construct the report.
+    Structure it with an executive summary, key findings, detailed analysis, and a conclusion.
+    Cite sources by linking findings to the source URLs.
+    
+    Findings:
+    ${JSON.stringify(researchState.findings, null, 2)}
+    
+    Source Summaries:
+    ${JSON.stringify(researchState.summaries, null, 2)}
+    
+    Sources:
+    ${JSON.stringify(researchState.sources, null, 2)}
+  `;
+  
+  const report = await geminiGenerateReport(finalReportPrompt);
 
-Use the findings and summaries below to create a well-structured report with clear headings, subheadings, and proper citations.
+  progressCallback?.({
+    step: 'completed',
+    message: `Research completed! Generated ${researchState.findings.length} findings from ${researchState.sources.length} sources.`,
+    depth: maxDepth
+  });
 
-Structure the report as follows:
-1. Executive Summary
-2. Key Findings
-3. Detailed Analysis (with subsections as appropriate)
-4. Implications and Applications
-5. Future Outlook
-6. Conclusion
-7. Sources and References
-
-Findings:
-${researchState.findings.map((f, index) => `[${index + 1}] Source: ${f.source}\nContent: ${f.text}`).join('\n\n')}
-
-Research Summaries:
-${researchState.summaries.join('\n\n')}
-
-Make the report comprehensive, well-organized, and include proper citations using the source URLs provided. Use markdown formatting for better readability.`;
-
-  const finalReport = await geminiGenerateReport(finalPrompt);
-
+  console.log('✅ Deep research finished successfully.');
+  
   return {
-    report: finalReport,
+    report,
     sources: researchState.sources,
     summaries: researchState.summaries,
-    totalFindings: researchState.findings.length
+    totalFindings: researchState.findings.length,
   };
 }
 
-// Main server handler
-Deno.serve(async (req) => {
+// Main Deno server logic
+serve(async (req) => {
   if (req.method === "OPTIONS") {
-    return new Response(null, {
-      status: 200,
-      headers: corsHeaders,
-    });
+    return new Response("ok", { headers: corsHeaders });
   }
 
   if (req.method !== 'POST') {

@@ -1,19 +1,19 @@
 import { useEffect, useState } from 'react';
-import { useAuth, useSignUp } from '@clerk/clerk-react';
+import { useAuth } from '@/components/auth/SupabaseAuthProvider';
 import AuthForm from '@/components/auth/AuthForm';
 import { ArrowLeft, Sparkles } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 export default function SignupPage() {
-  const { isSignedIn } = useAuth();
+  const { user } = useAuth();
   const [mounted, setMounted] = useState(false);
   
   useEffect(() => {
     setMounted(true);
-    if (isSignedIn) {
+    if (user) {
       window.location.href = '/dashboard';
     }
-  }, [isSignedIn]);
+  }, [user]);
 
   if (!mounted) {
     return null;

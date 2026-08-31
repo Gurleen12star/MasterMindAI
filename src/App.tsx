@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useAuth, useSession } from '@clerk/clerk-react';
+import { useAuth } from '@/components/auth/SupabaseAuthProvider';
 import { ThemeProvider } from '@/components/theme/ThemeProvider';
 import CustomCursor from '@/components/ui/CustomCursor';
 import Header from '@/components/layout/Header';
@@ -20,8 +20,7 @@ import RoadmapGeneratorPage from '@/pages/dashboard/RoadmapGeneratorPage';
 
 function App() {
   const [currentPath, setCurrentPath] = useState(window.location.pathname);
-  const { isLoaded, isSignedIn } = useAuth();
-  const { session } = useSession();
+  const { user, loading, session } = useAuth();
 
   useEffect(() => {
     document.title = 'EchoVerse - AI-Powered Learning Hub';
@@ -56,7 +55,7 @@ function App() {
   }, []);
 
   const renderContent = () => {
-    if (!isLoaded) {
+    if (loading) {
       // Return null while loading, let the HTML preloader handle the loading state
       return null;
     }
@@ -68,7 +67,7 @@ function App() {
         return <SignupPage />;
       default:
         if (currentPath.startsWith('/dashboard')) {
-          if (!isSignedIn) {
+          if (!user) {
             window.location.href = '/login';
             return null;
           }
@@ -81,7 +80,7 @@ function App() {
             <main className="relative z-10 max-w-7xl mx-auto px-4 md:px-6 lg:px-8">
               <HeroSection />
               {/* Move LogoMarquee here and apply absolute positioning */}
-              <LogoMarquee className="absolute bottom-0 left-0 right-0 z-20" />
+              <LogoMarquee />
             </main>
             <FeaturesGrid />
             <DemoSection />

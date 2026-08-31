@@ -1,9 +1,8 @@
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
-import { ClerkProvider } from '@clerk/clerk-react';
 import App from './App.tsx';
 import './index.css';
-import { ClerkSupabaseProvider } from './components/auth/ClerkSupabaseProvider.tsx';
+import { SupabaseAuthProvider } from './components/auth/SupabaseAuthProvider.tsx';
 
 // Immediately apply dark theme to prevent white flash
 const storedTheme = localStorage.getItem('echoverse-theme');
@@ -19,7 +18,6 @@ if (theme === 'dark' || (theme === 'system' && systemPrefersDark)) {
 // Add console logs for debugging
 console.log('Starting application...');
 console.log('Environment variables loaded:', {
-  hasClerkKey: !!import.meta.env.VITE_CLERK_PUBLISHABLE_KEY,
   hasSupabaseUrl: !!import.meta.env.VITE_SUPABASE_URL,
   hasSupabaseKey: !!import.meta.env.VITE_SUPABASE_ANON_KEY
 });
@@ -35,21 +33,19 @@ if (!rootElement) {
 }
 
 try {
-  if (!import.meta.env.VITE_CLERK_PUBLISHABLE_KEY) {
-    console.error('Missing Clerk Publishable Key');
-    rootElement.innerHTML = '<div style="color:red; padding: 20px;">Error: Missing Clerk Publishable Key</div>';
-    throw new Error('Missing Clerk Publishable Key');
+  if (!import.meta.env.VITE_SUPABASE_URL || !import.meta.env.VITE_SUPABASE_ANON_KEY) {
+    console.error('Missing Supabase environment variables');
+    rootElement.innerHTML = '<div style="color:red; padding: 20px;">Error: Missing Supabase environment variables</div>';
+    throw new Error('Missing Supabase environment variables');
   }
 
   console.log('Rendering application...');
   
   createRoot(rootElement).render(
     <StrictMode>
-      <ClerkProvider publishableKey={import.meta.env.VITE_CLERK_PUBLISHABLE_KEY}>
-        <ClerkSupabaseProvider>
-          <App />
-        </ClerkSupabaseProvider>
-      </ClerkProvider>
+      <SupabaseAuthProvider>
+        <App />
+      </SupabaseAuthProvider>
     </StrictMode>
   );
   

@@ -1,10 +1,10 @@
 import { useState, useEffect } from 'react';
-import { useUser } from '@clerk/clerk-react';
+import { useAuth } from '@/components/auth/SupabaseAuthProvider';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { useToast } from '@/hooks/use-toast';
 import { supabaseClient } from '@/lib/supabase-admin';
-import { useSupabaseAuth } from '@/components/auth/ClerkSupabaseProvider';
+
 import { generateRoadmapMermaid } from '@/lib/gemini';
 import { MermaidDiagram } from '@/components/ui/mermaid-diagram';
 import { Card } from '@/components/ui/card';
@@ -28,9 +28,8 @@ const DEFAULT_MERMAID_CODE = `flowchart TD
   E --> F[Mastery]`;
 
 export default function RoadmapGeneratorPage() {
-  const { user } = useUser();
+  const { user } = useAuth();
   const { toast } = useToast();
-  const { isSupabaseReady } = useSupabaseAuth();
   const [topic, setTopic] = useState('');
   const [isGenerating, setIsGenerating] = useState(false);
   const [currentRoadmap, setCurrentRoadmap] = useState<string | null>(null);
@@ -152,16 +151,7 @@ export default function RoadmapGeneratorPage() {
       try {
         console.log("Attempting to save roadmap to Supabase for user:", user.id);
         
-        // Check if Supabase auth is ready
-        if (!isSupabaseReady) {
-          console.warn('Supabase authentication not ready, skipping database save');
-          toast({
-            title: 'Authentication Not Ready',
-            description: 'Roadmap generated but not saved to your account. Please refresh and try again.',
-            variant: 'destructive',
-          });
-          return;
-        }
+        // Proceed with database save
         
         // First, check if we can connect to the database
         const { error: pingError } = await supabaseClient

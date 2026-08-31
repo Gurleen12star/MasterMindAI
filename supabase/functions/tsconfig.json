@@ -1,0 +1,15 @@
+{
+  "compilerOptions": {
+    "lib": ["dom", "deno.ns"],
+    "strict": true,
+    "allowJs": true,
+    "esModuleInterop": true,
+    "jsx": "react-jsx",
+    "target": "esnext",
+    "module": "esnext",
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
+    "noEmit": true
+  },
+  "include": ["./**/*.ts"]
+} 

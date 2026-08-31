@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useAuth } from '@clerk/clerk-react';
+import { useAuth } from '@/components/auth/SupabaseAuthProvider';
 import { useTheme } from '@/components/theme/ThemeProvider';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
@@ -17,7 +17,7 @@ const navItems = [
 export default function Header() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [activeItem, setActiveItem] = useState<string | null>(null);
-  const { isSignedIn } = useAuth();
+  const { user } = useAuth();
   const { theme, setTheme } = useTheme();
   
   useEffect(() => {
@@ -106,7 +106,7 @@ export default function Header() {
               <span className="sr-only">Toggle theme</span>
             </Button>
             
-            {!isSignedIn && (
+            {!user && (
               <Button 
                 variant="ghost" 
                 size="sm" 
@@ -118,7 +118,7 @@ export default function Header() {
               </Button>
             )}
             
-            {isSignedIn ? (
+            {user ? (
               <Button 
                 size="sm" 
                 className="hidden md:flex bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 transition-all duration-300 shadow-lg hover:shadow-xl hover:shadow-primary/25 relative overflow-hidden group rounded-xl font-medium"
@@ -169,7 +169,7 @@ export default function Header() {
                   >
                     {theme === 'dark' ? 'Light Mode' : 'Dark Mode'}
                   </Button>
-                  {!isSignedIn && (
+                  {!user && (
                     <Button 
                       variant="ghost" 
                       size="sm" 
@@ -179,7 +179,7 @@ export default function Header() {
                       Log in
                     </Button>
                   )}
-                  {isSignedIn ? (
+                  {user ? (
                     <Button 
                       size="sm"
                       className="bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 rounded-xl"

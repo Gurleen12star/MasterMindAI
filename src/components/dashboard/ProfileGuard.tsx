@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useUser } from '@clerk/clerk-react';
+import { useAuth } from '@/components/auth/SupabaseAuthProvider';
 import { useProfile } from '@/hooks/useProfile';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -11,12 +11,12 @@ interface ProfileGuardProps {
 }
 
 export default function ProfileGuard({ children }: ProfileGuardProps) {
-  const { user, isLoaded } = useUser();
+  const { user, loading } = useAuth();
   const { profile, isLoading, needsProfileSetup } = useProfile();
   const [showSetupPrompt, setShowSetupPrompt] = useState(false);
 
   useEffect(() => {
-    if (isLoaded && user && !isLoading) {
+    if (!loading && user && !isLoading) {
       if (needsProfileSetup) {
         // Show setup prompt for 3 seconds, then redirect
         setShowSetupPrompt(true);
@@ -27,10 +27,10 @@ export default function ProfileGuard({ children }: ProfileGuardProps) {
         return () => clearTimeout(timer);
       }
     }
-  }, [isLoaded, user, isLoading, needsProfileSetup]);
+  }, [loading, user, isLoading, needsProfileSetup]);
 
   // Show loading while checking authentication and profile
-  if (!isLoaded || isLoading) {
+  if (loading || isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <Card className="p-8 text-center max-w-md">

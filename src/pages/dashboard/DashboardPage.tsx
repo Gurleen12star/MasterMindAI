@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useUser } from '@clerk/clerk-react';
+import { useAuth } from '@/components/auth/SupabaseAuthProvider';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { Menu } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -15,7 +15,7 @@ import ProfileSetupPage from './ProfileSetupPage';
 import ProfilePage from './ProfilePage';
 
 export default function DashboardPage() {
-  const { user } = useUser();
+  const { user } = useAuth();
   const path = window.location.pathname;
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
 
@@ -26,31 +26,27 @@ export default function DashboardPage() {
 
   return (
     <ProfileGuard>
-      <div className="flex h-screen bg-background">
-        {/* Desktop Sidebar */}
-        <div className="hidden md:block">
-          <Sidebar />
-        </div>
+      <div className="flex min-h-screen bg-background">
+        <Sidebar className="hidden md:flex md:fixed" />
         
-        {/* Mobile Sidebar */}
-        <Sheet open={isMobileSidebarOpen} onOpenChange={setIsMobileSidebarOpen}>
-          <SheetContent side="left" className="p-0 w-[300px]">
-            <Sidebar onNavigate={() => setIsMobileSidebarOpen(false)} />
-          </SheetContent>
-        </Sheet>
-        
-        <div className="flex-1 flex flex-col">
+        <div className="flex-1 flex flex-col md:ml-64">
           <DashboardHeader>
-            <Button
-              variant="ghost"
-              size="icon"
-              className="md:hidden"
-              onClick={() => setIsMobileSidebarOpen(true)}
-            >
-              <Menu className="h-5 w-5" />
-            </Button>
+            <Sheet open={isMobileSidebarOpen} onOpenChange={setIsMobileSidebarOpen}>
+              <SheetTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="md:hidden"
+                >
+                  <Menu className="h-5 w-5" />
+                </Button>
+              </SheetTrigger>
+              <SheetContent side="left" className="p-0 w-64 bg-[#111111] border-r-0">
+                 <Sidebar className="flex" />
+              </SheetContent>
+            </Sheet>
           </DashboardHeader>
-          <main className="flex-1 overflow-y-auto px-4 md:px-6">
+          <main className="flex-1 overflow-y-auto p-4 md:p-6">
             {(() => {
               switch (path) {
                 case '/dashboard/roadmap-generator':
