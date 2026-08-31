@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useAuth } from '@clerk/clerk-react';
 import { ThemeProvider } from '@/components/theme/ThemeProvider';
 import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
@@ -15,6 +16,7 @@ import SignupPage from '@/pages/auth/SignupPage';
 
 function App() {
   const [currentPath, setCurrentPath] = useState(window.location.pathname);
+  const { isLoaded, isSignedIn } = useAuth();
 
   useEffect(() => {
     document.title = 'EchoVerse - AI-Powered Learning Hub';
@@ -27,12 +29,24 @@ function App() {
     return () => window.removeEventListener('popstate', handlePathChange);
   }, []);
 
+  if (!isLoaded) {
+    return <div className="min-h-screen flex items-center justify-center">Loading...</div>;
+  }
+
   const renderContent = () => {
     switch (currentPath) {
       case '/login':
         return <LoginPage />;
       case '/signup':
         return <SignupPage />;
+      case '/dashboard':
+        return isSignedIn ? (
+          <div className="container mx-auto px-4 py-8">
+            <h1 className="text-2xl font-bold">Welcome to your Dashboard</h1>
+          </div>
+        ) : (
+          window.location.href = '/login'
+        );
       default:
         return (
           <>
