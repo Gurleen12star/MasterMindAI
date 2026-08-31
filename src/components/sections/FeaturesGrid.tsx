@@ -30,7 +30,7 @@ export default function FeaturesGrid() {
           <h2 className="text-3xl font-bold tracking-tight md:text-4xl">
             Amplify Your Learning Journey
           </h2>
-          <p className="mt-4 text-xl text-muted-foreground/80">
+          <p className="mt-4 text-muted-foreground md:text-lg">
             Our AI-powered platform creates a personalized learning experience tailored to your needs.
           </p>
         </div>
