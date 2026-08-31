@@ -82,7 +82,7 @@ export default function Sidebar() {
     <div className={`${isCollapsed ? 'w-20' : 'w-64'} h-screen bg-card/50 backdrop-blur-sm border-r border-border/40 flex flex-col relative transition-all duration-300`}>
       <Button
         variant="ghost" 
-        className="absolute -right-6 top-32 h-12 w-12 rounded-full bg-gradient-to-r from-primary/90 to-primary shadow-lg hover:shadow-primary/25 hover:scale-110 transition-all duration-300 group overflow-hidden z-50"
+        className="absolute -right-6 top-20 h-12 w-12 rounded-full bg-gradient-to-r from-primary/90 to-primary shadow-lg hover:shadow-primary/25 hover:scale-110 transition-all duration-300 group overflow-hidden z-10"
         onClick={toggleSidebar}
       >
         <div className="absolute inset-0 bg-gradient-to-r from-primary/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
@@ -98,7 +98,7 @@ export default function Sidebar() {
       <div className={`p-6 ${isCollapsed ? 'px-2' : ''}`}>
         <div className="flex items-center group relative">
           <div className="relative flex items-center">
-            <Link href="/dashboard" className="block">
+            <Link href="/dashboard/explore" className="block">
               <img 
                 src="/src/assets/logo.png" 
                 alt="EchoVerse Logo" 
