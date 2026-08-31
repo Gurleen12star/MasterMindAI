@@ -21,8 +21,8 @@ export default function FeaturesGrid() {
           </p>
         </div>
         
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 [grid-template-areas:'a_b_b'_'a_c_d'_'e_f_f'] md:auto-rows-[28rem] relative">
-          <BentoBox gradient="purple" className="flex flex-col md:[grid-area:a] row-span-2 relative overflow-hidden group backdrop-blur-xl bg-background/20 border border-primary/10 hover:border-primary/20 transition-colors duration-300 shadow-[inset_0_0_1px_rgba(var(--primary),0.1)]">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:[grid-template-areas:'a_b_b'_'a_c_d'_'e_f_f'] md:auto-rows-[28rem] relative">
+          <BentoBox gradient="purple" className="flex flex-col md:[grid-area:a] row-span-2 relative overflow-hidden group backdrop-blur-xl bg-background/25 border border-primary/10 hover:border-primary/25 hover:bg-background/35 transition-colors duration-300 shadow-[inset_0_0_1px_rgba(var(--primary),0.1)] rounded-2xl">
             <img
               src="https://images.pexels.com/photos/8386440/pexels-photo-8386440.jpeg"
               alt="AI Brain"
@@ -37,7 +37,7 @@ export default function FeaturesGrid() {
             </p>
           </BentoBox>
           
-          <BentoBox gradient="blue" className="flex flex-col md:[grid-area:b] md:col-span-2 relative overflow-hidden group backdrop-blur-xl bg-background/20 border border-primary/10 hover:border-primary/20 transition-colors duration-300 shadow-[inset_0_0_1px_rgba(var(--primary),0.1)]">
+          <BentoBox gradient="blue" className="flex flex-col md:[grid-area:b] md:col-span-2 relative overflow-hidden group backdrop-blur-xl bg-background/25 border border-primary/10 hover:border-primary/25 hover:bg-background/35 transition-colors duration-300 shadow-[inset_0_0_1px_rgba(var(--primary),0.1)] rounded-2xl">
             <img
               src="https://images.pexels.com/photos/7014766/pexels-photo-7014766.jpeg"
               alt="Content Transformation"
@@ -52,7 +52,7 @@ export default function FeaturesGrid() {
             </p>
           </BentoBox>
           
-          <BentoBox gradient="teal" className="flex flex-col md:[grid-area:c] relative overflow-hidden group backdrop-blur-md bg-background/30 border-primary/20">
+          <BentoBox gradient="teal" className="flex flex-col md:[grid-area:c] relative overflow-hidden group backdrop-blur-xl bg-background/25 border border-primary/10 hover:border-primary/25 hover:bg-background/35 transition-colors duration-300 rounded-2xl">
             <img
               src="https://images.pexels.com/photos/7376/startup-photos.jpg"
               alt="Learning Dashboard"
@@ -67,7 +67,7 @@ export default function FeaturesGrid() {
             </p>
           </BentoBox>
           
-          <BentoBox gradient="green" className="flex flex-col md:[grid-area:d] relative overflow-hidden group backdrop-blur-md bg-background/30 border-primary/20">
+          <BentoBox gradient="green" className="flex flex-col md:[grid-area:d] relative overflow-hidden group backdrop-blur-xl bg-background/25 border border-primary/10 hover:border-primary/25 hover:bg-background/35 transition-colors duration-300 rounded-2xl">
             <img
               src="https://images.pexels.com/photos/3861969/pexels-photo-3861969.jpeg"
               alt="Language Translation"
@@ -82,7 +82,7 @@ export default function FeaturesGrid() {
             </p>
           </BentoBox>
           
-          <BentoBox gradient="blue" className="flex flex-col md:[grid-area:e] relative overflow-hidden group backdrop-blur-md bg-background/30 border-primary/20">
+          <BentoBox gradient="blue" className="flex flex-col md:[grid-area:e] relative overflow-hidden group backdrop-blur-xl bg-background/25 border border-primary/10 hover:border-primary/25 hover:bg-background/35 transition-colors duration-300 rounded-2xl">
             <img
               src="https://images.pexels.com/photos/8370752/pexels-photo-8370752.jpeg"
               alt="Decentralized Storage"
@@ -97,7 +97,7 @@ export default function FeaturesGrid() {
             </p>
           </BentoBox>
           
-          <BentoBox gradient="purple" className="flex flex-col md:[grid-area:f] md:col-span-2 relative overflow-hidden group backdrop-blur-md bg-background/30 border-primary/20">
+          <BentoBox gradient="purple" className="flex flex-col md:[grid-area:f] md:col-span-2 relative overflow-hidden group backdrop-blur-xl bg-background/25 border border-primary/10 hover:border-primary/25 hover:bg-background/35 transition-colors duration-300 shadow-[inset_0_0_1px_rgba(var(--primary),0.1)] rounded-2xl">
             <img
               src="https://images.pexels.com/photos/2882566/pexels-photo-2882566.jpeg"
               alt="Premium Content"
