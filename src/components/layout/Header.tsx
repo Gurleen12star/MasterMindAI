@@ -81,16 +81,18 @@ export default function Header() {
           <Button 
             variant="ghost" 
             size="sm" 
-            className="hidden md:flex hover:bg-primary/10 transition-all duration-300"
+            className="hidden md:flex hover:bg-primary/10 transition-all duration-300 relative"
             onClick={() => window.location.href = '/login'}
           >
             Log in
+            <div className="absolute inset-0 bg-primary/5 opacity-0 hover:opacity-100 rounded-md transition-opacity duration-300" />
           </Button>
           <Button 
             size="sm" 
-            className="hidden md:flex bg-primary/90 hover:bg-primary transition-all duration-200 shadow-lg hover:shadow-primary/25"
+            className="hidden md:flex bg-primary/90 hover:bg-primary transition-all duration-200 shadow-lg hover:shadow-primary/25 relative overflow-hidden group"
             onClick={() => window.location.href = '/signup'}
           >
+            <div className="absolute inset-0 bg-gradient-to-r from-indigo-500/20 to-purple-500/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
             Get Started
           </Button>
           
