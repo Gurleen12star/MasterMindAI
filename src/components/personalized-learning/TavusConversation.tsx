@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { supabase } from '@/lib/supabase';
 import { useToast } from '@/hooks/use-toast';
@@ -16,12 +17,24 @@ import {
 } from 'lucide-react';
 import AnimatedLoadingText from '@/components/ui/AnimatedLoadingText';
 
+const personas = [
+  { name: 'Sales Coach', persona_id: 'pdced222244b', replica_id: 'rc2146c13e81' },
+  { name: 'History Teacher', persona_id: 'pc55154f229a', replica_id: 'r6ae5b6efc9d' },
+  { name: 'AI Interviewer', persona_id: 'pe13ed370726', replica_id: 'r9d30b0e55ac' },
+  { name: 'Tavus Researcher', persona_id: 'p48fdf065d6b', replica_id: 'rf4703150052' },
+  { name: 'Healthcare Intake Assistant', persona_id: 'p5d11710002a', replica_id: 'r4317e64d25a' },
+  { name: 'College Tutor', persona_id: 'p88964a7', replica_id: 'rfb51183fe' },
+  { name: 'Corporate Trainer', persona_id: 'p7fb0be3', replica_id: 'ra54d1d861' },
+];
+
 const TavusConversation = () => {
   const { toast } = useToast();
   const [context, setContext] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [conversationUrl, setConversationUrl] = useState<string | null>(null);
+  const [selectedPersonaId, setSelectedPersonaId] = useState(personas[0].persona_id);
+  const [selectedReplicaId, setSelectedReplicaId] = useState(personas[0].replica_id);
 
   const handleStartConversation = async () => {
     if (!context.trim()) {
@@ -34,7 +47,11 @@ const TavusConversation = () => {
 
     try {
       const { data, error: fnError } = await supabase.functions.invoke('tavus-conversation', {
-        body: { context },
+        body: { 
+          context,
+          persona_id: selectedPersonaId,
+          replica_id: selectedReplicaId
+        },
       });
 
       if (fnError) throw new Error(fnError.message);
@@ -95,6 +112,33 @@ const TavusConversation = () => {
       </CardHeader>
       
       <CardContent className="space-y-4">
+        <div className="space-y-2">
+          <label className="text-sm font-medium">Choose AI Persona</label>
+          <Select
+            value={`${selectedPersonaId}|${selectedReplicaId}`}
+            onValueChange={(value) => {
+              const [pId, rId] = value.split('|');
+              setSelectedPersonaId(pId);
+              setSelectedReplicaId(rId);
+            }}
+            disabled={isLoading || !!conversationUrl}
+          >
+            <SelectTrigger className="w-full">
+              <SelectValue placeholder="Select a persona" />
+            </SelectTrigger>
+            <SelectContent>
+              {personas.map((p) => (
+                <SelectItem key={p.persona_id} value={`${p.persona_id}|${p.replica_id}`}>
+                  {p.name}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          <p className="text-xs text-muted-foreground">
+            Select an AI persona to interact with. Each persona has a unique style and role.
+          </p>
+        </div>
+
         <div className="space-y-2">
           <div className="flex items-center justify-between">
             <label className="text-sm font-medium">Context for your AI conversation partner</label>

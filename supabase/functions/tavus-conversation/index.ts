@@ -13,7 +13,7 @@ serve(async (req) => {
   }
 
   try {
-    const { context } = await req.json();
+    const { context, persona_id, replica_id } = await req.json();
     if (!context) {
       return new Response(JSON.stringify({ error: 'Context is required' }), {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
@@ -22,11 +22,13 @@ serve(async (req) => {
     }
 
     const TAVUS_API_KEY = Deno.env.get('TAVUS_API_KEY');
-    const TAVUS_REPLICA_ID = Deno.env.get('TAVUS_REPLICA_ID');
-    const TAVUS_PERSONA_ID = Deno.env.get('TAVUS_PERSONA_ID');
     
-    if (!TAVUS_API_KEY || !TAVUS_REPLICA_ID || !TAVUS_PERSONA_ID) {
-      throw new Error('Missing required Tavus environment variables');
+    if (!TAVUS_API_KEY) {
+      throw new Error('Missing required Tavus API key');
+    }
+    
+    if (!persona_id || !replica_id) {
+      throw new Error('Missing required persona_id or replica_id');
     }
 
     console.log('Creating Tavus conversation...');
@@ -37,8 +39,8 @@ serve(async (req) => {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        replica_id: TAVUS_REPLICA_ID,
-        persona_id: TAVUS_PERSONA_ID,
+        replica_id: replica_id,
+        persona_id: persona_id,
         conversation_name: 'EchoVerse Custom Conversation',
         conversational_context: context,
         // Optional: set a longer duration, default is 4 minutes
