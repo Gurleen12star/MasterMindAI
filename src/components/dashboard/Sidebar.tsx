@@ -1,4 +1,5 @@
 import { useAuth } from '@/components/auth/SupabaseAuthProvider';
+import { useAdmin } from '@/hooks/useAdmin';
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useSidebar } from './SidebarContext';
@@ -18,7 +19,8 @@ import {
   LogOut,
   ChevronRight,
   ChevronLeft,
-  GraduationCap
+  GraduationCap,
+  Settings
 } from 'lucide-react';
 import { Button } from '../ui/button';
 
