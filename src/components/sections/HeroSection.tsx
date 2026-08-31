@@ -2,19 +2,30 @@ import { useEffect } from 'react';
 
 export default function HeroSection() {
   useEffect(() => {
+    const resetPosition = () => {
+      document.documentElement.style.setProperty("--x", "0");
+      document.documentElement.style.setProperty("--y", "0");
+    };
+
     const UPDATE = ({ x, y }: { x: number; y: number }) => {
       const xNorm = (x / window.innerWidth - 0.5) * 2;
       const yNorm = (y / window.innerHeight - 0.5) * 2;
       document.documentElement.style.setProperty("--x", String(xNorm));
       document.documentElement.style.setProperty("--y", String(yNorm));
     };
-
+    
+    const heroCard = document.querySelector('.hero-card');
     window.addEventListener("mousemove", UPDATE as any);
-    return () => window.removeEventListener("mousemove", UPDATE as any);
+    heroCard?.addEventListener("mouseleave", resetPosition);
+    
+    return () => {
+      window.removeEventListener("mousemove", UPDATE as any);
+      heroCard?.removeEventListener("mouseleave", resetPosition);
+    };
   }, []);
 
   return (
-    <section className="relative overflow-hidden pt-24 md:pt-32 bg-gradient-to-br from-indigo-500/10 via-purple-500/5 to-pink-500/10">
+    <section className="relative overflow-hidden pt-24 md:pt-32 bg-gradient-to-b from-background via-background/95 to-background/90">
       <div className="container px-4 max-w-[1200px] mx-auto">
         <article className="hero-card">
           <div className="hero-assets">

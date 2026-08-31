@@ -10,7 +10,8 @@ import {
 
 export default function FeaturesGrid() {
   return (
-    <section id="features" className="py-16 md:py-24 bg-gradient-to-br from-background to-muted">
+    <section id="features" className="relative py-16 md:py-24 bg-gradient-to-b from-background via-background to-background/95">
+      <div className="absolute inset-0 bg-gradient-to-b from-transparent via-muted/10 to-transparent"></div>
       <div className="container px-4 max-w-[1200px] mx-auto">
         <div className="mx-auto max-w-5xl text-center">
           <h2 className="text-3xl font-bold tracking-tight md:text-4xl">
