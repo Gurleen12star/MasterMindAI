@@ -5,6 +5,7 @@ import { useSidebar } from './SidebarContext';
 import EchoVerseLogo from '@/components/ui/EchoVerseLogo';
 import {
   Home,
+  Shield,
   Compass,
   BookOpen,
   Search,
@@ -84,9 +85,10 @@ interface SidebarProps {
 }
 
 export default function Sidebar({ className }: SidebarProps) {
-  const { signOut } = useAuth();
+  const { signOut, user } = useAuth();
   const location = useLocation();
   const { isCollapsed, setIsCollapsed } = useSidebar();
+  const { isAdmin } = useAdmin();
   
   const mainMenu = [
     { to: '/dashboard', icon: Home, label: 'Overview' },
@@ -97,6 +99,12 @@ export default function Sidebar({ className }: SidebarProps) {
     { to: '/dashboard/summaries', icon: Wand2, label: 'Quick Summaries' },
     { to: '/dashboard/animation-studio', icon: Film, label: 'Animation Studio' },
     { to: '/dashboard/personalized-learning', icon: GraduationCap, label: 'Personalized Learning' },
+  ];
+
+  const adminMenu = [
+    { to: '/admin', icon: Shield, label: 'Admin Dashboard' },
+    { to: '/admin/users', icon: User, label: 'User Management' },
+    { to: '/admin/settings', icon: Settings, label: 'System Settings' },
   ];
 
   const projects = [
@@ -163,6 +171,27 @@ export default function Sidebar({ className }: SidebarProps) {
         </div>
         )}
       </div>
+
+      {/* Admin Menu Section - Only shown to admin users */}
+      {isAdmin && !isCollapsed && (
+      <div>
+        <div className="flex items-center justify-between px-4 py-2">
+          <h3 className="text-xs font-semibold tracking-wider text-gray-500 uppercase">
+            Admin
+          </h3>
+        </div>
+        <div className="space-y-1">
+          {adminMenu.map((item) => (
+            <NavLink
+              key={item.to}
+              {...item}
+              isActive={location.pathname === item.to || location.pathname.startsWith(item.to + '/')}
+              isCollapsed={isCollapsed}
+            />
+          ))}
+        </div>
+      </div>
+      )}
 
       <div className="p-3 border-t border-white/10">
         <nav className="space-y-1">

@@ -18,7 +18,9 @@ import ProfileSetupPage from './ProfileSetupPage';
 import ProfilePage from './ProfilePage';
 import AnimationStudioPage from './AnimationStudioPage';
 import PersonalizedLearningPage from './PersonalizedLearningPage';
+import AdminRoutes from '../admin/AdminRoutes';
 import PersonalizedLearningHistoryPage from './PersonalizedLearningHistoryPage';
+import MaintenanceBanner from '@/components/admin/MaintenanceBanner';
 
 function DashboardContent() {
   const { user } = useAuth();
@@ -30,7 +32,8 @@ function DashboardContent() {
       <div className="flex min-h-screen bg-background">
         <Sidebar className="hidden md:flex md:fixed" />
       
-        <div className={`flex-1 flex flex-col transition-all duration-300 ease-in-out ${isCollapsed ? 'md:ml-16' : 'md:ml-64'}`}>
+        <div className={`relative flex-1 flex flex-col transition-all duration-300 ease-in-out ${isCollapsed ? 'md:ml-16' : 'md:ml-64'}`}>
+        <MaintenanceBanner />
         <DashboardHeader>
           <Sheet open={isMobileSidebarOpen} onOpenChange={setIsMobileSidebarOpen}>
             <SheetTrigger asChild>
@@ -97,6 +100,11 @@ function DashboardContent() {
               <ProfileGuard>
                 <PersonalizedLearningHistoryPage />
               </ProfileGuard>
+            } />
+
+            {/* Admin Routes */}
+            <Route path="admin/*" element={
+              <AdminRoutes />
             } />
             
             {/* Default redirect to explore */}
