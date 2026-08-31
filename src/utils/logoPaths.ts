@@ -30,6 +30,11 @@ export const logoPaths: LogoPath[] = [
     title: 'ElevenLabs',
     type: 'file',
     file: '/elevenlabs-logo-white.svg',
+  },
+  {
+    title: 'Mem0ai',
+    type: 'file',
+    file: '/mem0ai-logo.png',
   }
   // {
   //   title: 'Cisco',
