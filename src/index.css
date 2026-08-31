@@ -75,7 +75,7 @@
   top: 0;
   left: 50%;
   translate: -50% -9%;
-  height: 180%;
+  height: 100%;
   width: auto;
   transform: translate(calc(var(--x) * 40px), calc(var(--y) * 10px));
   object-fit: contain;
