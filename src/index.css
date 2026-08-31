@@ -80,6 +80,129 @@
   --mermaid-orange-darker: hsl(25 84% 45%);
 }
 
+/* Loading Screen Styles */
+.loading-screen-container {
+  display: flex;
+  width: 100%;
+  height: 100vh;
+  justify-content: center;
+  align-items: center;
+  background: #342ead;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 9999;
+}
+
+.loading-screen-container svg {
+  filter: drop-shadow(0 0 20px rgba(255, 255, 255, 0.3));
+}
+
+/* Path animations */
+.path {
+  stroke-dasharray: 30;
+  animation: dash 5s infinite;
+}
+
+@keyframes dash {
+  to {
+    stroke-dashoffset: 300;
+  }
+}
+
+/* Circle animations - section 1 */
+.c1, .c2, .c3 {
+  animation: one 1s infinite;
+}
+
+@keyframes one {
+  30% {
+    opacity: 0.5;
+  }
+}
+
+.c4, .c5, .c6 {
+  animation: two 1s infinite;
+}
+
+@keyframes two {
+  60% {
+    opacity: 0.5;
+  }
+}
+
+.c7, .c8, .c9, .c10 {
+  animation: three 1s infinite;
+}
+
+@keyframes three {
+  90% {
+    opacity: 0.5;
+  }
+}
+
+/* Circle animations - section 2 */
+.lg-circle {
+  animation: scale-c 1.2s infinite;
+}
+
+@keyframes scale-c {
+  50% {
+    r: 2%;
+  }
+}
+
+.lg-middle {
+  animation: scale-b 1.2s infinite;
+}
+
+@keyframes scale-b {
+  20% {
+    r: 4%;
+  }
+}
+
+.lg-edge {
+  animation: scale-e 1.2s infinite;
+}
+
+@keyframes scale-e {
+  80% {
+    r: 2.8%;
+  }
+}
+
+/* Initial preloader styles */
+#initial-preloader {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: #342ead;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 10000;
+  transition: opacity 0.3s ease;
+}
+
+#initial-preloader .simple-loader {
+  color: white;
+  font-size: 18px;
+  font-weight: 500;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 0.6;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
 /* Loading Screen Animations */
 @keyframes pulse-float {
   0%, 100% {
@@ -485,6 +608,7 @@ div[style*="z-index: 999999"] {
     min-height: 25%;
   }
 }
+
 @media (max-width: 768px) {
   .hero-card {
     min-height: 400px;
@@ -737,7 +861,6 @@ body {
     grid-template-rows: repeat(3, 1fr);
     gap: 2rem;
   }
-
 
   .text-gradient {
     @apply bg-gradient-to-r from-purple-400 to-indigo-500 bg-clip-text text-transparent;

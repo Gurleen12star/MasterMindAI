@@ -43,6 +43,17 @@ try {
   );
   
   console.log('Application rendered successfully');
+  
+  // Additional cleanup for initial preloader after React has fully mounted
+  setTimeout(() => {
+    const initialPreloader = document.getElementById('initial-preloader');
+    if (initialPreloader && initialPreloader.style.display !== 'none') {
+      initialPreloader.style.opacity = '0';
+      setTimeout(() => {
+        initialPreloader.style.display = 'none';
+      }, 300);
+    }
+  }, 100);
 } catch (error) {
   console.error('Failed to render application:', error);
   rootElement.innerHTML = `<div style="color:red; padding: 20px;">
