@@ -181,7 +181,7 @@
 
 /* Custom Cursor Styles - Now opt-in with class .custom-cursor-enabled */
 .custom-cursor-enabled {
-  cursor: none;
+  cursor: none !important;
 }
 
 .custom-cursor-enabled *,
@@ -191,15 +191,18 @@
 }
 
 .curzr-arrow-pointer {
-  position: fixed;
+  position: fixed !important;
   width: var(--cursor-size);
   height: var(--cursor-size);
-  pointer-events: none;
-  z-index: 9999999;
+  pointer-events: none !important;
+  z-index: 9999999 !important;
   top: 0;
   left: 0;
   will-change: transform;
   transition: opacity 0.2s ease;
+  opacity: 1 !important;
+  visibility: visible !important;
+  display: block !important;
 }
 
 .curzr-arrow-pointer svg {
@@ -223,25 +226,35 @@
   fill: hsl(var(--primary)) !important;
 }
 
-/* Ensure cursor is visible in all contexts */
-.custom-cursor-enabled .curzr-arrow-pointer {
-  opacity: 1 !important;
-  visibility: visible !important;
-  display: block !important;
+/* Force cursor visibility in ALL contexts - including modals, dialogs, popups */
+[data-radix-dialog-overlay],
+[data-radix-dialog-content],
+[data-radix-popover-content],
+[data-radix-dropdown-menu-content],
+[data-radix-sheet-overlay],
+[data-radix-sheet-content],
+.modal,
+.popup,
+.overlay,
+.dialog,
+.popover,
+.dropdown {
+  cursor: none !important;
 }
 
-/* Override any potential hiding in dialogs, modals, etc. */
-[data-radix-dialog-overlay] .curzr-arrow-pointer,
-[data-radix-dialog-content] .curzr-arrow-pointer,
-[data-radix-popover-content] .curzr-arrow-pointer,
-[data-radix-dropdown-menu-content] .curzr-arrow-pointer,
-.modal .curzr-arrow-pointer,
-.popup .curzr-arrow-pointer,
-.overlay .curzr-arrow-pointer {
+/* Ensure cursor is ALWAYS visible and on top */
+body .curzr-arrow-pointer {
   opacity: 1 !important;
   visibility: visible !important;
   display: block !important;
   z-index: 9999999 !important;
+  position: fixed !important;
+  pointer-events: none !important;
+}
+
+/* Override any potential z-index conflicts */
+.curzr-arrow-pointer {
+  z-index: 2147483647 !important; /* Maximum z-index value */
 }
 
 /* Navbar Background Styles */
