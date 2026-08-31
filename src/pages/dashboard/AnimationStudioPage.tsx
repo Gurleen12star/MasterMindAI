@@ -24,7 +24,10 @@ import {
   XCircle,
   History,
   Zap,
-  Eye
+  Eye,
+  Archive,
+  Download,
+  FileVideo
 } from 'lucide-react';
 
 interface VideoFile {
@@ -329,11 +332,17 @@ export default function AnimationStudioPage() {
                   </div>
                 )}
                 
-                {selectedVideo && selectedVideo.status === 'completed' && selectedVideo.combined_video_url ? (
+                {selectedVideo && selectedVideo.status === 'completed' && (selectedVideo.combined_video_url || (selectedVideo as any).video_url) ? (
                   <video
                     controls
                     className="w-full h-full rounded-lg"
-                    src={getFileUrl(FINAL_VIDEOS_BUCKET_ID, selectedVideo.combined_video_url)}
+                    src={(() => {
+                      const urlField = (selectedVideo.combined_video_url || (selectedVideo as any).video_url) as string;
+                      // If the field already looks like a full URL, use it directly. Otherwise build Appwrite file URL.
+                      return urlField.startsWith('http')
+                        ? urlField
+                        : getFileUrl(FINAL_VIDEOS_BUCKET_ID, urlField);
+                    })()}
                   >
                     Your browser does not support the video tag.
                   </video>
@@ -397,63 +406,65 @@ export default function AnimationStudioPage() {
         </div>
       </div>
 
-      {/* History Section */}
+      {/* Artifacts Section */}
       <Card className="p-6">
-        <div className="flex items-center gap-2 mb-4">
-          <History className="h-5 w-5 text-primary" />
-          <h3 className="text-lg font-medium">Animation History</h3>
+        <div className="flex items-center gap-3 mb-4">
+          <Archive className="h-5 w-5 text-primary" />
+          <h3 className="text-lg font-medium">Rendered Artifacts</h3>
         </div>
         
         <ScrollArea className="h-[400px] w-full">
           {videoHistory.length > 0 ? (
-            <div className="space-y-3">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 pr-4">
               {videoHistory.map((file) => (
-                <motion.div
-                  key={file.$id}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  className={`p-4 rounded-lg border transition-all duration-200 cursor-pointer hover:bg-accent/50 ${
-                    selectedVideo?.combined_video_url === file.$id ? 'border-primary bg-primary/5' : 'border-border bg-card'
+                <Card 
+                  key={file.$id} 
+                  className={`overflow-hidden transition-all duration-200 cursor-pointer hover:border-primary/80 ${
+                    selectedVideo?.combined_video_url === file.$id ? 'border-primary ring-2 ring-primary/50' : 'border-border'
                   }`}
                   onClick={() => loadHistoryVideo(file)}
                 >
-                  <div className="flex items-start justify-between gap-3">
-                    <div className="flex-1">
-                      <div className="flex items-center gap-2 mb-2">
-                        <CheckCircle className="h-4 w-4 text-green-500" />
-                        <h4 className="font-medium truncate">{file.name}</h4>
-                      </div>
-                      <div className="flex items-center gap-4 text-sm text-muted-foreground">
-                        <span>Size: {(file.sizeOriginal / 1024 / 1024).toFixed(2)} MB</span>
-                        <span>{new Date(file.$createdAt).toLocaleDateString()}</span>
-                      </div>
-                    </div>
+                  <div className="aspect-video bg-muted flex items-center justify-center">
+                    <FileVideo className="h-12 w-12 text-muted-foreground/50" />
+                  </div>
+                  <div className="p-3 border-t">
+                    <p className="font-medium truncate text-sm mb-1">{file.name}</p>
+                    <p className="text-xs text-muted-foreground mb-3">
+                      {(file.sizeOriginal / 1024 / 1024).toFixed(2)} MB &bull; {new Date(file.$createdAt).toLocaleDateString()}
+                    </p>
                     <div className="flex items-center gap-2">
-                      <Badge className="bg-green-100 text-green-800">
-                        completed
-                      </Badge>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          loadHistoryVideo(file);
-                        }}
-                        className="gap-1"
+                      <Button 
+                        variant="outline" 
+                        size="sm" 
+                        className="w-full" 
+                        onClick={(e) => { e.stopPropagation(); loadHistoryVideo(file); }}
                       >
-                        <Eye className="h-3 w-3" />
+                        <Eye className="h-4 w-4 mr-2" />
                         View
                       </Button>
+                      <a 
+                        href={getFileUrl(FINAL_VIDEOS_BUCKET_ID, file.$id)}
+                        download={file.name}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="w-full"
+                        onClick={(e) => e.stopPropagation()}
+                      >
+                        <Button variant="outline" size="sm" className="w-full">
+                          <Download className="h-4 w-4 mr-2" />
+                          Download
+                        </Button>
+                      </a>
                     </div>
                   </div>
-                </motion.div>
+                </Card>
               ))}
             </div>
           ) : (
             <div className="flex flex-col items-center justify-center py-12 text-center text-muted-foreground">
-              <Film className="h-12 w-12 mb-4 opacity-50" />
-              <p className="font-medium">No animations yet</p>
-              <p className="text-sm">Create your first animation to get started</p>
+              <Archive className="h-12 w-12 mb-4 opacity-50" />
+              <p className="font-medium">No artifacts found</p>
+              <p className="text-sm">Generate an animation to see its artifacts here</p>
             </div>
           )}
         </ScrollArea>
