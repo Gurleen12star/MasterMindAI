@@ -105,7 +105,7 @@ const StudyPlatform = () => {
                                 .eq('user_id', user.id)
                                 .eq('topic', studyMaterial)
                                 .eq('personality', personality)
-                                .single();
+                                .maybeSingle();
 
                             if (existingSession && !fetchError) {
                                 // Use existing session
