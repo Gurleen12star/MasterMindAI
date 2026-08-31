@@ -1,285 +1,118 @@
 import { useState } from 'react';
-import { motion } from 'framer-motion';
+import { BentoBox } from '@/components/ui/BentoBox';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Card } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { 
-  Play, 
-  Brain, 
-  Search, 
-  Network, 
-  Film, 
-  ArrowRight,
-  Sparkles,
-  Loader2,
-  CheckCircle,
-  Zap
-} from 'lucide-react';
-
-const demoFeatures = [
-  {
-    id: 'personalized',
-    icon: Brain,
-    title: 'Personalized Learning',
-    description: 'AI adapts to your learning style',
-    color: 'from-purple-500 to-blue-500'
-  },
-  {
-    id: 'research',
-    icon: Search,
-    title: 'Deep Research',
-    description: 'Comprehensive topic analysis',
-    color: 'from-blue-500 to-teal-500'
-  },
-  {
-    id: 'roadmap',
-    icon: Network,
-    title: 'Visual Roadmaps',
-    description: 'Interactive learning paths',
-    color: 'from-teal-500 to-green-500'
-  },
-  {
-    id: 'animation',
-    icon: Film,
-    title: 'AI Animations',
-    description: 'Complex concepts simplified',
-    color: 'from-orange-500 to-red-500'
-  }
-];
-
-const sampleTopics = [
-  'Machine Learning Fundamentals',
-  'Quantum Physics Basics',
-  'Web Development with React',
-  'Digital Marketing Strategy',
-  'Data Science with Python'
-];
+import { FileText, Headphones, Video, Wand2, Sparkles } from 'lucide-react';
 
 export default function DemoSection() {
-  const [selectedTopic, setSelectedTopic] = useState('');
-  const [isGenerating, setIsGenerating] = useState(false);
-  const [generatedContent, setGeneratedContent] = useState<string | null>(null);
-  const [activeFeature, setActiveFeature] = useState('personalized');
-
-  const handleGenerate = () => {
-    if (!selectedTopic.trim()) return;
-    
-    setIsGenerating(true);
-    setGeneratedContent(null);
-    
-    // Simulate AI processing
-    setTimeout(() => {
-      setGeneratedContent(selectedTopic);
-      setIsGenerating(false);
-    }, 2000);
-  };
+  const [content, setContent] = useState<string>(
+    "Imagine having an AI companion that understands your unique learning style. EchoVerse adapts to your preferences, transforming complex content into formats that resonate with you. From detailed technical documentation to engaging video tutorials, watch as your content evolves into the perfect learning experience."
+  );
 
   return (
-    <section className="py-24 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-7xl mx-auto">
-        {/* Section Header */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-          viewport={{ once: true }}
-          className="text-center mb-16"
-        >
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 border border-primary/20 text-primary mb-6">
-            <Play className="h-4 w-4" />
-            <span className="text-sm font-medium">Interactive Demo</span>
+    <section id="demo" className="relative py-16 md:py-24 lg:py-32 overflow-hidden">
+      {/* Blurred oval overlay effects */}
+      <div className="absolute top-20 -right-40 w-80 h-80 rounded-full bg-gradient-to-br from-blue-500/6 via-cyan-500/4 to-transparent blur-3xl opacity-50" />
+      <div className="absolute -bottom-20 -left-40 w-96 h-96 rounded-full bg-gradient-to-br from-purple-500/8 via-primary/4 to-transparent blur-3xl opacity-60" />
+      
+      <div className="absolute inset-0 bg-gradient-to-b from-background/50 via-background to-background/50" />
+      <div className="absolute inset-0 bg-grid-white/[0.02]" />
+      <div className="container px-4 max-w-[1200px] mx-auto">
+        <div className="relative mx-auto max-w-5xl text-center mb-16">
+          <h2 className="text-4xl md:text-5xl font-bold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-primary to-primary/70">
+            See EchoVerse in Action
+          </h2>
+          <p className="mt-4 text-lg md:text-xl text-muted-foreground">
+            Experience how our AI transforms content across different formats.
+          </p>
+        </div>
+        
+        <div className="grid grid-cols-1 gap-8 lg:grid-cols-12">
+          <div className="lg:col-span-5">
+            <BentoBox gradient="purple" className="h-full backdrop-blur-xl bg-background/30 border-2 border-primary/20 hover:border-primary/30 transition-all duration-500 bento-modern shadow-inner-modern rounded-3xl">
+              <div className="flex items-center gap-4 mb-6">
+                <div className="relative inline-flex h-12 w-12 items-center justify-center rounded-xl bg-primary/20 before:absolute before:inset-0 before:rounded-xl before:bg-primary/10 before:animate-pulse shadow-lg">
+                  <FileText className="h-6 w-6 text-primary" />
+                </div>
+                <h3 className="text-xl font-semibold text-foreground">Input Content</h3>
+              </div>
+              <textarea
+                className="h-48 w-full resize-none rounded-xl border-2 border-primary/20 bg-background/60 backdrop-blur-sm p-4 text-base focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary/40 transition-all duration-300 placeholder:text-muted-foreground/60"
+                placeholder="Enter text content to transform..."
+                value={content}
+                onChange={(e) => setContent(e.target.value)}
+              />
+              <div className="mt-6">
+                <Button className="w-full bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 transition-all duration-300 shadow-lg hover:shadow-xl hover:shadow-primary/25 rounded-xl h-12">
+                  <Sparkles className="mr-2 h-5 w-5" />
+                  Transform Content
+                </Button>
+              </div>
+            </BentoBox>
           </div>
           
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-6">
-            See AI Learning in Action
-          </h2>
-          
-          <p className="max-w-3xl mx-auto text-lg text-muted-foreground">
-            Experience the power of AI-driven personalized learning. Enter any topic and watch 
-            as our intelligent system creates a customized learning experience just for you.
-          </p>
-        </motion.div>
-
-        <div className="grid lg:grid-cols-2 gap-12 items-center">
-          {/* Interactive Demo */}
-          <motion.div
-            initial={{ opacity: 0, x: -20 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.6 }}
-            viewport={{ once: true }}
-            className="space-y-6"
-          >
-            <Card className="p-8 bg-gradient-to-br from-primary/5 to-purple-500/5 border-primary/20">
-              <div className="space-y-6">
-                <div className="flex items-center gap-3 mb-6">
-                  <div className="p-2 rounded-lg bg-primary/10">
-                    <Sparkles className="h-5 w-5 text-primary" />
-                  </div>
-                  <h3 className="text-xl font-semibold">Try AI Learning Generator</h3>
+          <div className="lg:col-span-7">
+            <BentoBox gradient="blue" className="h-full backdrop-blur-xl bg-background/30 border-2 border-primary/20 hover:border-primary/30 transition-all duration-500 bento-modern shadow-inner-modern rounded-3xl">
+              <div className="flex items-center gap-4 mb-6">
+                <div className="relative inline-flex h-12 w-12 items-center justify-center rounded-xl bg-primary/20 before:absolute before:inset-0 before:rounded-xl before:bg-primary/10 before:animate-pulse shadow-lg">
+                  <Wand2 className="h-6 w-6 text-primary" />
                 </div>
-
-                <div className="space-y-4">
-                  <div>
-                    <label className="block text-sm font-medium mb-2">
-                      What would you like to learn?
-                    </label>
-                    <Input
-                      placeholder="Enter any topic (e.g., Machine Learning, Photography, Cooking...)"
-                      value={selectedTopic}
-                      onChange={(e) => setSelectedTopic(e.target.value)}
-                      className="w-full"
-                    />
-                  </div>
-
-                  <div className="flex flex-wrap gap-2">
-                    <span className="text-sm text-muted-foreground">Quick examples:</span>
-                    {sampleTopics.map((topic) => (
-                      <Badge
-                        key={topic}
-                        variant="outline"
-                        className="cursor-pointer hover:bg-primary/10 transition-colors"
-                        onClick={() => setSelectedTopic(topic)}
-                      >
-                        {topic}
-                      </Badge>
-                    ))}
-                  </div>
-
-                  <Button 
-                    onClick={handleGenerate}
-                    disabled={!selectedTopic.trim() || isGenerating}
-                    className="w-full gap-2"
-                    size="lg"
-                  >
-                    {isGenerating ? (
-                      <>
-                        <Loader2 className="h-4 w-4 animate-spin" />
-                        AI is generating your learning path...
-                      </>
-                    ) : (
-                      <>
-                        Generate Learning Path
-                        <Zap className="h-4 w-4" />
-                      </>
-                    )}
-                  </Button>
-                </div>
-
-                {isGenerating && (
-                  <motion.div
-                    initial={{ opacity: 0, height: 0 }}
-                    animate={{ opacity: 1, height: 'auto' }}
-                    className="space-y-3 p-4 bg-muted/50 rounded-lg"
-                  >
-                    <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                      <Loader2 className="h-4 w-4 animate-spin" />
-                      Analyzing your topic...
-                    </div>
-                    <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                      <Loader2 className="h-4 w-4 animate-spin" />
-                      Creating personalized modules...
-                    </div>
-                    <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                      <Loader2 className="h-4 w-4 animate-spin" />
-                      Generating interactive content...
-                    </div>
-                  </motion.div>
-                )}
-
-                {generatedContent && (
-                  <motion.div
-                    initial={{ opacity: 0, height: 0 }}
-                    animate={{ opacity: 1, height: 'auto' }}
-                    className="space-y-3 p-4 bg-green-50 dark:bg-green-950/30 rounded-lg border border-green-200 dark:border-green-800"
-                  >
-                    <div className="flex items-center gap-2 text-green-700 dark:text-green-400">
-                      <CheckCircle className="h-4 w-4" />
-                      Learning path generated successfully!
-                    </div>
-                    <p className="text-sm text-muted-foreground">
-                      Your personalized learning path for "{generatedContent}" is ready with:
+                <h3 className="text-xl font-semibold text-foreground">AI Transformations</h3>
+              </div>
+              
+              <Tabs defaultValue="summary" className="w-full">
+                <TabsList className="mb-6 w-full justify-start bg-muted/40 backdrop-blur-sm p-1.5 rounded-xl border border-border/30">
+                  <TabsTrigger value="summary" className="flex items-center gap-2 rounded-lg data-[state=active]:bg-background/80 data-[state=active]:shadow-sm transition-all duration-200">
+                    <FileText className="h-4 w-4" />
+                    <span>Summary</span>
+                  </TabsTrigger>
+                  <TabsTrigger value="audio" className="flex items-center gap-2 rounded-lg data-[state=active]:bg-background/80 data-[state=active]:shadow-sm transition-all duration-200">
+                    <Headphones className="h-4 w-4" />
+                    <span>Audio</span>
+                  </TabsTrigger>
+                  <TabsTrigger value="video" className="flex items-center gap-2 rounded-lg data-[state=active]:bg-background/80 data-[state=active]:shadow-sm transition-all duration-200">
+                    <Video className="h-4 w-4" />
+                    <span>Video</span>
+                  </TabsTrigger>
+                </TabsList>
+                
+                <TabsContent value="summary" className="mt-0">
+                  <div className="rounded-xl border-2 border-primary/20 bg-card/60 backdrop-blur-sm p-6 shadow-lg">
+                    <p className="mb-3 font-semibold text-foreground">AI-Generated Summary</p>
+                    <p className="text-sm text-muted-foreground leading-relaxed">
+                      EchoVerse personalizes learning through AI-powered content recommendations and multi-modal transformations, analyzing user preferences and enabling seamless conversion between text, audio, and video formats for an optimized educational experience.
                     </p>
-                    <ul className="text-sm space-y-1">
-                      <li className="flex items-center gap-2">
-                        <div className="w-1.5 h-1.5 bg-primary rounded-full" />
-                        5 adaptive learning modules
-                      </li>
-                      <li className="flex items-center gap-2">
-                        <div className="w-1.5 h-1.5 bg-primary rounded-full" />
-                        Interactive visual roadmap
-                      </li>
-                      <li className="flex items-center gap-2">
-                        <div className="w-1.5 h-1.5 bg-primary rounded-full" />
-                        Personalized difficulty adjustment
-                      </li>
-                      <li className="flex items-center gap-2">
-                        <div className="w-1.5 h-1.5 bg-primary rounded-full" />
-                        AI-generated practice exercises
-                      </li>
-                    </ul>
-                  </motion.div>
-                )}
-              </div>
-            </Card>
-          </motion.div>
-
-          {/* Feature Showcase */}
-          <motion.div
-            initial={{ opacity: 0, x: 20 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-            viewport={{ once: true }}
-            className="space-y-6"
-          >
-            <h3 className="text-2xl font-bold mb-6">Powered by Advanced AI Features</h3>
-            
-            <div className="space-y-4">
-              {demoFeatures.map((feature, index) => (
-                <motion.div
-                  key={feature.id}
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.4, delay: index * 0.1 }}
-                  viewport={{ once: true }}
-                  className={`p-6 rounded-xl border transition-all duration-300 cursor-pointer ${
-                    activeFeature === feature.id 
-                      ? 'border-primary bg-primary/5 shadow-lg' 
-                      : 'border-border bg-card hover:border-primary/50'
-                  }`}
-                  onClick={() => setActiveFeature(feature.id)}
-                >
-                  <div className="flex items-center gap-4">
-                    <div className={`p-3 rounded-lg bg-gradient-to-r ${feature.color}`}>
-                      <feature.icon className="h-6 w-6 text-white" />
-                    </div>
-                    <div className="flex-1">
-                      <h4 className="font-semibold mb-1">{feature.title}</h4>
-                      <p className="text-sm text-muted-foreground">{feature.description}</p>
-                    </div>
-                    <ArrowRight className={`h-5 w-5 transition-transform ${
-                      activeFeature === feature.id ? 'translate-x-1' : ''
-                    }`} />
                   </div>
-                </motion.div>
-              ))}
-            </div>
-
-            <div className="p-6 bg-gradient-to-br from-muted/50 to-muted/30 rounded-xl border">
-              <div className="flex items-center gap-3 mb-4">
-                <Sparkles className="h-5 w-5 text-primary" />
-                <span className="font-medium">Real-time AI Processing</span>
-              </div>
-              <p className="text-sm text-muted-foreground mb-4">
-                Every learning path is generated in real-time using advanced machine learning 
-                algorithms that analyze your preferences, learning style, and current knowledge level.
-              </p>
-              <div className="flex items-center gap-2 text-sm text-primary">
-                <CheckCircle className="h-4 w-4" />
-                <span>Personalized for your unique learning profile</span>
-              </div>
-            </div>
-          </motion.div>
+                </TabsContent>
+                
+                <TabsContent value="audio" className="mt-0">
+                  <div className="flex items-center justify-center rounded-xl border-2 border-primary/20 bg-card/60 backdrop-blur-sm p-8 shadow-lg">
+                    <div className="flex flex-col items-center gap-4">
+                      <div className="relative h-16 w-16 rounded-full bg-gradient-to-br from-primary/20 to-primary/10 flex items-center justify-center shadow-lg">
+                        <Headphones className="h-8 w-8 text-primary" />
+                      </div>
+                      <p className="text-sm text-muted-foreground text-center">
+                        Audio transformation would appear here
+                      </p>
+                    </div>
+                  </div>
+                </TabsContent>
+                
+                <TabsContent value="video" className="mt-0">
+                  <div className="flex items-center justify-center rounded-xl border-2 border-primary/20 bg-card/60 backdrop-blur-sm p-8 shadow-lg">
+                    <div className="flex flex-col items-center gap-4">
+                      <div className="relative h-16 w-16 rounded-full bg-gradient-to-br from-primary/20 to-primary/10 flex items-center justify-center shadow-lg">
+                        <Video className="h-8 w-8 text-primary" />
+                      </div>
+                      <p className="text-sm text-muted-foreground text-center">
+                        Video transformation would appear here
+                      </p>
+                    </div>
+                  </div>
+                </TabsContent>
+              </Tabs>
+            </BentoBox>
+          </div>
         </div>
       </div>
     </section>
