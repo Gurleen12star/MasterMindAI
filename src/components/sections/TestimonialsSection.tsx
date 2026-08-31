@@ -52,15 +52,14 @@ export default function TestimonialsSection() {
   }, [nextTestimonial]);
 
   return (
-    <section className="py-24 px-4 relative">
-      <div className="gradient-line"></div>
+    <section className="py-24 px-4">
       <div className="container mx-auto max-w-7xl">
         <div className="text-center mb-16">
-          <h2 className="text-4xl md:text-5xl font-bold mb-6 gradient-text-animation">
+          <h2 className="text-4xl md:text-5xl font-bold mb-6 bg-gradient-to-r from-primary via-primary/80 to-primary/60 bg-clip-text text-transparent">
             What Our Users Say
           </h2>
-          <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-            Join thousands of learners who have transformed their education with EchoVerse
+          <p className="mt-4 text-muted-foreground md:text-lg">
+            Join thousands of satisfied users who have transformed their learning journey.
           </p>
           
           <div className="overflow-hidden mt-12">

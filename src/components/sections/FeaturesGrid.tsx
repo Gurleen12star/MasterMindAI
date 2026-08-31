@@ -10,11 +10,12 @@ import {
 
 export default function FeaturesGrid() {
   return (
-    <section className="py-24 px-4 relative">
-      <div className="gradient-line"></div>
+    <section className="py-24 px-4">
+      {/* Simplified overlay effects - Updated to use theme variable */}
+      
       <div className="container relative z-10 px-4 max-w-[1200px] mx-auto">
         <div className="relative mx-auto max-w-5xl text-center mb-16">
-          <h2 className="text-4xl font-bold tracking-tight md:text-5xl gradient-text-animation">
+          <h2 className="text-4xl font-bold tracking-tight md:text-5xl bg-clip-text text-transparent bg-gradient-to-r from-primary to-primary/70">
             Amplify Your Learning Journey
           </h2>
           <p className="mt-4 text-muted-foreground md:text-lg max-w-2xl mx-auto">
@@ -23,7 +24,7 @@ export default function FeaturesGrid() {
         </div>
         
         {/* Grid with vibrant color cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 auto-rows-auto relative spotlight-group" data-spotlight>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 auto-rows-auto relative">
           {/* AI-Driven Content - Updated to Primary Theme with Yellow Accent */}
           <BentoBox gradient="purple" className="flex flex-col md:row-span-2 relative overflow-hidden group rounded-3xl min-h-[400px] border border-[hsl(var(--primary)/0.3)] bg-gradient-to-br from-[hsl(var(--primary)/0.9)] via-[hsl(var(--primary)/0.7)] to-[hsl(var(--chart-3)/0.5)] hover:from-[hsl(var(--primary)/1)] hover:via-[hsl(var(--primary)/0.8)] hover:to-[hsl(var(--chart-3)/0.6)] transition-all duration-300 shadow-lg shadow-[hsl(var(--primary)/0.2)]">
             <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent" />
