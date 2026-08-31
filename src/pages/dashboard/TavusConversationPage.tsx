@@ -125,3 +125,6 @@ const TavusConversationPage = () => {
       </div>
     </div>
   );
+};
+
+export default TavusConversationPage;
