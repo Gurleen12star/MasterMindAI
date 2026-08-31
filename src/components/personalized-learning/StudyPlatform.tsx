@@ -148,10 +148,8 @@ const StudyPlatform = () => {
                     addStoriesChat(generationHistory, setGenerationHistory, prompt, response.text());
                     setActualModuleRes(response.text());
                     
-                    // Save to database after modules are generated - check for existing session first
                     if (user?.id) {
                         try {
-                            // First check if a session already exists for this user, topic, and personality
                             const { data: existingSession, error: fetchError } = await supabase
                                 .from('personalized_learning_sessions')
                                 .select('id')
@@ -161,10 +159,8 @@ const StudyPlatform = () => {
                                 .maybeSingle();
 
                             if (existingSession && !fetchError) {
-                                // Use existing session
                                 setCurrentSessionId(existingSession.id);
                             } else {
-                                // Create new session only if none exists
                                 const { data, error } = await supabase
                                     .from('personalized_learning_sessions')
                                     .insert({
@@ -197,7 +193,7 @@ const StudyPlatform = () => {
                 setStudyPlatform({ ...studyPlatform, isGettingModels: true });
             }
         }
-    }, [generationHistory, introduction, personality, setGenerationHistory, setIntroduction, setStudyPlatform, studyMaterial, studyPlatform, user, currentSessionId, setCurrentSessionId]);
+    }, [generationHistory, introduction, personality, setGenerationHistory, setIntroduction, setStudyPlatform, studyMaterial, studyPlatform, user?.id, setCurrentSessionId]);
 
     const handleGetModule = useCallback(async () => {
         if (studyPlatform.modulos.length === 0) return;
@@ -213,7 +209,6 @@ const StudyPlatform = () => {
                 if (validateJSON(responseText)) {
                     generateModule(response.text(), studyPlatform, setStudyPlatform);
                     
-                    // Update database after module content is generated
                     if (user?.id && currentSessionId) {
                         try {
                             await supabase
@@ -243,7 +238,7 @@ const StudyPlatform = () => {
                 }));
             }
         }
-    }, [generationHistory, personality, setStudyPlatform, studyPlatform, user, currentSessionId]);
+    }, [generationHistory, personality, setStudyPlatform, studyPlatform, user?.id, currentSessionId]);
 
     useEffect(() => {
         if (introduction.isLoading) {
@@ -255,7 +250,7 @@ const StudyPlatform = () => {
         if (studyPlatform.isGettingModels && studyPlatform.show === false) {
             generateModules(actualModuleRes, studyPlatform, setStudyPlatform);
         }
-    }, [actualModuleRes, setStudyPlatform, studyPlatform]);
+    }, [actualModuleRes, generationHistory, setStudyPlatform, studyPlatform]);
 
     useEffect(() => {
         if (!studyPlatform.isGettingModulo && !studyPlatform.isLoading) {
@@ -288,26 +283,25 @@ const StudyPlatform = () => {
 
     return (
         <div className="w-full h-full">
-                <AnimatePresence mode="popLayout">
-                    <motion.div
-                        key="study-platform-content"
-                        initial="initial"
-                        animate="in"
-                        exit="out"
-                        variants={pageVariants(2)}
-                        transition={pageTransition(2)}
-                        className="w-full h-full"
-                    >
-                        {studyPlatform.isLoading ? (
-                            <StudyPlatformLoading />
-                        ) : (studyPlatform.isGettingModels ? (
-                            <StudyPlatformInitial handleGetModule={handleGetModule} />
-                        ) : (
-                            <div className="w-full">
-                                {/* Module Content */}
-                                <Card className="mb-6 bg-[#2A2B32] border-0 rounded-xl">
-                                    <ScrollArea className="h-[calc(100vh-250px)]">
-                                        <CardContent className="p-6 studyPlatform-content">
+            <AnimatePresence mode="popLayout">
+                <motion.div
+                    key="study-platform-content"
+                    initial="initial"
+                    animate="in"
+                    exit="out"
+                    variants={pageVariants(2)}
+                    transition={pageTransition(2)}
+                    className="w-full h-full"
+                >
+                    {studyPlatform.isLoading ? (
+                        <StudyPlatformLoading />
+                    ) : (studyPlatform.isGettingModels ? (
+                        <StudyPlatformInitial handleGetModule={handleGetModule} />
+                    ) : (
+                        <div className="w-full">
+                            <Card className="mb-6 bg-[#2A2B32] border-0 rounded-xl">
+                                <ScrollArea className="h-[calc(100vh-250px)]">
+                                    <CardContent className="p-6 studyPlatform-content">
                                         {studyPlatform.modulos[studyPlatform.actModule] && 
                                          studyPlatform.modulos[studyPlatform.actModule].content && 
                                          <ContextMenu>
@@ -359,66 +353,64 @@ const StudyPlatform = () => {
                                                      </ContextMenuItem>
                                                  </ContextMenuContent>
                                              )}
-                                         </ContextMenu>
+                                         </ContextMenu>}
+                                    </CardContent>
+                                </ScrollArea>
+                            </Card>
+                            
+                            <div className="flex items-center justify-between gap-4">
+                                <Button
+                                    variant="outline"
+                                    className={`${modulo === 0 ? "invisible" : ""} bg-white/10 hover:bg-white/20 text-white border-0 rounded-lg`}
+                                    onClick={() => {
+                                        setStudyPlatform(prevState => ({
+                                            ...prevState,
+                                            actModule: prevState.actModule - 1,
+                                            isGettingModulo: true,
+                                            isLoading: true,
+                                        }));
+                                    }}
+                                >
+                                    <ArrowLeft className="h-4 w-4 mr-2" />
+                                    Previous
+                                </Button>
+
+                                <Button
+                                    variant="default"
+                                    disabled={!timeModule}
+                                    className="bg-white text-black hover:bg-gray-200 rounded-lg"
+                                    onClick={() => {
+                                        if (modulo === (studyPlatform.modulos.length - 1)) {
+                                            resetContext(setIntroduction, setStudyPlatform);
+                                            return;
                                         }
-                                        </CardContent>
-                                    </ScrollArea>
-                                </Card>
-                                
-                                {/* Navigation */}
-                                <div className="flex items-center justify-between gap-4">
-                                    <Button
-                                        variant="outline"
-                                        className={`${modulo === 0 ? "invisible" : ""} bg-white/10 hover:bg-white/20 text-white border-0 rounded-lg`}
-                                        onClick={() => {
-                                            setStudyPlatform(prevState => ({
-                                                ...prevState,
-                                                actModule: prevState.actModule - 1,
-                                                isGettingModulo: true,
-                                                isLoading: true,
-                                            }));
-                                        }}
-                                    >
-                                        <ArrowLeft className="h-4 w-4 mr-2" />
-                                        Previous
-                                    </Button>
 
-                                    <Button
-                                        variant="default"
-                                        disabled={!timeModule}
-                                        className="bg-white text-black hover:bg-gray-200 rounded-lg"
-                                        onClick={() => {
-                                            if (modulo === (studyPlatform.modulos.length - 1)) {
-                                                resetContext(setIntroduction, setStudyPlatform);
-                                                return;
-                                            }
-
-                                            setStudyPlatform(prevState => ({
-                                                ...prevState,
-                                                actModule: prevState.actModule + 1,
-                                                isGettingModulo: true,
-                                                isLoading: true,
-                                            }));
-                                        }}
-                                    >
-                                        {modulo === (studyPlatform.modulos.length - 1) ? (
-                                            <>
-                                                New Topic
-                                                <Award className="h-4 w-4 ml-2" />
-                                            </>
-                                        ) : (
-                                            <>
-                                                Next
-                                                <ArrowRight className="h-4 w-4 ml-2" />
-                                            </>
-                                        )}
-                                    </Button>
-                                </div>
+                                        setStudyPlatform(prevState => ({
+                                            ...prevState,
+                                            actModule: prevState.actModule + 1,
+                                            isGettingModulo: true,
+                                            isLoading: true,
+                                        }));
+                                    }}
+                                >
+                                    {modulo === (studyPlatform.modulos.length - 1) ? (
+                                        <>
+                                            New Topic
+                                            <Award className="h-4 w-4 ml-2" />
+                                        </>
+                                    ) : (
+                                        <>
+                                            Next
+                                            <ArrowRight className="h-4 w-4 ml-2" />
+                                        </>
+                                    )}
+                                </Button>
                             </div>
-                        ))}
-                    </motion.div>
-                </AnimatePresence>
-            </div>
+                        </div>
+                    ))}
+                </motion.div>
+            </AnimatePresence>
+        </div>
     );
 };
 
