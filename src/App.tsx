@@ -77,7 +77,7 @@ function App() {
         return (
           <>
             <Header />
-            <main className="relative z-10 max-w-7xl mx-auto px-4 md:px-6 lg:px-8">
+            <main className="relative z-10">
               <HeroSection />
               <FeaturesGrid />
               <DemoSection />
