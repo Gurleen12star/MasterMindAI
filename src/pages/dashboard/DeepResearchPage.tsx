@@ -28,7 +28,13 @@ import {
   Brain,
   Target,
   Zap,
-  History,import { Search, Loader2, Copy, Download, ExternalLink, AlertCircle, CheckCircle, Clock, Globe, FileText, Sparkles, Brain, Target, Zap, History, Trash2, BoxSelect as SelectAll, MessageSquare, Expand } from 'lucide-react's: number; }
+  History,
+  Trash2
+} from 'lucide-react';
+
+// Interfaces remain the same
+interface ResearchSource { url: string; title: string; description: string; }
+interface ResearchResult { report: string; sources: ResearchSource[]; summaries: string[]; totalFindings: number; }
 interface ResearchProgress { step: string; message: string; depth: number; currentTopic?: string; sourcesFound?: number; }
 interface DeepResearchHistory { id: string; topic: string; report: string; sources: ResearchSource[]; summaries: string[]; total_findings: number; max_depth: number; created_at: string; }
 
