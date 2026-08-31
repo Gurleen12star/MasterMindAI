@@ -21,6 +21,9 @@ import PersonalizedLearningPage from './PersonalizedLearningPage';
 import TavusConversationPage from './TavusConversationPage';
 import AdminRoutes from '../admin/AdminRoutes';
 import PersonalizedLearningHistoryPage from './PersonalizedLearningHistoryPage';
+import MyMentorsPage from './MyMentorsPage';
+import FindMentorsPage from './FindMentorsPage';
+import BecomeMentorPage from './BecomeMentorPage';
 import MaintenanceBanner from '@/components/admin/MaintenanceBanner';
 
 function DashboardContent() {
@@ -95,6 +98,21 @@ function DashboardContent() {
             <Route path="convo-ai" element={
               <ProfileGuard>
                 <TavusConversationPage />
+              </ProfileGuard>
+            } />
+            <Route path="mentors" element={
+              <ProfileGuard>
+                <MyMentorsPage />
+              </ProfileGuard>
+            } />
+            <Route path="find-mentors" element={
+              <ProfileGuard>
+                <FindMentorsPage />
+              </ProfileGuard>
+            } />
+            <Route path="become-mentor" element={
+              <ProfileGuard>
+                <BecomeMentorPage />
               </ProfileGuard>
             } />
             <Route path="personalized-learning" element={
