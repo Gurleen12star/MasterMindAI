@@ -103,14 +103,12 @@ export default function Sidebar({ onNavigate }: SidebarProps) {
       
       <div className={`p-6 ${isCollapsed ? 'px-2' : ''}`}>
         <div className="flex items-center group relative">
-          <div className="relative flex items-center">
+          <div className="relative flex items-center flex-shrink-0">
             <Link href="/" className="block">
               <img 
                 src={logo}
                 alt="EchoVerse Logo" 
-                className={`object-contain transition-all duration-300 ${
-                  isCollapsed ? 'h-12 w-12' : 'h-16 w-16'
-                }`} 
+                className="object-contain transition-all duration-300 h-24 w-24" 
               />
             </Link>
           </div>
