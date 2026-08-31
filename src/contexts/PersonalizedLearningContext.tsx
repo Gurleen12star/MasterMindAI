@@ -75,7 +75,6 @@ const PersonalizedLearningContext = createContext<PersonalizedLearningContextTyp
 
 export const PersonalizedLearningProvider = ({ children }: { children: ReactNode }) => {
     const [introduction, setIntroduction] = useState<IntroductionType>(() => {
-        // Always start with a fresh state for now to ensure the page displays
         const defaultIntroduction = {
             show: true,
             isLoading: false,
@@ -95,9 +94,13 @@ export const PersonalizedLearningProvider = ({ children }: { children: ReactNode
             const localData = localStorage.getItem('personalized_learning_introduction');
             const parsed = localData ? JSON.parse(localData) : null;
             
-            // Validate the parsed data has required properties
+            // Load from localStorage but force show: true to ensure introduction displays
             if (parsed && typeof parsed.show === 'boolean' && typeof parsed.actPage === 'number') {
-                return parsed;
+                return {
+                    ...parsed,
+                    show: true, // Always show introduction on page load
+                    isLoading: false // Ensure we're not stuck in loading state
+                };
             }
         } catch (error) {
             console.warn('Error parsing localStorage data for introduction:', error);
@@ -124,9 +127,15 @@ export const PersonalizedLearningProvider = ({ children }: { children: ReactNode
             const localData = localStorage.getItem('personalized_learning_studyPlatform');
             const parsed = localData ? JSON.parse(localData) : null;
             
-            // Validate the parsed data has required properties
+            // Load from localStorage but force show: false to ensure clean start
             if (parsed && typeof parsed.show === 'boolean' && Array.isArray(parsed.modulos)) {
-                return parsed;
+                return {
+                    ...parsed,
+                    show: false, // Always hide study platform on page load
+                    isLoading: false,
+                    isGettingModels: false,
+                    isGettingModulo: false
+                };
             }
         } catch (error) {
             console.warn('Error parsing localStorage data for studyPlatform:', error);
