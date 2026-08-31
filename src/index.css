@@ -14,7 +14,7 @@
   --card-foreground: 240 10% 3.9%;
   --popover: 0 0% 100%;
   --popover-foreground: 0 0% 3.9%;
-  --primary: 252 87% 73%;
+  --primary: 252 87% 73%; /* Lilac / Purple */
   --primary-foreground: 0 0% 98%;
   --secondary: 240 4.8% 95.9%;
   --secondary-foreground: 0 0% 9%;
@@ -27,11 +27,11 @@
   --border: 240 5.9% 90%;
   --input: 0 0% 89.8%;
   --ring: 0 0% 3.9%;
-  --chart-1: 252 87% 73%;
-  --chart-2: 219 70% 55%;
-  --chart-3: 174 70% 40%;
-  --chart-4: 318 70% 65%;
-  --chart-5: 41 80% 65%;
+  --chart-1: 252 87% 73%; /* Lilac / Purple */
+  --chart-2: 145 63% 49%; /* Green */
+  --chart-3: 45 100% 51%; /* Yellow */
+  --chart-4: 210 100% 56%; /* Blue */
+  --chart-5: 25 84% 60%; /* Orange */
   --radius: 0.5rem;
 
   /* Custom Cursor */
@@ -52,6 +52,22 @@
   /* Hero Section Variables */
   --x: 0;
   --y: 0;
+
+  /* Mermaid Diagram Styles */
+  --mermaid-bg: #111827; /* Dark gray, almost black */
+  --mermaid-node-text-color: #F9FAFB; /* Light gray / Off-white */
+  --mermaid-edge-color: #9CA3AF; /* Lighter gray for edges */
+  
+  --mermaid-purple: hsl(var(--chart-1));
+  --mermaid-purple-darker: hsl(252 87% 55%);
+  --mermaid-green: hsl(var(--chart-2));
+  --mermaid-green-darker: hsl(145 63% 35%);
+  --mermaid-yellow: hsl(var(--chart-3));
+  --mermaid-yellow-darker: hsl(45 100% 40%);
+  --mermaid-blue: hsl(var(--chart-4));
+  --mermaid-blue-darker: hsl(210 100% 40%);
+  --mermaid-orange: hsl(var(--chart-5));
+  --mermaid-orange-darker: hsl(25 84% 45%);
 }
 
 /* Custom Cursor Styles */
@@ -198,70 +214,66 @@ div[style*="z-index: 999999"] {
   animation: float-particle 10s infinite alternate;
 }
 
-.hero-assets::after {
-  animation-delay: -5s;
-  animation-duration: 15s;
-  opacity: 0.3;
+.hero-assets img.background {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 140%;
+  height: 140%;
+  object-fit: cover;
+  transform: translate(-50%, -50%) scale(1.2);
+  opacity: 0.4;
+  z-index: -1;
+  transition: transform 0.5s ease-out, opacity 0.5s ease-out;
 }
 
 .hero-assets img.foreground {
   position: absolute;
-  top: 0;
+  bottom: 0;
   left: 50%;
-  translate: -50% -9%;
-  height: 120%;
-  width: auto;
-  transform: translate(calc(var(--x) * 40px), calc(var(--y) * 10px));
+  transform: translateX(-50%) translateY(10%) scale(0.8);
+  width: 80%;
+  max-width: 600px;
   object-fit: contain;
-  user-select: none;
-  pointer-events: none;
-  z-index: 2;
-  filter: drop-shadow(0 20px 40px rgba(0, 0, 0, 0.2));
-  transition: transform 0.8s cubic-bezier(0.33, 1, 0.68, 1);
+  transition: transform 0.5s ease-out, opacity 0.5s ease-out;
+  opacity: 0.9;
 }
 
 .hero-title {
   position: absolute;
+  top: 20%;
   left: 50%;
-  top: 8%;
-  margin: 0;
-  font-size: clamp(5rem, 15vw, 12rem);
-  text-transform: uppercase;
-  font-family: "Bebas Neue", sans-serif;
-  color: hsl(var(--primary));
-  transform: translate(calc(-50% + var(--x) * -30px), calc(var(--y) * -20px));
-  transition: transform 0.8s cubic-bezier(0.33, 1, 0.68, 1);
-  z-index: 4;
-  mix-blend-mode: multiply;
-  opacity: 0.9;
+  transform: translateX(-50%);
+  font-size: clamp(2rem, 5vw, 4rem);
+  font-weight: 700;
+  color: hsl(var(--card-foreground));
+  text-align: center;
+  z-index: 1;
+  width: 80%;
 }
 
 .hero-content {
-  min-height: 32%;
   position: absolute;
-  bottom: 0;
-  width: 100%;
-  color: hsl(var(--foreground));
-  display: grid;
-  gap: 0.2rem;
-  place-items: center;
-  align-content: center;
-  padding-bottom: 0.5rem;
-  z-index: 3;
+  bottom: 15%;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 1rem;
+  z-index: 1;
 }
 
 @media (max-width: 768px) {
   .hero-card {
+    min-height: 400px;
     border-radius: 2em;
-    aspect-ratio: 2 / 1.2;
   }
-  
   .hero-assets {
     border-radius: 2em;
   }
-  
   .hero-content {
-    min-height: 25%;
+    flex-direction: column;
+    align-items: center;
+    bottom: 10%;
   }
 }
 
@@ -271,7 +283,7 @@ div[style*="z-index: 999999"] {
     transform: translateY(0px);
   }
   50% {
-    transform: translateY(-5px);
+    transform: translateY(-10px);
   }
   100% {
     transform: translateY(0px);
@@ -281,42 +293,61 @@ div[style*="z-index: 999999"] {
 .dark {
   --nav-bg: rgba(0, 0, 0, 0.8);
   --nav-border: rgba(255, 255, 255, 0.1);
-  --background: 240 10% 3.9%;
+  --background: 0 0% 3.9%;
   --foreground: 0 0% 98%;
   --card: 240 10% 3.9%;
   --card-foreground: 0 0% 98%;
-  --popover: 240 10% 3.9%;
+  --popover: 0 0% 3.9%;
   --popover-foreground: 0 0% 98%;
   --primary: 252 87% 73%;
-  --primary-foreground: 0 0% 9%;
+  --primary-foreground: 0 0% 98%;
   --secondary: 240 3.7% 15.9%;
   --secondary-foreground: 0 0% 98%;
-  --muted: 240 3.7% 15.9%;
-  --muted-foreground: 240 5% 64.9%;
-  --accent: 240 3.7% 15.9%;
+  --muted: 0 0% 14.9%;
+  --muted-foreground: 0 0% 63.9%;
+  --accent: 0 0% 14.9%;
   --accent-foreground: 0 0% 98%;
   --destructive: 0 62.8% 30.6%;
   --destructive-foreground: 0 0% 98%;
-  --border: 240 3.7% 15.9%;
-  --input: 240 3.7% 15.9%;
-  --ring: 240 4.9% 83.9%;
-  --chart-1: 280 65% 65%;
+  --border: 0 0% 14.9%;
+  --input: 0 0% 14.9%;
+  --ring: 0 0% 83.1%;
+  --chart-1: 252 87% 73%;
   --chart-2: 219 70% 55%;
   --chart-3: 174 70% 40%;
   --chart-4: 318 70% 65%;
   --chart-5: 41 80% 65%;
+
+  /* Custom Cursor */
+  --cursor-color: hsl(var(--foreground));
+
+  /* Mermaid Diagram Styles for Dark Mode */
+  --mermaid-bg: #111827;
+  --mermaid-node-text-color: #F9FAFB;
+  --mermaid-edge-color: #6B7280; /* Slightly darker gray for edges in dark mode */
+
+  --mermaid-purple: hsl(var(--chart-1));
+  --mermaid-purple-darker: hsl(252 87% 55%);
+  --mermaid-green: hsl(var(--chart-2));
+  --mermaid-green-darker: hsl(145 63% 35%);
+  --mermaid-yellow: hsl(var(--chart-3));
+  --mermaid-yellow-darker: hsl(45 100% 40%);
+  --mermaid-blue: hsl(var(--chart-4));
+  --mermaid-blue-darker: hsl(210 100% 40%);
+  --mermaid-orange: hsl(var(--chart-5));
+  --mermaid-orange-darker: hsl(25 84% 45%);
 }
 
 .bg-grid-white {
-  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32' width='32' height='32' fill='none' stroke='rgb(255 255 255 / 0.02)'%3e%3cpath d='M0 .5H31.5V32'/%3e%3c/svg%3e");
+  background-image: linear-gradient(to right, rgba(255,255,255,0.05) 1px, transparent 1px), linear-gradient(to bottom, rgba(255,255,255,0.05) 1px, transparent 1px);
+  background-size: 20px 20px;
 }
 
 body {
+  background-color: hsl(var(--background));
+  color: hsl(var(--foreground));
   margin: 0;
-  min-width: 320px;
-  min-height: 100vh;
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
+  padding: 0;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
@@ -481,4 +512,112 @@ body {
 /* Smooth scrolling */
 html {
   scroll-behavior: smooth;
+}
+
+/* Mermaid Diagram Custom Styles */
+.mermaid-diagram-wrapper {
+  background-color: var(--mermaid-bg);
+  padding: 1rem;
+  border-radius: var(--radius);
+  overflow: auto; /* Add scroll for large diagrams */
+}
+
+.mermaid-render-area svg {
+  display: block; /* Helps with sizing */
+  margin: auto; /* Center the diagram if it's smaller than container */
+  max-width: 100%; /* Ensure responsiveness */
+  background-color: transparent !important; /* Override potential inline styles from mermaid */
+}
+
+/* Default Node Styles (applied if no specific class matches) */
+.mermaid-render-area .node > rect,
+.mermaid-render-area .node > circle,
+.mermaid-render-area .node > ellipse,
+.mermaid-render-area .node > polygon {
+  fill: #2d3748; /* Dark gray fill */
+  stroke: #4a5568; /* Slightly lighter gray border */
+  stroke-width: 2px;
+  rx: 8px; /* Rounded corners */
+  ry: 8px; /* Rounded corners */
+}
+
+.mermaid-render-area .node .label,
+.mermaid-render-area .node tspan {
+  fill: var(--mermaid-node-text-color) !important; /* Ensure text color is applied */
+  font-family: inherit;
+  font-size: 14px;
+}
+
+/* Edge Path Styles */
+.mermaid-render-area .edgePath path.path {
+  stroke: var(--mermaid-edge-color);
+  stroke-width: 2px;
+}
+.mermaid-render-area .edgePath .arrowhead {
+  fill: var(--mermaid-edge-color);
+}
+
+/* Edge Label Styles (if any) */
+.mermaid-render-area .edgeLabel tspan {
+  fill: var(--mermaid-node-text-color);
+  font-size: 12px;
+}
+
+/* Specific Class Styles for Nodes */
+/* Purple Node */
+.mermaid-render-area .classPurple > rect,
+.mermaid-render-area .classPurple > circle,
+.mermaid-render-area .classPurple > ellipse,
+.mermaid-render-area .classPurple > polygon {
+  fill: var(--mermaid-purple-darker);
+  stroke: var(--mermaid-purple);
+}
+.mermaid-render-area .classPurple .label { color: var(--mermaid-node-text-color); }
+
+/* Green Node */
+.mermaid-render-area .classGreen > rect,
+.mermaid-render-area .classGreen > circle,
+.mermaid-render-area .classGreen > ellipse,
+.mermaid-render-area .classGreen > polygon {
+  fill: var(--mermaid-green-darker);
+  stroke: var(--mermaid-green);
+}
+.mermaid-render-area .classGreen .label { color: var(--mermaid-node-text-color); }
+
+/* Yellow Node */
+.mermaid-render-area .classYellow > rect,
+.mermaid-render-area .classYellow > circle,
+.mermaid-render-area .classYellow > ellipse,
+.mermaid-render-area .classYellow > polygon {
+  fill: var(--mermaid-yellow-darker);
+  stroke: var(--mermaid-yellow);
+}
+.mermaid-render-area .classYellow .label { color: var(--mermaid-node-text-color); }
+
+/* Blue Node */
+.mermaid-render-area .classBlue > rect,
+.mermaid-render-area .classBlue > circle,
+.mermaid-render-area .classBlue > ellipse,
+.mermaid-render-area .classBlue > polygon {
+  fill: var(--mermaid-blue-darker);
+  stroke: var(--mermaid-blue);
+}
+.mermaid-render-area .classBlue .label { color: var(--mermaid-node-text-color); }
+
+/* Orange Node */
+.mermaid-render-area .classOrange > rect,
+.mermaid-render-area .classOrange > circle,
+.mermaid-render-area .classOrange > ellipse,
+.mermaid-render-area .classOrange > polygon {
+  fill: var(--mermaid-orange-darker);
+  stroke: var(--mermaid-orange);
+}
+.mermaid-render-area .classOrange .label { color: var(--mermaid-node-text-color); }
+
+
+/* If you have a specific container for the roadmap, ensure it has a dark background */
+.roadmap-display-container { /* Assuming you might wrap the <MermaidDiagram> component */
+  background-color: var(--mermaid-bg); /* Or your main page dark background */
+  padding: 1rem;
+  border-radius: var(--radius);
 }
