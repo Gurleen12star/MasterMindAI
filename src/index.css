@@ -74,14 +74,14 @@
   position: absolute;
   top: 0;
   left: 50%;
-  translate: -50% -25%;
+  translate: -50% -10%;
   height: 180%;
   width: auto;
   transform: translate(calc(var(--x) * 40px), calc(var(--y) * 10px));
   object-fit: contain;
   user-select: none;
   pointer-events: none;
-  z-index: 60;
+  z-index: 2;
   filter: drop-shadow(0 20px 40px rgba(0, 0, 0, 0.2));
   transition: transform 0.8s cubic-bezier(0.33, 1, 0.68, 1);
 }
@@ -95,9 +95,9 @@
   text-transform: uppercase;
   font-family: "Bebas Neue", sans-serif;
   color: white;
-  z-index: 55;
   transform: translate(calc(-50% + var(--x) * -30px), calc(var(--y) * -20px));
   transition: transform 0.8s cubic-bezier(0.33, 1, 0.68, 1);
+  z-index: 4;
 }
 
 .hero-content {
