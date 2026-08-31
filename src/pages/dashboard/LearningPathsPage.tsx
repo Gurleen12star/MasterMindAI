@@ -43,6 +43,10 @@ export default function LearningPathsPage() {
         generateLearningPathMermaid(topic, level, additionalInfo)
       ]);
       
+      if (!path || !diagram) {
+        throw new Error('Failed to generate learning path content');
+      }
+      
       setGeneratedPath(path);
       setMermaidDiagram(diagram);
       
@@ -52,9 +56,13 @@ export default function LearningPathsPage() {
       });
     } catch (error) {
       console.error('Error:', error);
+      const errorMessage = error instanceof Error && error.message.includes('overloaded')
+        ? 'The AI model is currently overloaded. Please wait a moment and try again.'
+        : 'Failed to generate learning path. Please try again.';
+      
       toast({
         title: 'Generation Failed',
-        description: 'Failed to generate learning path. Please try again.',
+        description: errorMessage,
         variant: 'destructive',
       });
     } finally {
