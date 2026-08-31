@@ -25,8 +25,10 @@ function App() {
   useEffect(() => {
     document.title = 'EchoVerse - AI-Powered Learning Hub';
     
-    // Enable custom cursor by default
-    document.documentElement.classList.add('custom-cursor-enabled');
+    // Enable custom cursor after preloader disappears
+    setTimeout(() => {
+      document.documentElement.classList.add('custom-cursor-enabled');
+    }, 500); // Wait for preloader to fully disappear (100ms delay + 300ms fade + 100ms buffer)
     
     // Add keyboard shortcut (Escape) to toggle custom cursor for accessibility
     const handleKeyDown = (e: KeyboardEvent) => {
