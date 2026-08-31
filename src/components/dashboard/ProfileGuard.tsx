@@ -35,7 +35,7 @@ export default function ProfileGuard({ children }: ProfileGuardProps) {
   if (loading || isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <Card className="p-8 text-center max-w-md">
+        <Card className="p-8 text-center max-w-md bg-[#2A2B32] border-0 rounded-xl">
           <Loader2 className="h-12 w-12 animate-spin mx-auto text-primary mb-4" />
           <h2 className="text-xl font-semibold mb-2">Loading your profile...</h2>
           <p className="text-muted-foreground">Please wait while we set things up</p>
@@ -48,7 +48,7 @@ export default function ProfileGuard({ children }: ProfileGuardProps) {
   if (showSetupPrompt && needsProfileSetup) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-background via-muted/30 to-background">
-        <Card className="p-8 text-center max-w-md">
+        <Card className="p-8 text-center max-w-md bg-[#2A2B32] border-0 rounded-xl">
           <div className="flex items-center justify-center w-16 h-16 rounded-full bg-primary/10 mx-auto mb-4">
             <User className="h-8 w-8 text-primary" />
           </div>
@@ -68,7 +68,7 @@ export default function ProfileGuard({ children }: ProfileGuardProps) {
             
             <Button 
               onClick={() => navigate('/dashboard/profile-setup')}
-              className="w-full"
+              className="w-full bg-white text-black hover:bg-gray-200 rounded-lg"
             >
               Set Up Profile Now
             </Button>

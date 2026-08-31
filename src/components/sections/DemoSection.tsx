@@ -37,7 +37,7 @@ export default function DemoSection() {
                 <h3 className="text-xl font-semibold text-foreground">Input Content</h3>
               </div>
               <textarea
-                className="h-48 w-full resize-none rounded-xl border-2 border-primary/20 bg-background/60 backdrop-blur-sm p-4 text-base focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary/40 transition-all duration-300 placeholder:text-muted-foreground/60"
+                className="h-48 w-full resize-none rounded-xl border-2 border-primary/20 bg-[#1E1E1E] backdrop-blur-sm p-4 text-base focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary/40 transition-all duration-300 placeholder:text-muted-foreground/60"
                 placeholder="Paste an article, upload a document, or simply type a topic..."
                 value={content}
                 onChange={(e) => setContent(e.target.value)}

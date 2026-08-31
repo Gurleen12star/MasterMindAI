@@ -19,7 +19,7 @@ const CustomRadio = (props: any) => {
         <div className="flex flex-col items-center justify-center group">
             <Label
                 htmlFor={`radio-${value}`}
-                className="flex flex-col items-center justify-center p-6 cursor-pointer rounded-xl border-2 border-border/50 hover:border-primary/60 transition-all duration-200 group-has-[[data-state=checked]]:bg-primary/20 group-has-[[data-state=checked]]:border-primary/80 group-has-[[data-state=checked]]:shadow-lg group-has-[[data-state=checked]]:shadow-primary/20 hover:transform hover:scale-105 transition-transform"
+                className="flex flex-col items-center justify-center p-6 cursor-pointer rounded-xl border-0 bg-[#2A2B32] hover:bg-white/10 transition-all duration-200 group-has-[[data-state=checked]]:bg-primary/20 group-has-[[data-state=checked]]:shadow-lg group-has-[[data-state=checked]]:shadow-primary/20 hover:transform hover:scale-105 transition-transform"
             >
                 <div className="w-16 h-16 rounded-full bg-gradient-to-br from-primary/30 to-primary/10 flex items-center justify-center mb-2 shadow-inner-modern">
                     <Icon className="h-8 w-8 text-primary" />
@@ -183,7 +183,7 @@ const Introduction = () => {
                                 >
                                     <Input
                                         placeholder="Enter your name"
-                                        className="max-w-[300px] rounded-xl shadow-lg border-primary/20 focus:border-primary/50 focus:ring-2 focus:ring-primary/20"
+                                        className="max-w-[300px] rounded-xl shadow-lg bg-[#2A2B32] border-0 focus:ring-2 focus:ring-primary/20"
                                         value={userName}
                                         onChange={(e) => {
                                             if (e.target.value.length > 2) {
@@ -550,7 +550,7 @@ const Introduction = () => {
                             >
                                 <Button
                                     variant="outline"
-                                    className={`w-[143px] rounded-xl shadow-md ${page === 1 ? "invisible select-none" : "visible"}`}
+                                    className={`w-[143px] rounded-xl shadow-md ${page === 1 ? "invisible select-none" : "visible"} bg-white/10 hover:bg-white/20 text-white border-0`}
                                     onClick={() => {
                                         setPage(page - 1);
                                         setIntroduction(prevState => ({
@@ -581,7 +581,7 @@ const Introduction = () => {
                             >
                                 <Button
                                     variant="default"
-                                    className="min-w-[143px] rounded-xl shadow-lg hover:shadow-primary/25 hover:scale-105 transition-transform duration-200"
+                                    className="min-w-[143px] rounded-xl shadow-lg hover:shadow-primary/25 hover:scale-105 transition-transform duration-200 bg-white text-black hover:bg-gray-200"
                                     disabled={!introduction.pages[`page${page}`].button}
                                     onClick={() => {
                                         if (page === 3) {

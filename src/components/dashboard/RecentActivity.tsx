@@ -41,7 +41,7 @@ const activities = [
 
 export default function RecentActivity() {
   return (
-    <Card className="backdrop-blur-sm bg-card/50 border-border/40">
+    <Card className="backdrop-blur-sm bg-[#2A2B32] border-0 rounded-xl">
       <CardHeader className="flex flex-row items-center justify-between">
         <div>
         <CardTitle>Recent Activity</CardTitle>
@@ -57,7 +57,7 @@ export default function RecentActivity() {
             {activities.map((activity, index) => (
               <div
                 key={index}
-                className="group flex items-start gap-4 p-4 rounded-lg hover:bg-accent/50 transition-colors"
+                className="group flex items-start gap-4 p-4 rounded-lg hover:bg-white/5 transition-colors"
               >
                 <div className="relative inline-flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10 before:absolute before:inset-0 before:rounded-lg before:bg-primary/5 before:animate-pulse">
                   <activity.icon className="h-5 w-5 text-primary transition-transform duration-300 group-hover:scale-110" />

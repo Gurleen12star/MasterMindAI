@@ -38,7 +38,7 @@ export default function OverviewStats() {
       {stats.map((stat) => (
         <div
           key={stat.label}
-          className="p-6 bg-card/50 backdrop-blur-sm rounded-xl border border-border/40 hover:border-primary/20 transition-all duration-300 group"
+          className="p-6 bg-[#2A2B32] backdrop-blur-sm rounded-xl transition-all duration-300 group"
         >
           <div className="flex items-center gap-4">
             <div className="relative inline-flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10 before:absolute before:inset-0 before:rounded-xl before:bg-primary/5 before:animate-pulse">

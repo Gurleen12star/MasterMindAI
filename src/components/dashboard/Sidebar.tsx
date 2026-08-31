@@ -112,8 +112,8 @@ export default function Sidebar({ className }: SidebarProps) {
 
 
   return (
-    <div className={`${isCollapsed ? 'w-16' : 'w-64'} h-screen bg-[#111111] text-white flex flex-col border-r border-white/10 transition-all duration-300 ease-in-out ${className}`}>
-      <div className={`${isCollapsed ? 'p-3' : 'p-5'} border-b border-white/10 flex items-center ${isCollapsed ? 'justify-center' : 'justify-between'} relative`}>
+    <div className={`${isCollapsed ? 'w-16' : 'w-64'} h-screen bg-[#1E1E1E] text-white flex flex-col transition-all duration-300 ease-in-out ${className}`}>
+      <div className={`${isCollapsed ? 'p-3' : 'p-5'} flex items-center ${isCollapsed ? 'justify-center' : 'justify-between'} relative`}>
         {/* Brand / Logo */}
         <Link to="/dashboard" className={`${isCollapsed ? 'flex items-center justify-center' : 'flex items-center gap-3'}`}>
           <EchoVerseLogo className="h-8 w-8 text-primary" />
@@ -125,7 +125,7 @@ export default function Sidebar({ className }: SidebarProps) {
           variant="ghost"
           size="icon"
           onClick={() => setIsCollapsed(!isCollapsed)}
-          className={`h-8 w-8 text-gray-400 hover:text-white transition-colors duration-200 ${isCollapsed ? 'absolute right-2 top-1/2 -translate-y-1/2' : 'ml-auto'}`}
+          className={`h-8 w-8 text-gray-400 hover:text-white transition-colors duration-200 rounded-lg ${isCollapsed ? 'absolute right-2 top-1/2 -translate-y-1/2' : 'ml-auto'}`}
           aria-label={isCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
         >
           {isCollapsed ? <ChevronRight className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />}
@@ -173,7 +173,7 @@ export default function Sidebar({ className }: SidebarProps) {
       </div>
       )}
 
-      <div className="p-3 border-t border-white/10">
+      <div className="p-3">
         <nav className="space-y-1">
            <NavLink to="/dashboard/profile" icon={User} label="Profile Settings" isActive={location.pathname === '/dashboard/profile'} isCollapsed={isCollapsed} />
            <button onClick={signOut} className="w-full">

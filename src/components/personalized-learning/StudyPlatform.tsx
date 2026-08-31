@@ -252,7 +252,7 @@ const StudyPlatform = () => {
                         ) : (
                             <div className="w-full">
                                 {/* Module Content */}
-                                <Card className="mb-6">
+                                <Card className="mb-6 bg-[#2A2B32] border-0 rounded-xl">
                                     <ScrollArea className="h-[calc(100vh-250px)]">
                                         <CardContent className="p-6 studyPlatform-content">
                                         {studyPlatform.modulos[studyPlatform.actModule] && 
@@ -288,7 +288,7 @@ const StudyPlatform = () => {
                                 <div className="flex items-center justify-between gap-4">
                                     <Button
                                         variant="outline"
-                                        className={`${modulo === 0 ? "invisible" : ""}`}
+                                        className={`${modulo === 0 ? "invisible" : ""} bg-white/10 hover:bg-white/20 text-white border-0 rounded-lg`}
                                         onClick={() => {
                                             setStudyPlatform(prevState => ({
                                                 ...prevState,
@@ -305,6 +305,7 @@ const StudyPlatform = () => {
                                     <Button
                                         variant="default"
                                         disabled={!timeModule}
+                                        className="bg-white text-black hover:bg-gray-200 rounded-lg"
                                         onClick={() => {
                                             if (modulo === (studyPlatform.modulos.length - 1)) {
                                                 resetContext(setIntroduction, setStudyPlatform);

@@ -46,14 +46,14 @@ export default function LoginPage() {
       </div>
 
       {/* Right side: Gradient panel */}
-      <div className="hidden md:flex md:w-1/2 bg-gradient-to-br from-[#1E1E3F] via-[#242A4E] to-[#4C3A5A] items-center justify-center p-8 rounded-l-2xl">
+      <div className="hidden md:flex md:w-1/2 bg-[#1E1E1E] items-center justify-center p-8 rounded-l-2xl">
         <div className="w-full max-w-md">
           <div className="relative">
             <Input
               placeholder="Ask EchoVerse to build your..."
-              className="w-full h-14 bg-white/10 backdrop-blur-sm text-white placeholder:text-gray-300 border-white/20 rounded-full px-6 pr-16"
+              className="w-full h-14 bg-[#1E1E1E] backdrop-blur-sm text-foreground placeholder:text-muted-foreground border-border/20 rounded-full px-6 pr-16"
             />
-            <Button size="icon" className="absolute right-2 top-1/2 -translate-y-1/2 h-10 w-10 rounded-full bg-white text-black hover:bg-gray-200">
+            <Button size="icon" className="absolute right-2 top-1/2 -translate-y-1/2 h-10 w-10 rounded-full bg-primary text-primary-foreground hover:bg-primary/90">
               <ArrowUp className="h-5 w-5" />
             </Button>
           </div>

@@ -29,9 +29,9 @@ export default function LearningModulesSidebar({ className }: LearningModulesSid
   }
 
   return (
-    <div className={`w-64 h-full bg-[#1a1a1a] border-r border-white/10 flex flex-col ${className}`}>
+    <div className={`w-64 h-full bg-[#1E1E1E] flex flex-col ${className}`}>
       {/* Header */}
-      <div className="p-4 border-b border-white/10">
+      <div className="p-4">
         <h3 className="text-sm font-semibold tracking-wider text-gray-300 uppercase">
           Learning Modules
         </h3>
@@ -48,7 +48,7 @@ export default function LearningModulesSidebar({ className }: LearningModulesSid
               key={index}
               className={`flex items-center text-sm font-medium rounded-md transition-all duration-200 ease-in-out relative group w-full px-4 py-3 ${
                 studyPlatform.actModule === index
-                  ? 'text-white bg-white/10 border border-white/20'
+                  ? 'text-white bg-white/10'
                   : 'text-gray-400 hover:text-white hover:bg-white/5'
               } ${!modulo.isOpen ? 'opacity-60 cursor-not-allowed' : 'cursor-pointer'}`}
               disabled={!modulo.isOpen}
@@ -88,7 +88,7 @@ export default function LearningModulesSidebar({ className }: LearningModulesSid
       </div>
       
       {/* Footer - Change Topic Button */}
-      <div className="p-3 border-t border-white/10">
+      <div className="p-3">
         <Link to="/dashboard/personalized-learning-history">
           <Button
             variant="ghost"
