@@ -1,5 +1,4 @@
 import { useEffect } from 'react';
-import { Sparkles } from 'lucide-react';
 
 export default function HeroSection() {
   useEffect(() => {
@@ -33,28 +32,18 @@ export default function HeroSection() {
     <section className="relative overflow-hidden pt-24 md:pt-32 bg-gradient-to-b from-background via-background/95 to-background/90">
       <div className="container px-4 max-w-[1200px] mx-auto">
         <article className="hero-card">
-          <div className="relative flex items-center justify-center min-h-[500px] rounded-[40px] bg-gradient-to-b from-background/50 via-background to-background/90 overflow-hidden">
-            <div className="absolute inset-0 bg-grid-white/5 bg-grid [mask-image:radial-gradient(white,transparent_85%)]" />
-            
-            <div className="absolute top-8 left-1/2 -translate-x-1/2 flex items-center gap-2">
-              <Sparkles className="h-6 w-6 text-primary animate-pulse" />
-              <span className="text-xl font-bold bg-gradient-to-r from-indigo-500 to-purple-500 bg-clip-text text-transparent">
-                EchoVerse
-              </span>
-            </div>
-            
-            <div className="relative">
-              <svg viewBox="0 0 300 180" className="w-[600px] fill-white/5 stroke-white/20 transition-transform duration-500">
-                <defs>
-                  <path id="curve" d="M 50 100 A 100 100 0 0 1 250 100" fill="none" />
-                </defs>
-                <text className="text-[36px] uppercase">
-                  <textPath href="#curve" startOffset="50%" textAnchor="middle">
-                    Img
-                  </textPath>
-                </text>
-              </svg>
-            </div>
+          <div className="hero-assets">
+            <h3 className="hero-title">ECHOVERSE</h3>
+            <img 
+              src="robot.png"
+              alt="Floating Icon"
+              className="foreground transition-transform duration-300"
+              style={{ width: "800px", height: "675px" }}
+            />
+          </div>
+          <div className="hero-content">
+            <p className="text-3xl md:text-4xl lg:text-5xl font-bold">AI-Powered Learning Hub</p>
+            <p className="text-lg md:text-xl lg:text-2xl opacity-100">Transform Your Learning Journey</p>
           </div>
         </article>
       </div>
