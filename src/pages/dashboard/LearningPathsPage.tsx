@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
-import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -11,12 +11,24 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { generateLearningPath, generateLearningPathMermaid } from '@/lib/gemini';
 import { MermaidDiagram } from '@/components/ui/mermaid-diagram';
 import { useToast } from '@/hooks/use-toast';
-import { Map, Loader2, FileText, BarChart as FlowChart, Maximize2 } from 'lucide-react';
+import { Map, Loader2, FileText, BarChart as FlowChart, Maximize2, History, Clock } from 'lucide-react';
+import { useUser } from '@clerk/clerk-react';
+import { supabase } from '@/lib/supabase';
 
 type DifficultyLevel = 'beginner' | 'intermediate' | 'advanced';
 
+interface LearningPath {
+  id: string;
+  topic: string;
+  mermaid_code: string;
+  markdown_content: string;
+  level: DifficultyLevel;
+  created_at: string;
+}
+
 export default function LearningPathsPage() {
   const { toast } = useToast();
+  const { user } = useUser();
   const [topic, setTopic] = useState('');
   const [level, setLevel] = useState<DifficultyLevel>('intermediate');
   const [additionalInfo, setAdditionalInfo] = useState('');
@@ -24,6 +36,42 @@ export default function LearningPathsPage() {
   const [generatedPath, setGeneratedPath] = useState<string | null>(null);
   const [mermaidDiagram, setMermaidDiagram] = useState<string | null>(null);
   const [isFullscreen, setIsFullscreen] = useState(false);
+  const [showHistoryDialog, setShowHistoryDialog] = useState(false);
+  const [learningPathHistory, setLearningPathHistory] = useState<LearningPath[]>([]);
+  const [isLoadingHistory, setIsLoadingHistory] = useState(false);
+  const [selectedHistoryItem, setSelectedHistoryItem] = useState<LearningPath | null>(null);
+
+  const fetchLearningPathHistory = async () => {
+    if (!user?.id) return;
+    
+    setIsLoadingHistory(true);
+    try {
+      const { data, error } = await supabase
+        .from('learning_paths')
+        .select('*')
+        .eq('user_id', user.id)
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+      setLearningPathHistory(data || []);
+    } catch (error) {
+      console.error('Error fetching history:', error);
+      toast({
+        title: 'Error',
+        description: 'Failed to load learning path history',
+        variant: 'destructive',
+      });
+    } finally {
+      setIsLoadingHistory(false);
+    }
+  };
+
+  const loadHistoryItem = (item: LearningPath) => {
+    setSelectedHistoryItem(item);
+    setGeneratedPath(item.markdown_content);
+    setMermaidDiagram(item.mermaid_code);
+    setShowHistoryDialog(false);
+  };
 
   useEffect(() => {
     const body = document.body;
@@ -61,6 +109,30 @@ export default function LearningPathsPage() {
       
       setGeneratedPath(path);
       setMermaidDiagram(diagram);
+
+      // Save to database if user is authenticated
+      if (user?.id) {
+        try {
+          const { error } = await supabase
+            .from('learning_paths')
+            .insert([{
+              topic,
+              mermaid_code: diagram,
+              markdown_content: path,
+              level,
+              user_id: user.id
+            }]);
+
+          if (error) throw error;
+        } catch (error) {
+          console.error('Error saving to database:', error);
+          toast({
+            title: 'Warning',
+            description: 'Generated successfully but failed to save to history',
+            variant: 'destructive',
+          });
+        }
+      }
       
       toast({
         title: 'Learning Path Generated',
@@ -93,6 +165,20 @@ export default function LearningPathsPage() {
           <p className="text-muted-foreground">
             Generate personalized learning paths tailored to your goals
           </p>
+          {user && (
+            <Button
+              variant="outline"
+              size="sm"
+              className="mt-2"
+              onClick={() => {
+                fetchLearningPathHistory();
+                setShowHistoryDialog(true);
+              }}
+            >
+              <History className="mr-2 h-4 w-4" />
+              View History
+            </Button>
+          )}
         </div>
       </div>
 
@@ -241,6 +327,51 @@ export default function LearningPathsPage() {
           </Tabs>
         </Card>
       </div>
+      
+      <Dialog open={showHistoryDialog} onOpenChange={setShowHistoryDialog}>
+        <DialogContent className="max-w-2xl">
+          <DialogTitle>Learning Path History</DialogTitle>
+          <DialogDescription>
+            Your previously generated learning paths
+          </DialogDescription>
+          
+          <ScrollArea className="h-[400px] pr-4">
+            {isLoadingHistory ? (
+              <div className="flex items-center justify-center py-8">
+                <Loader2 className="h-8 w-8 animate-spin" />
+              </div>
+            ) : learningPathHistory.length > 0 ? (
+              <div className="space-y-4">
+                {learningPathHistory.map((item) => (
+                  <Card
+                    key={item.id}
+                    className="p-4 cursor-pointer hover:bg-accent transition-colors"
+                    onClick={() => loadHistoryItem(item)}
+                  >
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <h4 className="font-medium">{item.topic}</h4>
+                        <p className="text-sm text-muted-foreground">
+                          Level: {item.level}
+                        </p>
+                      </div>
+                      <div className="flex items-center text-sm text-muted-foreground">
+                        <Clock className="mr-1 h-4 w-4" />
+                        {new Date(item.created_at).toLocaleDateString()}
+                      </div>
+                    </div>
+                  </Card>
+                ))}
+              </div>
+            ) : (
+              <div className="text-center py-8 text-muted-foreground">
+                <History className="mx-auto h-12 w-12 opacity-50 mb-2" />
+                <p>No learning paths in history</p>
+              </div>
+            )}
+          </ScrollArea>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
