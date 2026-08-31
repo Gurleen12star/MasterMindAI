@@ -10,7 +10,11 @@ import {
 
 export default function FeaturesGrid() {
   return (
-    <section id="features" className="relative -mt-32 md:-mt-48 py-24 md:py-32">
+    <section id="features" className="relative -mt-32 md:-mt-48 py-24 md:py-32 overflow-hidden">
+      {/* Blurred oval overlay effects */}
+      <div className="absolute -top-32 -right-32 w-96 h-96 rounded-full bg-gradient-to-br from-primary/8 via-primary/4 to-transparent blur-3xl opacity-60" />
+      <div className="absolute -bottom-32 -left-32 w-80 h-80 rounded-full bg-gradient-to-br from-blue-500/6 via-purple-500/4 to-transparent blur-3xl opacity-50" />
+      
       <div className="container relative z-10 px-4 max-w-[1200px] mx-auto">
         <div className="relative mx-auto max-w-5xl text-center mb-16">
           <h2 className="text-4xl font-bold tracking-tight md:text-5xl bg-clip-text text-transparent bg-gradient-to-r from-primary to-primary/70">
@@ -22,7 +26,7 @@ export default function FeaturesGrid() {
         </div>
         
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:[grid-template-areas:'a_b_b'_'a_c_d'_'e_f_f'] md:auto-rows-[28rem] relative">
-          <BentoBox gradient="purple" className="flex flex-col md:[grid-area:a] row-span-2 relative overflow-hidden group backdrop-blur-xl bg-background/30 border-2 border-primary/20 hover:border-primary/40 hover:bg-background/40 transition-all duration-500 bento-modern rounded-3xl">
+          <BentoBox gradient="purple" className="flex flex-col md:[grid-area:a] row-span-2 relative overflow-hidden group backdrop-blur-xl bg-background/30 border-2 border-primary/20 hover:border-primary/40 hover:bg-background/40 transition-all duration-500 bento-modern shadow-inner-modern rounded-3xl">
             <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-primary/5 to-transparent opacity-60 group-hover:opacity-80 transition-opacity duration-500" />
             <img
               src="https://images.pexels.com/photos/8386440/pexels-photo-8386440.jpeg"
@@ -41,7 +45,7 @@ export default function FeaturesGrid() {
             </div>
           </BentoBox>
           
-          <BentoBox gradient="blue" className="flex flex-col md:[grid-area:b] md:col-span-2 relative overflow-hidden group backdrop-blur-xl bg-background/30 border-2 border-primary/20 hover:border-primary/40 hover:bg-background/40 transition-all duration-500 bento-modern rounded-3xl">
+          <BentoBox gradient="blue" className="flex flex-col md:[grid-area:b] md:col-span-2 relative overflow-hidden group backdrop-blur-xl bg-background/30 border-2 border-primary/20 hover:border-primary/40 hover:bg-background/40 transition-all duration-500 bento-modern shadow-inner-modern rounded-3xl">
             <div className="absolute inset-0 bg-gradient-to-br from-blue-500/10 via-blue-500/5 to-transparent opacity-60 group-hover:opacity-80 transition-opacity duration-500" />
             <img
               src="https://images.pexels.com/photos/7014766/pexels-photo-7014766.jpeg"
@@ -60,7 +64,7 @@ export default function FeaturesGrid() {
             </div>
           </BentoBox>
           
-          <BentoBox gradient="teal" className="flex flex-col md:[grid-area:c] relative overflow-hidden group backdrop-blur-xl bg-background/30 border-2 border-primary/20 hover:border-primary/40 hover:bg-background/40 transition-all duration-500 bento-modern rounded-3xl">
+          <BentoBox gradient="teal" className="flex flex-col md:[grid-area:c] relative overflow-hidden group backdrop-blur-xl bg-background/30 border-2 border-primary/20 hover:border-primary/40 hover:bg-background/40 transition-all duration-500 bento-modern shadow-inner-modern rounded-3xl">
             <div className="absolute inset-0 bg-gradient-to-br from-teal-500/10 via-teal-500/5 to-transparent opacity-60 group-hover:opacity-80 transition-opacity duration-500" />
             <img
               src="https://images.pexels.com/photos/7376/startup-photos.jpg"
@@ -79,7 +83,7 @@ export default function FeaturesGrid() {
             </div>
           </BentoBox>
           
-          <BentoBox gradient="green" className="flex flex-col md:[grid-area:d] relative overflow-hidden group backdrop-blur-xl bg-background/30 border-2 border-primary/20 hover:border-primary/40 hover:bg-background/40 transition-all duration-500 bento-modern rounded-3xl">
+          <BentoBox gradient="green" className="flex flex-col md:[grid-area:d] relative overflow-hidden group backdrop-blur-xl bg-background/30 border-2 border-primary/20 hover:border-primary/40 hover:bg-background/40 transition-all duration-500 bento-modern shadow-inner-modern rounded-3xl">
             <div className="absolute inset-0 bg-gradient-to-br from-green-500/10 via-green-500/5 to-transparent opacity-60 group-hover:opacity-80 transition-opacity duration-500" />
             <img
               src="https://images.pexels.com/photos/3861969/pexels-photo-3861969.jpeg"
@@ -98,7 +102,7 @@ export default function FeaturesGrid() {
             </div>
           </BentoBox>
           
-          <BentoBox gradient="blue" className="flex flex-col md:[grid-area:e] relative overflow-hidden group backdrop-blur-xl bg-background/30 border-2 border-primary/20 hover:border-primary/40 hover:bg-background/40 transition-all duration-500 bento-modern rounded-3xl">
+          <BentoBox gradient="blue" className="flex flex-col md:[grid-area:e] relative overflow-hidden group backdrop-blur-xl bg-background/30 border-2 border-primary/20 hover:border-primary/40 hover:bg-background/40 transition-all duration-500 bento-modern shadow-inner-modern rounded-3xl">
             <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/10 via-indigo-500/5 to-transparent opacity-60 group-hover:opacity-80 transition-opacity duration-500" />
             <img
               src="https://images.pexels.com/photos/8370752/pexels-photo-8370752.jpeg"
@@ -117,7 +121,7 @@ export default function FeaturesGrid() {
             </div>
           </BentoBox>
           
-          <BentoBox gradient="purple" className="flex flex-col md:[grid-area:f] md:col-span-2 relative overflow-hidden group backdrop-blur-xl bg-background/30 border-2 border-primary/20 hover:border-primary/40 hover:bg-background/40 transition-all duration-500 bento-modern rounded-3xl">
+          <BentoBox gradient="purple" className="flex flex-col md:[grid-area:f] md:col-span-2 relative overflow-hidden group backdrop-blur-xl bg-background/30 border-2 border-primary/20 hover:border-primary/40 hover:bg-background/40 transition-all duration-500 bento-modern shadow-inner-modern rounded-3xl">
             <div className="absolute inset-0 bg-gradient-to-br from-purple-500/10 via-purple-500/5 to-transparent opacity-60 group-hover:opacity-80 transition-opacity duration-500" />
             <img
               src="https://images.pexels.com/photos/2882566/pexels-photo-2882566.jpeg"

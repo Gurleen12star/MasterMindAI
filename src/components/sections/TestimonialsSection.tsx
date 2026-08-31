@@ -52,7 +52,11 @@ export default function TestimonialsSection() {
   }, [nextTestimonial]);
 
   return (
-    <section className="py-16 md:py-24">
+    <section className="relative py-16 md:py-24 overflow-hidden">
+      {/* Blurred oval overlay effects */}
+      <div className="absolute top-10 -right-32 w-72 h-72 rounded-full bg-gradient-to-br from-green-500/6 via-emerald-500/4 to-transparent blur-3xl opacity-50" />
+      <div className="absolute -bottom-10 -left-32 w-80 h-80 rounded-full bg-gradient-to-br from-primary/8 via-blue-500/4 to-transparent blur-3xl opacity-60" />
+      
       <div className="container px-4 max-w-[1200px] mx-auto">
         <div className="mx-auto max-w-5xl text-center mb-16">
           <h2 className="text-3xl font-bold tracking-tight md:text-4xl bg-clip-text text-transparent bg-gradient-to-r from-primary to-primary/70">
@@ -69,10 +73,7 @@ export default function TestimonialsSection() {
             >
               {testimonials.map((testimonial, index) => (
                 <div key={index} className="w-full flex-shrink-0 px-4">
-                  <BentoBox 
-                    gradient="blue" 
-                    className="mx-auto max-w-4xl backdrop-blur-xl bg-background/30 border-2 border-primary/20 hover:border-primary/30 transition-all duration-500 bento-modern rounded-3xl"
-                  >
+                  <BentoBox gradient="blue" className="mx-auto max-w-4xl backdrop-blur-xl bg-background/30 border-2 border-primary/20 hover:border-primary/30 transition-all duration-500 bento-modern shadow-inner-modern rounded-3xl">
                     <div className="flex flex-col items-center text-center p-8">
                       <div className="relative mb-6">
                         <Quote className="h-12 w-12 text-primary/60" />

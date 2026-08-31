@@ -11,6 +11,10 @@ export default function DemoSection() {
 
   return (
     <section id="demo" className="relative py-16 md:py-24 lg:py-32 overflow-hidden">
+      {/* Blurred oval overlay effects */}
+      <div className="absolute top-20 -right-40 w-80 h-80 rounded-full bg-gradient-to-br from-blue-500/6 via-cyan-500/4 to-transparent blur-3xl opacity-50" />
+      <div className="absolute -bottom-20 -left-40 w-96 h-96 rounded-full bg-gradient-to-br from-purple-500/8 via-primary/4 to-transparent blur-3xl opacity-60" />
+      
       <div className="absolute inset-0 bg-gradient-to-b from-background/50 via-background to-background/50" />
       <div className="absolute inset-0 bg-grid-white/[0.02]" />
       <div className="container px-4 max-w-[1200px] mx-auto">
@@ -25,7 +29,7 @@ export default function DemoSection() {
         
         <div className="grid grid-cols-1 gap-8 lg:grid-cols-12">
           <div className="lg:col-span-5">
-            <BentoBox gradient="purple" className="h-full backdrop-blur-xl bg-background/30 border-2 border-primary/20 hover:border-primary/30 transition-all duration-500 bento-modern rounded-3xl">
+            <BentoBox gradient="purple" className="h-full backdrop-blur-xl bg-background/30 border-2 border-primary/20 hover:border-primary/30 transition-all duration-500 bento-modern shadow-inner-modern rounded-3xl">
               <div className="flex items-center gap-4 mb-6">
                 <div className="relative inline-flex h-12 w-12 items-center justify-center rounded-xl bg-primary/20 before:absolute before:inset-0 before:rounded-xl before:bg-primary/10 before:animate-pulse shadow-lg">
                   <FileText className="h-6 w-6 text-primary" />
@@ -48,7 +52,7 @@ export default function DemoSection() {
           </div>
           
           <div className="lg:col-span-7">
-            <BentoBox gradient="blue" className="h-full backdrop-blur-xl bg-background/30 border-2 border-primary/20 hover:border-primary/30 transition-all duration-500 bento-modern rounded-3xl">
+            <BentoBox gradient="blue" className="h-full backdrop-blur-xl bg-background/30 border-2 border-primary/20 hover:border-primary/30 transition-all duration-500 bento-modern shadow-inner-modern rounded-3xl">
               <div className="flex items-center gap-4 mb-6">
                 <div className="relative inline-flex h-12 w-12 items-center justify-center rounded-xl bg-primary/20 before:absolute before:inset-0 before:rounded-xl before:bg-primary/10 before:animate-pulse shadow-lg">
                   <Wand2 className="h-6 w-6 text-primary" />

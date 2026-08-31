@@ -75,6 +75,10 @@ const pricingPlans = [
 export default function PricingSection() {
   return (
     <section id="pricing" className="relative py-16 md:py-24 lg:py-32 overflow-hidden">
+      {/* Blurred oval overlay effects */}
+      <div className="absolute -top-20 -right-40 w-88 h-88 rounded-full bg-gradient-to-br from-orange-500/6 via-red-500/4 to-transparent blur-3xl opacity-50" />
+      <div className="absolute -bottom-20 -left-40 w-96 h-96 rounded-full bg-gradient-to-br from-primary/8 via-purple-500/4 to-transparent blur-3xl opacity-60" />
+      
       <div className="absolute inset-0 bg-gradient-to-b from-background/50 via-background to-background/50" />
       <div className="absolute inset-0 bg-grid-white/[0.02]" />
       <div className="container px-4 max-w-[1200px] mx-auto">
@@ -93,7 +97,7 @@ export default function PricingSection() {
               key={plan.name}
               gradient={plan.gradient as any}
               className={cn(
-                "backdrop-blur-xl bg-background/30 border-2 transition-all duration-500 bento-modern rounded-3xl relative",
+                "backdrop-blur-xl bg-background/30 border-2 transition-all duration-500 bento-modern shadow-inner-modern rounded-3xl relative",
                 plan.featured 
                   ? "border-primary/40 ring-2 ring-primary/30 scale-105" 
                   : "border-primary/20 hover:border-primary/30"
