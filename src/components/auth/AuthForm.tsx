@@ -1,4 +1,4 @@
-import { SignIn, SignUp } from '@clerk/clerk-react';
+import { SignIn, SignUp, useSignIn, useSignUp } from '@clerk/clerk-react';
 
 interface AuthFormProps {
   mode: 'login' | 'signup';
@@ -6,21 +6,23 @@ interface AuthFormProps {
 
 export default function AuthForm({ mode }: AuthFormProps) {
   return (
-    <div className="w-full">
+    <div className="w-full rounded-xl overflow-hidden border border-border/50 shadow-xl">
       {mode === 'login' ? (
         <SignIn
           appearance={{
             elements: {
               rootBox: "w-full",
-              card: "w-full bg-background border-border",
+              card: "w-full bg-card/50 backdrop-blur-sm p-6",
               headerTitle: "text-foreground",
               headerSubtitle: "text-muted-foreground",
-              formButtonPrimary: "bg-primary text-primary-foreground hover:bg-primary/90",
+              formButtonPrimary: "bg-primary text-primary-foreground hover:bg-primary/90 transition-colors",
               formFieldLabel: "text-foreground",
-              formFieldInput: "bg-background border-input",
+              formFieldInput: "bg-background border-input focus:ring-2 focus:ring-primary/30",
               dividerLine: "bg-border",
               dividerText: "text-muted-foreground",
               footerActionLink: "text-primary hover:text-primary/90",
+              socialButtonsIconButton: "border-border hover:bg-accent transition-colors",
+              socialButtonsBlockButton: "border-border hover:bg-accent transition-colors",
             },
           }}
         />
@@ -29,15 +31,17 @@ export default function AuthForm({ mode }: AuthFormProps) {
           appearance={{
             elements: {
               rootBox: "w-full",
-              card: "w-full bg-background border-border",
+              card: "w-full bg-card/50 backdrop-blur-sm p-6",
               headerTitle: "text-foreground",
               headerSubtitle: "text-muted-foreground",
-              formButtonPrimary: "bg-primary text-primary-foreground hover:bg-primary/90",
+              formButtonPrimary: "bg-primary text-primary-foreground hover:bg-primary/90 transition-colors",
               formFieldLabel: "text-foreground",
-              formFieldInput: "bg-background border-input",
+              formFieldInput: "bg-background border-input focus:ring-2 focus:ring-primary/30",
               dividerLine: "bg-border",
               dividerText: "text-muted-foreground",
               footerActionLink: "text-primary hover:text-primary/90",
+              socialButtonsIconButton: "border-border hover:bg-accent transition-colors",
+              socialButtonsBlockButton: "border-border hover:bg-accent transition-colors",
             },
           }}
         />
