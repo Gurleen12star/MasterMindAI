@@ -3,11 +3,30 @@ import robotImage from '../../assets/robott.png';
 
 declare global {
   interface Window {
+    UnicornStudio: {
+      addScene: (config: {
+        elementId: string;
+        projectId: string;
+        fps?: number;
+        scale?: number;
+        dpi?: number;
+        lazyLoad?: boolean;
+        fixed?: boolean;
+      }) => Promise<any>;
+      destroy: () => void;
+    };
+  }
+}
+
+declare global {
+  interface Window {
     UnicornStudio: any;
   }
 }
 
 export default function HeroSection() {
+  const backgroundRef = useRef<HTMLDivElement>(null);
+
   const backgroundRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -55,8 +74,32 @@ export default function HeroSection() {
     };
   }, []);
 
+  useEffect(() => {
+    if (backgroundRef.current && window.UnicornStudio) {
+      window.UnicornStudio.addScene({
+        elementId: 'unicorn-background',
+        projectId: '1gY80LcIkYtWkoIA4cVK',
+        fps: 60,
+        scale: 1,
+        dpi: 1.5,
+        lazyLoad: false,
+        fixed: true,
+      });
+    }
+
+    return () => {
+      window.UnicornStudio?.destroy();
+    };
+  }, []);
+
   return (
     <section className="relative overflow-hidden pt-24 pb-48 md:pt-32 md:pb-64 bg-gradient-to-b from-background via-background/95 to-transparent">
+      <div 
+        ref={backgroundRef}
+        id="unicorn-background" 
+        className="absolute inset-0 w-full h-full -z-10"
+        style={{ minHeight: '900px' }}
+      />
       <div ref={backgroundRef} id="hero-background" className="absolute inset-0 w-full h-full -z-10" />
       <div className="absolute inset-0 overflow-hidden">
         {[...Array(20)].map((_, i) => (
