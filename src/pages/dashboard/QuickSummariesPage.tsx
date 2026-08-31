@@ -631,7 +631,10 @@ export default function QuickSummariesPage() {
                     >
                       <Loader2 className="h-8 w-8 animate-spin text-primary" />
                       <div>
-                        <AnimatedLoadingText message="Processing your content..." className="font-medium" />
+                        <AnimatedLoadingText 
+                          message={pdfFileUrl ? "Analyzing PDF..." : "Processing content..."} 
+                          className="font-medium" 
+                        />
                         <p className="text-sm mt-2">Extracting key insights...</p>
                       </div>
                     </motion.div>
@@ -728,10 +731,7 @@ export default function QuickSummariesPage() {
                 >
                   <div 
                     className="h-full bg-gradient-to-r from-primary to-primary/80 rounded-full transition-all duration-150"
-                    <AnimatedLoadingText 
-                      message={pdfFileUrl ? "Analyzing your PDF document..." : "Processing your content..."} 
-                      className="font-medium" 
-                    />
+                    style={{ width: duration > 0 ? `${(currentTime / duration) * 100}%` : '0%' }}
                   />
                 </div>
                 
