@@ -498,10 +498,23 @@ export default function DeepResearchPage() {
                 </ScrollArea>
               </TabsContent>
               <TabsContent value="report">
-                <div className="relative">
-                  {/* Floating Audio Generation Button */}
+                <div className="relative h-[500px]">
+                  <ScrollArea className="h-full w-full">
+                    {result?.report ? (
+                      <div className="prose dark:prose-invert max-w-none">
+                        <ReactMarkdown remarkPlugins={[remarkGfm]}>{result.report}</ReactMarkdown>
+                      </div>
+                    ) : (
+                      <div className="flex flex-col items-center justify-center h-full text-center text-muted-foreground">
+                        <FileText className="h-12 w-12 mb-4 opacity-50" />
+                        <p className="font-medium">Research report will appear here</p>
+                      </div>
+                    )}
+                  </ScrollArea>
+                  
+                  {/* Audio Generation Button */}
                   {result?.report && (
-                    <div className="fixed bottom-8 right-8 z-10">
+                    <div className="absolute bottom-4 right-4 z-10">
                       <Button 
                         variant="default"
                         size="icon"
@@ -517,18 +530,6 @@ export default function DeepResearchPage() {
                       </Button>
                     </div>
                   )}
-                  <ScrollArea className="h-[500px] w-full">
-                    {result?.report ? (
-                      <div className="prose dark:prose-invert max-w-none">
-                        <ReactMarkdown remarkPlugins={[remarkGfm]}>{result.report}</ReactMarkdown>
-                      </div>
-                    ) : (
-                      <div className="flex flex-col items-center justify-center h-full text-center text-muted-foreground">
-                        <FileText className="h-12 w-12 mb-4 opacity-50" />
-                        <p className="font-medium">Research report will appear here</p>
-                      </div>
-                    )}
-                  </ScrollArea>
                   
                   {/* Audio Player */}
                   {audioUrl && (
