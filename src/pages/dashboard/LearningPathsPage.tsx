@@ -129,6 +129,17 @@ export default function LearningPathsPage() {
       // Save to database if user is authenticated
       if (user?.id) {
         try {
+          // Check if Supabase auth is ready
+          if (!isSupabaseReady) {
+            console.warn('Supabase authentication not ready, skipping database save');
+            toast({
+              title: 'Authentication Not Ready',
+              description: 'Learning path generated but not saved to your account. Please refresh and try again.',
+              variant: 'destructive',
+            });
+            return;
+          }
+          
           const supabaseUserId = getUserIdForSupabase(user.id);
           const { error } = await supabaseClient
             .from('learning_paths')
@@ -140,12 +151,41 @@ export default function LearningPathsPage() {
               user_id: supabaseUserId
             }]);
 
-          if (error) throw error;
+          if (error) {
+            console.error('Database save error:', error);
+            
+            // Provide more specific error messages
+            let errorMessage = error.message;
+            if (error.message.includes('JWT') || error.message.includes('auth') || error.code === 'PGRST301') {
+              errorMessage = 'Authentication expired. Please refresh the page and try again.';
+            }
+            
+            toast({
+              title: 'Failed to Save',
+              description: errorMessage,
+              variant: 'destructive',
+            });
+          } else {
+            toast({
+              title: 'Learning Path Saved',
+              description: 'Your learning path has been successfully saved to your account.',
+            });
+          }
         } catch (error) {
           console.error('Error saving to database:', error);
+          
+          let errorMessage = 'Failed to save to your account';
+          if (error instanceof Error) {
+            if (error.message.includes('JWT') || error.message.includes('auth')) {
+              errorMessage = 'Authentication issue. Please refresh the page and try again.';
+            } else {
+              errorMessage = error.message;
+            }
+          }
+          
           toast({
-            title: 'Warning',
-            description: 'Generated successfully but failed to save to history',
+            title: 'Save Failed',
+            description: errorMessage,
             variant: 'destructive',
           });
         }

@@ -103,6 +103,24 @@ function cleanMermaidCode(code: string): string {
     cleaned = 'flowchart LR\n' + cleaned;
   }
   
+  // Fix node labels with special characters that cause parsing errors
+  cleaned = cleaned.replace(/\[([^\]]*)\]/g, (match, label) => {
+    // Remove or replace problematic characters in node labels
+    let cleanLabel = label
+      .replace(/\([^)]*\)/g, '') // Remove parentheses and their content
+      .replace(/[(),\[\]{}]/g, '') // Remove brackets, parentheses, braces
+      .replace(/[^\w\s-]/g, '') // Keep only alphanumeric, spaces, and hyphens
+      .replace(/\s+/g, ' ') // Collapse multiple spaces
+      .trim();
+    
+    // Ensure label is not empty
+    if (!cleanLabel) {
+      cleanLabel = 'Step';
+    }
+    
+    return `[${cleanLabel}]`;
+  });
+  
   // Remove any duplicate flowchart/graph declarations
   const lines = cleaned.split('\n');
   const filteredLines = [];
@@ -116,7 +134,7 @@ function cleanMermaidCode(code: string): string {
         hasFlowchartDeclaration = true;
       }
       // Skip duplicate declarations
-    } else {
+    } else if (trimmedLine.length > 0) { // Skip empty lines
       filteredLines.push(line);
     }
   }
@@ -131,21 +149,29 @@ export async function generateLearningPathMermaid(topic: string, level: string, 
     const prompt = `Create a visual learning roadmap for "${topic}" at ${level} level using Mermaid flowchart syntax.
     ${additionalInfo ? `Additional context: ${additionalInfo}` : ''}
     
-    Requirements:
+    CRITICAL SYNTAX REQUIREMENTS:
     1. Start with "flowchart LR" (Left to Right layout)
     2. Include 6-8 key learning milestones as nodes
     3. Show dependencies between topics with arrows
     4. Use simple node syntax like A[Node Label] --> B[Next Node]
-    5. Node labels should only contain alphanumeric characters and spaces. No special characters like parentheses.
-    6. Include difficulty progression from basic to advanced
-    7. Do NOT include any markdown formatting, code blocks, or explanations
-    8. Return ONLY valid Mermaid flowchart syntax
+    5. Node labels MUST be simple text only - NO parentheses, commas, or special characters
+    6. Use short, clear labels like "Python Basics" not "Python Basics (Variables, Functions)"
+    7. Include difficulty progression from basic to advanced
+    8. Do NOT include any markdown formatting, code blocks, or explanations
+    9. Return ONLY valid Mermaid flowchart syntax
     
-    Example format:
+    VALID Example:
     flowchart LR
-        A[Basics] --> B[Fundamentals]
-        B --> C[Intermediate]
-        C --> D[Advanced]
+        A[Start] --> B[Python Basics]
+        B --> C[Data Structures]
+        C --> D[Control Flow]
+        D --> E[Functions]
+        E --> F[Object Oriented]
+        F --> G[Advanced Topics]
+    
+    INVALID Examples (DO NOT USE):
+    - A[Python Basics (Variables, Functions)] - Contains parentheses
+    - B[Data Visualization (Matplotlib, Seaborn)] - Contains parentheses
     
     Return ONLY the mermaid flowchart code with no additional text or formatting.`;
     
@@ -182,20 +208,28 @@ export async function generateRoadmapMermaid(topic: string): Promise<string> {
     
     const prompt = `Create a detailed learning roadmap for "${topic}" using Mermaid flowchart syntax.
     
-    Requirements:
+    CRITICAL SYNTAX REQUIREMENTS:
     1. Start with "flowchart LR" (Left to Right layout)
     2. Include major topics and subtopics as nodes
     3. Show clear progression path with arrows
     4. Use simple node syntax like A[Node Label] --> B[Next Node]
-    5. Include branching paths where relevant
-    6. Do NOT include any markdown formatting, code blocks, or explanations
-    7. Return ONLY valid Mermaid flowchart syntax
+    5. Node labels MUST be simple text only - NO parentheses, commas, or special characters
+    6. Use short, clear labels like "Git Basics" not "Version Control (Git)"
+    7. Include branching paths where relevant
+    8. Do NOT include any markdown formatting, code blocks, or explanations
+    9. Return ONLY valid Mermaid flowchart syntax
     
-    Example format:
+    VALID Example:
     flowchart LR
         A[Start] --> B[Fundamentals]
-        B --> C[Intermediate]
-        C --> D[Advanced]
+        B --> C[Core Concepts]
+        C --> D[Intermediate Skills]
+        D --> E[Advanced Topics]
+        E --> F[Specialization]
+    
+    INVALID Examples (DO NOT USE):
+    - A[Version Control (Git)] - Contains parentheses
+    - B[Data Visualization (Tools)] - Contains parentheses
         
     Return ONLY the mermaid flowchart code with no additional text or formatting.`;
     

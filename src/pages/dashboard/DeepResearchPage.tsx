@@ -236,25 +236,90 @@ export default function DeepResearchPage() {
       // Save to database if user is authenticated
       if (user?.id) {
         try {
-          const supabaseUserId = getUserIdForSupabase(user.id);
-          const { error: saveError } = await supabaseClient
-            .from('deep_research_history')
-            .insert([{
-              user_id: supabaseUserId,
-              topic: topic.trim(),
-              report: data.report,
-              sources: data.sources || [],
-              summaries: data.summaries || [],
-              total_findings: data.totalFindings || 0,
-              max_depth: maxDepth
-            }]);
+          console.log('Attempting to save deep research for user:', user.id);
+          
+          // Check if Supabase auth is ready
+          if (!isSupabaseReady) {
+            console.warn('Supabase authentication not ready, skipping database save');
+            toast({
+              title: 'Authentication Not Ready',
+              description: 'Research completed but not saved to your account. Please refresh and try again.',
+              variant: 'destructive',
+            });
+          } else {
+            console.log('Supabase auth is ready, proceeding with save...');
+            
+            const supabaseUserId = getUserIdForSupabase(user.id);
+            console.log('Supabase user ID:', supabaseUserId);
+            
+            // Log current session info
+            const { data: sessionData, error: sessionError } = await supabaseClient.auth.getSession();
+            console.log('Current session:', {
+              hasSession: !!sessionData.session,
+              sessionExists: !!sessionData.session?.access_token,
+              tokenLength: sessionData.session?.access_token?.length || 0,
+              userId: sessionData.session?.user?.id,
+              sessionError: sessionError?.message
+            });
+            
+            // Direct insert like roadmaps and learning paths (no connection test)
+            const { data: insertResult, error: saveError } = await supabaseClient
+              .from('deep_research_history')
+              .insert([{
+                user_id: supabaseUserId,
+                topic: topic.trim(),
+                report: data.report,
+                sources: data.sources || [],
+                summaries: data.summaries || [],
+                total_findings: data.totalFindings || 0,
+                max_depth: maxDepth
+              }])
+              .select();
 
-          if (saveError) throw saveError;
+            if (saveError) {
+              console.error('Database save error:', saveError);
+              console.error('Error code:', saveError.code);
+              console.error('Error details:', saveError.details);
+              console.error('Error hint:', saveError.hint);
+              
+              // Provide more specific error messages
+              let errorMessage = saveError.message;
+              if (saveError.message.includes('JWT') || saveError.message.includes('auth') || saveError.code === 'PGRST301') {
+                errorMessage = 'Authentication expired. Please refresh the page and try again.';
+              } else if (saveError.code === '42501') {
+                errorMessage = 'Permission denied. Database policies need to be updated. Please run the SQL fix script.';
+              } else if (saveError.code === '42P01') {
+                errorMessage = 'Table missing. Please run the database migration script.';
+              }
+              
+              toast({
+                title: 'Failed to Save',
+                description: errorMessage,
+                variant: 'destructive',
+              });
+            } else {
+              console.log('Deep research saved successfully:', insertResult);
+              toast({
+                title: 'Research Saved',
+                description: 'Your research has been successfully saved to your account.',
+              });
+            }
+          }
         } catch (error) {
           console.error('Error saving to database:', error);
+          
+          let errorMessage = 'Failed to save to your account';
+          if (error instanceof Error) {
+            if (error.message.includes('JWT') || error.message.includes('auth')) {
+              errorMessage = 'Authentication issue. Please refresh the page and try again.';
+            } else {
+              errorMessage = error.message;
+            }
+          }
+          
           toast({
-            title: 'Warning',
-            description: 'Research completed but failed to save to history',
+            title: 'Save Failed',
+            description: errorMessage,
             variant: 'destructive',
           });
         }

@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { useToast } from '@/hooks/use-toast';
 import { supabaseClient } from '@/lib/supabase-admin';
+import { useSupabaseAuth } from '@/components/auth/ClerkSupabaseProvider';
 import { generateRoadmapMermaid } from '@/lib/gemini';
 import { MermaidDiagram } from '@/components/ui/mermaid-diagram';
 import { Card } from '@/components/ui/card';
@@ -29,6 +30,7 @@ const DEFAULT_MERMAID_CODE = `flowchart TD
 export default function RoadmapGeneratorPage() {
   const { user } = useUser();
   const { toast } = useToast();
+  const { isSupabaseReady } = useSupabaseAuth();
   const [topic, setTopic] = useState('');
   const [isGenerating, setIsGenerating] = useState(false);
   const [currentRoadmap, setCurrentRoadmap] = useState<string | null>(null);
@@ -150,6 +152,17 @@ export default function RoadmapGeneratorPage() {
       try {
         console.log("Attempting to save roadmap to Supabase for user:", user.id);
         
+        // Check if Supabase auth is ready
+        if (!isSupabaseReady) {
+          console.warn('Supabase authentication not ready, skipping database save');
+          toast({
+            title: 'Authentication Not Ready',
+            description: 'Roadmap generated but not saved to your account. Please refresh and try again.',
+            variant: 'destructive',
+          });
+          return;
+        }
+        
         // First, check if we can connect to the database
         const { error: pingError } = await supabaseClient
           .from('roadmaps')
@@ -158,7 +171,22 @@ export default function RoadmapGeneratorPage() {
           
         if (pingError) {
           console.error('Supabase connection test failed:', pingError);
-          throw new Error(`Database connection failed: ${pingError.message}`);
+          
+          // Check if it's an auth-related error
+          if (pingError.message.includes('JWT') || pingError.message.includes('auth') || pingError.code === 'PGRST301') {
+            toast({
+              title: 'Authentication Issue',
+              description: 'Please refresh the page and try again. Your roadmap was generated successfully.',
+              variant: 'destructive',
+            });
+          } else {
+            toast({
+              title: 'Database Connection Failed',
+              description: `Unable to connect to database: ${pingError.message}`,
+              variant: 'destructive',
+            });
+          }
+          return;
         }
         
         // Then try the actual insert
@@ -173,9 +201,17 @@ export default function RoadmapGeneratorPage() {
           console.error('Error message:', error.message);
           console.error('Error details:', error.details);
           
+          // Provide more specific error messages based on error type
+          let errorMessage = error.message;
+          if (error.message.includes('JWT') || error.message.includes('auth') || error.code === 'PGRST301') {
+            errorMessage = 'Authentication expired. Please refresh the page and try again.';
+          } else if (error.code === '23505') {
+            errorMessage = 'A roadmap with this data already exists.';
+          }
+          
           toast({
-            title: 'Warning',
-            description: `Could not save to database: ${error.message}`,
+            title: 'Failed to Save',
+            description: errorMessage,
             variant: 'destructive',
           });
         } else if (data && data.length > 0) {
@@ -186,14 +222,29 @@ export default function RoadmapGeneratorPage() {
           );
           console.log("Successfully saved roadmap to Supabase with ID:", data[0].id);
           
+          toast({
+            title: 'Roadmap Saved',
+            description: 'Your roadmap has been successfully saved to your account.',
+          });
+          
           // Refresh the roadmaps list to ensure we have the latest data
           fetchUserRoadmaps();
         }
       } catch (dbError) {
         console.error('Database error:', dbError);
+        
+        let errorMessage = 'Unknown error occurred while saving';
+        if (dbError instanceof Error) {
+          if (dbError.message.includes('JWT') || dbError.message.includes('auth')) {
+            errorMessage = 'Authentication issue. Please refresh the page and try again.';
+          } else {
+            errorMessage = dbError.message;
+          }
+        }
+        
         toast({
           title: 'Database Error',
-          description: `Failed to save to database: ${dbError instanceof Error ? dbError.message : 'Unknown error'}`,
+          description: errorMessage,
           variant: 'destructive',
         });
         // Continue with the local fallback data
