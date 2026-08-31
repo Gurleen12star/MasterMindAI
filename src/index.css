@@ -35,8 +35,8 @@
   --radius: 0.5rem;
 
   /* Custom Cursor */
-  --cursor-color: #111920;
-  --cursor-size: 32px;
+  --cursor-color: hsl(var(--foreground));
+  --cursor-size: 24px;
 
   /* Navbar Animation */
   --nav-bg: rgba(255, 255, 255, 0.9);
@@ -59,13 +59,20 @@
   cursor: none !important;
 }
 
+a, button, [role="button"] {
+  cursor: none !important;
+}
+
 .curzr-arrow-pointer {
   position: fixed;
   width: var(--cursor-size);
   height: var(--cursor-size);
   pointer-events: none;
   z-index: 9999;
+  top: 0;
+  left: 0;
   will-change: transform;
+  transition: transform 0.05s cubic-bezier(0.23, 1, 0.32, 1);
 }
 
 .curzr-arrow-pointer svg {
@@ -74,7 +81,7 @@
 }
 
 .curzr-arrow-pointer .inner {
-  fill: #F2F5F8;
+  fill: hsl(var(--background));
 }
 
 .curzr-arrow-pointer .outer {
