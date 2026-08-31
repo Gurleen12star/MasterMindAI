@@ -31,7 +31,17 @@ export default function EarlyAdopterSection() {
                     placeholder="Enter your email"
                     className="flex-1 rounded-l-md border border-r-0 border-input bg-background px-6 py-3 text-lg focus:outline-none focus:ring-2 focus:ring-primary"
                   />
-                  <Button size="lg" className="rounded-l-none px-8">Join Waitlist</Button>
+                    type="email"
+                    placeholder="Enter your email"
+                    className="flex-1 rounded-l-md border border-r-0 border-input bg-background px-6 py-3 text-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                  />
+                  <Button 
+                    size="lg" 
+                    className="rounded-l-none px-8"
+                    onClick={() => window.location.href = '/signup'}
+                  >
+                    Join Waitlist
+                  </Button>
                 </div>
               </div>
             </div>

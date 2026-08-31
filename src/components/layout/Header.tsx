@@ -82,12 +82,14 @@ export default function Header() {
             variant="ghost" 
             size="sm" 
             className="hidden md:flex hover:bg-primary/10 transition-all duration-300"
+            onClick={() => window.location.href = '/login'}
           >
             Log in
           </Button>
           <Button 
             size="sm" 
             className="hidden md:flex bg-primary/90 hover:bg-primary transition-all duration-200 shadow-lg hover:shadow-primary/25"
+            onClick={() => window.location.href = '/signup'}
           >
             Get Started
           </Button>
@@ -111,10 +113,20 @@ export default function Header() {
                     {item.label}
                   </a>
                 ))}
-                <Button variant="ghost" size="sm" className="justify-start px-0">
+                <Button 
+                  variant="ghost" 
+                  size="sm" 
+                  className="justify-start px-0"
+                  onClick={() => window.location.href = '/login'}
+                >
                   Log in
                 </Button>
-                <Button size="sm">Get Started</Button>
+                <Button 
+                  size="sm"
+                  onClick={() => window.location.href = '/signup'}
+                >
+                  Get Started
+                </Button>
               </div>
             </SheetContent>
           </Sheet>

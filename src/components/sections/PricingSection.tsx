@@ -125,6 +125,7 @@ export default function PricingSection() {
                 <Button
                   className={plan.featured ? "w-full" : "w-full"}
                   variant={plan.featured ? "default" : "outline"}
+                 onClick={() => window.location.href = '/signup'}
                 >
                   {plan.cta}
                 </Button>
