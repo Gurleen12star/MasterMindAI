@@ -1,5 +1,12 @@
 import { useEffect, useRef, useState } from 'react';
 import robotImage from '../../assets/robott.png';
+import brainDumbelImage from '../../assets/brain-dumbel.png';
+import brainHandImage from '../../assets/Brain-hand.png';
+import bulbBrainHandImage from '../../assets/bulb-brain-hand.png';
+import graduateBrainImage from '../../assets/draduate-brain.png';
+import laptopBrainImage from '../../assets/laptop-brain.png';
+import skullAiImage from '../../assets/skull-ai.png';
+import aiBrainImage from '../../assets/ai-brain.png';
 
 export default function HeroSection() {
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
@@ -43,6 +50,7 @@ export default function HeroSection() {
           {/* Modern Overlay Effect */}
           <div className="hero-overlay-effect backdrop-blur-sm bg-gradient-to-br from-white/10 via-transparent to-primary/5"></div>
           
+          {/* Floating particle animation */}
           <div className="absolute inset-0 overflow-hidden" style={{ zIndex: 1 }}>
             {[...Array(20)].map((_, i) => (
               <div
@@ -57,13 +65,115 @@ export default function HeroSection() {
               />
             ))}
           </div>
+
+          {/* Floating Brain Images */}
+          <div className="absolute inset-0 overflow-hidden" style={{ zIndex: 2 }}>
+            {/* Brain with Dumbbell - Top Left */}
+            <img 
+              src={brainDumbelImage}
+              alt="Brain Training" 
+              className="absolute w-16 h-16 md:w-20 md:h-20 lg:w-24 lg:h-24 object-contain opacity-80 hover:opacity-100 transition-all duration-300"
+              style={{
+                left: '2%',
+                top: '40%',
+                animation: 'float-brain-1 8s ease-in-out infinite',
+                filter: 'drop-shadow(0 8px 16px rgba(0, 0, 0, 0.2))',
+              }}
+            />
+
+            {/* Brain in Hand - Top Right */}
+            <img 
+              src={brainHandImage}
+              alt="Brain Knowledge" 
+              className="absolute w-14 h-14 md:w-18 md:h-18 lg:w-20 lg:h-20 object-contain opacity-75 hover:opacity-100 transition-all duration-300"
+              style={{
+                right: '10%',
+                top: '10%',
+                animation: 'float-brain-2 10s ease-in-out infinite',
+                animationDelay: '-2s',
+                filter: 'drop-shadow(0 6px 12px rgba(0, 0, 0, 0.15))',
+              }}
+            />
+
+            {/* Lightbulb Brain - Left Side */}
+            <img 
+              src={bulbBrainHandImage}
+              alt="Innovation Ideas" 
+              className="absolute w-18 h-18 md:w-22 md:h-22 lg:w-28 lg:h-28 object-contain opacity-70 hover:opacity-100 transition-all duration-300"
+              style={{
+                left: '10%',
+                top: '9%',
+                animation: 'float-brain-3 12s ease-in-out infinite',
+                animationDelay: '-4s',
+                filter: 'drop-shadow(0 10px 20px rgba(0, 0, 0, 0.25))',
+              }}
+            />
+
+            {/* Graduate Brain - Right Side */}
+            <img 
+              src={graduateBrainImage}
+              alt="Learning Achievement" 
+              className="absolute w-16 h-16 md:w-20 md:h-20 lg:w-24 lg:h-24 object-contain opacity-85 hover:opacity-100 transition-all duration-300"
+              style={{
+                right: '2%',
+                top: '40%',
+                animation: 'float-brain-4 9s ease-in-out infinite',
+                animationDelay: '-1s',
+                filter: 'drop-shadow(0 8px 16px rgba(0, 0, 0, 0.2))',
+              }}
+            />
+
+            {/* Laptop Brain - Bottom Left */}
+            <img 
+              src={laptopBrainImage}
+              alt="Digital Learning" 
+              className="absolute w-20 h-20 md:w-24 md:h-24 lg:w-28 lg:h-28 object-contain opacity-75 hover:opacity-100 transition-all duration-300"
+              style={{
+                left: '10%',
+                bottom: '20%',
+                animation: 'float-brain-5 11s ease-in-out infinite',
+                animationDelay: '-3s',
+                filter: 'drop-shadow(0 12px 24px rgba(0, 0, 0, 0.3))',
+              }}
+            />
+
+            {/* AI Brain - Lower Center */}
+            <img 
+              // src={aiBrainImage}
+              alt="AI Intelligence Brain" 
+              className="absolute w-18 h-18 md:w-22 md:h-22 lg:w-26 lg:h-26 object-contain opacity-85 hover:opacity-100 transition-all duration-300"
+              style={{
+                left: '50%',
+                top: '150%',
+                transform: 'translate(-50%, -50%)',
+                animation: 'float-brain-7 9s ease-in-out infinite',
+                animationDelay: '-6s',
+                filter: 'drop-shadow(0 10px 20px rgba(0, 0, 0, 0.25))',
+              }}
+            />
+
+            {/* Skull AI - Bottom Right */}
+            <img 
+              src={skullAiImage}
+              alt="AI Intelligence" 
+              className="absolute w-14 h-14 md:w-16 md:h-16 lg:w-20 lg:h-20 object-contain opacity-80 hover:opacity-100 transition-all duration-300"
+              style={{
+                right: '10%',
+                bottom: '20%',
+                animation: 'float-brain-6 7s ease-in-out infinite',
+                animationDelay: '-5s',
+                filter: 'drop-shadow(0 6px 12px rgba(0, 0, 0, 0.15))',
+              }}
+            />
+          </div>
+
           <div className="hero-assets" style={{ zIndex: 2 }}>
             <h3 className="hero-title">ECHOVERSE</h3>
             <img 
               src={robotImage}
               alt="EchoVerse AI Assistant" 
               loading="eager"
-              width="800"
+              width="500"
               height="675"
               className="foreground"
             />

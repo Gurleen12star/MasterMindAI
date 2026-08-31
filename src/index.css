@@ -392,14 +392,19 @@ div[style*="z-index: 999999"] {
   aspect-ratio: 2 / 0.95;
   position: relative;
   border-radius: 3rem;
-  filter: drop-shadow(0 10px 20px rgba(0, 0, 0, 0.15));
+  filter: drop-shadow(0 10px 20px rgba(0, 0, 0, 0.4));
   min-height: 600px;
   overflow: hidden;
-  /* Add border gradient shine effect */
-  background: linear-gradient(var(--background), var(--background)) padding-box,
+  /* Dark gradient background */
+  background: linear-gradient(135deg, 
+                rgba(0, 0, 0, 0.8) 0%, 
+                rgba(15, 15, 15, 0.9) 25%, 
+                rgba(25, 25, 25, 0.95) 50%, 
+                rgba(15, 15, 15, 0.9) 75%, 
+                rgba(0, 0, 0, 0.8) 100%) padding-box,
               radial-gradient(100px 100px at calc(var(--x) * 1px) calc(var(--y) * 1px), 
-                hsl(var(--primary) / 0.9), 
-                hsl(var(--primary) / 0.5) 30%, 
+                hsl(var(--primary) / 0.6), 
+                hsl(var(--primary) / 0.3) 30%, 
                 transparent 70%) border-box;
   border: 2px solid transparent;
   transition: all 0.3s ease;
@@ -416,13 +421,13 @@ div[style*="z-index: 999999"] {
   inset: 0;
   border-radius: inherit;
   background: 
-    radial-gradient(circle at 30% 20%, rgba(255, 255, 255, 0.15) 0%, transparent 50%),
-    radial-gradient(circle at 70% 80%, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
-    linear-gradient(135deg, rgba(255, 255, 255, 0.15) 0%, transparent 50%);
-  backdrop-filter: blur(0.5px);
+    radial-gradient(circle at 30% 20%, rgba(0, 0, 0, 0.4) 0%, transparent 50%),
+    radial-gradient(circle at 70% 80%, rgba(0, 0, 0, 0.3) 0%, transparent 50%),
+    linear-gradient(135deg, rgba(0, 0, 0, 0.5) 0%, rgba(20, 20, 20, 0.3) 50%, transparent 100%);
+  backdrop-filter: blur(1px);
   pointer-events: none;
   z-index: 1;
-  opacity: 0.9;
+  opacity: 0.8;
   transition: opacity 0.3s ease;
 }
 
@@ -433,8 +438,9 @@ div[style*="z-index: 999999"] {
   z-index: 0;
   background: radial-gradient(
     circle at 50% 50%,
-    hsl(var(--primary) / 0.15),
-    hsl(var(--primary) / 0.05) 40%,
+    rgba(0, 0, 0, 0.6) 0%,
+    rgba(10, 10, 10, 0.4) 30%,
+    hsl(var(--primary) / 0.1) 60%,
     transparent 100%
   );
 }
@@ -462,10 +468,10 @@ div[style*="z-index: 999999"] {
 
 .hero-assets img.foreground {
   position: absolute;
-  top: 0;
+  top: 40px;
   left: 50%;
   translate: -50% -9%;
-  height: 120%;
+  height: 100%;
   width: auto;
   transform: translate(calc(var(--x) * 40px), calc(var(--y) * 10px));
   object-fit: contain;
