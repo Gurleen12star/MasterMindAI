@@ -4,6 +4,7 @@ import Sidebar from '@/components/dashboard/Sidebar';
 import OverviewStats from '@/components/dashboard/OverviewStats';
 import RecentActivity from '@/components/dashboard/RecentActivity';
 import RoadmapGeneratorPage from './RoadmapGeneratorPage';
+import ContentDiscoveryPage from './ContentDiscoveryPage';
 
 export default function DashboardPage() {
   const { user } = useUser();
@@ -15,6 +16,12 @@ export default function DashboardPage() {
         return <RoadmapGeneratorPage />;
       case '/dashboard/discovery':
         return <ContentDiscoveryPage />;
+      case '/dashboard/transform':
+        return <div className="p-6">Content Transformation Tools coming soon...</div>;
+      case '/dashboard/community':
+        return <div className="p-6">Community & Collaboration coming soon...</div>;
+      case '/dashboard/analytics':
+        return <div className="p-6">Progress & Analytics coming soon...</div>;
       default:
         return (
           <div className="p-6 space-y-6">
