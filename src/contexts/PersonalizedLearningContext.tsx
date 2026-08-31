@@ -21,8 +21,6 @@ interface PersonalizedLearningContextType {
     currentSessionId: string | null;
     loadSession: (session: any) => void;
     setCurrentSessionId: (id: string | null) => void;
-    initialConvoMessage: string | null;
-    setInitialConvoMessage: (message: string | null) => void;
 }
 
 const PersonalizedLearningContext = createContext<PersonalizedLearningContextType>({
@@ -73,8 +71,6 @@ const PersonalizedLearningContext = createContext<PersonalizedLearningContextTyp
     currentSessionId: null,
     loadSession: () => {},
     setCurrentSessionId: () => {},
-    initialConvoMessage: null,
-    setInitialConvoMessage: () => {},
 });
 
 export const PersonalizedLearningProvider = ({ children }: { children: ReactNode }) => {
@@ -128,7 +124,6 @@ export const PersonalizedLearningProvider = ({ children }: { children: ReactNode
         return localData ? JSON.parse(localData) : { expanded: false };
     });
     const [currentSessionId, setCurrentSessionId] = useState<string | null>(null);
-    const [initialConvoMessage, setInitialConvoMessage] = useState<string | null>(null);
 
     useEffect(() => {
         localStorage.setItem('personalized_learning_introduction', JSON.stringify(introduction));
@@ -203,8 +198,6 @@ export const PersonalizedLearningProvider = ({ children }: { children: ReactNode
                 currentSessionId,
                 loadSession,
                 setCurrentSessionId,
-                initialConvoMessage,
-                setInitialConvoMessage,
             }}
         >
             {children}

@@ -10,8 +10,6 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } f
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/lib/supabase';
 import { useAuth } from '@/components/auth/SupabaseAuthProvider';
-import { useAppContext } from '@/contexts/PersonalizedLearningContext';
-import { addHistoryChat } from '@/lib/personalized-learning/utilFunctions';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import AnimatedLoadingText from '@/components/ui/AnimatedLoadingText';
@@ -31,8 +29,7 @@ import {
   Target,
   Zap,
   History,
-  Trash2,
-  Volume2
+  Trash2
 } from 'lucide-react';
 
 // Interfaces remain the same
@@ -55,9 +52,7 @@ const mockProgressSteps: Omit<ResearchProgress, 'depth'>[] = [
 ];
 
 export default function DeepResearchPage() {
-  const navigate = useNavigate();
   const { toast } = useToast();
-  const { setInitialConvoMessage } = useAppContext();
   const { user, session } = useAuth();
 
   const [topic, setTopic] = useState('');
@@ -66,13 +61,6 @@ export default function DeepResearchPage() {
   const [result, setResult] = useState<ResearchResult | null>(null);
   const [progress, setProgress] = useState<ResearchProgress[]>([]);
   const [activeTab, setActiveTab] = useState('report');
-  const [selectedText, setSelectedText] = useState('');
-  const [contextMenu, setContextMenu] = useState({ visible: false, x: 0, y: 0 });
-  const [isGeneratingAudio, setIsGeneratingAudio] = useState(false);
-  const [audioUrl, setAudioUrl] = useState<string | null>(null);
-  const [isExpanding, setIsExpanding] = useState(false);
-  const reportRef = useRef<HTMLDivElement>(null);
-  const contextMenuRef = useRef<HTMLDivElement>(null);
   const [showHistoryDialog, setShowHistoryDialog] = useState(false);
   const [researchHistory, setResearchHistory] = useState<DeepResearchHistory[]>([]);
   const [isLoadingHistory, setIsLoadingHistory] = useState(false);
@@ -83,32 +71,12 @@ export default function DeepResearchPage() {
   
   const isFullyAuthenticated = !!session;
 
-  const handleTextSelection = () => {
-    const selection = window.getSelection();
-    if (selection && selection.toString().trim()) {
-      setSelectedText(selection.toString().trim());
-    }
-  };
-
-  const handleConvertToAudio = async () => {
-    // Audio conversion logic would go here
-  };
-
   useEffect(() => {
     const scrollToBottom = () => {
       if (progressRef.current) {
         progressRef.current.scrollTop = progressRef.current.scrollHeight;
       }
     };
-    
-    // Add click listener to hide context menu
-    const handleClick = (e: MouseEvent) => {
-      if (contextMenuRef.current && !contextMenuRef.current.contains(e.target as Node)) {
-        setContextMenu({ visible: false, x: 0, y: 0 });
-      }
-    };
-    
-    document.addEventListener('click', handleClick);
     
     if (isResearching) {
       progressIndexRef.current = 0;
@@ -134,6 +102,7 @@ export default function DeepResearchPage() {
       // Interval duration between 4 to 7 seconds.
       const randomInterval = () => Math.random() * 3000 + 4000;
       intervalRef.current = window.setInterval(addNextStep, randomInterval());
+
     }
 
     return () => {
@@ -141,7 +110,6 @@ export default function DeepResearchPage() {
         clearInterval(intervalRef.current);
         intervalRef.current = undefined;
       }
-      document.removeEventListener('click', handleClick);
     };
   }, [isResearching, maxDepth]);
 
@@ -329,7 +297,7 @@ export default function DeepResearchPage() {
               <div>
                 <label className="text-sm font-medium mb-2 block">Research Depth</label>
                 <div className="flex items-center gap-2">
-                  <Input type="number" min={1} max={5} value={maxDepth} onChange={(e) => setMaxDepth(parseInt(e.target.value))} disabled={isResearching} />
+                  <Input type="number" min="1" max="5" value={maxDepth} onChange={(e) => setMaxDepth(parseInt(e.target.value) || 3)} disabled={isResearching} className="w-20" />
                   <span className="text-sm text-muted-foreground">cycles (1-5)</span>
                 </div>
               </div>
