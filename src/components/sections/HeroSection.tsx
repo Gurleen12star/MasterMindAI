@@ -1,4 +1,5 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
+import { motion } from 'framer-motion'; // <-- 1. IMPORTED Framer Motion
 import robotImage from '../../assets/robott.png';
 
 // Add type declaration for UnicornStudio
@@ -12,10 +13,10 @@ declare global {
 }
 
 export default function HeroSection() {
-  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const heroCardRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    // Mouse move effect for the card
     const handleMouseMove = (e: MouseEvent) => {
       const heroCard = e.currentTarget as HTMLElement;
       const rect = heroCard.getBoundingClientRect();
@@ -23,95 +24,55 @@ export default function HeroSection() {
       const y = e.clientY - rect.top;
       const xNorm = (x / rect.width - 0.5) * 2;
       const yNorm = (y / rect.height - 0.5) * 2;
-      document.documentElement.style.setProperty("--x", String(xNorm));
-      document.documentElement.style.setProperty("--y", String(yNorm));
+      document.documentElement.style.setProperty('--x', String(xNorm));
+      document.documentElement.style.setProperty('--y', String(yNorm));
     };
 
     const resetPosition = () => {
-      document.documentElement.style.setProperty("--x", "0");
-      document.documentElement.style.setProperty("--y", "0");
+      document.documentElement.style.setProperty('--x', '0');
+      document.documentElement.style.setProperty('--y', '0');
     };
-    
+
     const heroCard = heroCardRef.current;
-    heroCard?.addEventListener("mousemove", handleMouseMove as any);
-    heroCard?.addEventListener("mouseleave", resetPosition);
-    
-    // Try to modify UnicornStudio to disable watermark
+    heroCard?.addEventListener('mousemove', handleMouseMove as any);
+    heroCard?.addEventListener('mouseleave', resetPosition);
+
+    // --- Unicorn Studio & Watermark Removal Logic ---
+    const initializeUnicornStudio = () => {
+      if (window.UnicornStudio && typeof window.UnicornStudio.init === 'function') {
+        const originalInit = window.UnicornStudio.init;
+        window.UnicornStudio.init = function(options) {
+          return originalInit.call(this, { ...options, hideWatermark: true });
+        };
+        window.UnicornStudio.init({ hideWatermark: true });
+      }
+    };
+
     if (window.UnicornStudio) {
-      // Try to patch UnicornStudio's init method to hide the watermark
-      const originalInit = window.UnicornStudio.init;
-      window.UnicornStudio.init = function(options) {
-        return originalInit.call(this, { ...options, hideWatermark: true });
-      };
-    }
-    
-    // Initialize UnicornStudio if it's available
-    if (window.UnicornStudio && typeof window.UnicornStudio.init === 'function') {
-      window.UnicornStudio.init({ hideWatermark: true });
+      initializeUnicornStudio();
     } else {
-      // If UnicornStudio is not available, create and load the script
       const script = document.createElement('script');
       script.src = "https://cdn.jsdelivr.net/gh/hiunicornstudio/unicornstudio.js@v1.4.25/dist/unicornStudio.umd.js";
-      script.onload = () => {
-        if (window.UnicornStudio && typeof window.UnicornStudio.init === 'function') {
-          // Try to patch UnicornStudio's init method to hide the watermark
-          const originalInit = window.UnicornStudio.init;
-          window.UnicornStudio.init = function(options) {
-            return originalInit.call(this, { ...options, hideWatermark: true });
-          };
-          
-          window.UnicornStudio.init({ hideWatermark: true });
-        }
-      };
+      script.onload = initializeUnicornStudio;
       document.head.appendChild(script);
     }
-    
-    // Hide UnicornStudio watermark
-    const removeWatermark = () => {
-      // Select potential watermark elements
-      const watermarks = document.querySelectorAll([
-        '[id*="us-watermark"]',
-        '[class*="us-watermark"]',
-        '[data-us-watermark]',
-        '.unicorn-studio-bg div[style*="position: fixed"]',
-        '.unicorn-studio-bg div[style*="bottom: 0"]',
-        '.unicorn-studio-bg div[style*="right: 0"]'
-      ].join(','));
-      
-      // Remove each watermark element
-      watermarks.forEach(el => el.remove());
-      
-      // Also try to find watermarks in iframes
-      const iframes = document.querySelectorAll('.unicorn-studio-bg iframe');
-      iframes.forEach(iframe => {
-        try {
-          const iframeDoc = (iframe as HTMLIFrameElement).contentDocument || 
-                           (iframe as HTMLIFrameElement).contentWindow?.document;
-          if (iframeDoc) {
-            const iframeWatermarks = iframeDoc.querySelectorAll([
-              '[id*="watermark"]',
-              '[class*="watermark"]',
-              'div[style*="position: fixed"]',
-              'div[style*="bottom: 0"]',
-              'div[style*="right: 0"]'
-            ].join(','));
-            
-            iframeWatermarks.forEach(el => el.remove());
-          }
-        } catch (e) {
-          // Ignore cross-origin errors
-        }
-      });
-    };
-    
-    // Run immediately and then every second for a short period to catch late-rendered watermarks
-    removeWatermark();
-    const interval = setInterval(removeWatermark, 1000);
-    setTimeout(() => clearInterval(interval), 10000);
 
+    const removeWatermark = () => {
+      const selectors = [
+        '[id*="us-watermark"]', '[class*="us-watermark"]', '[data-us-watermark]',
+        '.unicorn-studio-bg div[style*="position: fixed"]',
+      ];
+      document.querySelectorAll(selectors.join(',')).forEach(el => el.remove());
+    };
+
+    removeWatermark();
+    const interval = setInterval(removeWatermark, 500);
+    setTimeout(() => clearInterval(interval), 5000);
+
+    // Cleanup function
     return () => {
-      heroCard?.removeEventListener("mousemove", handleMouseMove as any);
-      heroCard?.removeEventListener("mouseleave", resetPosition);
+      heroCard?.removeEventListener('mousemove', handleMouseMove as any);
+      heroCard?.removeEventListener('mouseleave', resetPosition);
       clearInterval(interval);
     };
   }, []);
@@ -125,60 +86,64 @@ export default function HeroSection() {
       </div>
 
       <div className="relative z-20 max-w-7xl mx-auto px-4 md:px-6 lg:px-8 text-center">
+        {/* 2. CORRECTED JSX: Wrapped content in a properly closed motion.div */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-      <div className="container mx-auto max-w-7xl">
-        <div 
-          className="hero-card"
-          ref={heroCardRef}
+          transition={{ duration: 0.8, ease: "easeInOut" }}
         >
-          <div 
-            data-us-project="1gY80LcIkYtWkoIA4cVK" 
-            className="unicorn-studio-bg" 
-            style={{ 
-              position: 'absolute',
-              inset: 0,
-              borderRadius: 'inherit',
-              overflow: 'hidden',
-              zIndex: 0,
-              pointerEvents: 'none'
-            }}
-          ></div>
-          
-          {/* Modern Overlay Effect */}
-          <div className="hero-overlay-effect"></div>
-          
-          <div className="absolute inset-0 overflow-hidden" style={{ zIndex: 1 }}>
-            {[...Array(20)].map((_, i) => (
+          <div className="container mx-auto max-w-7xl">
+            <div
+              className="hero-card"
+              ref={heroCardRef}
+            >
               <div
-                key={i}
-                className="absolute w-2 h-2 bg-primary/10 rounded-full"
+                data-us-project="1gY80LcIkYtWkoIA4cVK"
+                className="unicorn-studio-bg"
                 style={{
-                  left: `${Math.random() * 100}%`,
-                  top: `${Math.random() * 100}%`,
-                  animation: `float-particle ${10 + Math.random() * 10}s infinite`,
-                  animationDelay: `${-Math.random() * 10}s`,
+                  position: 'absolute',
+                  inset: 0,
+                  borderRadius: 'inherit',
+                  overflow: 'hidden',
+                  zIndex: 0,
+                  pointerEvents: 'none'
                 }}
-              />
-            ))}
+              ></div>
+
+              <div className="hero-overlay-effect"></div>
+
+              <div className="absolute inset-0 overflow-hidden" style={{ zIndex: 1 }}>
+                {[...Array(20)].map((_, i) => (
+                  <div
+                    key={i}
+                    className="absolute w-2 h-2 bg-primary/10 rounded-full"
+                    style={{
+                      left: `${Math.random() * 100}%`,
+                      top: `${Math.random() * 100}%`,
+                      animation: `float-particle ${10 + Math.random() * 10}s infinite`,
+                      animationDelay: `${-Math.random() * 10}s`,
+                    }}
+                  />
+                ))}
+              </div>
+              <div className="hero-assets" style={{ zIndex: 2 }}>
+                <h3 className="hero-title">ECHOVERSE</h3>
+                <img
+                  src={robotImage}
+                  alt="EchoVerse AI Assistant"
+                  loading="eager"
+                  width="800"
+                  height="675"
+                  className="foreground"
+                />
+              </div>
+              <div className="hero-content" style={{ zIndex: 3 }}>
+                <p className="text-3xl md:text-4xl lg:text-5xl font-bold">AI-Powered Learning Hub</p>
+                <p className="text-lg md:text-xl lg:text-2xl opacity-100">Transform Your Learning Journey</p>
+              </div>
+            </div>
           </div>
-          <div className="hero-assets" style={{ zIndex: 2 }}>
-            <h3 className="hero-title">ECHOVERSE</h3>
-            <img 
-              src={robotImage}
-              alt="EchoVerse AI Assistant" 
-              loading="eager"
-              width="800"
-              height="675"
-              className="foreground"
-            />
-          </div>
-          <div className="hero-content" style={{ zIndex: 3 }}>
-            <p className="text-3xl md:text-4xl lg:text-5xl font-bold">AI-Powered Learning Hub</p>
-            <p className="text-lg md:text-xl lg:text-2xl opacity-100">Transform Your Learning Journey</p>
-          </div>
-        </div>
+        </motion.div>
       </div>
     </section>
   );
