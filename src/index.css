@@ -384,6 +384,8 @@ div[style*="z-index: 999999"] {
   75% { transform: translate(-5px, 5px); }
   100% { transform: translate(0, 0); }
 }
+  );
+}
 
 .hero-assets img.foreground {
   position: absolute;
@@ -756,4 +758,227 @@ body {
     );
     animation: shimmer 2s infinite;
   }
+
+  /* Glass morphism effect */
+  .glass-morph {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  /* Hover glow effects */
+  .hover-glow-purple:hover {
+    box-shadow: var(--glow-purple);
+  }
+
+  .hover-glow-pink:hover {
+    box-shadow: var(--glow-pink);
+  }
+
+  .hover-glow-blue:hover {
+    box-shadow: var(--glow-blue);
+  }
+
+  .hover-glow-green:hover {
+    box-shadow: var(--glow-green);
+  }
+
+  .project-box-footer {
+    @apply flex justify-between items-center mt-6 pt-4 border-t border-border/10;
+  }
+
+  .participants {
+    @apply flex items-center;
+  }
+
+  .days-left {
+    @apply bg-accent text-xs rounded-full px-4 py-1.5 font-medium;
+  }
+
+  .bento-grid {
+    @apply grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(3, 1fr);
+    gap: 2rem;
+  }
+
+  .text-gradient {
+    @apply bg-gradient-to-r from-purple-400 to-indigo-500 bg-clip-text text-transparent;
+  }
+
+  .bento-card {
+    @apply rounded-[2.5rem] flex flex-col items-start p-8 relative bg-card shadow-lg hover:shadow-xl transition-all duration-300;
+  }
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: hsl(var(--secondary));
+}
+
+::-webkit-scrollbar-thumb {
+  background: hsl(var(--muted-foreground)/0.3);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: hsl(var(--muted-foreground)/0.5);
+}
+
+/* Smooth scrolling */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Mermaid Diagram Custom Styles */
+.mermaid-diagram-wrapper {
+  background-color: hsl(var(--background));
+  padding: 1rem;
+  border-radius: var(--radius);
+  overflow: auto; /* Add scroll for large diagrams */
+  border: 1px solid hsl(var(--border));
+}
+
+.mermaid-render-area svg {
+  display: block; /* Helps with sizing */
+  margin: auto; /* Center the diagram if it's smaller than container */
+  max-width: 100%; /* Ensure responsiveness */
+  background-color: transparent !important; /* Override potential inline styles from mermaid */
+}
+
+/* Animated Loading Text Styles */
+.animated-loading-text {
+  color: hsl(var(--muted-foreground));
+  font-size: 16px;
+  font-family: 'Open Sans', sans-serif;
+  font-weight: 600;
+  display: inline-block;
+}
+
+.animated-loading-text span {
+  transition: all 0.3s ease;
+  display: inline-block;
+  animation: glow 2.6s ease infinite;
+  letter-spacing: 0.01em;
+}
+
+@keyframes glow {
+  0% {
+    transform: translate3d(0,0,0) scale(1);
+    color: hsl(var(--muted-foreground));
+    text-shadow: 0 0 0 hsl(var(--muted-foreground) / 0);
+  }
+  13% {
+    transform: translate3d(1px,-1px,0) scale(1.2);
+    color: hsl(var(--foreground));
+  }
+  16% {
+    text-shadow: 0 0 8px hsl(var(--primary) / 0.8);
+  }
+  26% {
+    transform: translate3d(0,0,0) scale(1);
+    color: hsl(var(--muted-foreground));
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 0.8;
+  }
+}
+
+/* Default Node Styles (applied if no specific class matches) */
+.mermaid-render-area .node > rect,
+.mermaid-render-area .node > circle,
+.mermaid-render-area .node > ellipse,
+.mermaid-render-area .node > polygon {
+  fill: hsl(var(--muted)) !important; /* Light gray fill */
+  stroke: hsl(var(--border)) !important; /* Border color */
+  stroke-width: 2px;
+  rx: 8px; /* Rounded corners */
+  ry: 8px; /* Rounded corners */
+}
+
+.mermaid-render-area .node .label,
+.mermaid-render-area .node tspan {
+  fill: hsl(var(--foreground)) !important; /* Dynamic text color */
+  font-family: inherit;
+  font-size: 14px;
+}
+
+/* Edge Path Styles */
+.mermaid-render-area .edgePath path.path {
+  stroke: hsl(var(--muted-foreground)) !important;
+  stroke-width: 2px;
+}
+.mermaid-render-area .edgePath .arrowhead {
+  fill: hsl(var(--muted-foreground)) !important;
+}
+
+/* Edge Label Styles (if any) */
+.mermaid-render-area .edgeLabel tspan {
+  fill: var(--mermaid-node-text-color);
+  font-size: 12px;
+}
+
+/* Specific Class Styles for Nodes */
+/* Purple Node */
+.mermaid-render-area .classPurple > rect,
+.mermaid-render-area .classPurple > circle,
+.mermaid-render-area .classPurple > ellipse,
+.mermaid-render-area .classPurple > polygon {
+  fill: var(--mermaid-purple-darker);
+  stroke: var(--mermaid-purple);
+}
+.mermaid-render-area .classPurple .label { fill: var(--mermaid-node-text-color); }
+
+/* Green Node */
+.mermaid-render-area .classGreen > rect,
+.mermaid-render-area .classGreen > circle,
+.mermaid-render-area .classGreen > ellipse,
+.mermaid-render-area .classGreen > polygon {
+  fill: var(--mermaid-green-darker);
+  stroke: var(--mermaid-green);
+}
+.mermaid-render-area .classGreen .label { fill: var(--mermaid-node-text-color); }
+
+/* Yellow Node */
+.mermaid-render-area .classYellow > rect,
+.mermaid-render-area .classYellow > circle,
+.mermaid-render-area .classYellow > ellipse,
+.mermaid-render-area .classYellow > polygon {
+  fill: var(--mermaid-yellow-darker);
+  stroke: var(--mermaid-yellow);
+}
+.mermaid-render-area .classYellow .label { fill: var(--mermaid-node-text-color); }
+
+/* Blue Node */
+.mermaid-render-area .classBlue > rect,
+.mermaid-render-area .classBlue > circle,
+.mermaid-render-area .classBlue > ellipse,
+.mermaid-render-area .classBlue > polygon {
+  fill: var(--mermaid-blue-darker);
+  stroke: var(--mermaid-blue);
+}
+.mermaid-render-area .classBlue .label { fill: var(--mermaid-node-text-color); }
+
+/* Orange Node */
+.mermaid-render-area .classOrange > rect,
+.mermaid-render-area .classOrange > circle,
+.mermaid-render-area .classOrange > ellipse,
+.mermaid-render-area .classOrange > polygon {
+  fill: var(--mermaid-orange-darker);
+  stroke: var(--mermaid-orange);
+}
+.mermaid-render-area .classOrange .label { fill: var(--mermaid-node-text-color); }
+
+/* If you have a specific container for the roadmap, ensure it has a dark background */
+.roadmap-display-container { /* Assuming you might wrap the <MermaidDiagram> component */
+  background-color: var(--mermaid-bg); /* Or your main page dark background */
+  padding: 1rem;
+  border-radius: var(--radius);
 }
