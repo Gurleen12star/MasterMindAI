@@ -56,11 +56,17 @@ export default function Sidebar() {
     <div className={`${isCollapsed ? 'w-20' : 'w-64'} h-screen bg-card/50 backdrop-blur-sm border-r border-border/40 flex flex-col relative transition-all duration-300`}>
       <Button
         variant="ghost"
-        size="icon"
-        className="absolute -right-4 top-6 h-8 w-8 rounded-full bg-primary text-primary-foreground shadow-md hover:bg-primary/90"
+        className="absolute -right-6 top-6 h-12 w-12 rounded-full bg-gradient-to-r from-primary/90 to-primary shadow-lg hover:shadow-primary/25 hover:scale-110 transition-all duration-300 group overflow-hidden"
         onClick={toggleSidebar}
       >
-        {isCollapsed ? <ChevronRight className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />}
+        <div className="absolute inset-0 bg-gradient-to-r from-primary/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+        <div className="relative z-10 flex items-center justify-center">
+          {isCollapsed ? (
+            <ChevronRight className="h-5 w-5 text-primary-foreground transition-transform duration-300 group-hover:translate-x-0.5" />
+          ) : (
+            <ChevronLeft className="h-5 w-5 text-primary-foreground transition-transform duration-300 group-hover:-translate-x-0.5" />
+          )}
+        </div>
       </Button>
       
       <div className={`p-6 ${isCollapsed ? 'px-2' : ''}`}>
@@ -69,9 +75,9 @@ export default function Sidebar() {
             <img 
               src="/src/assets/logo.png" 
               alt="EchoVerse Logo" 
-              className={`object-contain transition-all duration-300 ${
+              className={`object-contain transition-all duration-500 transform ${
                 isCollapsed ? 'h-12 w-12' : 'h-16 w-16'
-              }`} 
+              } ${isCollapsed ? 'rotate-180 scale-90' : 'rotate-0 scale-100'}`} 
             />
           </div>
         </a>
@@ -93,11 +99,11 @@ export default function Sidebar() {
                       href={item.href}
                       className={`group flex items-center justify-between px-3 py-2 text-sm text-muted-foreground hover:text-foreground rounded-md hover:bg-accent/50 transition-colors ${
                         isCollapsed ? 'justify-center' : ''
-                      }`}
+                      } hover:shadow-sm hover:-translate-y-0.5 transition-all duration-300`}
                       title={isCollapsed ? item.label : undefined}
                     >
                       <div className={`flex items-center ${isCollapsed ? 'justify-center' : 'gap-3'}`}>
-                        <item.icon className="h-4 w-4 transition-transform duration-300 group-hover:scale-110" />
+                        <item.icon className="h-4 w-4 transition-all duration-300 group-hover:scale-110 group-hover:text-primary" />
                         {!isCollapsed && item.label}
                       </div>
                       {!isCollapsed && item.badge && (
