@@ -99,3 +99,37 @@ export async function generateRoadmapMermaid(topic: string): Promise<string> {
     return `flowchart LR\nERROR[\"Failed to generate diagram: ${sanitizedErrorMessage}\"]:::classPurple`;
   }
 } 
+
+export async function generateLearningPath(topic: string, level: 'beginner' | 'intermediate' | 'advanced', additionalInfo?: string): Promise<string> {
+  try {
+    const model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash' });
+    const escapedTopic = topic.replace(/"/g, '\\"').replace(/`/g, '\\`');
+    
+    const prompt = `Create a detailed learning path for "${escapedTopic}" at ${level} level.
+    ${additionalInfo ? `Additional context: ${additionalInfo}\n` : ''}
+    
+    Format the response as markdown with:
+    1. A brief introduction
+    2. Clear learning objectives
+    3. Detailed steps with estimated time commitments
+    4. Recommended resources for each step
+    5. Projects or exercises to practice
+    6. Assessment criteria to measure progress
+    
+    Use proper markdown formatting with:
+    - Headers (##, ###)
+    - Lists (-, *)
+    - Bold and italic text
+    - Code blocks where relevant
+    
+    Keep the content practical and actionable.`;
+    
+    const result = await model.generateContent(prompt);
+    const response = result.response;
+    return response.text().trim();
+  } catch (error) {
+    console.error('Error generating learning path:', error);
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    return `# Error Generating Learning Path\n\nSorry, there was an error: ${errorMessage}\n\nPlease try again.`;
+  }
+}
