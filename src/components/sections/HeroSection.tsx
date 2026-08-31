@@ -116,7 +116,17 @@ export default function HeroSection() {
   }, []);
 
   return (
-    <section className="relative overflow-hidden pt-24 pb-48 md:pt-32 md:pb-64 bg-gradient-to-b from-background via-background/95 to-transparent">
+    <section className="relative min-h-screen flex items-center justify-center overflow-hidden bg-gradient-to-br from-background via-muted/30 to-background">
+      {/* Animated Background Elements */}
+      <div className="absolute inset-0 overflow-hidden">
+        <div className="absolute top-20 left-4 w-32 h-32 bg-primary/5 rounded-full blur-2xl animate-pulse"></div>
+        <div className="absolute bottom-20 right-4 w-24 h-24 bg-blue-500/5 rounded-full blur-2xl animate-pulse delay-1000"></div>
+        <div className="absolute top-1/2 left-8 w-16 h-16 bg-green-500/5 rounded-full blur-2xl animate-pulse delay-500"></div>
+        
+        {/* Grid pattern overlay */}
+        <div className="absolute inset-0 bg-grid-white opacity-[0.02]"></div>
+      </div>
+
       <div className="container px-4 max-w-[1200px] mx-auto">
         <article className="hero-card" ref={heroCardRef}>
           <div 
