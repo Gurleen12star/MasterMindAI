@@ -57,21 +57,15 @@ const NavLink = ({ to, icon: Icon, label, isActive, isProject = false, isCollaps
           {/* Far spreading light effect */}
           <div className="absolute -inset-3 bg-green-400/10 rounded-full blur-lg"></div>
           
-          {/* Light rays effect - only show when not collapsed */}
-          {!isCollapsed && (
-            <>
-              <div className="absolute left-1 top-1/2 -translate-y-1/2 w-8 h-0.5 bg-gradient-to-r from-green-400/60 to-transparent blur-sm"></div>
-              <div className="absolute left-1 top-1/2 -translate-y-1/2 w-12 h-px bg-gradient-to-r from-green-400/30 to-transparent"></div>
-            </>
-          )}
+
         </div>
       </div>
     )}
     <Icon className={`${isCollapsed ? 'h-5 w-5' : `mr-3 h-5 w-5 ${isProject ? 'h-4 w-4' : ''}`}`} />
     {!isCollapsed && (
       <>
-        <span>{label}</span>
-        {!isProject && <ChevronRight className="ml-auto h-4 w-4 text-gray-500" />}
+    <span>{label}</span>
+    {!isProject && <ChevronRight className="ml-auto h-4 w-4 text-gray-500" />}
       </>
     )}
     
@@ -113,10 +107,10 @@ export default function Sidebar({ className }: SidebarProps) {
     <div className={`${isCollapsed ? 'w-16' : 'w-64'} h-screen bg-[#111111] text-white flex-col border-r border-white/10 transition-all duration-300 ${className}`}>
       <div className={`${isCollapsed ? 'p-3' : 'p-5'} border-b border-white/10 flex items-center justify-between`}>
         {!isCollapsed ? (
-          <Link to="/dashboard" className="flex items-center gap-3">
-            <EchoVerseLogo className="h-8 w-8 text-primary" />
-            <span className="text-lg font-bold">EchoVerse</span>
-          </Link>
+        <Link to="/dashboard" className="flex items-center gap-3">
+          <EchoVerseLogo className="h-8 w-8 text-primary" />
+          <span className="text-lg font-bold">EchoVerse</span>
+        </Link>
         ) : (
           <Link to="/dashboard" className="flex items-center justify-center w-full">
             <EchoVerseLogo className="h-8 w-8 text-primary" />
@@ -135,9 +129,9 @@ export default function Sidebar({ className }: SidebarProps) {
       <div className="flex-1 p-3 space-y-4">
         <div>
           {!isCollapsed && (
-            <h3 className="px-4 py-2 text-xs font-semibold tracking-wider text-gray-500 uppercase">
-              Main Menu
-            </h3>
+          <h3 className="px-4 py-2 text-xs font-semibold tracking-wider text-gray-500 uppercase">
+            Main Menu
+          </h3>
           )}
           <div className="space-y-1">
             {mainMenu.map((item) => (
@@ -151,21 +145,21 @@ export default function Sidebar({ className }: SidebarProps) {
           </div>
         </div>
         {!isCollapsed && (
-          <div>
-            <div className="flex items-center justify-between px-4 py-2">
-              <h3 className="text-xs font-semibold tracking-wider text-gray-500 uppercase">
-                Projects
-              </h3>
-              <Button variant="ghost" size="icon" className="h-6 w-6 text-gray-400 hover:text-white">
-                <Plus className="h-4 w-4" />
-              </Button>
-            </div>
-            <div className="space-y-1">
-              {projects.map((item) => (
-                <NavLink key={item.label} {...item} isActive={false} isProject isCollapsed={isCollapsed} />
-              ))}
-            </div>
+        <div>
+          <div className="flex items-center justify-between px-4 py-2">
+            <h3 className="text-xs font-semibold tracking-wider text-gray-500 uppercase">
+              Projects
+            </h3>
+            <Button variant="ghost" size="icon" className="h-6 w-6 text-gray-400 hover:text-white">
+              <Plus className="h-4 w-4" />
+            </Button>
           </div>
+          <div className="space-y-1">
+            {projects.map((item) => (
+                <NavLink key={item.label} {...item} isActive={false} isProject isCollapsed={isCollapsed} />
+            ))}
+          </div>
+        </div>
         )}
       </div>
 
