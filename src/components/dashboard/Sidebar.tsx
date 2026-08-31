@@ -98,7 +98,7 @@ export default function Sidebar() {
       <div className={`p-6 ${isCollapsed ? 'px-2' : ''}`}>
         <div className="flex items-center group relative">
           <div className="relative flex items-center">
-            <Link href="/dashboard/explore" className="block">
+            <Link href="/" className="block">
               <img 
                 src="/src/assets/logo.png" 
                 alt="EchoVerse Logo" 

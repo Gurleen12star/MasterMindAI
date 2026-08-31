@@ -58,14 +58,15 @@ function App() {
         return <LoginPage />;
       case '/signup':
         return <SignupPage />;
-      case '/dashboard':
-      case '/dashboard/roadmap-generator':
-        if (!isSignedIn) {
-          window.location.href = '/login';
-          return null;
-        }
-        return <DashboardPage />;
       default:
+        if (currentPath.startsWith('/dashboard')) {
+          if (!isSignedIn) {
+            window.location.href = '/login';
+            return null;
+          }
+          return <DashboardPage />;
+        }
+        // If not /login, /signup, or /dashboard/*, render homepage content
         return (
           <>
             <Header />
