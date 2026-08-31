@@ -41,10 +41,6 @@ const faqs = [
 export default function FAQSection() {
   return (
     <section id="faq" className="py-16 md:py-24 lg:py-32">
-      {/* Modern overlay background */}
-      <div className="absolute inset-0 bg-gradient-to-b from-background/50 via-background to-background/50" />
-      <div className="absolute inset-0 bg-grid-white/[0.02]" />
-      
       <div className="container px-4 max-w-[1200px] mx-auto">
         <div className="mx-auto max-w-3xl text-center">
           <h2 className="text-3xl font-bold tracking-tight md:text-4xl bg-clip-text text-transparent bg-gradient-to-r from-primary to-primary/70">
@@ -61,7 +57,7 @@ export default function FAQSection() {
               <AccordionItem 
                 key={index} 
                 value={`item-${index}`}
-                className="border-2 border-primary/20 rounded-xl bg-background/30 backdrop-blur-sm hover:border-primary/30 transition-all duration-300 bento-modern px-6 py-2"
+                className="border-2 border-primary/20 rounded-xl bg-background/30 backdrop-blur-sm hover:border-primary/30 transition-all duration-300 shadow-lg hover:shadow-xl px-6 py-2"
               >
                 <AccordionTrigger className="text-left hover:no-underline py-6 text-lg font-semibold text-foreground hover:text-primary transition-colors duration-200">
                   {faq.question}
