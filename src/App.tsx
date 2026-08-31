@@ -2,7 +2,6 @@ import { useEffect, useState } from 'react';
 import { useAuth, useSession } from '@clerk/clerk-react';
 import { ThemeProvider } from '@/components/theme/ThemeProvider';
 import CustomCursor from '@/components/ui/CustomCursor';
-import LoadingScreen from '@/components/ui/LoadingScreen';
 import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
 import HeroSection from '@/components/sections/HeroSection';
@@ -50,11 +49,12 @@ function App() {
     };
   }, []);
 
-  if (!isLoaded) {
-    return <LoadingScreen />;
-  }
-
   const renderContent = () => {
+    if (!isLoaded) {
+      // Return null while loading, let the HTML preloader handle the loading state
+      return null;
+    }
+    
     switch (currentPath) {
       case '/login':
         return <LoginPage />;

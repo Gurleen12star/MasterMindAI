@@ -4,17 +4,224 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
     <title>EchoVerse AI Learning Hub Landing Page</title>
     <script type="text/javascript">
       !function(){if(!window.UnicornStudio){window.UnicornStudio={isInitialized:!1};var i=document.createElement("script");i.src="https://cdn.jsdelivr.net/gh/hiunicornstudio/unicornstudio.js@v1.4.25/dist/unicornStudio.umd.js",i.onload=function(){window.UnicornStudio.isInitialized||(UnicornStudio.init(),window.UnicornStudio.isInitialized=!0)},(document.head || document.body).appendChild(i)}}();
     </script>
+    <style>
+      /* Initial preloader styles */
+      #initial-preloader {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100vh;
+        background: #342ead;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        z-index: 10000;
+        transition: opacity 0.3s ease;
+        font-family: 'Open Sans', sans-serif;
+      }
+
+      /* SVG Logo Container */
+      .logo-container {
+        margin-bottom: 2rem;
+        filter: drop-shadow(0 0 20px rgba(255, 255, 255, 0.3));
+      }
+
+      /* SVG Animations */
+      .path {
+        stroke-dasharray: 30;
+        animation: dash 5s infinite;
+      }
+
+      @keyframes dash {
+        to {
+          stroke-dashoffset: 300;
+        }
+      }
+
+      .c1, .c2, .c3 {
+        animation: one 1s infinite;
+      }
+
+      @keyframes one {
+        30% {
+          opacity: 0.5;
+        }
+      }
+
+      .c4, .c5, .c6 {
+        animation: two 1s infinite;
+      }
+
+      @keyframes two {
+        60% {
+          opacity: 0.5;
+        }
+      }
+
+      .c7, .c8, .c9, .c10 {
+        animation: three 1s infinite;
+      }
+
+      @keyframes three {
+        90% {
+          opacity: 0.5;
+        }
+      }
+
+      .lg-circle {
+        animation: scale-c 1.2s infinite;
+      }
+
+      @keyframes scale-c {
+        50% {
+          r: 2%;
+        }
+      }
+
+      .lg-middle {
+        animation: scale-b 1.2s infinite;
+      }
+
+      @keyframes scale-b {
+        20% {
+          r: 4%;
+        }
+      }
+
+      .lg-edge {
+        animation: scale-e 1.2s infinite;
+      }
+
+      @keyframes scale-e {
+        80% {
+          r: 2.8%;
+        }
+      }
+
+      /* Animated Text Styles */
+      #animatedText {
+        color: #868F97;
+        font-size: 16px;
+        font-family: 'Open Sans', sans-serif;
+        font-weight: 600;
+        margin-top: 1rem;
+      }
+
+      #animatedText span {
+        transition: all 0.3s ease;
+        display: inline-block;
+        animation: glow 2.6s ease infinite;
+        letter-spacing: 0.01em;
+      }
+
+      #animatedText span:nth-child(1) { animation-delay: 0s; }
+      #animatedText span:nth-child(2) { animation-delay: 0.09s; }
+      #animatedText span:nth-child(3) { animation-delay: 0.18s; }
+      #animatedText span:nth-child(4) { animation-delay: 0.27s; }
+      #animatedText span:nth-child(5) { animation-delay: 0.36s; }
+      #animatedText span:nth-child(6) { animation-delay: 0.45s; }
+      #animatedText span:nth-child(7) { animation-delay: 0.54s; }
+      #animatedText span:nth-child(8) { animation-delay: 0.63s; }
+      #animatedText span:nth-child(9) { animation-delay: 0.72s; }
+      #animatedText span:nth-child(10) { animation-delay: 0.81s; }
+      #animatedText span:nth-child(11) { animation-delay: 0.9s; }
+      #animatedText span:nth-child(12) { animation-delay: 0.99s; }
+      #animatedText span:nth-child(13) { animation-delay: 1.08s; }
+      #animatedText span:nth-child(14) { animation-delay: 1.17s; }
+      #animatedText span:nth-child(15) { animation-delay: 1.26s; }
+      #animatedText span:nth-child(16) { animation-delay: 1.35s; }
+      #animatedText span:nth-child(17) { animation-delay: 1.44s; }
+      #animatedText span:nth-child(18) { animation-delay: 1.53s; }
+      #animatedText span:nth-child(19) { animation-delay: 1.62s; }
+      #animatedText span:nth-child(20) { animation-delay: 1.71s; }
+      #animatedText span:nth-child(21) { animation-delay: 1.8s; }
+
+      @keyframes glow {
+        0% {
+          transform: translate3d(0,0,0) scale(1);
+          color: #868F97;
+          text-shadow: 0 0 0 rgba(134, 143, 151, 0);
+        }
+        13% {
+          transform: translate3d(1px,-1px,0) scale(1.2);
+          color: #ffffff;
+        }
+        16% {
+          text-shadow: 0 0 2px rgba(255, 255, 255, 0.8);
+        }
+        26% {
+          transform: translate3d(0,0,0) scale(1);
+          color: #b8c1c9;
+          opacity: 1;
+        }
+        100% {
+          transform: scale(1);
+          opacity: 0.8;
+        }
+      }
+    </style>
   </head>
   <body>
-    <!-- Initial preloader to prevent white screen -->
+    <!-- Initial preloader with SVG logo and animated text -->
     <div id="initial-preloader">
-      <div class="simple-loader">Loading EchoVerse...</div>
+      <div class="logo-container">
+        <svg width="201" height="201" viewBox="0 0 201 201" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M112 136C83.2812 136 60 112.719 60 84C60 60.6795 75.3514 40.9445 96.5 34.3493" stroke="white"
+              stroke-width="2" stroke-linecap="round" />
+          <path
+              d="M75.2422 167.978C90.5676 162.775 105.79 151.026 117.846 136.369C117.982 136.205 118.115 136.038 118.249 135.873C120.85 132.375 123.225 129.24 124.088 128.11C142.858 101.02 150.39 67.151 130.619 45.5898C123.074 37.3622 112.294 32.8666 101.139 33.2945C104.844 32.4617 100.63 32.0222 112.656 32.0222C124.682 32.0222 162.19 43.2507 155.603 72.7302C153.281 83.1249 163.138 89.0719 168.606 97.3357C161.458 101.866 155.334 103.031 159.197 108.207C160.027 109.321 161.113 110.45 162.454 111.593L155.456 114.388C161.513 116.479 160.859 118.797 153.495 121.341C162.553 132.822 157.371 138.179 137.95 137.414C125.64 142.164 118.448 154.999 120.824 167.978H75.2422Z"
+              fill="white" />
+          <path class="path" d="M99.5 56.5L65 80.5" stroke="white" stroke-width="2" stroke-linecap="round" />
+          <path class="path" d="M105 60.5L111 83" stroke="white" stroke-width="2" stroke-linecap="round" />
+          <path class="path" d="M130.5 68.5L89.5 98" stroke="white" stroke-width="2" stroke-linecap="round" />
+          <path class="path" d="M82 46L130 65" stroke="white" stroke-width="2" stroke-linecap="round" />
+          <path class="path" d="M79.5 49L87 95.5" stroke="white" stroke-width="2" stroke-linecap="round" />
+          <path class="path" d="M67 87L86.5 98.5" stroke="white" stroke-width="2" stroke-linecap="round" />
+          <path class="path" d="M113 109L90 100.5" stroke="white" stroke-width="2" stroke-linecap="round" />
+          <path class="path" d="M112 86L117.5 105" stroke="white" stroke-width="2" stroke-linecap="round" />
+          <path class="path" d="M121 130L120 114.5" stroke="white" stroke-width="2" />
+          <path class="path" d="M114 114.5L86 126.5" stroke="white" stroke-width="2" stroke-linecap="round" />
+          <path class="path" d="M87 102.5L84 124.5" stroke="white" stroke-width="2" stroke-linecap="round" />
+          <path d="M118.5 133L88 148.5" stroke="white" stroke-width="2" stroke-linecap="round"
+              stroke-linejoin="round" />
+
+          <!-- section 1 -->
+          <circle class="c10" cx="65.5" cy="126.5" r="4.5" fill="white" />
+          <circle class="c9" cx="51" cy="111" r="7" fill="white" />
+          <circle class="c8" cx="37" cy="111" r="4" fill="white" />
+          <circle class="c7" cx="34.5" cy="98.5" r="3.5" fill="white" />
+          <circle class="c6" cx="42" cy="88" r="4" fill="white" />
+          <circle class="c5" cx="37.5" cy="77.5" r="3.5" fill="white" />
+          <circle class="c4" cx="47.5" cy="67.5" r="5.5" fill="white" />
+          <circle class="c3" cx="32.5" cy="66.5" r="3.5" fill="white" />
+          <circle class="c2" cx="42.5" cy="55.5" r="3.5" fill="white" />
+          <circle class="c1" cx="57" cy="48" r="4" fill="white" />
+          <!-- section 2 -->
+          <circle class="lg-middle" cx="88" cy="99" r="7" fill="white" />
+          <circle class="lg-circle" cx="103" cy="56" r="9" fill="white" />
+          <circle class="lg-circle" cx="118" cy="110" r="9" fill="white" />
+          <circle class="lg-middle" cx="83" cy="68" r="5" fill="white" />
+          <circle class="lg-middle" cx="120" cy="131" r="5" fill="white" />
+          <circle class="lg-middle" cx="131.5" cy="66.5" r="5.5" fill="white" />
+          <circle class="lg-edge" cx="111" cy="83" r="6" fill="white" />
+          <circle class="lg-middle" cx="84.5" cy="126.5" r="5.5" fill="white" />
+          <circle class="lg-edge" cx="80.5" cy="46.5" r="5.5" fill="white" />
+          <circle class="lg-circle" cx="62" cy="84" r="9" fill="white" />
+        </svg>
+      </div>
+      
+      <div id="animatedText">
+        <span>L</span><span>o</span><span>a</span><span>d</span><span>i</span><span>n</span><span>g</span><span> </span><span>E</span><span>c</span><span>h</span><span>o</span><span>V</span><span>e</span><span>r</span><span>s</span><span>e</span><span>.</span><span>.</span><span>.</span>
+      </div>
     </div>
+    
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
