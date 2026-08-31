@@ -78,12 +78,12 @@ function App() {
         return (
           <>
             <Header />
-            
-<main className="relative z-10 max-w-7xl mx-auto px-4 md:px-6 lg:px-8">
-  <HeroSection />
-  {/* Move LogoMarquee here and apply absolute positioning */}
-  <LogoMarquee className="absolute bottom-0 left-0 right-0 z-20" />
-</main>
+                          
+              <main className="relative z-10 max-w-7xl mx-auto px-4 md:px-6 lg:px-8">
+                <HeroSection />
+                {/* Move LogoMarquee here and apply absolute positioning */}
+                <LogoMarquee className="absolute bottom-0 left-0 right-0 z-20" />
+              </main>
 
               <FeaturesGrid />
               <DemoSection />
