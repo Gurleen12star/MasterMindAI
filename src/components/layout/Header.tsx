@@ -40,7 +40,7 @@ export default function Header() {
         <div className="relative mx-auto flex items-center justify-between w-full max-w-6xl rounded-2xl bg-background/60 backdrop-blur-md shadow-lg border border-border/5 px-6 py-4">
         <a href="#" className="flex items-center gap-2 group z-20">
           <div className="relative">
-            <img src={logo} alt="EchoVerse Logo" className="h-12 w-12 object-contain" />
+            <img src={logo} alt="EchoVerse Logo" className="h-16 w-16 object-contain" />
           </div>
           <span className="bg-gradient-to-r from-indigo-500 to-purple-500 bg-clip-text text-xl font-bold text-transparent hover:scale-105 transition-transform">
             {/* EchoVerse*/}
