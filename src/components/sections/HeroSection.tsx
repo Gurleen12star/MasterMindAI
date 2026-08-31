@@ -29,7 +29,7 @@ export default function HeroSection() {
   }, []);
 
   return (
-    <section className="relative overflow-hidden pt-24 md:pt-32 bg-gradient-to-b from-background via-background/95 to-background/90">
+    <section className="relative overflow-hidden pt-0 bg-gradient-to-b from-background via-background/95 to-background/90">
       <div className="container px-4 max-w-[1200px] mx-auto">
         <article className="hero-card">
           <div className="hero-assets">
@@ -37,7 +37,7 @@ export default function HeroSection() {
             <img 
               src="robot.png"
               alt="Floating Icon"
-              className="foreground transition-transform duration-300"
+              className="foreground"
               style={{ width: "800px", height: "675px" }}
             />
           </div>
