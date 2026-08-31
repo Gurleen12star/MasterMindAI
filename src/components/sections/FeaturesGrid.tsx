@@ -12,19 +12,19 @@ export default function FeaturesGrid() {
   return (
     <section id="features" className="relative -mt-32 md:-mt-48 py-24 md:py-32 overflow-hidden">
       <div className="absolute inset-0">
-        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-background/30 to-background/60"></div>
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,_var(--tw-gradient-stops))] from-primary/10 via-transparent to-transparent opacity-50"></div>
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_bottom_left,_var(--tw-gradient-stops))] from-primary/10 via-transparent to-transparent opacity-50"></div>
+        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-background/20 to-background/40"></div>
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,_var(--tw-gradient-stops))] from-primary/5 via-transparent to-transparent opacity-30"></div>
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_bottom_left,_var(--tw-gradient-stops))] from-primary/5 via-transparent to-transparent opacity-30"></div>
         <div 
           className="absolute inset-0" 
           style={{
             backgroundImage: `linear-gradient(to right, hsl(var(--primary)/0.1) 1px, transparent 1px),
                              linear-gradient(to bottom, hsl(var(--primary)/0.1) 1px, transparent 1px)`,
             backgroundSize: '24px 24px',
-            maskImage: 'radial-gradient(circle at center, black, transparent 90%)'
+            maskImage: 'radial-gradient(circle at center, black, transparent 100%)'
           }}
         ></div>
-        <div className="absolute inset-0 backdrop-blur-[50px]"></div>
+        <div className="absolute inset-0 backdrop-blur-[100px] bg-background/5"></div>
       </div>
       <div className="container relative z-10 px-4 max-w-[1200px] mx-auto">
         <div className="relative mx-auto max-w-5xl text-center mb-16">
