@@ -10,7 +10,7 @@ import { Search, Sparkles, Clock, BookOpen, Star, History, FileText, Network, Vi
 import AnimatedLoadingText from '@/components/ui/AnimatedLoadingText';
 import { useAuth } from '@/components/auth/SupabaseAuthProvider';
 import { supabase } from '@/lib/supabase';
-import OverviewStats from '@/components/dashboard/OverviewStats';
+import { useNavigate } from 'react-router-dom';
 
 // Types for activities
 interface BaseActivity {
@@ -50,6 +50,7 @@ interface UserStats {
 
 export default function ExploreHubPage() {
   const { user } = useAuth();
+  const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState('');
   const [recentActivities, setRecentActivities] = useState<CombinedActivity[]>([]);
   const [isLoadingActivities, setIsLoadingActivities] = useState(true);
@@ -60,12 +61,20 @@ export default function ExploreHubPage() {
     totalRoadmaps: 0,
     lastActive: new Date().toISOString()
   });
+  const [isSearching, setIsSearching] = useState(false);
 
   useEffect(() => {
     if (user?.id) {
       fetchUserActivitiesAndStats();
     }
   }, [user?.id]);
+
+  // Reset to default activities when searchQuery is cleared
+  useEffect(() => {
+    if (user?.id && searchQuery.trim() === '') {
+      fetchUserActivitiesAndStats();
+    }
+  }, [searchQuery, user?.id]);
 
   const fetchUserActivitiesAndStats = async () => {
     if (!user?.id) return;
@@ -156,6 +165,83 @@ export default function ExploreHubPage() {
       console.error('Error fetching user activities:', error);
     } finally {
       setIsLoadingActivities(false);
+    }
+  };
+
+  // Search handler
+  const handleSearch = async () => {
+    if (!user?.id) return;
+    if (!searchQuery.trim()) {
+      // If search is empty, show default activities
+      fetchUserActivitiesAndStats();
+      return;
+    }
+    setIsSearching(true);
+    setIsLoadingActivities(true);
+    try {
+      // Search personalized learning sessions
+      const { data: learningSessions } = await supabase
+        .from('personalized_learning_sessions')
+        .select('id, user_id, topic, personality, modules_data, created_at')
+        .eq('user_id', user.id)
+        .or(`topic.ilike.%${searchQuery}%,personality.ilike.%${searchQuery}%`)
+        .order('created_at', { ascending: false });
+
+      // Search deep research history
+      const { data: researchReports } = await supabase
+        .from('deep_research_history')
+        .select('id, user_id, topic, max_depth, total_findings, created_at')
+        .eq('user_id', user.id)
+        .or(`topic.ilike.%${searchQuery}%`)
+        .order('created_at', { ascending: false });
+
+      // Search roadmaps
+      const { data: roadmaps } = await supabase
+        .from('roadmaps')
+        .select('id, user_id, topic, mermaid_code, created_at')
+        .eq('user_id', user.id)
+        .or(`topic.ilike.%${searchQuery}%`)
+        .order('created_at', { ascending: false });
+
+      // Transform results
+      const learningActivities: LearningSessionActivity[] = (learningSessions || []).map(session => ({
+        id: session.id,
+        user_id: session.user_id,
+        type: 'learning_session',
+        topic: session.topic,
+        personality: session.personality,
+        modules_count: Array.isArray(session.modules_data) ? session.modules_data.length : 0,
+        created_at: session.created_at
+      }));
+      const researchActivities: ResearchReportActivity[] = (researchReports || []).map(report => ({
+        id: report.id,
+        user_id: report.user_id,
+        type: 'deep_research',
+        topic: report.topic,
+        max_depth: report.max_depth,
+        total_findings: report.total_findings || 0,
+        created_at: report.created_at
+      }));
+      const roadmapActivities: RoadmapActivity[] = (roadmaps || []).map(roadmap => ({
+        id: roadmap.id,
+        user_id: roadmap.user_id,
+        type: 'roadmap',
+        topic: roadmap.topic,
+        mermaid_code_preview: roadmap.mermaid_code ? roadmap.mermaid_code.substring(0, 50) + '...' : '',
+        created_at: roadmap.created_at
+      }));
+      // Combine and sort
+      const allActivities = [
+        ...learningActivities,
+        ...researchActivities,
+        ...roadmapActivities
+      ].sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
+      setRecentActivities(allActivities);
+    } catch (error) {
+      console.error('Search failed:', error);
+    } finally {
+      setIsLoadingActivities(false);
+      setIsSearching(false);
     }
   };
 
@@ -267,19 +353,18 @@ export default function ExploreHubPage() {
               placeholder="Search for topics, courses, or content..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
+              onKeyDown={(e) => { if (e.key === 'Enter') handleSearch(); }}
               className="pl-9 bg-background/50"
+              disabled={isSearching}
             />
-            <Button className="ml-2 gap-2">
+            <Button className="ml-2 gap-2" onClick={handleSearch} disabled={isSearching}>
               <Sparkles className="h-4 w-4" />
-              Search
+              {isSearching ? 'Searching...' : 'Search'}
             </Button>
           </div>
         </Card>
       </div>
 
-      {/* Overview Stats */}
-      <OverviewStats />
-      
       {/* Recent Activities */}
       <Card className="p-6 rounded-2xl">
         <CardHeader className="px-0 pt-0">
@@ -428,7 +513,7 @@ export default function ExploreHubPage() {
                   e.preventDefault();
                   e.stopPropagation();
                   console.log('Card clicked:', resource.title, resource.path);
-                  window.location.href = resource.path;
+                  navigate(resource.path);
                 }}
               >
                 <div className={`pointer-events-none absolute inset-0 bg-gradient-to-br ${resource.color} opacity-10`} />

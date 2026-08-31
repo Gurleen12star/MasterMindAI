@@ -22,9 +22,9 @@ export default function FeaturesGrid() {
           </p>
         </div>
         
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 auto-rows-auto relative">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 gap-y-8 auto-rows-auto relative">
           {/* Intelligent Learning Paths */}
-          <BentoBox gradient="purple" className="flex flex-col md:row-span-2 relative overflow-hidden group rounded-3xl min-h-[400px] border border-[hsl(var(--primary)/0.2)] shadow-lg shadow-black/20">
+          <BentoBox gradient="purple" className="flex flex-col md:row-span-2 relative overflow-hidden group rounded-3xl min-h-[280px] md:min-h-[400px] border border-[hsl(var(--primary)/0.2)] shadow-lg shadow-black/20 p-4 md:p-8">
             {/* Dark Gradient Background Layer */}
             <div className="absolute inset-0 rounded-3xl bg-gradient-to-br from-[hsl(var(--primary)/0.3)] via-[hsl(var(--primary)/0.2)] to-black/60 group-hover:from-[hsl(var(--primary)/0.4)] group-hover:via-[hsl(var(--primary)/0.3)] group-hover:to-black/70 transition-all duration-300" />
             <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
@@ -44,7 +44,7 @@ export default function FeaturesGrid() {
           </BentoBox>
           
           {/* The Animation Studio */}
-          <BentoBox gradient="blue" className="flex flex-col md:col-span-2 relative overflow-hidden group rounded-3xl min-h-[280px] border border-[hsl(var(--chart-2)/0.2)] shadow-lg shadow-black/20">
+          <BentoBox gradient="blue" className="flex flex-col md:col-span-2 relative overflow-hidden group rounded-3xl min-h-[200px] md:min-h-[280px] border border-[hsl(var(--chart-2)/0.2)] shadow-lg shadow-black/20 p-4 md:p-8">
             {/* Dark Gradient Background Layer */}
             <div className="absolute inset-0 rounded-3xl bg-gradient-to-br from-[hsl(var(--chart-2)/0.3)] via-[hsl(var(--chart-2)/0.2)] to-black/60 group-hover:from-[hsl(var(--chart-2)/0.4)] group-hover:via-[hsl(var(--chart-2)/0.3)] group-hover:to-black/70 transition-all duration-300" />
             <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
@@ -64,7 +64,7 @@ export default function FeaturesGrid() {
           </BentoBox>
           
           {/* Deep-Dive Research Agent */}
-          <BentoBox gradient="teal" className="flex flex-col relative overflow-hidden group rounded-3xl min-h-[280px] border border-[hsl(var(--chart-3)/0.2)] shadow-lg shadow-black/20">
+          <BentoBox gradient="teal" className="flex flex-col relative overflow-hidden group rounded-3xl min-h-[200px] md:min-h-[280px] border border-[hsl(var(--chart-3)/0.2)] shadow-lg shadow-black/20 p-4 md:p-8">
              {/* Dark Gradient Background Layer */}
             <div className="absolute inset-0 rounded-3xl bg-gradient-to-br from-[hsl(var(--chart-3)/0.3)] via-[hsl(var(--chart-3)/0.2)] to-black/60 group-hover:from-[hsl(var(--chart-3)/0.4)] group-hover:via-[hsl(var(--chart-3)/0.3)] group-hover:to-black/70 transition-all duration-300" />
             <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
@@ -84,7 +84,7 @@ export default function FeaturesGrid() {
           </BentoBox>
           
           {/* Global Content Creator */}
-          <BentoBox gradient="green" className="flex flex-col relative overflow-hidden group rounded-3xl min-h-[280px] border border-slate-800/30 shadow-lg shadow-black/20">
+          <BentoBox gradient="green" className="flex flex-col relative overflow-hidden group rounded-3xl min-h-[200px] md:min-h-[280px] border border-slate-800/30 shadow-lg shadow-black/20 p-4 md:p-8">
             {/* Dark Gradient Background Layer */}
             <div className="absolute inset-0 rounded-3xl bg-gradient-to-br from-slate-800/50 via-slate-900/60 to-black/70 group-hover:from-slate-800/60 group-hover:via-slate-900/70 group-hover:to-black/80 transition-all duration-300" />
             <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
@@ -104,7 +104,7 @@ export default function FeaturesGrid() {
           </BentoBox>
           
           {/* Fortress-Level Security */}
-          <BentoBox gradient="blue" className="flex flex-col relative overflow-hidden group rounded-3xl min-h-[280px] border border-[hsl(var(--secondary)/0.2)] shadow-lg shadow-black/20">
+          <BentoBox gradient="blue" className="flex flex-col relative overflow-hidden group rounded-3xl min-h-[200px] md:min-h-[280px] border border-[hsl(var(--secondary)/0.2)] shadow-lg shadow-black/20 p-4 md:p-8">
             {/* Dark Gradient Background Layer */}
             <div className="absolute inset-0 rounded-3xl bg-gradient-to-br from-[hsl(var(--secondary)/0.3)] via-[hsl(var(--secondary)/0.2)] to-black/60 group-hover:from-[hsl(var(--secondary)/0.4)] group-hover:via-[hsl(var(--secondary)/0.3)] group-hover:to-black/70 transition-all duration-300" />
             <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
@@ -124,7 +124,7 @@ export default function FeaturesGrid() {
           </BentoBox>
           
           {/* Creator Hub & Monetization */}
-          <BentoBox gradient="purple" className="flex flex-col md:col-span-2 relative overflow-hidden group rounded-3xl min-h-[280px] border border-[hsl(var(--primary)/0.2)] shadow-lg shadow-black/20">
+          <BentoBox gradient="purple" className="flex flex-col md:col-span-2 relative overflow-hidden group rounded-3xl min-h-[200px] md:min-h-[280px] border border-[hsl(var(--primary)/0.2)] shadow-lg shadow-black/20 p-4 md:p-8">
             {/* Dark Gradient Background Layer */}
             <div className="absolute inset-0 rounded-3xl bg-gradient-to-br from-[hsl(var(--chart-2)/0.3)] via-[hsl(var(--primary)/0.2)] to-black/60 group-hover:from-[hsl(var(--chart-2)/0.4)] group-hover:via-[hsl(var(--primary)/0.3)] group-hover:to-black/70 transition-all duration-300" />
             <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />

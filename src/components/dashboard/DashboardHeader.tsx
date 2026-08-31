@@ -13,7 +13,7 @@ export default function DashboardHeader({ children }: { children?: React.ReactNo
   return (
     <header className={`fixed top-0 z-50 transition-all duration-300 ${isCollapsed ? 'left-16' : 'left-64'} right-0 px-4 py-4 bg-transparent`}>
       <div className="flex h-16 items-center justify-between">
-        <div className="flex items-center gap-4 rounded-full bg-[#1F2129]/80 px-4 py-2 shadow-lg backdrop-blur-sm border border-white/10">
+        <div className="flex items-center gap-4 rounded-lg bg-[#1F2129]/80 px-4 py-2 shadow-lg backdrop-blur-sm border border-white/10">
           {children}
           <h1 className="hidden md:block text-xl font-semibold bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">
             Dashboard
@@ -22,7 +22,7 @@ export default function DashboardHeader({ children }: { children?: React.ReactNo
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <Input
               placeholder="Search..."
-              className="w-full md:w-[300px] pl-9 bg-black/20 border-0 focus:ring-2 focus:ring-primary/20 transition-all duration-300 rounded-xl"
+              className="w-full md:w-[300px] pl-9 bg-black/20 border-0 focus:ring-2 focus:ring-primary/20 transition-all duration-300 rounded-lg"
             />
           </div>
         </div>
