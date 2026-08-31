@@ -20,7 +20,7 @@ export default function HeroSection() {
           <div className="hero-assets">
             <h3 className="hero-title">ECHOVERSE</h3>
             <img 
-              src="http://mattcannon.games/codepen/sweet-treats/cup-cake.png"
+              src="robot.png"
               alt="Floating Icon"
               className="foreground"
               style={{ width: "800px", height: "675px" }}
