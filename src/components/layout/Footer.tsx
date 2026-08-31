@@ -6,10 +6,14 @@ import EchoVerseLogo from '@/components/ui/EchoVerseLogo';
 export default function Footer() {
   return (
     <section className="relative overflow-hidden py-24 md:py-32 lg:py-40">
+      {/* Blurred oval overlay effects */}
+      <div className="absolute top-20 -right-32 w-80 h-80 rounded-full bg-gradient-to-br from-indigo-500/8 via-purple-500/6 to-transparent blur-3xl opacity-60" />
+      <div className="absolute -bottom-32 -left-32 w-96 h-96 rounded-full bg-gradient-to-br from-pink-500/6 via-primary/4 to-transparent blur-3xl opacity-50" />
+      
       <div className="absolute inset-0 bg-grid-white/[0.02] bg-[size:32px]" />
       <div className="absolute inset-0 bg-gradient-to-t from-background to-background/0" />
       <div className="container px-4 max-w-[1200px] mx-auto">
-        <BentoBox gradient="purple" className="mx-auto max-w-6xl overflow-hidden p-12 lg:p-16 backdrop-blur-xl bg-background/30 border-2 border-primary/30 shadow-[0_20px_50px_rgb(0,0,0,0.15)] hover:shadow-[0_30px_60px_rgb(0,0,0,0.2)] transition-all duration-500 rounded-3xl">
+        <BentoBox gradient="purple" className="mx-auto max-w-6xl overflow-hidden p-12 lg:p-16 backdrop-blur-xl bg-background/30 border-2 border-primary/30 shadow-inner-modern shadow-[0_20px_50px_rgb(0,0,0,0.15)] hover:shadow-[0_30px_60px_rgb(0,0,0,0.2)] transition-all duration-500 rounded-3xl">
           <div className="absolute -right-32 -top-32 h-80 w-80 rounded-full bg-gradient-to-br from-indigo-500/20 to-purple-500/20 blur-3xl opacity-60" />
           <div className="absolute -bottom-24 -left-24 h-80 w-80 rounded-full bg-gradient-to-br from-purple-500/20 to-pink-500/20 blur-3xl opacity-60" />
           
