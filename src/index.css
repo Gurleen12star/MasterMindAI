@@ -53,8 +53,8 @@
   aspect-ratio: 2 / 0.9;
   position: relative;
   border-radius: 4em;
-  filter: drop-shadow(0 10px 20px rgba(0, 0, 0, 0.1));
   min-height: 600px;
+  overflow: hidden;
 }
 
 .hero-assets {
@@ -90,6 +90,7 @@
   position: absolute;
   left: 50%;
   top: 8%;
+  z-index: 2;
   margin: 0;
   font-size: clamp(5rem, 15vw, 12rem);
   text-transform: uppercase;
@@ -97,7 +98,6 @@
   color: white;
   transform: translate(calc(-50% + var(--x) * -30px), calc(var(--y) * -20px));
   transition: transform 0.8s cubic-bezier(0.33, 1, 0.68, 1);
-  z-index: 4;
 }
 
 .hero-content {
@@ -110,7 +110,7 @@
   gap: 0.2rem;
   place-items: center;
   align-content: center;
-  padding-bottom: 0.5rem;
+  padding-bottom: 2rem;
   z-index: 3;
 }
 
@@ -127,6 +127,17 @@
   .hero-content {
     min-height: 25%;
   }
+}
+
+#canvas-container {
+  height: 100%;
+  width: 100%;
+  position: absolute;
+}
+
+#canvas-container canvas {
+  width: 100% !important;
+  height: 100% !important;
 }
 
 /* Navbar Styles */

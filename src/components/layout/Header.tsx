@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useAuth } from '@clerk/clerk-react';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { Menu, Sparkles } from 'lucide-react';
@@ -14,6 +15,7 @@ const navItems = [
 export default function Header() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [activeItem, setActiveItem] = useState<string | null>(null);
+  const { isSignedIn } = useAuth();
   
   useEffect(() => {
     const handleScroll = () => {
@@ -82,18 +84,18 @@ export default function Header() {
             variant="ghost" 
             size="sm" 
             className="hidden md:flex hover:bg-primary/10 transition-all duration-300 relative"
-            onClick={() => window.location.href = '/login'}
+            onClick={() => window.location.href = isSignedIn ? '/dashboard' : '/login'}
           >
-            Log in
+            {isSignedIn ? 'Dashboard' : 'Log in'}
             <div className="absolute inset-0 bg-primary/5 opacity-0 hover:opacity-100 rounded-md transition-opacity duration-300" />
           </Button>
           <Button 
             size="sm" 
             className="hidden md:flex bg-primary/90 hover:bg-primary transition-all duration-200 shadow-lg hover:shadow-primary/25 relative overflow-hidden group"
-            onClick={() => window.location.href = '/signup'}
+            onClick={() => window.location.href = isSignedIn ? '/dashboard' : '/signup'}
           >
             <div className="absolute inset-0 bg-gradient-to-r from-indigo-500/20 to-purple-500/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-            Get Started
+            {isSignedIn ? 'Go to Dashboard' : 'Get Started'}
           </Button>
           
           {/* Mobile Navigation */}
@@ -119,15 +121,15 @@ export default function Header() {
                   variant="ghost" 
                   size="sm" 
                   className="justify-start px-0"
-                  onClick={() => window.location.href = '/login'}
+                  onClick={() => window.location.href = isSignedIn ? '/dashboard' : '/login'}
                 >
-                  Log in
+                  {isSignedIn ? 'Dashboard' : 'Log in'}
                 </Button>
                 <Button 
                   size="sm"
-                  onClick={() => window.location.href = '/signup'}
+                  onClick={() => window.location.href = isSignedIn ? '/dashboard' : '/signup'}
                 >
-                  Get Started
+                  {isSignedIn ? 'Go to Dashboard' : 'Get Started'}
                 </Button>
               </div>
             </SheetContent>
