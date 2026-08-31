@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { MermaidDiagram } from '@/components/ui/mermaid-diagram';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
-import { Dialog, DialogContent, DialogTitle, DialogDescription } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -307,7 +307,9 @@ export default function LearningPathsPage() {
                     
                     <Dialog open={isFullscreen} onOpenChange={setIsFullscreen}>
                       <DialogContent className="max-w-[90vw] w-[90vw] h-[90vh] p-6 custom-cursor-enabled" aria-labelledby="fullscreen-dialog-title">
-                        <DialogTitle id="fullscreen-dialog-title">Learning Path Visualization</DialogTitle>
+                        <DialogHeader>
+                          <DialogTitle id="fullscreen-dialog-title">Learning Path Visualization</DialogTitle>
+                        </DialogHeader>
                         <div className="mermaid-diagram-wrapper h-full w-full flex items-center justify-center bg-gradient-to-br from-background to-background/95">
                           <MermaidDiagram 
                             definition={mermaidDiagram}
@@ -340,10 +342,12 @@ export default function LearningPathsPage() {
       
       <Dialog open={showHistoryDialog} onOpenChange={setShowHistoryDialog}>
         <DialogContent className="max-w-2xl" aria-labelledby="history-dialog-title">
-          <DialogTitle id="history-dialog-title">Learning Path History</DialogTitle>
-          <DialogDescription id="history-dialog-desc">
-            Your previously generated learning paths
-          </DialogDescription>
+          <DialogHeader>
+            <DialogTitle id="history-dialog-title">Learning Path History</DialogTitle>
+            <DialogDescription id="history-dialog-desc">
+              Your previously generated learning paths
+            </DialogDescription>
+          </DialogHeader>
           
           <ScrollArea className="h-[400px] pr-4">
             {isLoadingHistory ? (
