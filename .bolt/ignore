@@ -19,12 +19,10 @@ vite.config.ts.timestamp-1748959622520-720580c0ef5358.mjs
 
 public
 src/assets
-src/components/dashboard/*
 src/components/layout/*
 src/components/dashboard
 src/components/admin
 src/index.css
-src/components/personalized-learning
 src/components/sections
 src/components/ui
 src/pages
