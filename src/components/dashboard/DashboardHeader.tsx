@@ -5,17 +5,18 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Input } from '@/components/ui/input';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 
-export default function DashboardHeader() {
+export default function DashboardHeader({ children }: { children?: React.ReactNode }) {
   const { user } = useUser();
   
   return (
     <header className="h-16 border-b border-border/40 bg-background/95 backdrop-blur-sm supports-[backdrop-filter]:bg-background/60">
       <div className="h-full px-6 flex items-center justify-between">
         <div className="flex items-center gap-8">
+          {children}
           <h1 className="text-xl font-semibold bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">
             Dashboard
           </h1>
-          <div className="hidden md:flex relative">
+          <div className="hidden lg:flex relative">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <Input
               placeholder="Search..."
@@ -25,7 +26,7 @@ export default function DashboardHeader() {
         </div>
         
         <div className="flex items-center gap-4">
-          <Popover>
+          <Popover className="hidden md:block">
             <PopoverTrigger asChild>
               <Button variant="ghost" size="icon" className="relative">
                 <Bell className="h-5 w-5" />
@@ -62,7 +63,7 @@ export default function DashboardHeader() {
             </PopoverContent>
           </Popover>
           
-          <Button variant="ghost" size="icon">
+          <Button variant="ghost" size="icon" className="hidden md:flex">
             <Settings className="h-5 w-5" />
           </Button>
           

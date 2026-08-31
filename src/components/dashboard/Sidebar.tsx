@@ -28,7 +28,11 @@ import {
   ChevronRight
 } from 'lucide-react';
 
-export default function Sidebar() {
+interface SidebarProps {
+  onNavigate?: () => void;
+}
+
+export default function Sidebar({ onNavigate }: SidebarProps) {
   const { signOut } = useAuth();
   const [isCollapsed, setIsCollapsed] = useState(false);
   
@@ -79,10 +83,10 @@ export default function Sidebar() {
   };
 
   return (
-    <div className={`${isCollapsed ? 'w-20' : 'w-64'} h-screen bg-card/50 backdrop-blur-sm border-r border-border/40 flex flex-col relative transition-all duration-300`}>
+    <div className={`${isCollapsed ? 'w-20' : 'w-64'} h-screen bg-card/50 backdrop-blur-sm border-r border-border/40 flex flex-col relative transition-all duration-300 overflow-hidden`}>
       <Button
         variant="ghost" 
-        className="absolute -right-6 top-20 h-12 w-12 rounded-full bg-gradient-to-r from-primary/90 to-primary shadow-lg hover:shadow-primary/25 hover:scale-110 transition-all duration-300 group overflow-hidden z-10"
+        className="absolute -right-6 top-20 h-12 w-12 rounded-full bg-gradient-to-r from-primary/90 to-primary shadow-lg hover:shadow-primary/25 hover:scale-110 transition-all duration-300 group overflow-hidden z-10 hidden md:flex"
         onClick={toggleSidebar}
       >
         <div className="absolute inset-0 bg-gradient-to-r from-primary/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
@@ -129,6 +133,7 @@ export default function Sidebar() {
                         isCollapsed ? 'justify-center' : ''
                       } hover:shadow-sm hover:-translate-y-0.5 transition-all duration-300`}
                       title={isCollapsed ? item.label : undefined}
+                      onClick={onNavigate}
                     >
                       <div className={`flex items-center ${isCollapsed ? 'justify-center' : 'gap-3'}`}>
                         <item.icon className="h-4 w-4 transition-all duration-300 group-hover:scale-110 group-hover:text-primary" />

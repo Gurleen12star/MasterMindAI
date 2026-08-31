@@ -160,7 +160,7 @@ export default function LearningPathsPage() {
   };
 
   return (
-    <div className="p-6 space-y-8">
+    <div className="p-4 md:p-6 space-y-8">
       <div className="flex items-center gap-3">
         <div className="relative inline-flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10 before:absolute before:inset-0 before:rounded-lg before:bg-primary/5 before:animate-pulse">
           <Map className="h-6 w-6 text-primary" />
@@ -187,7 +187,7 @@ export default function LearningPathsPage() {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
         <Card className="p-6">
           <div className="space-y-6">
             <div className="space-y-2">
@@ -262,7 +262,7 @@ export default function LearningPathsPage() {
             </TabsList>
             
             <TabsContent value="text">
-              <ScrollArea className="h-[600px] pr-4">
+              <ScrollArea className="h-[400px] md:h-[600px] pr-4">
                 {generatedPath ? (
                   <div className="prose prose-neutral dark:prose-invert max-w-none">
                     <ReactMarkdown remarkPlugins={[remarkGfm]}>
@@ -285,7 +285,7 @@ export default function LearningPathsPage() {
             </TabsContent>
             
             <TabsContent value="visual">
-              <ScrollArea className="h-[600px] px-4">
+              <ScrollArea className="h-[400px] md:h-[600px] px-4">
                 {mermaidDiagram ? (
                   <>
                     <div className="relative">

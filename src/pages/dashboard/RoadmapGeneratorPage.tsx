@@ -232,7 +232,7 @@ export default function RoadmapGeneratorPage() {
   };
 
   return (
-    <div className="p-6">
+    <div className="p-4 md:p-6">
       <div className="mb-6">
         <h2 className="text-2xl font-bold tracking-tight">Roadmap Generator</h2>
         <p className="text-muted-foreground">
@@ -240,9 +240,9 @@ export default function RoadmapGeneratorPage() {
         </p>
       </div>
 
-      <div className="flex flex-col lg:flex-row gap-6">
+      <div className="flex flex-col xl:flex-row gap-6">
         {/* Main content area - Form and Selected Roadmap */}
-        <div className={`flex-1 space-y-6 ${isSidebarCollapsed ? 'lg:pr-14' : ''}`}>
+        <div className={`flex-1 space-y-6 ${isSidebarCollapsed ? 'xl:pr-14' : ''}`}>
           {/* Generation Form */}
           <Card className="p-6">
             <h3 className="font-semibold text-lg mb-4">Generate New Roadmap</h3>
@@ -308,10 +308,10 @@ export default function RoadmapGeneratorPage() {
         </div>
 
         {/* Right sidebar - Roadmap History */}
-        <div className={`transition-all duration-300 ${isSidebarCollapsed ? 'lg:w-12' : 'lg:w-80 xl:w-96'}`}>
+        <div className={`transition-all duration-300 ${isSidebarCollapsed ? 'xl:w-12' : 'xl:w-80 2xl:w-96'} hidden xl:block`}>
           {/* Sidebar toggle button - visible only on larger screens */}
           <button 
-            className="hidden lg:flex absolute z-10 items-center justify-center w-8 h-8 rounded-full bg-primary text-primary-foreground -ml-4 shadow-md hover:bg-primary/90"
+            className="hidden xl:flex absolute z-10 items-center justify-center w-8 h-8 rounded-full bg-primary text-primary-foreground -ml-4 shadow-md hover:bg-primary/90"
             onClick={toggleSidebar}
             aria-label={isSidebarCollapsed ? "Expand sidebar" : "Collapse sidebar"}
             style={{ transform: 'translateY(20px)' }}
