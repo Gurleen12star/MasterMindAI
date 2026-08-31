@@ -25,7 +25,8 @@ import {
   Volume2,
   Play,
   Pause,
-  VolumeX
+  VolumeX,
+  RotateCcw
 } from 'lucide-react';
 
 export default function QuickSummariesPage() {
@@ -41,6 +42,8 @@ export default function QuickSummariesPage() {
   const [selectedVoice, setSelectedVoice] = useState(AVAILABLE_VOICES[0].id);
   const [isPlaying, setIsPlaying] = useState(false);
   const [isMuted, setIsMuted] = useState(false);
+  const [currentTime, setCurrentTime] = useState(0);
+  const [duration, setDuration] = useState(0);
   const audioRef = useRef<HTMLAudioElement>(null);
 
   const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -104,6 +107,9 @@ export default function QuickSummariesPage() {
     // Clear audio when generating new summary
     setAudioUrl(null);
     setIsPlaying(false);
+    setCurrentTime(0);
+    setDuration(0);
+    
     try {
       const generatedSummary = await generateSummary(content, instructions);
       setSummary(generatedSummary);
@@ -138,11 +144,21 @@ export default function QuickSummariesPage() {
     }
 
     setIsGeneratingAudio(true);
+    setIsPlaying(false);
+    setCurrentTime(0);
+    setDuration(0);
+    
     try {
       const audioUrl = await generateAudio({
         text: summary,
         voiceId: selectedVoice,
       });
+      
+      // Clean up previous audio URL
+      if (audioRef.current?.src) {
+        URL.revokeObjectURL(audioRef.current.src);
+      }
+      
       setAudioUrl(audioUrl);
       toast({
         title: 'Audio Generated',
@@ -158,6 +174,45 @@ export default function QuickSummariesPage() {
       });
     } finally {
       setIsGeneratingAudio(false);
+    }
+  };
+
+  const handleVoiceChange = async (newVoiceId: string) => {
+    setSelectedVoice(newVoiceId);
+    
+    // If we have a summary and audio was previously generated, regenerate with new voice
+    if (summary && audioUrl) {
+      setIsGeneratingAudio(true);
+      setIsPlaying(false);
+      setCurrentTime(0);
+      setDuration(0);
+      
+      try {
+        const newAudioUrl = await generateAudio({
+          text: summary,
+          voiceId: newVoiceId,
+        });
+        
+        // Clean up previous audio URL
+        if (audioRef.current?.src) {
+          URL.revokeObjectURL(audioRef.current.src);
+        }
+        
+        setAudioUrl(newAudioUrl);
+        toast({
+          title: 'Voice Changed',
+          description: 'Audio regenerated with new voice!',
+        });
+      } catch (error) {
+        console.error('Error regenerating audio:', error);
+        toast({
+          title: 'Voice Change Failed',
+          description: 'Failed to regenerate audio with new voice.',
+          variant: 'destructive',
+        });
+      } finally {
+        setIsGeneratingAudio(false);
+      }
     }
   };
 
@@ -178,6 +233,33 @@ export default function QuickSummariesPage() {
     setIsMuted(audioRef.current.muted);
   };
 
+  const handleTimeUpdate = () => {
+    if (!audioRef.current) return;
+    setCurrentTime(audioRef.current.currentTime);
+  };
+
+  const handleLoadedMetadata = () => {
+    if (!audioRef.current) return;
+    setDuration(audioRef.current.duration);
+  };
+
+  const handleSeek = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (!audioRef.current || !duration) return;
+    
+    const rect = e.currentTarget.getBoundingClientRect();
+    const clickX = e.clientX - rect.left;
+    const newTime = (clickX / rect.width) * duration;
+    
+    audioRef.current.currentTime = newTime;
+    setCurrentTime(newTime);
+  };
+
+  const formatTime = (time: number) => {
+    const minutes = Math.floor(time / 60);
+    const seconds = Math.floor(time % 60);
+    return `${minutes}:${seconds.toString().padStart(2, '0')}`;
+  };
+
   const handleDownloadAudio = () => {
     if (!audioUrl) return;
 
@@ -193,6 +275,7 @@ export default function QuickSummariesPage() {
       description: 'Audio file is being downloaded.',
     });
   };
+
   const handleCopySummary = async () => {
     if (!summary) return;
     
@@ -239,7 +322,7 @@ export default function QuickSummariesPage() {
         <div>
           <h1 className="text-2xl font-bold tracking-tight">Quick Summaries</h1>
           <p className="text-muted-foreground">
-            Upload documents or paste content to get AI-powered summaries
+            Upload documents or paste content to get AI-powered summaries with audio playback
           </p>
         </div>
       </div>
@@ -356,25 +439,6 @@ export default function QuickSummariesPage() {
                   <Button
                     variant="outline"
                     size="sm"
-                    onClick={handleGenerateAudio}
-                    disabled={isGeneratingAudio}
-                    className="gap-2"
-                  >
-                    {isGeneratingAudio ? (
-                      <>
-                        <Loader2 className="h-4 w-4 animate-spin" />
-                        <AnimatedLoadingText message="Converting..." />
-                      </>
-                    ) : (
-                      <>
-                        <Volume2 className="h-4 w-4" />
-                        To Audio
-                      </>
-                    )}
-                  </Button>
-                  <Button
-                    variant="outline"
-                    size="sm"
                     onClick={handleCopySummary}
                     className="gap-2"
                   >
@@ -394,7 +458,7 @@ export default function QuickSummariesPage() {
               )}
             </div>
 
-            <ScrollArea className="h-[500px] w-full rounded-lg border bg-background/50 p-4">
+            <ScrollArea className="h-[400px] w-full rounded-lg border bg-background/50 p-4">
               {summary ? (
                 <div className="prose prose-neutral dark:prose-invert max-w-none">
                   <ReactMarkdown remarkPlugins={[remarkGfm]}>
@@ -428,75 +492,145 @@ export default function QuickSummariesPage() {
               )}
             </ScrollArea>
 
-            {/* Audio Player */}
-            {audioUrl && (
-              <div className="mt-4 p-4 bg-accent/50 rounded-lg border border-primary/20">
-                <div className="flex items-center justify-between mb-3">
+            {/* Voice Selection and Audio Generation */}
+            {summary && (
+              <div className="space-y-4">
+                <div className="flex items-center justify-between">
                   <h4 className="font-medium text-foreground flex items-center gap-2">
                     <Volume2 className="h-4 w-4" />
-                    Audio Summary
+                    Audio Conversion
                   </h4>
-                  <Select value={selectedVoice} onValueChange={setSelectedVoice}>
-                    <SelectTrigger className="w-40">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {AVAILABLE_VOICES.map((voice) => (
-                        <SelectItem key={voice.id} value={voice.id}>
-                          {voice.name}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
                 </div>
                 
                 <div className="flex items-center gap-3">
-                  <Button
-                    variant="outline"
-                    size="icon"
-                    onClick={handlePlayPause}
-                    className="h-10 w-10"
-                  >
-                    {isPlaying ? (
-                      <Pause className="h-4 w-4" />
-                    ) : (
-                      <Play className="h-4 w-4" />
-                    )}
-                  </Button>
+                  <div className="flex-1">
+                    <label className="text-sm font-medium mb-2 block">Select Voice</label>
+                    <Select value={selectedVoice} onValueChange={handleVoiceChange}>
+                      <SelectTrigger className="w-full">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {AVAILABLE_VOICES.map((voice) => (
+                          <SelectItem key={voice.id} value={voice.id}>
+                            <div className="flex flex-col items-start">
+                              <span className="font-medium">{voice.name}</span>
+                              <span className="text-xs text-muted-foreground">{voice.description}</span>
+                            </div>
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
                   
-                  <Button
-                    variant="outline"
-                    size="icon"
-                    onClick={handleMuteToggle}
-                    className="h-10 w-10"
-                  >
-                    {isMuted ? (
-                      <VolumeX className="h-4 w-4" />
-                    ) : (
-                      <Volume2 className="h-4 w-4" />
-                    )}
-                  </Button>
-                  
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={handleDownloadAudio}
-                    className="gap-2"
-                  >
-                    <Download className="h-4 w-4" />
-                    Download MP3
-                  </Button>
-                  
-                  <audio
-                    ref={audioRef}
-                    src={audioUrl}
-                    onPlay={() => setIsPlaying(true)}
-                    onPause={() => setIsPlaying(false)}
-                    onEnded={() => setIsPlaying(false)}
-                    className="hidden"
-                  />
+                  <div className="flex flex-col">
+                    <label className="text-sm font-medium mb-2 block opacity-0">Action</label>
+                    <Button
+                      onClick={handleGenerateAudio}
+                      disabled={isGeneratingAudio}
+                      className="gap-2"
+                    >
+                      {isGeneratingAudio ? (
+                        <>
+                          <Loader2 className="h-4 w-4 animate-spin" />
+                          <AnimatedLoadingText message="Converting..." />
+                        </>
+                      ) : (
+                        <>
+                          <Volume2 className="h-4 w-4" />
+                          To Audio
+                        </>
+                      )}
+                    </Button>
+                  </div>
                 </div>
               </div>
+            )}
+
+            {/* Enhanced Audio Player */}
+            {audioUrl && (
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="p-6 bg-gradient-to-br from-primary/5 via-primary/3 to-transparent rounded-xl border-2 border-primary/20 backdrop-blur-sm"
+              >
+                <div className="flex items-center justify-between mb-4">
+                  <h4 className="font-semibold text-foreground flex items-center gap-2">
+                    <Volume2 className="h-5 w-5 text-primary" />
+                    Audio Summary
+                  </h4>
+                  <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                    <span>{formatTime(currentTime)}</span>
+                    <span>/</span>
+                    <span>{formatTime(duration)}</span>
+                  </div>
+                </div>
+                
+                {/* Progress Bar */}
+                <div 
+                  className="w-full h-2 bg-primary/20 rounded-full mb-4 cursor-pointer overflow-hidden"
+                  onClick={handleSeek}
+                >
+                  <div 
+                    className="h-full bg-gradient-to-r from-primary to-primary/80 rounded-full transition-all duration-150"
+                    style={{ width: duration ? `${(currentTime / duration) * 100}%` : '0%' }}
+                  />
+                </div>
+                
+                {/* Controls */}
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <Button
+                      variant="outline"
+                      size="icon"
+                      onClick={handlePlayPause}
+                      className="h-12 w-12 rounded-full border-2 border-primary/30 hover:border-primary/50 hover:bg-primary/10 transition-all duration-300"
+                    >
+                      {isPlaying ? (
+                        <Pause className="h-5 w-5" />
+                      ) : (
+                        <Play className="h-5 w-5 ml-0.5" />
+                      )}
+                    </Button>
+                    
+                    <Button
+                      variant="outline"
+                      size="icon"
+                      onClick={handleMuteToggle}
+                      className="h-10 w-10 rounded-full border border-primary/20 hover:border-primary/40 hover:bg-primary/10 transition-all duration-300"
+                    >
+                      {isMuted ? (
+                        <VolumeX className="h-4 w-4" />
+                      ) : (
+                        <Volume2 className="h-4 w-4" />
+                      )}
+                    </Button>
+                  </div>
+                  
+                  <div className="flex items-center gap-2">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={handleDownloadAudio}
+                      className="gap-2 rounded-lg border border-primary/20 hover:border-primary/40 hover:bg-primary/10 transition-all duration-300"
+                    >
+                      <Download className="h-4 w-4" />
+                      Download MP3
+                    </Button>
+                  </div>
+                </div>
+                
+                {/* Hidden Audio Element */}
+                <audio
+                  ref={audioRef}
+                  src={audioUrl}
+                  onPlay={() => setIsPlaying(true)}
+                  onPause={() => setIsPlaying(false)}
+                  onEnded={() => setIsPlaying(false)}
+                  onTimeUpdate={handleTimeUpdate}
+                  onLoadedMetadata={handleLoadedMetadata}
+                  className="hidden"
+                />
+              </motion.div>
             )}
           </div>
         </Card>
@@ -507,15 +641,15 @@ export default function QuickSummariesPage() {
         <div className="flex items-start gap-3">
           <AlertCircle className="h-5 w-5 text-primary mt-0.5" />
           <div>
-            <h4 className="font-medium text-primary mb-2">Tips for Better Summaries</h4>
+            <h4 className="font-medium text-primary mb-2">Tips for Better Summaries & Audio</h4>
             <ul className="text-sm text-muted-foreground space-y-1">
               <li>• Provide clear, well-structured content for best results</li>
               <li>• Use specific instructions to tailor the summary to your needs</li>
               <li>• For academic papers, mention "include methodology and conclusions"</li>
               <li>• For business documents, try "focus on key decisions and action items"</li>
-              <li>• PDF support is coming soon - currently supports text files only</li>
-              <li>• Audio generation uses ElevenLabs AI for high-quality voice synthesis</li>
               <li>• Choose different voices to match your preference for audio content</li>
+              <li>• Audio generation uses ElevenLabs AI for high-quality voice synthesis</li>
+              <li>• Changing voice will automatically regenerate audio with the new voice</li>
             </ul>
           </div>
         </div>
