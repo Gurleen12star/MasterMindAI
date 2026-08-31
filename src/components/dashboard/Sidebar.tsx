@@ -64,13 +64,13 @@ export default function Sidebar() {
       </Button>
       
       <div className={`p-6 ${isCollapsed ? 'px-2' : ''}`}>
-        <a href="/" className="flex items-center justify-center group relative">
-          <div className="relative flex items-center justify-center">
+        <a href="/" className="flex items-center group relative">
+          <div className="relative flex items-center">
             <img 
               src="/src/assets/logo.png" 
               alt="EchoVerse Logo" 
               className={`object-contain transition-all duration-300 ${
-                isCollapsed ? 'h-16 w-16 -my-4' : 'h-24 w-24 -my-8'
+                isCollapsed ? 'h-12 w-12' : 'h-16 w-16'
               }`} 
             />
           </div>
