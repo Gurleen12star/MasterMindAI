@@ -279,24 +279,43 @@ div[style*="z-index: 999999"] {
   aspect-ratio: 2 / 0.9;
   position: relative;
   border-radius: 4em;
-  filter: drop-shadow(0 10px 20px rgba(0, 0, 0, 0.1));
+  filter: drop-shadow(0 20px 40px rgba(0, 0, 0, 0.15)) url(#grain);
   min-height: 600px;
   overflow: hidden;
-  /* Add border gradient shine effect */
-  background: linear-gradient(var(--background), var(--background)) padding-box,
-              radial-gradient(100px 100px at calc(var(--x) * 1px) calc(var(--y) * 1px), 
-                hsl(var(--primary) / 0.8), 
-                hsl(var(--primary) / 0.4) 30%, 
-                transparent 70%) border-box;
-  border: 2px solid transparent;
+  /* Enhanced geometric background with multiple layers */
+  background: 
+    /* Geometric dot pattern */
+    radial-gradient(circle at 20% 20%, hsl(var(--primary) / 0.03) 1px, transparent 1px),
+    radial-gradient(circle at 80% 80%, hsl(var(--primary) / 0.03) 1px, transparent 1px),
+    radial-gradient(circle at 40% 60%, hsl(var(--primary) / 0.02) 1px, transparent 1px),
+    /* Complex gradient layers */
+    linear-gradient(135deg, 
+      hsl(var(--background)) 0%,
+      hsl(var(--background) / 0.98) 25%,
+      hsl(var(--primary) / 0.02) 50%,
+      hsl(var(--background) / 0.95) 75%,
+      hsl(var(--background)) 100%
+    ),
+    /* Interactive light effect */
+    radial-gradient(600px 600px at calc(var(--x) * 1px) calc(var(--y) * 1px), 
+      hsl(var(--primary) / 0.12), 
+      hsl(var(--primary) / 0.06) 40%, 
+      transparent 70%);
+  background-size: 40px 40px, 60px 60px, 80px 80px, 100% 100%, 100% 100%;
+  border: 3px solid transparent;
+  background-clip: padding-box;
   transition: all 0.3s ease;
+  /* Apply geometric filter for subtle texture */
+  backdrop-filter: blur(0.5px);
 }
 
 .hero-card:hover {
   box-shadow: 
-    0 0 0 1px hsl(var(--primary) / 0.2),
-    0 20px 40px rgba(0, 0, 0, 0.15),
-    0 0 60px hsl(var(--primary) / 0.1);
+    0 0 0 1px hsl(var(--primary) / 0.3),
+    0 30px 60px rgba(0, 0, 0, 0.2),
+    0 0 80px hsl(var(--primary) / 0.15),
+    inset 0 0 40px hsl(var(--primary) / 0.05);
+  transform: translateY(-2px);
 }
 
 .hero-assets {
@@ -304,33 +323,68 @@ div[style*="z-index: 999999"] {
   inset: 0;
   border-radius: 4em;
   z-index: 0;
-  background: radial-gradient(
-    circle at 50% 50%,
-    hsl(var(--primary) / 0.15),
-    hsl(var(--primary) / 0.05) 40%,
-    transparent 100%
-  );
+  background: 
+    /* Multiple light sources for depth */
+    radial-gradient(
+      ellipse 800px 400px at 30% 20%,
+      hsl(var(--primary) / 0.08),
+      transparent 50%
+    ),
+    radial-gradient(
+      ellipse 600px 300px at 70% 80%,
+      hsl(var(--chart-2) / 0.06),
+      transparent 50%
+    ),
+    radial-gradient(
+      circle at 50% 50%,
+      hsl(var(--primary) / 0.12),
+      hsl(var(--primary) / 0.04) 60%,
+      transparent 100%
+    );
+  /* Add subtle texture overlay */
+  background-image: 
+    repeating-linear-gradient(
+      45deg,
+      transparent,
+      transparent 2px,
+      hsl(var(--primary) / 0.01) 2px,
+      hsl(var(--primary) / 0.01) 4px
+    );
 }
 
-.hero-assets::before,
+.hero-assets::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: 
+    /* Geometric mesh pattern */
+    linear-gradient(90deg, transparent 49%, hsl(var(--primary) / 0.02) 50%, transparent 51%),
+    linear-gradient(0deg, transparent 49%, hsl(var(--primary) / 0.02) 50%, transparent 51%);
+  background-size: 100px 100px;
+  opacity: 0.3;
+  filter: url(#geometric);
+}
+
 .hero-assets::after {
   content: "";
   position: absolute;
-  inset: -50%;
-  background: radial-gradient(
-    circle,
-    hsl(var(--primary) / 0.1) 0%,
-    transparent 70%
-  );
-  opacity: 0.5;
-  filter: blur(60px);
-  animation: float-particle 10s infinite alternate;
+  inset: 0;
+  background: 
+    /* Subtle noise texture */
+    radial-gradient(circle at 25% 25%, hsl(var(--primary) / 0.03) 1px, transparent 1px),
+    radial-gradient(circle at 75% 75%, hsl(var(--chart-4) / 0.02) 1px, transparent 1px);
+  background-size: 20px 20px, 30px 30px;
+  animation: float-texture 20s infinite linear;
 }
 
-.hero-assets::after {
-  animation-delay: -5s;
-  animation-duration: 15s;
-  opacity: 0.3;
+@keyframes float-texture {
+  0% { transform: translate(0, 0); }
+  25% { transform: translate(-10px, -5px); }
+  50% { transform: translate(5px, -10px); }
+  75% { transform: translate(-5px, 5px); }
+  100% { transform: translate(0, 0); }
+}
+  );
 }
 
 .hero-assets img.foreground {
@@ -345,7 +399,10 @@ div[style*="z-index: 999999"] {
   user-select: none;
   pointer-events: none;
   z-index: 2;
-  filter: drop-shadow(0 20px 40px rgba(0, 0, 0, 0.2));
+  filter: 
+    drop-shadow(0 30px 60px rgba(0, 0, 0, 0.3))
+    drop-shadow(0 0 20px hsl(var(--primary) / 0.4))
+    url(#enhanced-glow);
   transition: transform 0.8s cubic-bezier(0.33, 1, 0.68, 1);
 }
 
@@ -357,12 +414,20 @@ div[style*="z-index: 999999"] {
   font-size: clamp(5rem, 15vw, 12rem);
   text-transform: uppercase;
   font-family: "Bebas Neue", sans-serif;
-  color: hsl(var(--primary));
+  background: linear-gradient(
+    135deg,
+    hsl(var(--primary)) 0%,
+    hsl(var(--chart-4)) 50%,
+    hsl(var(--primary)) 100%
+  );
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
   transform: translate(calc(-50% + var(--x) * -30px), calc(var(--y) * -20px));
   transition: transform 0.8s cubic-bezier(0.33, 1, 0.68, 1);
   z-index: 4;
-  mix-blend-mode: multiply;
-  opacity: 0.9;
+  filter: drop-shadow(0 4px 8px hsl(var(--primary) / 0.3));
+  opacity: 0.95;
 }
 
 .hero-content {
@@ -377,20 +442,38 @@ div[style*="z-index: 999999"] {
   align-content: center;
   padding-bottom: 0.5rem;
   z-index: 3;
+  background: linear-gradient(
+    to top,
+    hsl(var(--background) / 0.9) 0%,
+    hsl(var(--background) / 0.7) 50%,
+    transparent 100%
+  );
+  backdrop-filter: blur(2px);
+  border-radius: 0 0 4em 4em;
 }
 
 @media (max-width: 768px) {
   .hero-card {
     border-radius: 2em;
     aspect-ratio: 2 / 1.2;
+    background-size: 20px 20px, 30px 30px, 40px 40px, 100% 100%, 100% 100%;
   }
   
   .hero-assets {
     border-radius: 2em;
   }
   
+  .hero-assets::before {
+    background-size: 50px 50px;
+  }
+  
+  .hero-assets::after {
+    background-size: 10px 10px, 15px 15px;
+  }
+  
   .hero-content {
     min-height: 25%;
+    border-radius: 0 0 2em 2em;
   }
 }
 
