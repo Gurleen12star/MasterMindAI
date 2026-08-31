@@ -10,7 +10,7 @@ import {
 
 export default function FeaturesGrid() {
   return (
-    <section id="features" className="relative pt-32 md:pt-48 pb-16 md:pb-24 overflow-hidden">
+    <section id="features" className="relative py-16 md:py-24 overflow-hidden">
       <div className="absolute inset-0">
         <div className="absolute inset-0 bg-gradient-to-b from-background/80 via-background/95 to-background"></div>
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,_var(--tw-gradient-stops))] from-primary/10 via-transparent to-transparent opacity-50"></div>
