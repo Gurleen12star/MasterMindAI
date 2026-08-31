@@ -36,12 +36,12 @@ export default function HeroSection() {
     <section className="relative min-h-screen flex items-center justify-center px-4 pt-20 overflow-hidden">
       <div className="container mx-auto max-w-7xl">
         <div 
-          className="hero-card"
+          className="hero-card backdrop-blur-md bg-background/20 border border-white/20"
           ref={heroCardRef}
         >
           
           {/* Modern Overlay Effect */}
-          <div className="hero-overlay-effect"></div>
+          <div className="hero-overlay-effect backdrop-blur-sm bg-gradient-to-br from-white/10 via-transparent to-primary/5"></div>
           
           <div className="absolute inset-0 overflow-hidden" style={{ zIndex: 1 }}>
             {[...Array(20)].map((_, i) => (
@@ -69,8 +69,8 @@ export default function HeroSection() {
             />
           </div>
           <div className="hero-content" style={{ zIndex: 3 }}>
-            <p className="text-3xl md:text-4xl lg:text-5xl font-bold">Your Universe of Knowledge, Reimagined by AI.</p>
-            <p className="text-lg md:text-xl lg:text-2xl opacity-100">From deep research to dynamic content, master any subject your way.</p>
+            <p className="text-3xl md:text-4xl lg:text-5xl font-bold text-white drop-shadow-lg">Your Universe of Knowledge, Reimagined by AI.</p>
+            <p className="text-lg md:text-xl lg:text-2xl text-white/90 drop-shadow-md">From deep research to dynamic content, master any subject your way.</p>
           </div>
         </div>
       </div>
