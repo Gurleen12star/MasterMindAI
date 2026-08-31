@@ -50,11 +50,11 @@
 .hero-card {
   width: 100%;
   max-width: 100%;
-  aspect-ratio: 2 / 1;
+  aspect-ratio: 2 / 0.9;
   position: relative;
   border-radius: 4em;
   filter: drop-shadow(0 10px 20px rgba(0, 0, 0, 0.1));
-  min-height: 700px;
+  min-height: 600px;
 }
 
 .hero-assets {
@@ -74,7 +74,7 @@
   position: absolute;
   top: 0;
   left: 50%;
-  translate: -50% -25%;
+  translate: -50% -10%;
   height: 180%;
   width: auto;
   transform: translate(calc(var(--x) * 40px), calc(var(--y) * 10px));
