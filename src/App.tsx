@@ -81,7 +81,7 @@ function App() {
             <main className="relative z-10 max-w-7xl mx-auto px-4 md:px-6 lg:px-8">
               <HeroSection />
             </main>
-            <LogoMarquee className="relative z-20 mt-[-40rem]" />
+            <LogoMarquee className="relative z-20 mt-[-90rem]" />
             <main className="relative z-10 max-w-7xl mx-auto px-4 md:px-6 lg:px-8">
               <FeaturesGrid />
               <DemoSection />
