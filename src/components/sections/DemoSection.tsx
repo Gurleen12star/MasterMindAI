@@ -6,6 +6,7 @@ import { FileText, Headphones, Video, Wand2, Sparkles } from 'lucide-react';
 
 export default function DemoSection() {
   const [isPlaying, setIsPlaying] = useState(false);
+  const [content, setContent] = useState('');
 
   return (
     <section className="py-24 px-4">
