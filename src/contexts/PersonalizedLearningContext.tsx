@@ -18,6 +18,9 @@ interface PersonalizedLearningContextType {
     setGenerationHistory: (generationHistory: ChatHistoryType[]) => void;
     sidebar: SidebarType;
     setSidebar: SetSidebarType;
+    currentSessionId: string | null;
+    loadSession: (session: any) => void;
+    setCurrentSessionId: (id: string | null) => void;
 }
 
 const PersonalizedLearningContext = createContext<PersonalizedLearningContextType>({
@@ -65,6 +68,9 @@ const PersonalizedLearningContext = createContext<PersonalizedLearningContextTyp
         expanded: false,
     },
     setSidebar: () => {},
+    currentSessionId: null,
+    loadSession: () => {},
+    setCurrentSessionId: () => {},
 });
 
 export const PersonalizedLearningProvider = ({ children }: { children: ReactNode }) => {
@@ -117,6 +123,7 @@ export const PersonalizedLearningProvider = ({ children }: { children: ReactNode
         }
         return localData ? JSON.parse(localData) : { expanded: false };
     });
+    const [currentSessionId, setCurrentSessionId] = useState<string | null>(null);
 
     useEffect(() => {
         localStorage.setItem('personalized_learning_introduction', JSON.stringify(introduction));
@@ -146,6 +153,31 @@ export const PersonalizedLearningProvider = ({ children }: { children: ReactNode
         localStorage.setItem('personalized_learning_sidebar', JSON.stringify(sidebar));
     }, [sidebar]);
 
+    const loadSession = (session: any) => {
+        setStudyPlatform({
+            show: true,
+            isGettingModels: false,
+            isGettingModulo: false,
+            isLoading: false,
+            actModule: 0,
+            modulos: session.modules_data || [],
+        });
+        setPersonality(session.personality);
+        setStudyMaterial(session.topic);
+        setGenerationHistory(session.generation_history || []);
+        setCurrentSessionId(session.id);
+        setIntroduction({
+            show: false,
+            isLoading: false,
+            actPage: 3,
+            pages: {
+                page1: { input: true, button: true, visited: true },
+                page2: { input: true, button: true, visited: true },
+                page3: { input: true, button: true, visited: true },
+            },
+        });
+    };
+
     return (
         <PersonalizedLearningContext.Provider
             value={{
@@ -163,6 +195,9 @@ export const PersonalizedLearningProvider = ({ children }: { children: ReactNode
                 setGenerationHistory,
                 sidebar,
                 setSidebar,
+                currentSessionId,
+                loadSession,
+                setCurrentSessionId,
             }}
         >
             {children}

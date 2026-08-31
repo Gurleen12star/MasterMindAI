@@ -10,6 +10,9 @@ import prompts from "@/lib/personalized-learning/prompts";
 import interactionGemini from "@/lib/personalized-learning/geminiClient";
 import { Award, ArrowLeft, ArrowRight, Loader2 } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { supabase } from "@/lib/supabase";
+import { useAuth } from "@/components/auth/SupabaseAuthProvider";
 
 const StudyPlatformLoading = () => {
     const studyPlatformLoadingEl = useRef<HTMLDivElement>(null);
@@ -69,7 +72,8 @@ const StudyPlatformInitial = ({ handleGetModule }: { handleGetModule: () => Prom
 };
 
 const StudyPlatform = () => {
-    const { introduction, setIntroduction, personality, studyMaterial, generationHistory, setGenerationHistory, studyPlatform, setStudyPlatform } = useAppContext();
+    const { introduction, setIntroduction, personality, studyMaterial, generationHistory, setGenerationHistory, studyPlatform, setStudyPlatform, currentSessionId, setCurrentSessionId } = useAppContext();
+    const { user } = useAuth();
     const [modulo, setModulo] = useState<number>(studyPlatform.actModule);
     const [actualModuleRes, setActualModuleRes] = useState<string>("");
     const [timeModule, setTimeModule] = useState<boolean>(false);
@@ -90,6 +94,28 @@ const StudyPlatform = () => {
                 if (validateJSON(responseText)) {
                     addStoriesChat(generationHistory, setGenerationHistory, prompt, response.text());
                     setActualModuleRes(response.text());
+                    
+                    // Save to database after modules are generated
+                    if (user?.id) {
+                        try {
+                            const { data, error } = await supabase
+                                .from('personalized_learning_sessions')
+                                .insert({
+                                    user_id: user.id,
+                                    topic: studyMaterial,
+                                    personality: personality,
+                                    modules_data: [],
+                                    generation_history: generationHistory,
+                                })
+                                .select()
+                                .single();
+                            if (data && !error) {
+                                setCurrentSessionId(data.id);
+                            }
+                        } catch (dbError) {
+                            console.error('Error saving session to database:', dbError);
+                        }
+                    }
                     break;
                 } else {
                     throw new SyntaxError("Invalid JSON response.");
@@ -118,6 +144,21 @@ const StudyPlatform = () => {
 
                 if (validateJSON(responseText)) {
                     generateModule(response.text(), studyPlatform, setStudyPlatform);
+                    
+                    // Update database after module content is generated
+                    if (user?.id && currentSessionId) {
+                        try {
+                            await supabase
+                                .from('personalized_learning_sessions')
+                                .update({
+                                    modules_data: studyPlatform.modulos,
+                                    generation_history: generationHistory,
+                                })
+                                .eq('id', currentSessionId);
+                        } catch (dbError) {
+                            console.error('Error updating session in database:', dbError);
+                        }
+                    }
                     break;
                 } else {
                     throw new SyntaxError("Invalid JSON response.");
@@ -197,7 +238,8 @@ const StudyPlatform = () => {
                             <div className="w-full">
                                 {/* Module Content */}
                                 <Card className="mb-6">
-                                    <CardContent className="p-6 studyPlatform-content">
+                                    <ScrollArea className="h-[calc(100vh-400px)]">
+                                        <CardContent className="p-6 studyPlatform-content">
                                         {studyPlatform.modulos[studyPlatform.actModule] && 
                                          studyPlatform.modulos[studyPlatform.actModule].content && 
                                          studyPlatform.modulos[studyPlatform.actModule].content.map((item, index) => {
@@ -223,7 +265,8 @@ const StudyPlatform = () => {
                                                 );
                                             }
                                         })}
-                                    </CardContent>
+                                        </CardContent>
+                                    </ScrollArea>
                                 </Card>
                                 
                                 {/* Navigation */}

@@ -18,6 +18,7 @@ import ProfileSetupPage from './ProfileSetupPage';
 import ProfilePage from './ProfilePage';
 import AnimationStudioPage from './AnimationStudioPage';
 import PersonalizedLearningPage from './PersonalizedLearningPage';
+import PersonalizedLearningHistoryPage from './PersonalizedLearningHistoryPage';
 
 function DashboardContent() {
   const { user } = useAuth();
@@ -90,6 +91,11 @@ function DashboardContent() {
             <Route path="personalized-learning" element={
               <ProfileGuard>
                 <PersonalizedLearningPage />
+              </ProfileGuard>
+            } />
+            <Route path="personalized-learning-history" element={
+              <ProfileGuard>
+                <PersonalizedLearningHistoryPage />
               </ProfileGuard>
             } />
             
