@@ -26,18 +26,11 @@ export default function Sidebar() {
     {
       section: 'Main',
       items: [
-        { icon: LayoutDashboard, label: 'Overview', href: '/dashboard' },
-        { icon: BookOpen, label: 'My Courses', href: '/dashboard/courses', badge: '8' },
         { icon: GitBranch, label: 'Roadmap Generator', href: '/dashboard/roadmap-generator' },
-        { icon: History, label: 'Learning History', href: '/dashboard/history' },
-        { icon: Rocket, label: 'Goals', href: '/dashboard/goals', badge: 'New' }
-      ]
-    },
-    {
-      section: 'Social',
-      items: [
-        { icon: Users, label: 'Study Groups', href: '/dashboard/groups' },
-        { icon: MessageSquare, label: 'Discussions', href: '/dashboard/discussions', badge: '3' }
+        { icon: BookOpen, label: 'Content Discovery', href: '/dashboard/discovery', badge: 'New' },
+        { icon: Video, label: 'Content Transformation', href: '/dashboard/transform' },
+        { icon: Users, label: 'Community', href: '/dashboard/community' },
+        { icon: LineChart, label: 'Progress & Analytics', href: '/dashboard/analytics' }
       ]
     },
     {
@@ -56,7 +49,7 @@ export default function Sidebar() {
     <div className={`${isCollapsed ? 'w-20' : 'w-64'} h-screen bg-card/50 backdrop-blur-sm border-r border-border/40 flex flex-col relative transition-all duration-300`}>
       <Button
         variant="ghost" 
-        className="absolute -right-6 top-20 h-12 w-12 rounded-full bg-gradient-to-r from-primary/90 to-primary shadow-lg hover:shadow-primary/25 hover:scale-110 transition-all duration-300 group overflow-hidden z-50"
+        className="absolute -right-6 top-20 h-12 w-12 rounded-full bg-gradient-to-r from-primary/90 to-primary shadow-lg hover:shadow-primary/25 hover:scale-110 transition-all duration-300 group overflow-hidden z-[60]"
         onClick={toggleSidebar}
       >
         <div className="absolute inset-0 bg-gradient-to-r from-primary/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
@@ -72,10 +65,10 @@ export default function Sidebar() {
       <div className={`p-6 ${isCollapsed ? 'px-2' : ''}`}>
         <div className="flex items-center group relative">
           <div className="relative flex items-center">
-            <img 
-              src="/src/assets/logo.png" 
+            <img
+              src="/src/assets/logo.png"
               alt="EchoVerse Logo" 
-              className={`object-contain transition-all duration-300 ${
+              className={`object-contain transition-none ${
                 isCollapsed ? 'h-12 w-12' : 'h-16 w-16'
               } cursor-default`} 
             />
