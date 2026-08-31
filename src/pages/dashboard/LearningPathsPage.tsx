@@ -1,14 +1,16 @@
 import { useState } from 'react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { generateLearningPath } from '@/lib/gemini';
+import { generateLearningPath, generateLearningPathMermaid } from '@/lib/gemini';
+import { MermaidDiagram } from '@/components/ui/mermaid-diagram';
 import { useToast } from '@/hooks/use-toast';
-import { Map, Loader2 } from 'lucide-react';
+import { Map, Loader2, FileText, FlowChart } from 'lucide-react';
 
 type DifficultyLevel = 'beginner' | 'intermediate' | 'advanced';
 
@@ -19,6 +21,7 @@ export default function LearningPathsPage() {
   const [additionalInfo, setAdditionalInfo] = useState('');
   const [isGenerating, setIsGenerating] = useState(false);
   const [generatedPath, setGeneratedPath] = useState<string | null>(null);
+  const [mermaidDiagram, setMermaidDiagram] = useState<string | null>(null);
 
   const handleGenerate = async () => {
     if (!topic) {
@@ -32,8 +35,15 @@ export default function LearningPathsPage() {
 
     setIsGenerating(true);
     try {
-      const path = await generateLearningPath(topic, level, additionalInfo);
+      // Generate both text and visual representations concurrently
+      const [path, diagram] = await Promise.all([
+        generateLearningPath(topic, level, additionalInfo),
+        generateLearningPathMermaid(topic, level, additionalInfo)
+      ]);
+      
       setGeneratedPath(path);
+      setMermaidDiagram(diagram);
+      
       toast({
         title: 'Learning Path Generated',
         description: 'Your personalized learning path is ready!',
@@ -121,26 +131,62 @@ export default function LearningPathsPage() {
         </Card>
 
         <Card className="p-6">
-          <ScrollArea className="h-[600px] pr-4">
-            {generatedPath ? (
-              <div className="prose prose-neutral dark:prose-invert max-w-none">
-                <ReactMarkdown remarkPlugins={[remarkGfm]}>
-                  {generatedPath}
-                </ReactMarkdown>
-              </div>
-            ) : (
-              <div className="flex items-center justify-center h-full text-muted-foreground">
-                {isGenerating ? (
-                  <div className="flex flex-col items-center gap-2">
-                    <Loader2 className="h-8 w-8 animate-spin" />
-                    <p>Generating your learning path...</p>
+          <Tabs defaultValue="text" className="w-full">
+            <TabsList className="mb-4">
+              <TabsTrigger value="text" className="flex items-center gap-2">
+                <FileText className="h-4 w-4" />
+                <span>Text View</span>
+              </TabsTrigger>
+              <TabsTrigger value="visual" className="flex items-center gap-2">
+                <FlowChart className="h-4 w-4" />
+                <span>Visual View</span>
+              </TabsTrigger>
+            </TabsList>
+            
+            <TabsContent value="text">
+              <ScrollArea className="h-[600px] pr-4">
+                {generatedPath ? (
+                  <div className="prose prose-neutral dark:prose-invert max-w-none">
+                    <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                      {generatedPath}
+                    </ReactMarkdown>
                   </div>
                 ) : (
-                  <p>Your learning path will appear here</p>
+                  <div className="flex items-center justify-center h-full text-muted-foreground">
+                    {isGenerating ? (
+                      <div className="flex flex-col items-center gap-2">
+                        <Loader2 className="h-8 w-8 animate-spin" />
+                        <p>Generating your learning path...</p>
+                      </div>
+                    ) : (
+                      <p>Your learning path will appear here</p>
+                    )}
+                  </div>
                 )}
-              </div>
-            )}
-          </ScrollArea>
+              </ScrollArea>
+            </TabsContent>
+            
+            <TabsContent value="visual">
+              <ScrollArea className="h-[600px]">
+                {mermaidDiagram ? (
+                  <div className="p-4 bg-muted rounded-lg">
+                    <MermaidDiagram definition={mermaidDiagram} className="w-full" />
+                  </div>
+                ) : (
+                  <div className="flex items-center justify-center h-full text-muted-foreground">
+                    {isGenerating ? (
+                      <div className="flex flex-col items-center gap-2">
+                        <Loader2 className="h-8 w-8 animate-spin" />
+                        <p>Generating visual diagram...</p>
+                      </div>
+                    ) : (
+                      <p>Visual representation will appear here</p>
+                    )}
+                  </div>
+                )}
+              </ScrollArea>
+            </TabsContent>
+          </Tabs>
         </Card>
       </div>
     </div>

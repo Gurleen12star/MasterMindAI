@@ -100,6 +100,72 @@ export async function generateRoadmapMermaid(topic: string): Promise<string> {
   }
 } 
 
+export async function generateLearningPathMermaid(topic: string, level: 'beginner' | 'intermediate' | 'advanced', additionalInfo?: string): Promise<string> {
+  try {
+    const model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash' });
+    const escapedTopic = topic.replace(/"/g, '\\"').replace(/`/g, '\\`');
+
+    const prompt = `Create a visual learning path for "${escapedTopic}" at ${level} level using Mermaid flowchart syntax.
+    ${additionalInfo ? `Consider this context: ${additionalInfo}\n` : ''}
+
+    Follow these CRITICAL guidelines:
+    1. Use 'flowchart LR' (Left-to-Right) format
+    2. Each node and connection MUST be on its own line
+    3. Use descriptive node IDs (A, B, C1, etc.)
+    4. Quote node text containing special characters
+    5. Use these style classes:
+       - Main topic/start: :::classPurple
+       - Core concepts: :::classGreen
+       - Practice/Projects: :::classYellow
+       - Advanced topics: :::classBlue
+       - Assessments/Milestones: :::classOrange
+    6. Keep node text concise (2-5 words)
+    7. Use --> for connections
+    8. Include 5-10 key learning milestones
+    9. Return ONLY valid Mermaid code
+
+    Example structure:
+    flowchart LR
+    A["Start: ${escapedTopic} Basics"]:::classPurple
+    B["Core Concept 1"]:::classGreen
+    C["Practice Project"]:::classYellow
+    A --> B
+    B --> C`;
+
+    const result = await model.generateContent(prompt);
+    const response = result.response;
+    let mermaidCode = response.text().trim();
+
+    // Process the mermaid code (remove markdown fences if present)
+    if (mermaidCode.startsWith('```mermaid')) {
+      mermaidCode = mermaidCode.substring('```mermaid'.length);
+    }
+    if (mermaidCode.startsWith('```')) {
+      mermaidCode = mermaidCode.substring('```'.length);
+    }
+    if (mermaidCode.endsWith('```')) {
+      mermaidCode = mermaidCode.substring(0, mermaidCode.length - '```'.length);
+    }
+    mermaidCode = mermaidCode.trim();
+
+    // Ensure the code starts with flowchart LR
+    const lines = mermaidCode.split('\n').map(line => line.trim()).filter(line => line.length > 0);
+    const processedLines = ['flowchart LR'];
+    
+    for (const line of lines) {
+      if (!line.toLowerCase().startsWith('flowchart')) {
+        processedLines.push(line);
+      }
+    }
+
+    return processedLines.join('\n');
+  } catch (error) {
+    console.error('Error generating learning path diagram:', error);
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    return `flowchart LR\nERROR["Failed to generate learning path: ${errorMessage.replace(/"/g, "'")}"]:::classPurple`;
+  }
+}
+
 export async function generateLearningPath(topic: string, level: 'beginner' | 'intermediate' | 'advanced', additionalInfo?: string): Promise<string> {
   try {
     const model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash' });
