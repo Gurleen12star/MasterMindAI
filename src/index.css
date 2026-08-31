@@ -544,11 +544,15 @@ div[style*="z-index: 999999"] {
     transform: translateY(0px);
   }
   50% {
-    transform: translateY(-10px);
+    transform: translateY(-4px);
   }
   100% {
     transform: translateY(0px);
   }
+}
+
+.animate-float {
+  animation: float 6s ease-in-out infinite;
 }
 
 .dark {

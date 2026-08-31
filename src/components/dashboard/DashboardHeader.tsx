@@ -4,28 +4,30 @@ import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Input } from '@/components/ui/input';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { useSidebar } from './SidebarContext';
 
 export default function DashboardHeader({ children }: { children?: React.ReactNode }) {
   const { user } = useAuth();
+  const { isCollapsed } = useSidebar();
   
   return (
-    <header className="h-16 bg-[#1E1E1E] backdrop-blur-xl">
-      <div className="h-full px-6 flex items-center justify-between">
-        <div className="flex items-center gap-8">
+    <header className={`fixed top-0 z-50 transition-all duration-300 ${isCollapsed ? 'left-16' : 'left-64'} right-0 px-4 py-4 bg-transparent`}>
+      <div className="flex h-16 items-center justify-between">
+        <div className="flex items-center gap-4 rounded-full bg-[#1F2129]/80 px-4 py-2 shadow-lg backdrop-blur-sm border border-white/10">
           {children}
-          <h1 className="text-xl font-semibold bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">
+          <h1 className="hidden md:block text-xl font-semibold bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">
             Dashboard
           </h1>
           <div className="hidden lg:flex relative">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <Input
               placeholder="Search..."
-              className="w-[300px] pl-9 bg-[#2A2B32] border-0 focus:ring-2 focus:ring-primary/20 transition-all duration-300 rounded-xl"
+              className="w-full md:w-[300px] pl-9 bg-black/20 border-0 focus:ring-2 focus:ring-primary/20 transition-all duration-300 rounded-xl"
             />
           </div>
         </div>
         
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-2 rounded-full bg-[#1F2129]/80 px-3 py-2 shadow-lg backdrop-blur-sm border border-white/10">
           <Popover>
             <PopoverTrigger asChild>
               <Button variant="ghost" size="icon" className="relative hover:bg-primary/10 transition-all duration-300 rounded-xl">
@@ -35,7 +37,7 @@ export default function DashboardHeader({ children }: { children?: React.ReactNo
                 </span>
               </Button>
             </PopoverTrigger>
-            <PopoverContent align="end" className="w-80 backdrop-blur-xl bg-[#2A2B32] border-0 shadow-xl rounded-xl">
+            <PopoverContent align="end" className="w-80 backdrop-blur-xl bg-[#2A2B32]/80 border-white/10 shadow-xl rounded-xl">
               <div className="space-y-4">
                 <div className="flex justify-between items-center">
                   <h4 className="font-medium text-foreground">Notifications</h4>
@@ -47,7 +49,7 @@ export default function DashboardHeader({ children }: { children?: React.ReactNo
                   {[1, 2, 3].map((i) => (
                     <div
                       key={i}
-                      className="flex gap-4 items-start p-3 rounded-lg hover:bg-muted/50 transition-colors duration-200"
+                      className="flex gap-4 items-start p-3 rounded-lg hover:bg-white/10 transition-colors duration-200"
                     >
                       <div className="h-8 w-8 rounded-full bg-primary/20 flex items-center justify-center flex-shrink-0 shadow-sm">
                         <Bell className="h-4 w-4 text-primary" />
@@ -78,7 +80,7 @@ export default function DashboardHeader({ children }: { children?: React.ReactNo
                 </Avatar>
               </Button>
             </PopoverTrigger>
-            <PopoverContent align="end" className="w-56 backdrop-blur-xl bg-[#2A2B32] border-0 shadow-xl rounded-xl">
+            <PopoverContent align="end" className="w-56 backdrop-blur-xl bg-[#2A2B32]/80 border-white/10 shadow-xl rounded-xl">
               <div className="space-y-3">
                 <div className="flex items-center gap-3 p-2">
                   <Avatar className="h-10 w-10">
@@ -92,14 +94,14 @@ export default function DashboardHeader({ children }: { children?: React.ReactNo
                     <p className="text-xs text-muted-foreground">{user?.email}</p>
                   </div>
                 </div>
-                <div className="border-t border-border/20" />
+                <div className="border-t border-white/10" />
                 <Button variant="ghost" className="w-full justify-start text-sm hover:bg-primary/10 rounded-lg">
                   View Profile
                 </Button>
                 <Button variant="ghost" className="w-full justify-start text-sm hover:bg-primary/10 rounded-lg">
                   Settings
                 </Button>
-                <div className="border-t border-border/20" />
+                <div className="border-t border-white/10" />
                 <Button variant="ghost" className="w-full justify-start text-sm text-destructive hover:bg-destructive/10 rounded-lg">
                   Sign Out
                 </Button>
