@@ -50,7 +50,7 @@ export default function LoginPage() {
         <div className="w-full max-w-md">
           <div className="relative">
             <Input
-              placeholder="Ask EchoVerse to build your..."
+              placeholder="EchoVerse, Education is important"
               className="w-full h-14 bg-[#1E1E1E] backdrop-blur-sm text-foreground placeholder:text-muted-foreground border-border/20 rounded-full px-6 pr-16"
             />
             <Button size="icon" className="absolute right-2 top-1/2 -translate-y-1/2 h-10 w-10 rounded-full bg-primary text-primary-foreground hover:bg-primary/90">
