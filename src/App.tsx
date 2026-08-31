@@ -15,6 +15,7 @@ import { Toaster } from '@/components/ui/toaster';
 import LoginPage from '@/pages/auth/LoginPage';
 import SignupPage from '@/pages/auth/SignupPage';
 import DashboardPage from '@/pages/dashboard/DashboardPage';
+import RoadmapGeneratorPage from '@/pages/dashboard/RoadmapGeneratorPage';
 
 function App() {
   const [currentPath, setCurrentPath] = useState(window.location.pathname);
@@ -42,6 +43,7 @@ function App() {
       case '/signup':
         return <SignupPage />;
       case '/dashboard':
+      case '/dashboard/roadmap-generator':
         if (!isSignedIn) {
           window.location.href = '/login';
           return null;
