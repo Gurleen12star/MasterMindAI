@@ -38,6 +38,7 @@
   --cursor-color-default: hsl(var(--foreground));
   --cursor-color-clickable: hsl(var(--primary));
   --cursor-size: 24px;
+
   /* Navbar Animation */
   --nav-bg: rgba(255, 255, 255, 0.9);
   --nav-border: rgba(0, 0, 0, 0.05);
@@ -105,19 +106,27 @@
 .curzr-arrow-pointer .outer {
   fill: var(--cursor-color-default);
   transition: fill 0.2s ease;
-  pointer-events: none;
 }
 
-/* Change cursor color when hovering over interactive elements */
-.custom-cursor-enabled a:hover + .curzr-arrow-pointer .outer,
-.custom-cursor-enabled button:hover + .curzr-arrow-pointer .outer,
-.custom-cursor-enabled [role="button"]:hover + .curzr-arrow-pointer .outer,
-.custom-cursor-enabled input:hover + .curzr-arrow-pointer .outer,
-.custom-cursor-enabled select:hover + .curzr-arrow-pointer .outer,
-.custom-cursor-enabled textarea:hover + .curzr-arrow-pointer .outer,
-.custom-cursor-enabled .interactive:hover + .curzr-arrow-pointer .outer {
-  fill: var(--cursor-color-clickable);
+/* Change cursor color for clickable elements */
+.custom-cursor-enabled a:hover ~ .curzr-arrow-pointer .outer,
+.custom-cursor-enabled button:hover ~ .curzr-arrow-pointer .outer,
+.custom-cursor-enabled [role="button"]:hover ~ .curzr-arrow-pointer .outer,
+.custom-cursor-enabled input:hover ~ .curzr-arrow-pointer .outer,
+.custom-cursor-enabled select:hover ~ .curzr-arrow-pointer .outer,
+.custom-cursor-enabled textarea:hover ~ .curzr-arrow-pointer .outer {
+  fill: var(--cursor-color-default);
   transition: fill 0.2s ease;
+}
+
+/* Change cursor color for clickable elements */
+.custom-cursor-enabled a:hover ~ .curzr-arrow-pointer .outer,
+.custom-cursor-enabled button:hover ~ .curzr-arrow-pointer .outer,
+.custom-cursor-enabled [role="button"]:hover ~ .curzr-arrow-pointer .outer,
+.custom-cursor-enabled input:hover ~ .curzr-arrow-pointer .outer,
+.custom-cursor-enabled select:hover ~ .curzr-arrow-pointer .outer,
+.custom-cursor-enabled textarea:hover ~ .curzr-arrow-pointer .outer {
+  fill: var(--cursor-color-clickable);
 }
 
 /* Navbar Background Styles */
