@@ -1,4 +1,3 @@
-import React from 'react';
 import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
@@ -15,8 +14,7 @@ import {
   Film,
   Wand2,
   User,
-  Infinity,
-  Shield
+  Infinity
 } from 'lucide-react';
 
 const plans = [
