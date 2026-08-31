@@ -1,20 +1,10 @@
-src/components/auth/*
 src/components/layout/*
 src/components/sections/*
 
 
-src/pages/auth/*
 src/assets/*
 src/hooks/*
-src/lib/*
-supabase/functions/generate-audio/*
-supabase/functions/generate-learning-path/*
-supabase/functions/generate-roadmap/*
-supabase/functions/generate-summary/*
-supabase/functions/health-check/*
-supabase/functions/search-content/*
-supabase/functions/_shared/*
-supabase/migrations/*
+
 public/*
 components.json
 eslint.config.js
