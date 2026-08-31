@@ -1,10 +1,3 @@
-import { useEffect } from 'react';
-import { initSpotlights } from '@/lib/spotlight';
-import { gsap } from 'gsap';
-import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import { motion } from 'framer-motion';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
 import { BentoBox } from '@/components/ui/BentoBox';
 import { 
   Brain, 
@@ -16,42 +9,6 @@ import {
 } from 'lucide-react';
 
 export default function FeaturesGrid() {
-  useEffect(() => {
-    // Register GSAP ScrollTrigger plugin
-    gsap.registerPlugin(ScrollTrigger);
-    
-    // Initialize spotlight effects
-    const cleanup = initSpotlights();
-    
-    // Initialize parallax effect
-    const parallaxElement = document.querySelector('.dx-fixed-background__media-wrapper');
-    const parallaxMedia = document.querySelector('.dx-fixed-background__media');
-    
-    if (parallaxElement && parallaxMedia) {
-      gsap.from(parallaxElement, {
-        scale: 0.55,
-        scrollTrigger: {
-          trigger: parallaxElement,
-          start: "top bottom",
-          end: "center 75%",
-          scrub: true
-        }
-      });
-      
-      gsap.from(parallaxMedia, {
-        borderRadius: "300px",
-        scrollTrigger: {
-          trigger: parallaxElement,
-          start: "top bottom",
-          end: "center 75%",
-          scrub: true
-        }
-      });
-    }
-    
-    return cleanup;
-  }, []);
-
   return (
     <section className="py-24 px-4">
       {/* Simplified overlay effects - Updated to use theme variable */}

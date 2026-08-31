@@ -77,7 +77,7 @@ export default function PricingSection() {
   const [hoveredCard, setHoveredCard] = useState<number | null>(null);
 
   return (
-    <section className="py-24 px-4 md:px-6 lg:px-8 bg-transparent">
+    <section className="py-24 px-4">
       <div className="container mx-auto max-w-7xl">
         <div className="text-center mb-16">
           <h2 className="text-4xl md:text-5xl font-bold mb-6 bg-gradient-to-r from-primary via-primary/80 to-primary/60 bg-clip-text text-transparent">
