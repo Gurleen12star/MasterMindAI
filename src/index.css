@@ -84,6 +84,21 @@
   --mermaid-blue-darker: hsl(210 100% 40%);
   --mermaid-orange: hsl(var(--chart-5));
   --mermaid-orange-darker: hsl(25 84% 45%);
+
+  /* Modern Shadow Variables */
+  --shadow-inner: inset 0 2px 4px 0 rgba(0, 0, 0, 0.06);
+  --shadow-modern: 
+    0 1px 3px 0 rgba(0, 0, 0, 0.1),
+    0 1px 2px 0 rgba(0, 0, 0, 0.06),
+    inset 0 1px 0 0 rgba(255, 255, 255, 0.1);
+  --shadow-elevated: 
+    0 4px 6px -1px rgba(0, 0, 0, 0.1),
+    0 2px 4px -1px rgba(0, 0, 0, 0.06),
+    inset 0 1px 0 0 rgba(255, 255, 255, 0.1);
+  --shadow-floating: 
+    0 10px 15px -3px rgba(0, 0, 0, 0.1),
+    0 4px 6px -2px rgba(0, 0, 0, 0.05),
+    inset 0 1px 0 0 rgba(255, 255, 255, 0.1);
 }
 
 /* Enhanced Mermaid Diagram Styles */
@@ -296,7 +311,24 @@ div[style*="z-index: 999999"] {
   box-shadow: 
     0 0 0 1px hsl(var(--primary) / 0.2),
     0 20px 40px rgba(0, 0, 0, 0.15),
-    0 0 60px hsl(var(--primary) / 0.1);
+    0 0 60px hsl(var(--primary) / 0.1),
+    inset 0 1px 0 0 rgba(255, 255, 255, 0.1);
+}
+
+/* Hero Overlay Effect */
+.hero-overlay-effect {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: 
+    radial-gradient(circle at 30% 20%, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
+    radial-gradient(circle at 70% 80%, rgba(255, 255, 255, 0.05) 0%, transparent 50%),
+    linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, transparent 50%);
+  backdrop-filter: blur(0.5px);
+  pointer-events: none;
+  z-index: 1;
+  opacity: 0.8;
+  transition: opacity 0.3s ease;
 }
 
 .hero-assets {
@@ -477,6 +509,12 @@ div[style*="z-index: 999999"] {
   --mermaid-blue-darker: hsl(210 100% 40%);
   --mermaid-orange: hsl(var(--chart-5));
   --mermaid-orange-darker: hsl(25 84% 45%);
+
+  /* Override shadow variables for dark mode */
+  --shadow-inner: var(--shadow-inner-dark);
+  --shadow-modern: var(--shadow-modern-dark);
+  --shadow-elevated: var(--shadow-elevated-dark);
+  --shadow-floating: var(--shadow-floating-dark);
 }
 
 .bg-grid-white {
@@ -725,6 +763,34 @@ body {
 
   .bento-card {
     @apply rounded-[2.5rem] flex flex-col items-start p-8 relative bg-card shadow-lg hover:shadow-xl transition-all duration-300;
+  }
+
+  /* Modern Shadow Utilities */
+  .shadow-inner-modern {
+    box-shadow: var(--shadow-inner);
+  }
+
+  .shadow-modern {
+    box-shadow: var(--shadow-modern);
+  }
+
+  .shadow-elevated {
+    box-shadow: var(--shadow-elevated);
+  }
+
+  .shadow-floating {
+    box-shadow: var(--shadow-floating);
+  }
+
+  /* Enhanced BentoBox with modern shadows */
+  .bento-modern {
+    box-shadow: var(--shadow-elevated);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .bento-modern:hover {
+    box-shadow: var(--shadow-floating);
+    transform: translateY(-2px);
   }
 }
 

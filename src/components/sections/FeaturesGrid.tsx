@@ -22,7 +22,7 @@ export default function FeaturesGrid() {
         </div>
         
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:[grid-template-areas:'a_b_b'_'a_c_d'_'e_f_f'] md:auto-rows-[28rem] relative">
-          <BentoBox gradient="purple" className="flex flex-col md:[grid-area:a] row-span-2 relative overflow-hidden group backdrop-blur-xl bg-background/30 border-2 border-primary/20 hover:border-primary/40 hover:bg-background/40 transition-all duration-500 shadow-[0_8px_30px_rgb(0,0,0,0.12)] hover:shadow-[0_20px_40px_rgb(0,0,0,0.15)] rounded-3xl">
+          <BentoBox gradient="purple" className="flex flex-col md:[grid-area:a] row-span-2 relative overflow-hidden group backdrop-blur-xl bg-background/30 border-2 border-primary/20 hover:border-primary/40 hover:bg-background/40 transition-all duration-500 rounded-3xl">
             <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-primary/5 to-transparent opacity-60 group-hover:opacity-80 transition-opacity duration-500" />
             <img
               src="https://images.pexels.com/photos/8386440/pexels-photo-8386440.jpeg"
@@ -41,7 +41,7 @@ export default function FeaturesGrid() {
             </div>
           </BentoBox>
           
-          <BentoBox gradient="blue" className="flex flex-col md:[grid-area:b] md:col-span-2 relative overflow-hidden group backdrop-blur-xl bg-background/30 border-2 border-primary/20 hover:border-primary/40 hover:bg-background/40 transition-all duration-500 shadow-[0_8px_30px_rgb(0,0,0,0.12)] hover:shadow-[0_20px_40px_rgb(0,0,0,0.15)] rounded-3xl">
+          <BentoBox gradient="blue" className="flex flex-col md:[grid-area:b] md:col-span-2 relative overflow-hidden group backdrop-blur-xl bg-background/30 border-2 border-primary/20 hover:border-primary/40 hover:bg-background/40 transition-all duration-500 rounded-3xl">
             <div className="absolute inset-0 bg-gradient-to-br from-blue-500/10 via-blue-500/5 to-transparent opacity-60 group-hover:opacity-80 transition-opacity duration-500" />
             <img
               src="https://images.pexels.com/photos/7014766/pexels-photo-7014766.jpeg"
@@ -60,7 +60,7 @@ export default function FeaturesGrid() {
             </div>
           </BentoBox>
           
-          <BentoBox gradient="teal" className="flex flex-col md:[grid-area:c] relative overflow-hidden group backdrop-blur-xl bg-background/30 border-2 border-primary/20 hover:border-primary/40 hover:bg-background/40 transition-all duration-500 shadow-[0_8px_30px_rgb(0,0,0,0.12)] hover:shadow-[0_20px_40px_rgb(0,0,0,0.15)] rounded-3xl">
+          <BentoBox gradient="teal" className="flex flex-col md:[grid-area:c] relative overflow-hidden group backdrop-blur-xl bg-background/30 border-2 border-primary/20 hover:border-primary/40 hover:bg-background/40 transition-all duration-500 rounded-3xl">
             <div className="absolute inset-0 bg-gradient-to-br from-teal-500/10 via-teal-500/5 to-transparent opacity-60 group-hover:opacity-80 transition-opacity duration-500" />
             <img
               src="https://images.pexels.com/photos/7376/startup-photos.jpg"
@@ -79,7 +79,7 @@ export default function FeaturesGrid() {
             </div>
           </BentoBox>
           
-          <BentoBox gradient="green" className="flex flex-col md:[grid-area:d] relative overflow-hidden group backdrop-blur-xl bg-background/30 border-2 border-primary/20 hover:border-primary/40 hover:bg-background/40 transition-all duration-500 shadow-[0_8px_30px_rgb(0,0,0,0.12)] hover:shadow-[0_20px_40px_rgb(0,0,0,0.15)] rounded-3xl">
+          <BentoBox gradient="green" className="flex flex-col md:[grid-area:d] relative overflow-hidden group backdrop-blur-xl bg-background/30 border-2 border-primary/20 hover:border-primary/40 hover:bg-background/40 transition-all duration-500 rounded-3xl">
             <div className="absolute inset-0 bg-gradient-to-br from-green-500/10 via-green-500/5 to-transparent opacity-60 group-hover:opacity-80 transition-opacity duration-500" />
             <img
               src="https://images.pexels.com/photos/3861969/pexels-photo-3861969.jpeg"
@@ -98,7 +98,7 @@ export default function FeaturesGrid() {
             </div>
           </BentoBox>
           
-          <BentoBox gradient="blue" className="flex flex-col md:[grid-area:e] relative overflow-hidden group backdrop-blur-xl bg-background/30 border-2 border-primary/20 hover:border-primary/40 hover:bg-background/40 transition-all duration-500 shadow-[0_8px_30px_rgb(0,0,0,0.12)] hover:shadow-[0_20px_40px_rgb(0,0,0,0.15)] rounded-3xl">
+          <BentoBox gradient="blue" className="flex flex-col md:[grid-area:e] relative overflow-hidden group backdrop-blur-xl bg-background/30 border-2 border-primary/20 hover:border-primary/40 hover:bg-background/40 transition-all duration-500 rounded-3xl">
             <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/10 via-indigo-500/5 to-transparent opacity-60 group-hover:opacity-80 transition-opacity duration-500" />
             <img
               src="https://images.pexels.com/photos/8370752/pexels-photo-8370752.jpeg"
@@ -117,7 +117,7 @@ export default function FeaturesGrid() {
             </div>
           </BentoBox>
           
-          <BentoBox gradient="purple" className="flex flex-col md:[grid-area:f] md:col-span-2 relative overflow-hidden group backdrop-blur-xl bg-background/30 border-2 border-primary/20 hover:border-primary/40 hover:bg-background/40 transition-all duration-500 shadow-[0_8px_30px_rgb(0,0,0,0.12)] hover:shadow-[0_20px_40px_rgb(0,0,0,0.15)] rounded-3xl">
+          <BentoBox gradient="purple" className="flex flex-col md:[grid-area:f] md:col-span-2 relative overflow-hidden group backdrop-blur-xl bg-background/30 border-2 border-primary/20 hover:border-primary/40 hover:bg-background/40 transition-all duration-500 rounded-3xl">
             <div className="absolute inset-0 bg-gradient-to-br from-purple-500/10 via-purple-500/5 to-transparent opacity-60 group-hover:opacity-80 transition-opacity duration-500" />
             <img
               src="https://images.pexels.com/photos/2882566/pexels-photo-2882566.jpeg"

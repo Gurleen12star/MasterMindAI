@@ -39,7 +39,7 @@ export function BentoBox({
         'group relative overflow-hidden rounded-xl border border-border/40 bg-card/30 p-6 backdrop-blur-sm',
         hoverEffect &&
           'transition-all duration-300 hover:border-primary/20 hover:shadow-md hover:shadow-primary/5',
-        sizeClasses[size],
+        "relative overflow-hidden rounded-3xl p-8 transition-all duration-300 shadow-inner-modern bento-modern",
         gradientClasses[gradient],
         className
       )}

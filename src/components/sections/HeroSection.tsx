@@ -131,6 +131,10 @@ export default function HeroSection() {
               pointerEvents: 'none'
             }}
           ></div>
+          
+          {/* Modern Overlay Effect */}
+          <div className="hero-overlay-effect"></div>
+          
           <div className="absolute inset-0 overflow-hidden" style={{ zIndex: 1 }}>
             {[...Array(20)].map((_, i) => (
               <div
