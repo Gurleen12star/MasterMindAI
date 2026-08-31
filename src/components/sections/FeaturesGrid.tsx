@@ -1,3 +1,5 @@
+import { useEffect } from 'react';
+import { initSpotlights } from '@/lib/spotlight';
 import { BentoBox } from '@/components/ui/BentoBox';
 import { 
   Brain, 
@@ -9,6 +11,11 @@ import {
 } from 'lucide-react';
 
 export default function FeaturesGrid() {
+  useEffect(() => {
+    const cleanup = initSpotlights();
+    return cleanup;
+  }, []);
+
   return (
     <section className="py-24 px-4">
       {/* Simplified overlay effects - Updated to use theme variable */}

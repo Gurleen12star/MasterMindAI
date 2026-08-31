@@ -9,11 +9,11 @@ export default function DemoSection() {
   const [content, setContent] = useState('');
 
   return (
-    <section className="py-24 px-4">
+    <section className="py-24 px-4 md:px-6 lg:px-8 bg-transparent">
       <div className="container mx-auto max-w-7xl">
         <div className="text-center mb-16">
-          <h2 className="text-4xl md:text-5xl font-bold mb-6 bg-gradient-to-r from-primary via-primary/80 to-primary/60 bg-clip-text text-transparent">
-            See EchoVerse in Action
+          <h2 className="text-4xl md:text-5xl font-bold mb-6">
+            <span className="gradient-text-animation">See EchoVerse in Action</span>
           </h2>
           <p className="mt-4 text-lg md:text-xl text-muted-foreground">
             Experience how our AI transforms content across different formats.

@@ -117,7 +117,17 @@ export default function HeroSection() {
   }, []);
 
   return (
-    <section className="relative min-h-screen flex items-center justify-center px-4 py-20 overflow-hidden">
+    <section className="relative min-h-screen flex items-center justify-center overflow-hidden bg-transparent">
+      {/* Animated background elements */}
+      <div className="absolute inset-0 overflow-hidden">
+        <div className="absolute -top-40 -right-40 w-80 h-80 bg-primary/20 rounded-full blur-3xl animate-pulse" />
+        <div className="absolute bottom-20 left-20 w-60 h-60 bg-blue-500/10 rounded-full blur-2xl animate-bounce" style={{ animationDelay: '1s' }} />
+      </div>
+
+      <div className="relative z-20 max-w-7xl mx-auto px-4 md:px-6 lg:px-8 text-center">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
       <div className="container mx-auto max-w-7xl">
         <div 
           className="hero-card"
