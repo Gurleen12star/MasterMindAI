@@ -22,11 +22,16 @@ interface ResearchProgress {
 // Real Firecrawl implementation
 async function firecrawlSearch(topic: string) {
   const apiKey = Deno.env.get('FIRECRAWL_API_KEY');
+  console.log('🔍 Starting Firecrawl search for topic:', topic);
+  console.log('🔑 Firecrawl API key present:', !!apiKey);
+  
   if (!apiKey) {
+    console.error('❌ FIRECRAWL_API_KEY environment variable is not set');
     throw new Error('FIRECRAWL_API_KEY environment variable is not set');
   }
 
   try {
+    console.log('📡 Making request to Firecrawl API...');
     const response = await fetch('https://api.firecrawl.dev/v1/search', {
       method: 'POST',
       headers: {
@@ -45,17 +50,26 @@ async function firecrawlSearch(topic: string) {
       }),
     });
 
+    console.log('📊 Firecrawl response status:', response.status);
+    console.log('📊 Firecrawl response headers:', Object.fromEntries(response.headers.entries()));
+
     if (!response.ok) {
       const errorText = await response.text();
+      console.error('❌ Firecrawl API error response:', errorText);
       throw new Error(`Firecrawl search failed: ${response.status} - ${errorText}`);
     }
 
     const data = await response.json();
+    console.log('📦 Raw Firecrawl response data:', JSON.stringify(data, null, 2));
+    console.log('✅ Firecrawl search success:', data.success);
+    console.log('📊 Number of results returned:', data.data?.length || 0);
     
     if (!data.success) {
+      console.error('❌ Firecrawl search unsuccessful:', data.error);
       throw new Error(`Firecrawl search unsuccessful: ${data.error || 'Unknown error'}`);
     }
 
+    console.log('🎯 Returning search results:', data.data?.length || 0, 'items');
     return {
       success: true,
       data: data.data || [],
@@ -219,6 +233,8 @@ async function runDeepResearch(
   maxDepth: number = 3,
   progressCallback?: (progress: ResearchProgress) => void
 ) {
+  console.log('🚀 Starting deep research for topic:', topic, 'with max depth:', maxDepth);
+  
   const researchState: ResearchState = {
     findings: [],
     summaries: [],
@@ -233,7 +249,11 @@ async function runDeepResearch(
   });
 
   for (let depth = 0; depth < maxDepth; depth++) {
+    console.log(`🔄 Research cycle ${depth + 1}/${maxDepth}`);
+    console.log('📋 Current gaps to investigate:', researchState.gaps);
+    
     if (researchState.gaps.length === 0) {
+      console.log('✅ No more gaps to investigate. Finishing research.');
       progressCallback?.({
         step: 'completion',
         message: 'No more gaps to investigate. Finishing research.',
@@ -243,6 +263,7 @@ async function runDeepResearch(
     }
 
     const currentTopic = researchState.gaps.shift()!; // Get the next topic to research
+    console.log('🎯 Researching current topic:', currentTopic);
     
     progressCallback?.({
       step: 'searching',
@@ -253,9 +274,13 @@ async function runDeepResearch(
 
     try {
       // 1. Search for relevant information using Firecrawl
+      console.log('🔍 Calling firecrawlSearch for:', currentTopic);
       const searchResult = await firecrawlSearch(currentTopic);
+      console.log('📊 Search result success:', searchResult.success);
+      console.log('📊 Search result data length:', searchResult.data?.length || 0);
 
       if (!searchResult.success || searchResult.data.length === 0) {
+        console.warn('⚠️ Search failed or returned no results for topic:', currentTopic);
         progressCallback?.({
           step: 'error',
           message: 'Search failed or returned no results.',
@@ -270,6 +295,7 @@ async function runDeepResearch(
         title: result.title || 'Untitled',
         description: result.description || result.content || 'No description available',
       }));
+      console.log('📚 Adding', newSources.length, 'new sources to research state');
       researchState.sources.push(...newSources);
 
       progressCallback?.({
