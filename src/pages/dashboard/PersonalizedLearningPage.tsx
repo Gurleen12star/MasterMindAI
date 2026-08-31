@@ -107,7 +107,6 @@ function PersonalizedLearningContent() {
       setIsLoading(false);
     }
   };
-}
 
 export default function PersonalizedLearningPage() {
   const { introduction, studyPlatform } = useAppContext();
