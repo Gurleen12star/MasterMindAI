@@ -10,6 +10,7 @@ import {
   Search,
   Network,
   Wand2,
+  Film,
   Folder,
   Plus,
   User,
@@ -93,6 +94,7 @@ export default function Sidebar({ className }: SidebarProps) {
     { to: '/dashboard/research', icon: Search, label: 'Deep Research' },
     { to: '/dashboard/roadmap-generator', icon: Network, label: 'Roadmap Generator' },
     { to: '/dashboard/summaries', icon: Wand2, label: 'Quick Summaries' },
+    { to: '/dashboard/animation-studio', icon: Film, label: 'Animation Studio' },
   ];
 
   const projects = [

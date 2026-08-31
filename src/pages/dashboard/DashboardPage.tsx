@@ -15,6 +15,7 @@ import QuickSummariesPage from './QuickSummariesPage';
 import DeepResearchPage from './DeepResearchPage';
 import ProfileSetupPage from './ProfileSetupPage';
 import ProfilePage from './ProfilePage';
+import AnimationStudioPage from './AnimationStudioPage';
 
 function DashboardContent() {
   const { user } = useAuth();
@@ -76,6 +77,11 @@ function DashboardContent() {
             <Route path="profile" element={
               <ProfileGuard>
                 <ProfilePage />
+              </ProfileGuard>
+            } />
+            <Route path="animation-studio" element={
+              <ProfileGuard>
+                <AnimationStudioPage />
               </ProfileGuard>
             } />
             
