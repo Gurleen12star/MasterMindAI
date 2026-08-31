@@ -10,7 +10,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { generateLearningPath, generateLearningPathMermaid } from '@/lib/gemini';
 import { MermaidDiagram } from '@/components/ui/mermaid-diagram';
 import { useToast } from '@/hooks/use-toast';
-import { Map, Loader2, FileText, FlowChart } from 'lucide-react';
+import { Map, Loader2, FileText, BarChart as FlowChart } from 'lucide-react';
 
 type DifficultyLevel = 'beginner' | 'intermediate' | 'advanced';
 
