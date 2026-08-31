@@ -40,9 +40,6 @@
   --nav-item-gap: 0.5rem;
   --nav-animation-duration: 200ms;
   --nav-animation-easing: cubic-bezier(0.4, 0, 0.2, 1);
-
-  /* Hero Section Variables */
-  --x: 0;
 }
 
 /* Hero Section Styles */
@@ -77,11 +74,10 @@
   left: 50%;
   translate: -50% 0;
   height: 100%;
-  width: 1260px;
+  width: 100%;
   object-fit: cover;
   user-select: none;
   pointer-events: none;
-  object-position: calc(50% + (var(--x) * 40px)) calc(50% + (var(--y) * 10px));
   z-index: 99;
 }
 
@@ -94,7 +90,7 @@
   text-transform: uppercase;
   font-family: "Bebas Neue", sans-serif;
   color: white;
-  translate: calc(-50% + (var(--x) * -30px)) calc(var(--y) * -20px);
+  translate: -50% 0;
   z-index: 4;
 }
 
@@ -110,30 +106,6 @@
   align-content: center;
   padding-bottom: 0.5rem;
   z-index: 3;
-}
-
-.hero-blur {
-  --layers: 5;
-  position: absolute;
-  inset: 0;
-  z-index: 1;
-}
-
-.hero-blur .layer {
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(
-    45deg,
-    hsl(var(--primary) / 0.1),
-    transparent 60%
-  );
-  backdrop-filter: blur(1px);
-  z-index: 2;
-  mask: radial-gradient(
-    180% 160% at 45% 90%,
-    #fff 10%,
-    #0000 50%
-  );
 }
 
 @media (max-width: 768px) {
