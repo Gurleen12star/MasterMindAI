@@ -348,7 +348,6 @@ export default function DocsPage() {
                           <span className="text-purple-600">import</span> { EchoVerseClient } <span className="text-purple-600">from</span> <span className="text-green-600">'@echoverse/client'</span>;<br /><br />
 
                           <span className="text-purple-600">const</span> client = <span className="text-purple-600">new</span> EchoVerseClient({<br />
-                          &nbsp;&nbsp;projectId: <span className="text-green-600">'your-project-id'</span>,<br />
                           &nbsp;&nbsp;environment: <span className="text-green-600">'production'</span><br />
                           });<br /><br />
 
