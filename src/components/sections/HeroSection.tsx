@@ -33,7 +33,7 @@ export default function HeroSection() {
           </div>
           <div className="hero-content">
             <p className="text-3xl md:text-4xl lg:text-5xl font-bold">AI-Powered Learning Hub</p>
-            <p className="text-lg md:text-xl lg:text-2xl opacity-80">Transform Your Learning Journey</p>
+            <p className="text-lg md:text-xl lg:text-2xl opacity-100">Transform Your Learning Journey</p>
           </div>
         </article>
       </div>
