@@ -20,6 +20,12 @@ export default function HeroSection() {
       const rect = heroCard.getBoundingClientRect();
       const x = e.clientX - rect.left;
       const y = e.clientY - rect.top;
+      
+      // Set mouse position relative to card for border shine effect
+      document.documentElement.style.setProperty("--mouse-rel-x", String(x));
+      document.documentElement.style.setProperty("--mouse-rel-y", String(y));
+      
+      // Keep existing normalized values for robot parallax effect
       const xNorm = (x / rect.width - 0.5) * 2;
       const yNorm = (y / rect.height - 0.5) * 2;
       document.documentElement.style.setProperty("--x", String(xNorm));
@@ -27,6 +33,17 @@ export default function HeroSection() {
     };
 
     const resetPosition = () => {
+      // Reset mouse position for border shine
+      const heroCard = heroCardRef.current;
+      if (heroCard) {
+        const rect = heroCard.getBoundingClientRect();
+        const centerX = rect.width / 2;
+        const centerY = rect.height / 2;
+        document.documentElement.style.setProperty("--mouse-rel-x", String(centerX));
+        document.documentElement.style.setProperty("--mouse-rel-y", String(centerY));
+      }
+      
+      // Keep existing reset for robot parallax
       document.documentElement.style.setProperty("--x", "0");
       document.documentElement.style.setProperty("--y", "0");
     };
