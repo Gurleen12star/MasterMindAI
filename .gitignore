@@ -23,3 +23,8 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Temporary documentation files
+TAVUS_CONVO_AI_IMPLEMENTATION.md
+tavus_convo_ai_implementation.md
+TAVUS_FIXES_SUMMARY.md

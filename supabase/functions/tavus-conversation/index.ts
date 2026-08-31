@@ -13,7 +13,7 @@ serve(async (req) => {
   }
 
   try {
-    const { context, persona_id, replica_id } = await req.json();
+    const { context, persona_id, replica_id, conversation_name, custom_greeting, callback_url } = await req.json();
     if (!context) {
       return new Response(JSON.stringify({ error: 'Context is required' }), {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
@@ -38,7 +38,8 @@ serve(async (req) => {
     const timeoutId = setTimeout(() => controller.abort(), 120000); // 120 second timeout
     
     try {
-      const response = await fetch('https://api.tavus.io/v2/conversations', {
+      // Use the correct Tavus API endpoint
+      const response = await fetch('https://tavusapi.com/v2/conversations', {
         method: 'POST',
         headers: {
           'x-api-key': TAVUS_API_KEY,
@@ -47,10 +48,22 @@ serve(async (req) => {
         body: JSON.stringify({
           replica_id: replica_id,
           persona_id: persona_id,
-          conversation_name: 'EchoVerse Custom Conversation',
+          callback_url: callback_url || "https://yourwebsite.com/webhook",
+          conversation_name: conversation_name || "EchoVerse Learning Conversation",
           conversational_context: context,
-          // Optional: set a longer duration, default is 4 minutes
-          max_call_duration: 600 // 10 minutes
+          custom_greeting: custom_greeting || "Hey there! I'm ready to discuss the content you've shared with me.",
+          properties: {
+            max_call_duration: 3600, // 1 hour instead of 10 minutes
+            participant_left_timeout: 60,
+            participant_absent_timeout: 300,
+            enable_recording: true,
+            enable_closed_captions: true,
+            apply_greenscreen: true,
+            language: "english",
+            recording_s3_bucket_name: "conversation-recordings",
+            recording_s3_bucket_region: "us-east-1",
+            aws_assume_role_arn: ""
+          }
         }),
         signal: controller.signal,
       });
@@ -59,22 +72,24 @@ serve(async (req) => {
 
       if (!response.ok) {
         const errorData = await response.text();
-        let errorMessage = `Tavus API error: ${response.statusText}`;
+        let errorMessage = `Tavus API error: ${response.status} ${response.statusText}`;
         try {
           const parsedError = JSON.parse(errorData);
-          errorMessage += `, ${JSON.stringify(parsedError)}`;
+          errorMessage += `, Details: ${JSON.stringify(parsedError)}`;
         } catch (e) {
-          errorMessage += `, ${errorData}`;
+          errorMessage += `, Raw response: ${errorData}`;
         }
+        console.error('Tavus API error response:', errorMessage);
         throw new Error(errorMessage);
       }
 
       const data = await response.json();
-      console.log('Conversation created successfully');
+      console.log('Conversation created successfully:', data.conversation_id);
 
       return new Response(JSON.stringify({ 
         conversation_url: data.conversation_url,
-        conversation_id: data.conversation_id 
+        conversation_id: data.conversation_id,
+        status: 'created'
       }), {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         status: 200,
@@ -100,7 +115,8 @@ serve(async (req) => {
     
     return new Response(JSON.stringify({ 
       error: error.message || 'An unexpected error occurred',
-      timeout: error.message.includes('timeout') || error.message.includes('timed out')
+      timeout: error.message.includes('timeout') || error.message.includes('timed out'),
+      details: 'Check the console logs for more information'
     }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       status: 500,
