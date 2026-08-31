@@ -2,11 +2,11 @@ import { BentoBox } from '@/components/ui/BentoBox';
 import GlassIcons from '@/components/ui/GlassIcons';
 import { 
   Brain, 
-  LanguagesIcon, 
   Search, 
   ShieldCheck, 
   DollarSign, 
-  Video
+  Video,
+  MessagesSquare
 } from 'lucide-react';
 
 export default function FeaturesGrid() {
@@ -83,7 +83,7 @@ export default function FeaturesGrid() {
             </div>
           </BentoBox>
           
-          {/* Global Content Creator */}
+          {/* AI Video Conversations */}
           <BentoBox gradient="green" className="flex flex-col relative overflow-hidden group rounded-3xl min-h-[200px] md:min-h-[280px] border border-slate-800/30 shadow-lg shadow-black/20 p-4 md:p-8">
             {/* Dark Gradient Background Layer */}
             <div className="absolute inset-0 rounded-3xl bg-gradient-to-br from-slate-800/50 via-slate-900/60 to-black/70 group-hover:from-slate-800/60 group-hover:via-slate-900/70 group-hover:to-black/80 transition-all duration-300" />
@@ -91,13 +91,13 @@ export default function FeaturesGrid() {
             <div className="relative z-20 p-8 h-full flex flex-col justify-between">
               <div className="flex justify-center mb-4" style={{ height: '80px' }}>
                 <div className="scale-75">
-                  <GlassIcons items={[{ icon: <LanguagesIcon className="h-6 w-6" />, color: 'green', label: 'Global' }]} />
+                  <GlassIcons items={[{ icon: <MessagesSquare className="h-6 w-6" />, color: 'green', label: 'Converse' }]} />
                 </div>
               </div>
               <div>
-                <h3 className="mb-4 text-3xl font-bold tracking-tight text-white">Global Content Creator</h3>
+                <h3 className="mb-4 text-3xl font-bold tracking-tight text-white">AI Video Conversations</h3>
                 <p className="text-white/80 text-lg leading-relaxed">
-                  Break down barriers. Create and consume content in any language with seamless, real-time translation, expanding your reach and knowledge base.
+                  Engage in live video conversations with AI personas. Practice interviews, discuss complex topics, or get personalized coaching in real-time through our Tavus integration.
                 </p>
               </div>
             </div>
@@ -117,7 +117,7 @@ export default function FeaturesGrid() {
               <div>
                 <h3 className="mb-4 text-3xl font-bold tracking-tight text-white">Fortress-Level Security</h3>
                 <p className="text-white/80 text-lg leading-relaxed">
-                  Your data is yours alone. We leverage decentralized storage and state-of-the-art encryption to ensure your content and personal information are always protected.
+                  Your data is yours alone. We use Supabase for secure data storage with Row Level Security, and our architecture ensures API keys are protected using Edge Functions.
                 </p>
               </div>
             </div>

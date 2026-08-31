@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import { useCursor } from '@/contexts/CursorContext';
 import robotImage from '../../assets/robott.png';
 // import brainDumbelImage from '../../assets/brain-dumbel.png';
 // import brainHandImage from '../../assets/Brain-hand.png';
@@ -11,6 +12,7 @@ import robotImage from '../../assets/robott.png';
 export default function HeroSection() {
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const heroCardRef = useRef<HTMLDivElement>(null);
+  const { setCursorType, setCursorText } = useCursor();
 
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
@@ -39,12 +41,24 @@ export default function HeroSection() {
     };
   }, []);
 
+  const handleMouseEnter = () => {
+    setCursorText('ECHOVERSE');
+    setCursorType('text');
+  };
+
+  const handleMouseLeave = () => {
+    setCursorType('default');
+    setCursorText('');
+  };
+
   return (
     <section className="relative min-h-screen flex items-center justify-center px-4 pt-20 overflow-hidden">
       <div className="container mx-auto max-w-7xl">
         <div 
           className="hero-card backdrop-blur-md bg-background/20 border border-white/20"
           ref={heroCardRef}
+          onMouseEnter={handleMouseEnter}
+          onMouseLeave={handleMouseLeave}
         >
           
           {/* Modern Overlay Effect */}
