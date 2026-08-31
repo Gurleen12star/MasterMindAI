@@ -754,4 +754,5 @@ body {
 html {
   height: 100%;
   overflow-x: hidden;
-  background: radial-gradient(circle at 30% 20%, hsl(var(--primary) /
+  background: radial-gradient(circle at 30% 20%, hsl(var(--primary) / 0.15), transparent 50%);
+}
