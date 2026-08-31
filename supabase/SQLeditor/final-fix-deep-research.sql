@@ -21,6 +21,11 @@ BEGIN
     EXECUTE 'DROP POLICY IF EXISTS "clerk_read_deep_research" ON deep_research_history';
     EXECUTE 'DROP POLICY IF EXISTS "clerk_update_deep_research" ON deep_research_history';
     EXECUTE 'DROP POLICY IF EXISTS "clerk_delete_deep_research" ON deep_research_history';
+EXECUTE 'DROP POLICY IF EXISTS "deep_research_clerk_insert_v2" ON deep_research_history';
+EXECUTE 'DROP POLICY IF EXISTS "deep_research_clerk_select_v2" ON deep_research_history';
+EXECUTE 'DROP POLICY IF EXISTS "deep_research_clerk_update_v2" ON deep_research_history';
+EXECUTE 'DROP POLICY IF EXISTS "deep_research_clerk_delete_v2" ON deep_research_history';
+
 EXCEPTION
     WHEN others THEN
         RAISE NOTICE 'Some policies may not have existed: %', SQLERRM;
