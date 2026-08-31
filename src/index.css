@@ -754,7 +754,55 @@ body {
 html {
   height: 100%;
   overflow-x: hidden;
-  background: radial-gradient(circle at 30% 20%, hsl(var(--primary) / 0.15), transparent 50%);
+}
+
+/* Animated Gradient Background */
+@keyframes rotate {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.gradient-background {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+  background-color: #071c39;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+}
+
+.gradient {
+  --size: 750px;
+  --speed: 50s;
+  --easing: cubic-bezier(0.8, 0.2, 0.2, 0.8);
+
+  width: var(--size);
+  height: var(--size);
+  filter: blur(calc(var(--size) / 5));
+  background-image: linear-gradient(hsl(222, 84%, 60%), hsl(164, 79%, 71%));
+  animation: rotate var(--speed) var(--easing) alternate infinite;
+  border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%;
+  position: absolute;
+}
+
+@media (min-width: 720px) {
+  .gradient {
+    --size: 500px;
+  }
+}
+
+/* Smooth transitions for viewport changes */
+.gradient {
+  transition: all 0.5s ease-out;
 }
 
 /* Logo Marquee Styles */

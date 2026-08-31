@@ -99,6 +99,13 @@ function App() {
   return (
     <ThemeProvider defaultTheme="dark" storageKey="echoverse-theme">
       <div className="min-h-screen relative bg-transparent antialiased overflow-x-hidden">
+        {/* Animated Gradient Background - only show on homepage */}
+        {!currentPath.startsWith('/dashboard') && currentPath !== '/login' && currentPath !== '/signup' && (
+          <div className="gradient-background">
+            <div className="gradient"></div>
+          </div>
+        )}
+        
         {/* SVG Filter for grainy texture */}
         <svg width="0" height="0" aria-hidden="true">
           <filter id="grainy" x="0" y="0" width="100%" height="100%">
