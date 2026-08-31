@@ -14,11 +14,14 @@ export default function MaintenanceBanner() {
           .from('admin_settings')
           .select('value')
           .eq('key', 'system_settings')
-          .single();
+          .maybeSingle();
         
-        if (!error && data) {
+        if (error) {
+          console.error('Error checking maintenance status:', error);
+          setIsMaintenanceMode(false);
+        } else if (data) {
           setIsMaintenanceMode(data.value.maintenanceMode || false);
-        } else if (error && error.code === 'PGRST116') {
+        } else {
           // No system_settings row exists yet, default to maintenance mode disabled
           setIsMaintenanceMode(false);
         }
