@@ -232,16 +232,6 @@
   fill: hsl(var(--primary)); /* Use the primary color (purple) when hovering clickables */
 }
 
-/* Ensure custom cursor is used in fullscreen dialog */
-body.fullscreen-dialog-open [data-radix-dialog-overlay][data-state="open"],
-body.fullscreen-dialog-open [data-radix-dialog-content][data-state="open"] {
-  cursor: none !important;
-}
-
-body.fullscreen-dialog-open [data-radix-dialog-content][data-state="open"] * {
-    cursor: none !important;
-}
-
 /* Navbar Background Styles */
 .navbar-bg-image {
   background-image: var(--navbar-bg);
