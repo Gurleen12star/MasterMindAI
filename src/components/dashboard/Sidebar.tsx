@@ -13,7 +13,6 @@ import {
   Network,
   Wand2,
   Film,
-  Code,
   Folder,
   Plus,
   User,
@@ -102,7 +101,6 @@ export default function Sidebar({ className }: SidebarProps) {
     { to: '/dashboard/summaries', icon: Wand2, label: 'Quick Summaries' },
     { to: '/dashboard/animation-studio', icon: Film, label: 'Animation Studio' },
     { to: '/dashboard/personalized-learning', icon: GraduationCap, label: 'Personalized Learning' },
-    { to: '/dashboard/collaborative-coding', icon: Code, label: 'Collaborative Coding' },
   ];
 
   const adminMenu = [

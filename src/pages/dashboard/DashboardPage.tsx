@@ -17,7 +17,6 @@ import DeepResearchPage from './DeepResearchPage';
 import ProfileSetupPage from './ProfileSetupPage';
 import ProfilePage from './ProfilePage';
 import AnimationStudioPage from './AnimationStudioPage';
-import CollaborativeCodingPage from './CollaborativeCodingPage';
 import PersonalizedLearningPage from './PersonalizedLearningPage';
 import AdminRoutes from '../admin/AdminRoutes';
 import PersonalizedLearningHistoryPage from './PersonalizedLearningHistoryPage';
@@ -95,11 +94,6 @@ function DashboardContent() {
             <Route path="personalized-learning" element={
               <ProfileGuard>
                 <PersonalizedLearningPage />
-              </ProfileGuard>
-            } />
-            <Route path="collaborative-coding" element={
-              <ProfileGuard>
-                <CollaborativeCodingPage />
               </ProfileGuard>
             } />
             <Route path="personalized-learning-history" element={
