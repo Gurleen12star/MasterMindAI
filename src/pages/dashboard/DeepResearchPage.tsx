@@ -1,690 +1,356 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { useState, useRef, useEffect } from 'react';
+import { motion } from 'framer-motion';
+import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Badge } from '@/components/ui/badge';
-import { Skeleton } from '@/components/ui/skeleton';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { Separator } from '@/components/ui/separator';
-import { toast } from '@/hooks/use-toast';
-import { useAuth } from '@/components/auth/SupabaseAuthProvider';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Badge } from '@/components/ui/badge';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
+import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/lib/supabase';
-import { useAppContext } from '@/contexts/PersonalizedLearningContext';
-import { Search, BookOpen, ExternalLink, Play, Pause, Volume2, VolumeX, Copy, MousePointer, MessageSquare, Expand, RotateCcw } from 'lucide-react';
+import { useAuth } from '@/components/auth/SupabaseAuthProvider';
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
+import AnimatedLoadingText from '@/components/ui/AnimatedLoadingText';
+import {
+  Search,
+  Loader2,
+  Copy,
+  Download,
+  ExternalLink,
+  AlertCircle,
+  CheckCircle,
+  Clock,
+  Globe,
+  FileText,
+  Sparkles,
+  Brain,
+  Target,
+  Zap,
+  History,
+  Trash2
+} from 'lucide-react';
 
-interface ResearchReport {
-  id: string;
-  topic: string;
-  report: string;
-  sources: Array<{
-    url: string;
-    title: string;
-    description: string;
-  }>;
-  summaries: string[];
-  total_findings: number;
-  max_depth: number;
-  created_at: string;
-}
+// Interfaces remain the same
+interface ResearchSource { url: string; title: string; description: string; }
+interface ResearchResult { report: string; sources: ResearchSource[]; summaries: string[]; totalFindings: number; }
+interface ResearchProgress { step: string; message: string; depth: number; currentTopic?: string; sourcesFound?: number; }
+interface DeepResearchHistory { id: string; topic: string; report: string; sources: ResearchSource[]; summaries: string[]; total_findings: number; max_depth: number; created_at: string; }
 
-interface ContextMenuState {
-  visible: boolean;
-  x: number;
-  y: number;
-  selectedText: string;
-}
-
-interface ExpandModalState {
-  visible: boolean;
-  originalText: string;
-  expandedText: string;
-  isLoading: boolean;
-}
+const mockProgressSteps: Omit<ResearchProgress, 'depth'>[] = [
+    { step: 'starting', message: 'Initializing deep research agent...' },
+    { step: 'searching', message: 'Scanning for initial data sources on the web...' },
+    { step: 'analyzing', message: 'Analyzing preliminary findings and identifying key vectors...' },
+    { step: 'searching', message: 'Executing deep search based on key vectors...' },
+    { step: 'extracting', message: 'Extracting and parsing content from high-relevance sources...' },
+    { step: 'analyzing', message: 'Identifying informational patterns and knowledge gaps...' },
+    { step: 'searching', message: 'Conducting targeted searches to bridge identified gaps...' },
+    { step: 'synthesizing', message: 'Synthesizing diverse findings into a coherent narrative...' },
+    { step: 'analyzing', message: 'Performing cross-validation of sources and facts...' },
+    { step: 'synthesizing', message: 'Structuring and compiling the final research report...' },
+];
 
 export default function DeepResearchPage() {
-  const { user } = useAuth();
-  const navigate = useNavigate();
-  const { setInitialConvoMessage } = useAppContext();
-  
-  const [searchTopic, setSearchTopic] = useState('');
+  const { toast } = useToast();
+  const { user, session } = useAuth();
+
+  const [topic, setTopic] = useState('');
   const [maxDepth, setMaxDepth] = useState(3);
-  const [isLoading, setIsLoading] = useState(false);
-  const [reports, setReports] = useState<ResearchReport[]>([]);
-  const [currentReport, setCurrentReport] = useState<ResearchReport | null>(null);
-  const [isLoadingHistory, setIsLoadingHistory] = useState(true);
-  const [contextMenu, setContextMenu] = useState<ContextMenuState>({
-    visible: false,
-    x: 0,
-    y: 0,
-    selectedText: ''
-  });
-  const [expandModal, setExpandModal] = useState<ExpandModalState>({
-    visible: false,
-    originalText: '',
-    expandedText: '',
-    isLoading: false
-  });
-  const [audioState, setAudioState] = useState({
-    isPlaying: false,
-    isLoading: false,
-    audioUrl: null as string | null,
-    currentTime: 0,
-    duration: 0
-  });
-
-  const audioRef = useRef<HTMLAudioElement>(null);
-  const reportContentRef = useRef<HTMLDivElement>(null);
+  const [isResearching, setIsResearching] = useState(false);
+  const [result, setResult] = useState<ResearchResult | null>(null);
+  const [progress, setProgress] = useState<ResearchProgress[]>([]);
+  const [activeTab, setActiveTab] = useState('report');
+  const [showHistoryDialog, setShowHistoryDialog] = useState(false);
+  const [researchHistory, setResearchHistory] = useState<DeepResearchHistory[]>([]);
+  const [isLoadingHistory, setIsLoadingHistory] = useState(false);
+  const [selectedHistoryItem, setSelectedHistoryItem] = useState<DeepResearchHistory | null>(null);
+  const progressRef = useRef<HTMLDivElement>(null);
+  const progressIndexRef = useRef(0);
+  const intervalRef = useRef<number | undefined>();
+  
+  const isFullyAuthenticated = !!session;
 
   useEffect(() => {
-    if (user?.id) {
-      loadResearchHistory();
-    }
-  }, [user?.id]);
-
-  useEffect(() => {
-    // Close context menu when clicking outside
-    const handleClickOutside = () => {
-      setContextMenu(prev => ({ ...prev, visible: false }));
-    };
-
-    document.addEventListener('click', handleClickOutside);
-    return () => document.removeEventListener('click', handleClickOutside);
-  }, []);
-
-  useEffect(() => {
-    // Handle text selection
-    const handleTextSelection = () => {
-      const selection = window.getSelection();
-      if (selection && selection.toString().trim() && reportContentRef.current?.contains(selection.anchorNode)) {
-        const selectedText = selection.toString().trim();
-        if (selectedText.length > 0) {
-          setContextMenu(prev => ({ ...prev, selectedText }));
-        }
+    const scrollToBottom = () => {
+      if (progressRef.current) {
+        progressRef.current.scrollTop = progressRef.current.scrollHeight;
       }
     };
-
-    document.addEventListener('selectionchange', handleTextSelection);
-    return () => document.removeEventListener('selectionchange', handleTextSelection);
-  }, []);
-
-  // Handle right-click context menu
-  const handleContextMenu = (e: React.MouseEvent) => {
-    e.preventDefault();
-    const selection = window.getSelection();
     
-    if (selection && selection.toString().trim()) {
-      const selectedText = selection.toString().trim();
-      setContextMenu({
-        visible: true,
-        x: e.clientX,
-        y: e.clientY,
-        selectedText
-      });
+    if (isResearching) {
+      progressIndexRef.current = 0;
+      setProgress([]);
+
+      const addNextStep = () => {
+        if (progressIndexRef.current < mockProgressSteps.length) {
+          const step = mockProgressSteps[progressIndexRef.current];
+          const depth = Math.min(maxDepth, Math.floor(progressIndexRef.current / (mockProgressSteps.length / maxDepth)) + 1);
+          setProgress(prev => [...prev, { ...step, depth }]);
+          progressIndexRef.current++;
+          scrollToBottom();
+        } else {
+            if (intervalRef.current) {
+                clearInterval(intervalRef.current);
+                intervalRef.current = undefined;
+            }
+        }
+      };
+
+      addNextStep(); // Show first step immediately
+
+      // Interval duration between 4 to 7 seconds.
+      const randomInterval = () => Math.random() * 3000 + 4000;
+      intervalRef.current = window.setInterval(addNextStep, randomInterval());
+
+    }
+
+    return () => {
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+        intervalRef.current = undefined;
+      }
+    };
+  }, [isResearching, maxDepth]);
+
+  const saveResearchToHistory = async (researchData: ResearchResult) => {
+    if (!isFullyAuthenticated || !user) return;
+
+    try {
+      const { error } = await supabase
+        .from('deep_research_history')
+        .insert([{
+          user_id: user.id,
+          topic: topic.trim(),
+          report: researchData.report,
+          sources: researchData.sources || [],
+          summaries: researchData.summaries || [],
+          total_findings: researchData.totalFindings || 0,
+          max_depth: maxDepth
+        }]);
+
+      if (error) throw error;
+      
+      console.log('✅ Deep research saved successfully!');
+      toast({ title: 'Research Saved', description: 'Your research has been saved.' });
+
+    } catch (error) {
+      console.error('An unexpected error occurred during save:', error);
+      toast({ title: 'Save Failed', description: error instanceof Error ? error.message : 'An unexpected error occurred.', variant: 'destructive' });
     }
   };
 
-  const loadResearchHistory = async () => {
+  const fetchResearchHistory = async () => {
+    if (!isFullyAuthenticated || !user) return;
+    
+    setIsLoadingHistory(true);
     try {
-      setIsLoadingHistory(true);
       const { data, error } = await supabase
         .from('deep_research_history')
         .select('*')
-        .eq('user_id', user?.id)
+        .eq('user_id', user.id)
         .order('created_at', { ascending: false });
 
       if (error) throw error;
-
-      setReports(data || []);
+      setResearchHistory(data || []);
     } catch (error) {
-      console.error('Error loading research history:', error);
-      toast({
-        title: 'Error',
-        description: 'Failed to load research history',
-        variant: 'destructive',
-      });
+      console.error('Error fetching history:', error);
+      toast({ title: 'Error', description: 'Failed to load research history.', variant: 'destructive' });
     } finally {
       setIsLoadingHistory(false);
     }
   };
 
-  const generateResearch = async () => {
-    if (!searchTopic.trim()) {
-      toast({
-        title: 'Error',
-        description: 'Please enter a research topic',
-        variant: 'destructive',
-      });
-      return;
-    }
-
-    try {
-      setIsLoading(true);
-      const { data, error } = await supabase.functions.invoke('deep-research-agent', {
-        body: { 
-          topic: searchTopic.trim(),
-          maxDepth: Math.min(Math.max(1, maxDepth), 5)
-        }
-      });
-
-      if (error) throw error;
-
-      // Save to database
-      const { data: savedReport, error: saveError } = await supabase
-        .from('deep_research_history')
-        .insert({
-          user_id: user?.id,
-          topic: searchTopic.trim(),
-          report: data.report,
-          sources: data.sources || [],
-          summaries: data.summaries || [],
-          total_findings: data.totalFindings || 0,
-          max_depth: maxDepth
-        })
-        .select()
-        .single();
-
-      if (saveError) throw saveError;
-
-      setCurrentReport(savedReport);
-      setReports(prev => [savedReport, ...prev]);
-      
-      toast({
-        title: 'Research Complete',
-        description: `Generated report with ${data.totalFindings || 0} findings from ${data.sources?.length || 0} sources`,
-      });
-
-    } catch (error: any) {
-      console.error('Research generation error:', error);
-      toast({
-        title: 'Research Failed',
-        description: error.message || 'Failed to generate research report',
-        variant: 'destructive',
-      });
-    } finally {
-      setIsLoading(false);
-    }
+  const loadHistoryItem = (item: DeepResearchHistory) => {
+    setSelectedHistoryItem(item);
+    setResult({ report: item.report, sources: item.sources, summaries: item.summaries, totalFindings: item.total_findings });
+    setTopic(item.topic);
+    setMaxDepth(item.max_depth);
+    setShowHistoryDialog(false);
+    setActiveTab('report');
   };
 
-  // Context menu actions
-  const handleCopyText = async () => {
+  const deleteHistoryItem = async (id: string) => {
+    if (!isFullyAuthenticated) return;
     try {
-      await navigator.clipboard.writeText(contextMenu.selectedText);
-      toast({
-        title: 'Copied',
-        description: 'Text copied to clipboard',
-      });
+      const { error } = await supabase.from('deep_research_history').delete().eq('id', id);
+      if (error) throw error;
+      setResearchHistory(prev => prev.filter(item => item.id !== id));
+      toast({ title: 'Deleted', description: 'Research history item deleted.' });
     } catch (error) {
-      toast({
-        title: 'Error',
-        description: 'Failed to copy text',
-        variant: 'destructive',
-      });
-    }
-    setContextMenu(prev => ({ ...prev, visible: false }));
-  };
-
-  const handleSelectAll = () => {
-    if (reportContentRef.current) {
-      const range = document.createRange();
-      range.selectNodeContents(reportContentRef.current);
-      const selection = window.getSelection();
-      selection?.removeAllRanges();
-      selection?.addRange(range);
-    }
-    setContextMenu(prev => ({ ...prev, visible: false }));
-  };
-
-  const handleSendToConvoAI = () => {
-    setInitialConvoMessage(contextMenu.selectedText);
-    setContextMenu(prev => ({ ...prev, visible: false }));
-    navigate('/dashboard/personalized-learning');
-  };
-
-  const handleExpandText = async () => {
-    setExpandModal({
-      visible: true,
-      originalText: contextMenu.selectedText,
-      expandedText: '',
-      isLoading: true
-    });
-    setContextMenu(prev => ({ ...prev, visible: false }));
-
-    try {
-      const { data, error } = await supabase.functions.invoke('expand-content', {
-        body: { textToExpand: contextMenu.selectedText }
-      });
-
-      if (error) throw error;
-
-      setExpandModal(prev => ({
-        ...prev,
-        expandedText: data.expandedText,
-        isLoading: false
-      }));
-    } catch (error: any) {
-      console.error('Text expansion error:', error);
-      toast({
-        title: 'Expansion Failed',
-        description: error.message || 'Failed to expand text',
-        variant: 'destructive',
-      });
-      setExpandModal(prev => ({ ...prev, visible: false, isLoading: false }));
+      console.error('Error deleting history item:', error);
+      toast({ title: 'Error', description: 'Failed to delete history item.', variant: 'destructive' });
     }
   };
 
-  // Audio functionality
-  const generateAudio = async () => {
-    if (!currentReport?.report) {
-      toast({
-        title: 'Error',
-        description: 'No report content available for audio conversion',
-        variant: 'destructive',
-      });
+  const handleStartResearch = async () => {
+    if (!isFullyAuthenticated) {
+        toast({ title: 'Authentication Required', description: 'Please wait for the session to initialize.', variant: 'destructive' });
+        return;
+    }
+    if (!topic.trim()) {
+      toast({ title: 'Topic Required', description: 'Please enter a topic to research.', variant: 'destructive' });
       return;
     }
 
+    setResult(null);
+    setSelectedHistoryItem(null);
+    setActiveTab('progress');
+    setIsResearching(true);
+
     try {
-      setAudioState(prev => ({ ...prev, isLoading: true }));
-
-      const { data, error } = await supabase.functions.invoke('elevenlabs-tts', {
-        body: {
-          text: currentReport.report,
-          voiceId: 'JBFqnCBsd6RMkjVDRZzb', // George voice
-          modelId: 'eleven_multilingual_v2',
-          outputFormat: 'mp3_44100_128'
-        }
+      const { data, error } = await supabase.functions.invoke('deep-research-agent', {
+        body: { topic: topic.trim(), maxDepth: Math.min(Math.max(1, maxDepth), 5) },
       });
 
-      if (error) throw error;
-
-      // Convert the response to a blob and create URL
-      const audioBlob = new Blob([data], { type: 'audio/mpeg' });
-      const audioUrl = URL.createObjectURL(audioBlob);
-      
-      setAudioState(prev => ({
-        ...prev,
-        audioUrl,
-        isLoading: false
-      }));
-
-      toast({
-        title: 'Audio Generated',
-        description: 'Your research report has been converted to audio',
-      });
-
-    } catch (error: any) {
-      console.error('Audio generation error:', error);
-      toast({
-        title: 'Audio Generation Failed',
-        description: error.message || 'Failed to convert report to audio',
-        variant: 'destructive',
-      });
-      setAudioState(prev => ({ ...prev, isLoading: false }));
-    }
-  };
-
-  const toggleAudioPlayback = () => {
-    if (audioRef.current) {
-      if (audioState.isPlaying) {
-        audioRef.current.pause();
-      } else {
-        audioRef.current.play();
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+        intervalRef.current = undefined;
       }
+
+      if (error) throw new Error(error.message || 'Failed to start research');
+      if (!data) throw new Error('No data received from research agent');
+
+      setProgress(prev => [...prev, { step: 'completed', message: `Research completed! Generated ${data.totalFindings || 0} findings from ${data.sources?.length || 0} sources.`, depth: maxDepth }]);
+      if (progressRef.current) {
+        progressRef.current.scrollTop = progressRef.current.scrollHeight;
+      }
+
+      setResult(data);
+      setActiveTab('report');
+      toast({ title: 'Research Complete', description: `Generated report on "${topic}".` });
+      
+      await saveResearchToHistory(data);
+
+    } catch (error) {
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+        intervalRef.current = undefined;
+      }
+      console.error('Research error:', error);
+      setProgress(prev => [...prev, { step: 'error', message: `Research failed: ${error instanceof Error ? error.message : 'Unknown error'}`, depth: 0 }]);
+      toast({ title: 'Research Failed', description: error instanceof Error ? error.message : 'An unexpected error occurred.', variant: 'destructive' });
+    } finally {
+      setIsResearching(false);
     }
   };
 
-  const handleAudioLoadedMetadata = () => {
-    if (audioRef.current) {
-      setAudioState(prev => ({
-        ...prev,
-        duration: audioRef.current?.duration || 0
-      }));
-    }
+  const handleCopyReport = async () => {
+    if (!result?.report) return;
+    try { await navigator.clipboard.writeText(result.report); toast({ title: 'Copied to Clipboard' }); } 
+    catch (error) { toast({ title: 'Copy Failed', variant: 'destructive' }); }
   };
 
-  const handleAudioTimeUpdate = () => {
-    if (audioRef.current) {
-      setAudioState(prev => ({
-        ...prev,
-        currentTime: audioRef.current?.currentTime || 0
-      }));
-    }
+  const handleDownloadReport = () => {
+    if (!result?.report) return;
+    const blob = new Blob([result.report], { type: 'text/markdown' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `research-report-${topic.replace(/[^a-z0-9]/gi, '-').toLowerCase()}.md`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    toast({ title: 'Download Started' });
   };
 
-  const handleAudioPlay = () => {
-    setAudioState(prev => ({ ...prev, isPlaying: true }));
-  };
-
-  const handleAudioPause = () => {
-    setAudioState(prev => ({ ...prev, isPlaying: false }));
-  };
-
-  const formatTime = (seconds: number) => {
-    const mins = Math.floor(seconds / 60);
-    const secs = Math.floor(seconds % 60);
-    return `${mins}:${secs.toString().padStart(2, '0')}`;
+  const getStepIcon = (step: string) => {
+    const iconMap: { [key: string]: JSX.Element } = {
+      starting: <Zap className="h-4 w-4 text-blue-500" />,
+      searching: <Search className="h-4 w-4 text-purple-500" />,
+      extracting: <Globe className="h-4 w-4 text-green-500" />,
+      analyzing: <Brain className="h-4 w-4 text-orange-500" />,
+      synthesizing: <FileText className="h-4 w-4 text-indigo-500" />,
+      completed: <CheckCircle className="h-4 w-4 text-green-600" />,
+      error: <AlertCircle className="h-4 w-4 text-red-500" />,
+    };
+    return iconMap[step] || <Clock className="h-4 w-4 text-muted-foreground" />;
   };
 
   return (
-    <div className="space-y-6 p-6">
-      <div>
-        <h1 className="text-3xl font-bold mb-2">Deep Research Agent</h1>
-        <p className="text-muted-foreground">
-          Generate comprehensive research reports on any topic using AI-powered web research
-        </p>
+    <div className="p-4 md:p-6 space-y-8">
+      <div className="flex items-center gap-3">
+        <div className="relative inline-flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10">
+          <Search className="h-6 w-6 text-primary" />
+        </div>
+        <div className="flex-1">
+          <h1 className="text-2xl font-bold tracking-tight">Deep Research</h1>
+          <p className="text-muted-foreground">AI-powered autonomous research agent</p>
+        </div>
+        {user && (
+          <Button variant="outline" size="sm" className="gap-2" onClick={() => { fetchResearchHistory(); setShowHistoryDialog(true); }}>
+            <History className="h-4 w-4" /> View History
+          </Button>
+        )}
       </div>
 
-      {/* Research Generation Form */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Search className="h-5 w-5" />
-            Start New Research
-          </CardTitle>
-          <CardDescription>
-            Enter a topic to generate an in-depth research report with multiple sources
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div className="md:col-span-2">
-              <Label htmlFor="topic">Research Topic</Label>
-              <Input
-                id="topic"
-                placeholder="e.g., AI in healthcare, climate change solutions..."
-                value={searchTopic}
-                onChange={(e) => setSearchTopic(e.target.value)}
-                disabled={isLoading}
-              />
-            </div>
-            <div>
-              <Label htmlFor="depth">Research Depth</Label>
-              <Input
-                id="depth"
-                type="number"
-                min="1"
-                max="5"
-                value={maxDepth}
-                onChange={(e) => setMaxDepth(parseInt(e.target.value) || 3)}
-                disabled={isLoading}
-              />
-            </div>
-          </div>
-          <Button onClick={generateResearch} disabled={isLoading || !searchTopic.trim()}>
-            {isLoading ? (
-              <>
-                <RotateCcw className="h-4 w-4 mr-2 animate-spin" />
-                Researching...
-              </>
-            ) : (
-              <>
-                <Search className="h-4 w-4 mr-2" />
-                Generate Research
-              </>
-            )}
-          </Button>
-        </CardContent>
-      </Card>
-
-      {/* Current Report Display */}
-      {currentReport && (
-        <Card>
-          <CardHeader>
-            <div className="flex items-start justify-between">
-              <div className="space-y-2">
-                <CardTitle className="flex items-center gap-2">
-                  <BookOpen className="h-5 w-5" />
-                  {currentReport.topic}
-                </CardTitle>
-                <div className="flex items-center gap-2 flex-wrap">
-                  <Badge variant="secondary">
-                    {currentReport.total_findings} findings
-                  </Badge>
-                  <Badge variant="secondary">
-                    {currentReport.sources?.length || 0} sources
-                  </Badge>
-                  <Badge variant="secondary">
-                    Depth: {currentReport.max_depth}
-                  </Badge>
-                </div>
-              </div>
-              <div className="flex items-center gap-2">
-                {audioState.audioUrl && (
-                  <div className="flex items-center gap-2">
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={toggleAudioPlayback}
-                      disabled={audioState.isLoading}
-                    >
-                      {audioState.isPlaying ? (
-                        <Pause className="h-4 w-4" />
-                      ) : (
-                        <Play className="h-4 w-4" />
-                      )}
-                    </Button>
-                    <span className="text-sm text-muted-foreground">
-                      {formatTime(audioState.currentTime)} / {formatTime(audioState.duration)}
-                    </span>
-                  </div>
-                )}
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={generateAudio}
-                  disabled={audioState.isLoading}
-                >
-                  {audioState.isLoading ? (
-                    <RotateCcw className="h-4 w-4 animate-spin" />
-                  ) : (
-                    <Volume2 className="h-4 w-4" />
-                  )}
-                  {audioState.isLoading ? 'Generating...' : 'Listen to Report'}
-                </Button>
-              </div>
-            </div>
-          </CardHeader>
-          <CardContent>
-            <div 
-              ref={reportContentRef}
-              className="prose prose-sm max-w-none dark:prose-invert select-text"
-              onContextMenu={handleContextMenu}
-              style={{ userSelect: 'text' }}
-            >
-              <div dangerouslySetInnerHTML={{ __html: currentReport.report.replace(/\n/g, '<br/>') }} />
-            </div>
-
-            {currentReport.sources && currentReport.sources.length > 0 && (
-              <div className="mt-6">
-                <Separator className="mb-4" />
-                <h3 className="text-lg font-semibold mb-3">Sources</h3>
-                <div className="grid gap-3">
-                  {currentReport.sources.map((source, index) => (
-                    <Card key={index} className="p-3">
-                      <div className="flex items-start justify-between">
-                        <div className="flex-1">
-                          <h4 className="font-medium text-sm">{source.title}</h4>
-                          <p className="text-xs text-muted-foreground mt-1">{source.description}</p>
-                        </div>
-                        <Button variant="ghost" size="sm" asChild>
-                          <a href={source.url} target="_blank" rel="noopener noreferrer">
-                            <ExternalLink className="h-4 w-4" />
-                          </a>
-                        </Button>
-                      </div>
-                    </Card>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {/* Audio Element */}
-            {audioState.audioUrl && (
-              <audio
-                ref={audioRef}
-                src={audioState.audioUrl}
-                onLoadedMetadata={handleAudioLoadedMetadata}
-                onTimeUpdate={handleAudioTimeUpdate}
-                onPlay={handleAudioPlay}
-                onPause={handleAudioPause}
-                className="hidden"
-              />
-            )}
-          </CardContent>
-        </Card>
-      )}
-
-      {/* Research History */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Research History</CardTitle>
-          <CardDescription>Your previous research reports</CardDescription>
-        </CardHeader>
-        <CardContent>
-          {isLoadingHistory ? (
-            <div className="space-y-3">
-              {[...Array(3)].map((_, i) => (
-                <div key={i} className="flex items-center space-x-4">
-                  <Skeleton className="h-12 w-12 rounded" />
-                  <div className="space-y-2 flex-1">
-                    <Skeleton className="h-4 w-3/4" />
-                    <Skeleton className="h-4 w-1/2" />
-                  </div>
-                </div>
-              ))}
-            </div>
-          ) : reports.length === 0 ? (
-            <Alert>
-              <BookOpen className="h-4 w-4" />
-              <AlertDescription>
-                No research reports yet. Generate your first report above!
-              </AlertDescription>
-            </Alert>
-          ) : (
-            <ScrollArea className="h-[300px]">
-              <div className="space-y-3">
-                {reports.map((report) => (
-                  <Card 
-                    key={report.id} 
-                    className={`cursor-pointer transition-colors hover:bg-muted/50 ${
-                      currentReport?.id === report.id ? 'ring-2 ring-primary' : ''
-                    }`}
-                    onClick={() => setCurrentReport(report)}
-                  >
-                    <CardContent className="p-4">
-                      <div className="flex items-start justify-between">
-                        <div className="space-y-1 flex-1">
-                          <h4 className="font-medium">{report.topic}</h4>
-                          <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                            <span>{report.total_findings} findings</span>
-                            <span>•</span>
-                            <span>{report.sources?.length || 0} sources</span>
-                            <span>•</span>
-                            <span>{new Date(report.created_at).toLocaleDateString()}</span>
-                          </div>
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-                ))}
-              </div>
-            </ScrollArea>
-          )}
-        </CardContent>
-      </Card>
-
-      {/* Custom Context Menu */}
-      {contextMenu.visible && (
-        <div
-          className="fixed bg-background border rounded-md shadow-md z-50 p-1"
-          style={{
-            left: contextMenu.x,
-            top: contextMenu.y,
-            transform: 'translate(-50%, -100%)'
-          }}
-          onClick={(e) => e.stopPropagation()}
-        >
-          <div className="flex flex-col space-y-1">
-            <Button
-              variant="ghost"
-              size="sm"
-              className="justify-start h-8 px-2"
-              onClick={handleCopyText}
-            >
-              <Copy className="h-3 w-3 mr-2" />
-              Copy
-            </Button>
-            <Button
-              variant="ghost"
-              size="sm"
-              className="justify-start h-8 px-2"
-              onClick={handleSelectAll}
-            >
-              <MousePointer className="h-3 w-3 mr-2" />
-              Select All
-            </Button>
-            <Button
-              variant="ghost"
-              size="sm"
-              className="justify-start h-8 px-2"
-              onClick={handleSendToConvoAI}
-            >
-              <MessageSquare className="h-3 w-3 mr-2" />
-              Send to Convo AI
-            </Button>
-            <Button
-              variant="ghost"
-              size="sm"
-              className="justify-start h-8 px-2"
-              onClick={handleExpandText}
-            >
-              <Expand className="h-3 w-3 mr-2" />
-              Expand
-            </Button>
-          </div>
-        </div>
-      )}
-
-      {/* Expand Modal */}
-      <Dialog open={expandModal.visible} onOpenChange={(open) => 
-        setExpandModal(prev => ({ ...prev, visible: open }))
-      }>
-        <DialogContent className="max-w-4xl max-h-[80vh]">
-          <DialogHeader>
-            <DialogTitle>Expanded Content</DialogTitle>
-            <DialogDescription>
-              AI-generated detailed explanation of the selected text
-            </DialogDescription>
-          </DialogHeader>
-          <ScrollArea className="max-h-[60vh]">
+      <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
+        <Card className="p-6 space-y-6">
+          <div className="space-y-4">
+            <h3 className="text-lg font-medium flex items-center gap-2"><Target className="h-5 w-5" /> Research Configuration</h3>
             <div className="space-y-4">
               <div>
-                <h4 className="font-medium mb-2">Original Text:</h4>
-                <div className="bg-muted p-3 rounded text-sm">
-                  {expandModal.originalText}
-                </div>
+                <label className="text-sm font-medium mb-2 block">Research Topic</label>
+                <Input placeholder="e.g., Artificial Intelligence in Healthcare..." value={topic} onChange={(e) => setTopic(e.target.value)} disabled={isResearching} />
               </div>
               <div>
-                <h4 className="font-medium mb-2">Expanded Explanation:</h4>
-                {expandModal.isLoading ? (
-                  <div className="space-y-2">
-                    <Skeleton className="h-4 w-full" />
-                    <Skeleton className="h-4 w-3/4" />
-                    <Skeleton className="h-4 w-1/2" />
-                  </div>
-                ) : (
-                  <div className="prose prose-sm max-w-none dark:prose-invert">
-                    <div dangerouslySetInnerHTML={{ 
-                      __html: expandModal.expandedText.replace(/\n/g, '<br/>') 
-                    }} />
-                  </div>
-                )}
+                <label className="text-sm font-medium mb-2 block">Research Depth</label>
+                <div className="flex items-center gap-2">
+                  <Input type="number" min="1" max="5" value={maxDepth} onChange={(e) => setMaxDepth(parseInt(e.target.value) || 3)} disabled={isResearching} className="w-20" />
+                  <span className="text-sm text-muted-foreground">cycles (1-5)</span>
+                </div>
               </div>
             </div>
+            <Button onClick={handleStartResearch} disabled={isResearching || !topic.trim() || !isFullyAuthenticated} className="w-full gap-2" size="lg">
+              {isResearching ? (<><Loader2 className="h-4 w-4 animate-spin" /><AnimatedLoadingText message="Researching..." /></>) 
+              : !isFullyAuthenticated ? (<><Loader2 className="h-4 w-4 animate-spin" />Initializing Session...</>) 
+              : (<><Search className="h-4 w-4" />Start Deep Research</>)}
+            </Button>
+          </div>
+
+          {result && (
+            <div className="space-y-3 pt-4 border-t">
+              <h4 className="font-medium text-sm text-muted-foreground">Research Summary</h4>
+              <div className="grid grid-cols-2 gap-3">
+                <div className="text-center p-3 bg-accent rounded-lg"><div className="text-lg font-bold text-primary">{result.sources.length}</div><div className="text-xs text-muted-foreground">Sources</div></div>
+                <div className="text-center p-3 bg-accent rounded-lg"><div className="text-lg font-bold text-primary">{result.totalFindings}</div><div className="text-xs text-muted-foreground">Findings</div></div>
+              </div>
+              {selectedHistoryItem && (<div className="text-xs text-muted-foreground text-center pt-2 border-t"><Clock className="inline h-3 w-3 mr-1" />From history: {new Date(selectedHistoryItem.created_at).toLocaleDateString()}</div>)}
+            </div>
+          )}
+        </Card>
+
+        <div className="xl:col-span-2">
+          <Card className="p-6">
+            <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+              <div className="flex items-center justify-between mb-4">
+                <TabsList>
+                  <TabsTrigger value="progress" className="flex items-center gap-2"><Clock className="h-4 w-4" /> Progress</TabsTrigger>
+                  <TabsTrigger value="report" className="flex items-center gap-2" disabled={!result}><FileText className="h-4 w-4" /> Report</TabsTrigger>
+                  <TabsTrigger value="sources" className="flex items-center gap-2" disabled={!result}><Globe className="h-4 w-4" /> Sources</TabsTrigger>
+                </TabsList>
+                {result && activeTab === 'report' && (<div className="flex gap-2"><Button variant="outline" size="sm" onClick={handleCopyReport} className="gap-2"><Copy className="h-4 w-4" /> Copy</Button><Button variant="outline" size="sm" onClick={handleDownloadReport} className="gap-2"><Download className="h-4 w-4" /> Download</Button></div>)}
+              </div>
+              <TabsContent value="progress"><ScrollArea className="h-[500px] w-full" ref={progressRef}>
+                  {progress.length > 0 ? (<div className="space-y-4">{progress.map((step, index) => (<motion.div key={index} initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: index * 0.1 }} className="flex items-start gap-3 p-3 rounded-lg bg-accent"><div className="flex-shrink-0 mt-0.5">{getStepIcon(step.step)}</div><div className="flex-1"><div className="flex items-center gap-2 mb-1"><span className="font-medium text-sm">{step.message}</span>{step.depth > 0 && <Badge variant="secondary" className="text-xs">Depth {step.depth}</Badge>}</div>{step.currentTopic && <p className="text-xs text-muted-foreground">Topic: {step.currentTopic}</p>}{typeof step.sourcesFound !== 'undefined' && <p className="text-xs text-muted-foreground">Found {step.sourcesFound} sources</p>}</div></motion.div>))}</div>) 
+                  : (<div className="flex flex-col items-center justify-center h-full text-center text-muted-foreground"><Search className="h-12 w-12 mb-4 opacity-50" /><p className="font-medium">Research progress will appear here</p></div>)}
+              </ScrollArea></TabsContent>
+              <TabsContent value="report"><ScrollArea className="h-[500px] w-full">{result?.report ? (<div className="prose dark:prose-invert max-w-none"><ReactMarkdown remarkPlugins={[remarkGfm]}>{result.report}</ReactMarkdown></div>) 
+              : (<div className="flex flex-col items-center justify-center h-full text-center text-muted-foreground"><FileText className="h-12 w-12 mb-4 opacity-50" /><p className="font-medium">Research report will appear here</p></div>)}</ScrollArea></TabsContent>
+              <TabsContent value="sources"><ScrollArea className="h-[500px] w-full">{result?.sources && result.sources.length > 0 ? (<div className="space-y-4">{result.sources.map((source, index) => (<motion.div key={index} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: index * 0.1 }} className="p-4 rounded-lg border bg-card hover:bg-accent transition-colors"><div className="flex items-start justify-between gap-3"><div className="flex-1"><h4 className="font-medium text-sm mb-1">{source.title}</h4><p className="text-xs text-muted-foreground mb-2">{source.description}</p><div className="flex items-center gap-2"><Globe className="h-3 w-3 text-muted-foreground" /><span className="text-xs text-muted-foreground truncate">{source.url}</span></div></div><Button variant="ghost" size="sm" className="flex-shrink-0" onClick={() => window.open(source.url, '_blank')}><ExternalLink className="h-4 w-4" /></Button></div></motion.div>))}</div>) 
+              : (<div className="flex flex-col items-center justify-center h-full text-center text-muted-foreground"><Globe className="h-12 w-12 mb-4 opacity-50" /><p className="font-medium">Research sources will appear here</p></div>)}</ScrollArea></TabsContent>
+            </Tabs>
+          </Card>
+        </div>
+      </div>
+      
+      <Dialog open={showHistoryDialog} onOpenChange={setShowHistoryDialog}>
+        <DialogContent className="max-w-4xl max-h-[80vh]">
+          <DialogHeader><DialogTitle className="flex items-center gap-2"><History className="h-5 w-5" /> Deep Research History</DialogTitle><DialogDescription>Your previously completed research reports</DialogDescription></DialogHeader>
+          <ScrollArea className="h-[500px] pr-4">{isLoadingHistory ? (<div className="flex items-center justify-center py-8"><Loader2 className="h-8 w-8 animate-spin" /></div>) 
+          : researchHistory.length > 0 ? (<div className="space-y-4">{researchHistory.map((item) => (<Card key={item.id} className="p-4 hover:bg-accent transition-colors"><div className="flex items-start justify-between gap-4"><div className="flex-1 cursor-pointer" onClick={() => loadHistoryItem(item)}><h4 className="font-medium mb-2">{item.topic}</h4><div className="flex flex-wrap items-center gap-4 text-sm text-muted-foreground mb-2"><span className="flex items-center gap-1"><Globe className="h-3 w-3" />{item.sources.length} sources</span><span className="flex items-center gap-1"><FileText className="h-3 w-3" />{item.total_findings} findings</span><span className="flex items-center gap-1"><Target className="h-3 w-3" />Depth {item.max_depth}</span></div><div className="flex items-center gap-2 text-xs text-muted-foreground"><Clock className="h-3 w-3" />{new Date(item.created_at).toLocaleString()}</div></div><div className="flex items-center gap-2"><Button variant="outline" size="sm" onClick={() => loadHistoryItem(item)}>Load</Button><Button variant="ghost" size="sm" onClick={() => deleteHistoryItem(item.id)} className="text-destructive hover:text-destructive"><Trash2 className="h-4 w-4" /></Button></div></div></Card>))}</div>) 
+          : (<div className="text-center py-8 text-muted-foreground"><History className="mx-auto h-12 w-12 opacity-50 mb-2" /><p>No research history found</p></div>)}
           </ScrollArea>
         </DialogContent>
       </Dialog>

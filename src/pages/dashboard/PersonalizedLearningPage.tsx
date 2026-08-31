@@ -1,5 +1,4 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React from 'react';
 import { useAppContext } from '@/contexts/PersonalizedLearningContext';
 import { useSidebar } from '@/components/dashboard/SidebarContext';
 import { AnimatePresence, motion } from 'framer-motion';
@@ -9,104 +8,6 @@ import IntroductionLoading from '@/components/personalized-learning/Introduction
 import StudyPlatform from '@/components/personalized-learning/StudyPlatform';
 import LearningModulesSidebar from '@/components/personalized-learning/LearningModulesSidebar';
 import { Card } from '@/components/ui/card';
-import { toast } from '@/hooks/use-toast';
-import { useAuth } from '@/components/auth/SupabaseAuthProvider';
-import { supabase } from '@/lib/supabase';
-import { PersonalizedLearningProvider } from '@/contexts/PersonalizedLearningContext';
-import { addHistoryChat } from '@/lib/personalized-learning/utilFunctions';
-import interactionGemini from '@/lib/personalized-learning/geminiClient';
-import { Brain, BookOpen, Clock, TrendingUp } from 'lucide-react';
-
-interface LearningSession {
-  id: string;
-  title: string;
-  description: string;
-  created_at: string;
-}
-
-function PersonalizedLearningContent() {
-  const { user } = useAuth();
-  const navigate = useNavigate();
-  const {
-    introduction,
-    studyPlatform,
-    sidebar,
-    currentSessionId,
-    loadSession,
-    initialConvoMessage,
-    setInitialConvoMessage,
-    generationHistory,
-    setGenerationHistory,
-    personality
-  } = useAppContext();
-  
-  const [sessions, setSessions] = useState<LearningSession[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-
-  useEffect(() => {
-    if (user?.id) {
-      loadSessions();
-    }
-  }, [user?.id]);
-
-  // Handle initial conversation message from Deep Research
-  useEffect(() => {
-    if (initialConvoMessage && !studyPlatform.show) {
-      handleInitialConvoMessage();
-    }
-  }, [initialConvoMessage, studyPlatform.show]);
-
-  const handleInitialConvoMessage = async () => {
-    if (!initialConvoMessage) return;
-
-    try {
-      // Add user message to history
-      const userMessage = `Please explain this research finding in detail: "${initialConvoMessage}"`;
-      addHistoryChat(generationHistory, setGenerationHistory, 'user', userMessage);
-
-      // Get AI response
-      const response = await interactionGemini(userMessage, personality, generationHistory);
-      const aiResponse = response.text();
-
-      // Add AI response to history
-      addHistoryChat(generationHistory, setGenerationHistory, 'model', aiResponse);
-
-      toast({
-        title: 'Research Discussion Started',
-        description: 'Your selected text has been sent to the conversation AI.',
-      });
-
-    } catch (error) {
-      console.error('Error starting conversation with research text:', error);
-      toast({
-        title: 'Error',
-        description: 'Failed to start conversation with selected text.',
-        variant: 'destructive',
-      });
-    } finally {
-      // Reset the initial message
-      setInitialConvoMessage(null);
-    }
-  };
-
-  const loadSessions = async () => {
-    try {
-      setIsLoading(true);
-      const { data, error } = await supabase
-        .from('personalized_learning_sessions')
-        .select('*')
-        .eq('user_id', user?.id)
-        .order('created_at', { ascending: false })
-        .limit(10);
-
-      if (error) throw error;
-      setSessions(data || []);
-    } catch (error) {
-      console.error('Error loading sessions:', error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
 
 export default function PersonalizedLearningPage() {
   const { introduction, studyPlatform } = useAppContext();
