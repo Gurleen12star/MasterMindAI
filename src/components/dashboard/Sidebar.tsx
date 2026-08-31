@@ -149,23 +149,6 @@ export default function Sidebar({ className }: SidebarProps) {
             ))}
           </div>
         </div>
-        {!isCollapsed && (
-        <div>
-          <div className="flex items-center justify-between px-4 py-2">
-            <h3 className="text-xs font-semibold tracking-wider text-gray-500 uppercase">
-              Projects
-            </h3>
-            <Button variant="ghost" size="icon" className="h-6 w-6 text-gray-400 hover:text-white">
-              <Plus className="h-4 w-4" />
-            </Button>
-          </div>
-          <div className="space-y-1">
-            {projects.map((item) => (
-                <NavLink key={item.label} {...item} isActive={false} isProject isCollapsed={isCollapsed} />
-            ))}
-          </div>
-        </div>
-        )}
       </div>
 
       {/* Admin Menu Section - Only shown to admin users */}
