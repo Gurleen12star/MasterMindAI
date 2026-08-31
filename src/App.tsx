@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useAuth } from '@clerk/clerk-react';
+import { useAuth, useSession } from '@clerk/clerk-react';
 import { ThemeProvider } from '@/components/theme/ThemeProvider';
 import CustomCursor from '@/components/ui/CustomCursor';
 import Header from '@/components/layout/Header';
@@ -16,10 +16,25 @@ import LoginPage from '@/pages/auth/LoginPage';
 import SignupPage from '@/pages/auth/SignupPage';
 import DashboardPage from '@/pages/dashboard/DashboardPage';
 import RoadmapGeneratorPage from '@/pages/dashboard/RoadmapGeneratorPage';
+import { setSupabaseToken } from '@/lib/supabase-admin';
 
 function App() {
   const [currentPath, setCurrentPath] = useState(window.location.pathname);
   const { isLoaded, isSignedIn } = useAuth();
+  const { session } = useSession();
+
+  // Set up Supabase authentication with Clerk token
+  useEffect(() => {
+    const setupSupabase = async () => {
+      if (session) {
+        const token = await session.getToken({ template: 'supabase' });
+        await setSupabaseToken(token);
+      } else {
+        await setSupabaseToken(null);
+      }
+    };
+    setupSupabase();
+  }, [session]);
 
   useEffect(() => {
     document.title = 'EchoVerse - AI-Powered Learning Hub';

@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import MermaidDiagram from '@/components/ui/mermaid-diagram';
+import { MermaidDiagram } from '@/components/ui/mermaid-diagram';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { Dialog, DialogContent, DialogTitle, DialogDescription } from '@/components/ui/dialog';
