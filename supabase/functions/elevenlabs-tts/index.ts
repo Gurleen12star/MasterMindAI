@@ -28,11 +28,16 @@ serve(async (req) => {
 
     console.log('Generating audio with ElevenLabs...');
     
+    let apiUrl = `https://api.elevenlabs.io/v1/text-to-speech/${voiceId}`;
+    if (outputFormat) {
+      apiUrl += `?output_format=${outputFormat}`;
+    }
+    
     // Call ElevenLabs API directly
-    const response = await fetch(`https://api.elevenlabs.io/v1/text-to-speech/${voiceId}`, {
+    const response = await fetch(apiUrl, {
       method: 'POST',
       headers: {
-        'Accept': 'audio/mpeg',
+        'Accept': '*/*',
         'Content-Type': 'application/json',
         'xi-api-key': ELEVENLABS_API_KEY,
       },
@@ -54,11 +59,24 @@ serve(async (req) => {
     // Get audio as binary data
     const audioData = await response.arrayBuffer();
 
+    let contentType = "audio/mpeg"; // Default for default output format from API
+    if (outputFormat) {
+      if (outputFormat.includes("mp3")) {
+        contentType = "audio/mpeg";
+      } else if (outputFormat.includes("pcm")) {
+        contentType = "audio/wav";
+      } else if (outputFormat.includes("ulaw")) { // mu-law
+        contentType = "audio/basic";
+      } else if (outputFormat.includes("opus")) {
+        contentType = "audio/opus";
+      }
+    }
+
     // Return the audio binary data
     return new Response(audioData, {
       headers: {
         ...corsHeaders,
-        "Content-Type": "audio/mpeg",
+        "Content-Type": contentType,
       },
     });
   } catch (error) {
