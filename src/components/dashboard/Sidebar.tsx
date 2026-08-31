@@ -50,7 +50,7 @@ export default function Sidebar() {
       <div className="p-6">
         <a href="/" className="flex items-center gap-2 group relative">
           <div className="relative flex items-center justify-center">
-            <img src="/logo.png" alt="EchoVerse Logo" className="h-24 w-24 object-contain -my-8" />
+            <img src="/image.png" alt="EchoVerse Logo" className="h-24 w-24 object-contain -my-8" />
           </div>
           <span className="bg-gradient-to-r from-indigo-500 to-purple-500 bg-clip-text text-xl font-bold text-transparent hover:scale-105 transition-transform">
             EchoVerse
