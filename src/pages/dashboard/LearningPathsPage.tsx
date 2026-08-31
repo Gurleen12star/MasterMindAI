@@ -9,7 +9,7 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { generateLearningPath, generateLearningPathMermaid } from '@/lib/gemini';
-import { MermaidDiagram } from '@/components/ui/mermaid-diagram';
+import { supabaseClient } from '@/lib/supabase-admin';
 import { useToast } from '@/hooks/use-toast';
 import { Map, Loader2, FileText, BarChart as FlowChart, Maximize2, History, Clock } from 'lucide-react';
 import { useUser } from '@clerk/clerk-react';
