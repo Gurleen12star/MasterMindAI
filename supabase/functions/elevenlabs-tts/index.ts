@@ -82,5 +82,26 @@ serve(async (req) => {
       status: 500,
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
+  } catch (error) {
+    console.error("Error in elevenlabs-tts function:", error);
+    
+    let errorMessage = "An unexpected error occurred";
+    if (error instanceof Error) {
+      errorMessage = error.message;
+      
+      // Provide more user-friendly error messages
+      if (errorMessage.includes('API key')) {
+        errorMessage = "Authentication failed. Please check your ElevenLabs API key.";
+      } else if (errorMessage.includes('429')) {
+        errorMessage = "Rate limit exceeded. Please try again later or upgrade your ElevenLabs plan.";
+      } else if (errorMessage.includes('fetch')) {
+        errorMessage = "Network error. Could not connect to ElevenLabs API.";
+      }
+    }
+    
+    return new Response(JSON.stringify({ error: errorMessage }), {
+      status: 500,
+      headers: { ...corsHeaders, "Content-Type": "application/json" },
+    });
   }
 });
