@@ -9,17 +9,16 @@ import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { useToast } from '@/hooks/use-toast';
 import { supabaseClient } from '@/lib/supabase-admin';
-import { useUser } from '@clerk/clerk-react';
-import { useSupabaseAuth } from '@/components/auth/ClerkSupabaseProvider';
+import { useUser, useSession } from '@clerk/clerk-react';
 import { getUserIdForSupabase } from '@/lib/supabase-admin';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import AnimatedLoadingText from '@/components/ui/AnimatedLoadingText';
-import { 
-  Search, 
-  Loader2, 
-  Copy, 
-  Download, 
+import {
+  Search,
+  Loader2,
+  Copy,
+  Download,
   ExternalLink,
   AlertCircle,
   CheckCircle,
@@ -68,8 +67,12 @@ interface DeepResearchHistory {
 
 export default function DeepResearchPage() {
   const { toast } = useToast();
-  const { user } = useUser();
-  const { isSupabaseReady } = useSupabaseAuth();
+  const { user, isLoaded: isClerkLoaded } = useUser();
+  const { session } = useSession(); // **FIX: Added useSession hook**
+
+  // **FIX: This is our new "source of truth" for readiness**
+  const [isFullyAuthenticated, setIsFullyAuthenticated] = useState(false);
+
   const [topic, setTopic] = useState('');
   const [maxDepth, setMaxDepth] = useState(3);
   const [isResearching, setIsResearching] = useState(false);
@@ -82,8 +85,76 @@ export default function DeepResearchPage() {
   const [selectedHistoryItem, setSelectedHistoryItem] = useState<DeepResearchHistory | null>(null);
   const progressRef = useRef<HTMLDivElement>(null);
 
+  // **FIX: This useEffect hook is the core of the race condition fix**
+  useEffect(() => {
+    // We wait until Clerk is fully loaded AND has an active session.
+    // The session becomes active only after the Supabase client has been
+    // fully initialized with the token from Clerk.
+    if (isClerkLoaded && session) {
+      setIsFullyAuthenticated(true);
+      console.log("✅ Authentication is fully confirmed. It is now safe to make database requests.");
+    } else {
+      setIsFullyAuthenticated(false);
+    }
+  }, [session, isClerkLoaded]); // Dependency array ensures this runs when auth state changes
+
+
+  const saveResearchToHistory = async (researchData: ResearchResult) => {
+    // This function is now self-contained and guarded
+    if (!isFullyAuthenticated || !user) {
+      console.warn("Save aborted: Authentication is not fully ready or user is missing.");
+      toast({
+        title: 'Authentication Not Ready',
+        description: 'Research completed but could not be saved to your account. Please try again.',
+        variant: 'destructive',
+      });
+      return;
+    }
+
+    try {
+      console.log('Attempting to save deep research for user:', user.id);
+      const supabaseUserId = getUserIdForSupabase(user.id);
+      
+      const { error: saveError } = await supabaseClient
+        .from('deep_research_history')
+        .insert([{
+          user_id: supabaseUserId,
+          topic: topic.trim(),
+          report: researchData.report,
+          sources: researchData.sources || [],
+          summaries: researchData.summaries || [],
+          total_findings: researchData.totalFindings || 0,
+          max_depth: maxDepth
+        }]);
+
+      if (saveError) {
+        // The 42501 error was happening here. It should now be resolved.
+        console.error('Database save error:', saveError);
+        toast({
+          title: 'Failed to Save',
+          description: `Error: ${saveError.message}. Please try again.`,
+          variant: 'destructive',
+        });
+      } else {
+        console.log('Deep research saved successfully');
+        toast({
+          title: 'Research Saved',
+          description: 'Your research has been successfully saved to your account.',
+        });
+      }
+    } catch (error) {
+      console.error('An unexpected error occurred during save:', error);
+      toast({
+        title: 'Save Failed',
+        description: 'An unexpected error occurred while saving to your account.',
+        variant: 'destructive',
+      });
+    }
+  };
+
+
   const fetchResearchHistory = async () => {
-    if (!user?.id) return;
+    if (!isFullyAuthenticated || !user?.id) return;
     
     setIsLoadingHistory(true);
     try {
@@ -123,7 +194,7 @@ export default function DeepResearchPage() {
   };
 
   const deleteHistoryItem = async (id: string) => {
-    if (!user?.id) return;
+    if (!isFullyAuthenticated || !user?.id) return;
 
     try {
       const { error } = await supabaseClient
@@ -149,6 +220,15 @@ export default function DeepResearchPage() {
   };
 
   const handleStartResearch = async () => {
+    // **FIX: The primary guard clause that prevents the race condition**
+    if (!isFullyAuthenticated) {
+        toast({
+            title: 'Authentication Required',
+            description: 'Please wait for the secure connection to initialize.',
+            variant: 'destructive',
+        });
+        return;
+    }
     if (!topic.trim()) {
       toast({
         title: 'Topic Required',
@@ -165,7 +245,6 @@ export default function DeepResearchPage() {
     setActiveTab('progress');
 
     try {
-      // Add initial progress
       const initialProgress: ResearchProgress = {
         step: 'starting',
         message: 'Initializing deep research agent...',
@@ -180,51 +259,20 @@ export default function DeepResearchPage() {
         },
       });
 
-      if (error) {
-        throw new Error(error.message || 'Failed to start research');
-      }
-
-      if (!data) {
-        throw new Error('No data received from research agent');
-      }
-
-      // Simulate progress updates for better UX
+      if (error) throw new Error(error.message || 'Failed to start research');
+      if (!data) throw new Error('No data received from research agent');
+      
       const progressSteps: ResearchProgress[] = [
-        {
-          step: 'searching',
-          message: `Searching for information about "${topic}"...`,
-          depth: 1,
-          currentTopic: topic
-        },
-        {
-          step: 'extracting',
-          message: 'Extracting content from relevant sources...',
-          depth: 1,
-          sourcesFound: data.sources?.length || 0
-        },
-        {
-          step: 'analyzing',
-          message: 'Analyzing findings and identifying knowledge gaps...',
-          depth: 2
-        },
-        {
-          step: 'synthesizing',
-          message: 'Generating comprehensive research report...',
-          depth: maxDepth
-        },
-        {
-          step: 'completed',
-          message: `Research completed! Generated ${data.totalFindings || 0} findings from ${data.sources?.length || 0} sources.`,
-          depth: maxDepth
-        }
+        { step: 'searching', message: `Searching for information about "${topic}"...`, depth: 1, currentTopic: topic },
+        { step: 'extracting', message: 'Extracting content from relevant sources...', depth: 1, sourcesFound: data.sources?.length || 0 },
+        { step: 'analyzing', message: 'Analyzing findings and identifying knowledge gaps...', depth: 2 },
+        { step: 'synthesizing', message: 'Generating comprehensive research report...', depth: maxDepth },
+        { step: 'completed', message: `Research completed! Generated ${data.totalFindings || 0} findings from ${data.sources?.length || 0} sources.`, depth: maxDepth }
       ];
 
-      // Add progress steps with delays for realistic feel
-      for (let i = 0; i < progressSteps.length; i++) {
+      for (const step of progressSteps) {
         await new Promise(resolve => setTimeout(resolve, 800));
-        setProgress(prev => [...prev, progressSteps[i]]);
-        
-        // Auto-scroll to bottom
+        setProgress(prev => [...prev, step]);
         if (progressRef.current) {
           progressRef.current.scrollTop = progressRef.current.scrollHeight;
         }
@@ -232,113 +280,22 @@ export default function DeepResearchPage() {
 
       setResult(data);
       setActiveTab('report');
-
-      // Save to database if user is authenticated
-      if (user?.id) {
-        try {
-          console.log('Attempting to save deep research for user:', user.id);
-          
-          // Check if Supabase auth is ready
-          if (!isSupabaseReady) {
-            console.warn('Supabase authentication not ready, skipping database save');
-            toast({
-              title: 'Authentication Not Ready',
-              description: 'Research completed but not saved to your account. Please refresh and try again.',
-              variant: 'destructive',
-            });
-          } else {
-            console.log('Supabase auth is ready, proceeding with save...');
-            
-            const supabaseUserId = getUserIdForSupabase(user.id);
-            console.log('Supabase user ID:', supabaseUserId);
-            
-            // Log current session info
-            const { data: sessionData, error: sessionError } = await supabaseClient.auth.getSession();
-            console.log('Current session:', {
-              hasSession: !!sessionData.session,
-              sessionExists: !!sessionData.session?.access_token,
-              tokenLength: sessionData.session?.access_token?.length || 0,
-              userId: sessionData.session?.user?.id,
-              sessionError: sessionError?.message
-            });
-            
-            // Direct insert like roadmaps and learning paths (no connection test)
-            const { error: saveError } = await supabaseClient
-              .from('deep_research_history')
-              .insert([{
-                user_id: supabaseUserId,
-                topic: topic.trim(),
-                report: data.report,
-                sources: data.sources || [],
-                summaries: data.summaries || [],
-                total_findings: data.totalFindings || 0,
-                max_depth: maxDepth
-              }]);
-
-            if (saveError) {
-              console.error('Database save error:', saveError);
-              console.error('Error code:', saveError.code);
-              console.error('Error details:', saveError.details);
-              console.error('Error hint:', saveError.hint);
-              
-              // Provide more specific error messages
-              let errorMessage = saveError.message;
-              if (saveError.message.includes('JWT') || saveError.message.includes('auth') || saveError.code === 'PGRST301') {
-                errorMessage = 'Authentication expired. Please refresh the page and try again.';
-              } else if (saveError.code === '42501') {
-                errorMessage = 'Permission denied. Database policies need to be updated. Please run the SQL fix script.';
-              } else if (saveError.code === '42P01') {
-                errorMessage = 'Table missing. Please run the database migration script.';
-              }
-              
-              toast({
-                title: 'Failed to Save',
-                description: errorMessage,
-                variant: 'destructive',
-              });
-            } else {
-              console.log('Deep research saved successfully');
-              toast({
-                title: 'Research Saved',
-                description: 'Your research has been successfully saved to your account.',
-              });
-            }
-          }
-        } catch (error) {
-          console.error('Error saving to database:', error);
-          
-          let errorMessage = 'Failed to save to your account';
-          if (error instanceof Error) {
-            if (error.message.includes('JWT') || error.message.includes('auth')) {
-              errorMessage = 'Authentication issue. Please refresh the page and try again.';
-            } else {
-              errorMessage = error.message;
-            }
-          }
-          
-          toast({
-            title: 'Save Failed',
-            description: errorMessage,
-            variant: 'destructive',
-          });
-        }
-      }
-
       toast({
         title: 'Research Complete',
         description: `Generated comprehensive report on "${topic}" with ${data.sources?.length || 0} sources.`,
       });
+      
+      // **FIX: Call the refactored, safe save function**
+      await saveResearchToHistory(data);
 
     } catch (error) {
       console.error('Research error:', error);
-      
       const errorProgress: ResearchProgress = {
         step: 'error',
         message: `Research failed: ${error instanceof Error ? error.message : 'Unknown error'}`,
         depth: 0
       };
       setProgress(prev => [...prev, errorProgress]);
-
       toast({
         title: 'Research Failed',
         description: error instanceof Error ? error.message : 'An unexpected error occurred.',
@@ -351,7 +308,6 @@ export default function DeepResearchPage() {
 
   const handleCopyReport = async () => {
     if (!result?.report) return;
-    
     try {
       await navigator.clipboard.writeText(result.report);
       toast({
@@ -369,7 +325,6 @@ export default function DeepResearchPage() {
 
   const handleDownloadReport = () => {
     if (!result?.report) return;
-
     const blob = new Blob([result.report], { type: 'text/markdown' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
@@ -379,7 +334,6 @@ export default function DeepResearchPage() {
     a.click();
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
-
     toast({
       title: 'Download Started',
       description: 'Research report is being downloaded as a Markdown file.',
@@ -387,25 +341,17 @@ export default function DeepResearchPage() {
   };
 
   const getStepIcon = (step: string) => {
-    switch (step) {
-      case 'starting':
-      case 'initialization':
-        return <Zap className="h-4 w-4 text-blue-500" />;
-      case 'searching':
-        return <Search className="h-4 w-4 text-purple-500" />;
-      case 'extracting':
-        return <Globe className="h-4 w-4 text-green-500" />;
-      case 'analyzing':
-        return <Brain className="h-4 w-4 text-orange-500" />;
-      case 'synthesizing':
-        return <FileText className="h-4 w-4 text-indigo-500" />;
-      case 'completed':
-        return <CheckCircle className="h-4 w-4 text-green-600" />;
-      case 'error':
-        return <AlertCircle className="h-4 w-4 text-red-500" />;
-      default:
-        return <Clock className="h-4 w-4 text-muted-foreground" />;
-    }
+    const iconMap: { [key: string]: JSX.Element } = {
+      starting: <Zap className="h-4 w-4 text-blue-500" />,
+      initialization: <Zap className="h-4 w-4 text-blue-500" />,
+      searching: <Search className="h-4 w-4 text-purple-500" />,
+      extracting: <Globe className="h-4 w-4 text-green-500" />,
+      analyzing: <Brain className="h-4 w-4 text-orange-500" />,
+      synthesizing: <FileText className="h-4 w-4 text-indigo-500" />,
+      completed: <CheckCircle className="h-4 w-4 text-green-600" />,
+      error: <AlertCircle className="h-4 w-4 text-red-500" />,
+    };
+    return iconMap[step] || <Clock className="h-4 w-4 text-muted-foreground" />;
   };
 
   return (
@@ -437,7 +383,6 @@ export default function DeepResearchPage() {
       </div>
 
       <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
-        {/* Input Section */}
         <Card className="p-6 space-y-6">
           <div className="space-y-4">
             <h3 className="text-lg font-medium flex items-center gap-2">
@@ -449,7 +394,7 @@ export default function DeepResearchPage() {
               <div>
                 <label className="text-sm font-medium mb-2 block">Research Topic</label>
                 <Input
-                  placeholder="e.g., Artificial Intelligence in Healthcare, Climate Change Solutions..."
+                  placeholder="e.g., Artificial Intelligence in Healthcare..."
                   value={topic}
                   onChange={(e) => setTopic(e.target.value)}
                   disabled={isResearching}
@@ -468,19 +413,17 @@ export default function DeepResearchPage() {
                     disabled={isResearching}
                     className="w-20"
                   />
-                  <span className="text-sm text-muted-foreground">
-                    cycles (1-5)
-                  </span>
+                  <span className="text-sm text-muted-foreground">cycles (1-5)</span>
                 </div>
                 <p className="text-xs text-muted-foreground mt-1">
-                  Higher depth = more comprehensive research but longer processing time
+                  Higher depth = more comprehensive but longer processing time
                 </p>
               </div>
             </div>
-
+            {/* **FIX: Button state is now driven by isFullyAuthenticated** */}
             <Button
               onClick={handleStartResearch}
-              disabled={isResearching || !topic.trim() || !isSupabaseReady}
+              disabled={isResearching || !topic.trim() || !isFullyAuthenticated}
               className="w-full gap-2"
               size="lg"
             >
@@ -489,10 +432,10 @@ export default function DeepResearchPage() {
                   <Loader2 className="h-4 w-4 animate-spin" />
                   <AnimatedLoadingText message="Researching..." />
                 </>
-              ) : !isSupabaseReady ? (
+              ) : !isFullyAuthenticated ? (
                 <>
                   <Loader2 className="h-4 w-4 animate-spin" />
-                  Initializing Secure Connection...
+                  Initializing Session...
                 </>
               ) : (
                 <>
@@ -503,7 +446,6 @@ export default function DeepResearchPage() {
             </Button>
           </div>
 
-          {/* Research Stats */}
           {result && (
             <div className="space-y-3 pt-4 border-t border-border/30">
               <h4 className="font-medium text-sm text-muted-foreground">Research Summary</h4>
@@ -527,45 +469,29 @@ export default function DeepResearchPage() {
           )}
         </Card>
 
-        {/* Results Section */}
         <div className="xl:col-span-2">
           <Card className="p-6">
             <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
               <div className="flex items-center justify-between mb-4">
                 <TabsList>
                   <TabsTrigger value="progress" className="flex items-center gap-2">
-                    <Clock className="h-4 w-4" />
-                    Progress
+                    <Clock className="h-4 w-4" /> Progress
                   </TabsTrigger>
                   <TabsTrigger value="report" className="flex items-center gap-2" disabled={!result}>
-                    <FileText className="h-4 w-4" />
-                    Report
+                    <FileText className="h-4 w-4" /> Report
                   </TabsTrigger>
                   <TabsTrigger value="sources" className="flex items-center gap-2" disabled={!result}>
-                    <Globe className="h-4 w-4" />
-                    Sources
+                    <Globe className="h-4 w-4" /> Sources
                   </TabsTrigger>
                 </TabsList>
                 
                 {result && activeTab === 'report' && (
                   <div className="flex gap-2">
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={handleCopyReport}
-                      className="gap-2"
-                    >
-                      <Copy className="h-4 w-4" />
-                      Copy
+                    <Button variant="outline" size="sm" onClick={handleCopyReport} className="gap-2">
+                      <Copy className="h-4 w-4" /> Copy
                     </Button>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={handleDownloadReport}
-                      className="gap-2"
-                    >
-                      <Download className="h-4 w-4" />
-                      Download
+                    <Button variant="outline" size="sm" onClick={handleDownloadReport} className="gap-2">
+                      <Download className="h-4 w-4" /> Download
                     </Button>
                   </div>
                 )}
@@ -583,28 +509,14 @@ export default function DeepResearchPage() {
                           transition={{ delay: index * 0.1 }}
                           className="flex items-start gap-3 p-3 rounded-lg bg-accent/30"
                         >
-                          <div className="flex-shrink-0 mt-0.5">
-                            {getStepIcon(step.step)}
-                          </div>
+                          <div className="flex-shrink-0 mt-0.5">{getStepIcon(step.step)}</div>
                           <div className="flex-1">
                             <div className="flex items-center gap-2 mb-1">
                               <span className="font-medium text-sm">{step.message}</span>
-                              {step.depth > 0 && (
-                                <Badge variant="secondary" className="text-xs">
-                                  Depth {step.depth}
-                                </Badge>
-                              )}
+                              {step.depth > 0 && <Badge variant="secondary" className="text-xs">Depth {step.depth}</Badge>}
                             </div>
-                            {step.currentTopic && (
-                              <p className="text-xs text-muted-foreground">
-                                Topic: {step.currentTopic}
-                              </p>
-                            )}
-                            {step.sourcesFound && (
-                              <p className="text-xs text-muted-foreground">
-                                Found {step.sourcesFound} sources
-                              </p>
-                            )}
+                            {step.currentTopic && <p className="text-xs text-muted-foreground">Topic: {step.currentTopic}</p>}
+                            {typeof step.sourcesFound !== 'undefined' && <p className="text-xs text-muted-foreground">Found {step.sourcesFound} sources</p>}
                           </div>
                         </motion.div>
                       ))}
@@ -627,35 +539,21 @@ export default function DeepResearchPage() {
                         <FileText className="h-6 w-6 text-primary" />
                       </div>
                       <div>
-                        <h2 className="text-xl font-bold bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">
-                          Research Report: {topic}
-                        </h2>
-                        <p className="text-sm text-muted-foreground">
-                          Depth: {maxDepth} cycles • {result.sources.length} sources • {result.totalFindings} findings
-                        </p>
+                        <h2 className="text-xl font-bold bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">Research Report: {topic}</h2>
+                        <p className="text-sm text-muted-foreground">Depth: {maxDepth} cycles • {result.sources.length} sources • {result.totalFindings} findings</p>
                       </div>
-                    </div>
-                    <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                      <CheckCircle className="h-3 w-3 text-green-500" />
-                      <span>Research completed successfully</span>
-                      <span>•</span>
-                      <Clock className="h-3 w-3" />
-                      <span>Generated on {new Date().toLocaleDateString()}</span>
                     </div>
                   </div>
                 )}
                 <ScrollArea className="h-[500px] w-full">
                   {result?.report ? (
                     <div className="prose prose-neutral dark:prose-invert max-w-none research-report">
-                      <ReactMarkdown remarkPlugins={[remarkGfm]}>
-                        {result.report}
-                      </ReactMarkdown>
+                      <ReactMarkdown remarkPlugins={[remarkGfm]}>{result.report}</ReactMarkdown>
                     </div>
                   ) : (
                     <div className="flex flex-col items-center justify-center h-full text-center text-muted-foreground">
                       <FileText className="h-12 w-12 mb-4 opacity-50" />
                       <p className="font-medium">Research report will appear here</p>
-                      <p className="text-sm">Complete a research to view the comprehensive report</p>
                     </div>
                   )}
                 </ScrollArea>
@@ -676,22 +574,13 @@ export default function DeepResearchPage() {
                           <div className="flex items-start justify-between gap-3">
                             <div className="flex-1">
                               <h4 className="font-medium text-sm mb-1">{source.title}</h4>
-                              <p className="text-xs text-muted-foreground mb-2">
-                                {source.description}
-                              </p>
+                              <p className="text-xs text-muted-foreground mb-2">{source.description}</p>
                               <div className="flex items-center gap-2">
                                 <Globe className="h-3 w-3 text-muted-foreground" />
-                                <span className="text-xs text-muted-foreground truncate">
-                                  {source.url}
-                                </span>
+                                <span className="text-xs text-muted-foreground truncate">{source.url}</span>
                               </div>
                             </div>
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              className="flex-shrink-0"
-                              onClick={() => window.open(source.url, '_blank')}
-                            >
+                            <Button variant="ghost" size="sm" className="flex-shrink-0" onClick={() => window.open(source.url, '_blank')}>
                               <ExternalLink className="h-4 w-4" />
                             </Button>
                           </div>
@@ -702,7 +591,6 @@ export default function DeepResearchPage() {
                     <div className="flex flex-col items-center justify-center h-full text-center text-muted-foreground">
                       <Globe className="h-12 w-12 mb-4 opacity-50" />
                       <p className="font-medium">Research sources will appear here</p>
-                      <p className="text-sm">Complete a research to view all sources used</p>
                     </div>
                   )}
                 </ScrollArea>
@@ -712,69 +600,35 @@ export default function DeepResearchPage() {
         </div>
       </div>
 
-      {/* History Dialog */}
       <Dialog open={showHistoryDialog} onOpenChange={setShowHistoryDialog}>
         <DialogContent className="max-w-4xl max-h-[80vh]">
           <DialogHeader>
-            <DialogTitle className="flex items-center gap-2">
-              <History className="h-5 w-5" />
-              Deep Research History
-            </DialogTitle>
-            <DialogDescription>
-              Your previously completed research reports
-            </DialogDescription>
+            <DialogTitle className="flex items-center gap-2"><History className="h-5 w-5" /> Deep Research History</DialogTitle>
+            <DialogDescription>Your previously completed research reports</DialogDescription>
           </DialogHeader>
-          
           <ScrollArea className="h-[500px] pr-4">
             {isLoadingHistory ? (
-              <div className="flex items-center justify-center py-8">
-                <Loader2 className="h-8 w-8 animate-spin" />
-              </div>
+              <div className="flex items-center justify-center py-8"><Loader2 className="h-8 w-8 animate-spin" /></div>
             ) : researchHistory.length > 0 ? (
               <div className="space-y-4">
                 {researchHistory.map((item) => (
-                  <Card
-                    key={item.id}
-                    className="p-4 hover:bg-accent/50 transition-colors"
-                  >
+                  <Card key={item.id} className="p-4 hover:bg-accent/50 transition-colors">
                     <div className="flex items-start justify-between gap-4">
                       <div className="flex-1 cursor-pointer" onClick={() => loadHistoryItem(item)}>
                         <h4 className="font-medium mb-2">{item.topic}</h4>
-                        <div className="flex items-center gap-4 text-sm text-muted-foreground mb-2">
-                          <span className="flex items-center gap-1">
-                            <Globe className="h-3 w-3" />
-                            {item.sources.length} sources
-                          </span>
-                          <span className="flex items-center gap-1">
-                            <FileText className="h-3 w-3" />
-                            {item.total_findings} findings
-                          </span>
-                          <span className="flex items-center gap-1">
-                            <Target className="h-3 w-3" />
-                            Depth {item.max_depth}
-                          </span>
+                        <div className="flex flex-wrap items-center gap-4 text-sm text-muted-foreground mb-2">
+                          <span className="flex items-center gap-1"><Globe className="h-3 w-3" />{item.sources.length} sources</span>
+                          <span className="flex items-center gap-1"><FileText className="h-3 w-3" />{item.total_findings} findings</span>
+                          <span className="flex items-center gap-1"><Target className="h-3 w-3" />Depth {item.max_depth}</span>
                         </div>
                         <div className="flex items-center gap-2 text-xs text-muted-foreground">
                           <Clock className="h-3 w-3" />
-                          {new Date(item.created_at).toLocaleDateString()} at {new Date(item.created_at).toLocaleTimeString()}
+                          {new Date(item.created_at).toLocaleString()}
                         </div>
                       </div>
                       <div className="flex items-center gap-2">
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => loadHistoryItem(item)}
-                        >
-                          Load
-                        </Button>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => deleteHistoryItem(item.id)}
-                          className="text-destructive hover:text-destructive"
-                        >
-                          <Trash2 className="h-4 w-4" />
-                        </Button>
+                        <Button variant="outline" size="sm" onClick={() => loadHistoryItem(item)}>Load</Button>
+                        <Button variant="ghost" size="sm" onClick={() => deleteHistoryItem(item.id)} className="text-destructive hover:text-destructive"><Trash2 className="h-4 w-4" /></Button>
                       </div>
                     </div>
                   </Card>
@@ -784,27 +638,22 @@ export default function DeepResearchPage() {
               <div className="text-center py-8 text-muted-foreground">
                 <History className="mx-auto h-12 w-12 opacity-50 mb-2" />
                 <p>No research history found</p>
-                <p className="text-sm">Complete your first research to see it here</p>
               </div>
             )}
           </ScrollArea>
         </DialogContent>
       </Dialog>
 
-      {/* Tips Section */}
       <Card className="p-6 bg-gradient-to-r from-primary/5 via-primary/3 to-transparent border-primary/10">
         <div className="flex items-start gap-3">
           <Sparkles className="h-5 w-5 text-primary mt-0.5" />
           <div>
             <h4 className="font-medium text-primary mb-2">Deep Research Tips</h4>
-            <ul className="text-sm text-muted-foreground space-y-1">
-              <li>• Use specific, well-defined topics for better research quality</li>
-              <li>• Higher research depth provides more comprehensive analysis but takes longer</li>
-              <li>• The agent autonomously searches, extracts, analyzes, and synthesizes information</li>
-              <li>• Each research cycle identifies knowledge gaps and explores them systematically</li>
-              <li>• Final reports include citations and are structured for easy reading</li>
-              <li>• Your research history is automatically saved and can be accessed anytime</li>
-              <li>• Best for academic research, market analysis, and comprehensive topic exploration</li>
+            <ul className="text-sm text-muted-foreground space-y-1 list-disc list-inside">
+              <li>Use specific, well-defined topics for better research quality.</li>
+              <li>Higher research depth provides more comprehensive analysis but takes longer.</li>
+              <li>The agent autonomously searches, extracts, analyzes, and synthesizes information.</li>
+              <li>Your research history is automatically saved and can be accessed anytime.</li>
             </ul>
           </div>
         </div>
