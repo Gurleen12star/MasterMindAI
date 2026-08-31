@@ -1,182 +1,63 @@
-import { useEffect, useState } from 'react';
-import { motion } from 'framer-motion';
-import logo from '@/assets/logo.png';
+import { useEffect } from 'react';
 
 export default function LoadingScreen() {
-  const [progress, setProgress] = useState(0);
-
   useEffect(() => {
-    const timer = setInterval(() => {
-      setProgress((prev) => {
-        if (prev >= 100) {
-          clearInterval(timer);
-          return 100;
-        }
-        return prev + Math.random() * 15;
-      });
-    }, 150);
-
-    return () => clearInterval(timer);
+    // Hide the initial preloader when React component mounts
+    const initialPreloader = document.getElementById('initial-preloader');
+    if (initialPreloader) {
+      initialPreloader.style.opacity = '0';
+      setTimeout(() => {
+        initialPreloader.style.display = 'none';
+      }, 300);
+    }
   }, []);
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-gradient-to-br from-background via-background/95 to-background overflow-hidden">
-      {/* Animated background particles */}
-      <div className="absolute inset-0">
-        {[...Array(20)].map((_, i) => (
-          <motion.div
-            key={i}
-            className="absolute w-1 h-1 bg-primary/20 rounded-full"
-            initial={{
-              x: Math.random() * window.innerWidth,
-              y: Math.random() * window.innerHeight,
-              opacity: 0,
-            }}
-            animate={{
-              x: Math.random() * window.innerWidth,
-              y: Math.random() * window.innerHeight,
-              opacity: [0, 1, 0],
-            }}
-            transition={{
-              duration: Math.random() * 10 + 5,
-              repeat: Infinity,
-              ease: "linear",
-            }}
-          />
-        ))}
-      </div>
+    <div className="loading-screen-container">
+      <svg width="201" height="201" viewBox="0 0 201 201" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M112 136C83.2812 136 60 112.719 60 84C60 60.6795 75.3514 40.9445 96.5 34.3493" stroke="white"
+            strokeWidth="2" strokeLinecap="round" />
+        <path
+            d="M75.2422 167.978C90.5676 162.775 105.79 151.026 117.846 136.369C117.982 136.205 118.115 136.038 118.249 135.873C120.85 132.375 123.225 129.24 124.088 128.11C142.858 101.02 150.39 67.151 130.619 45.5898C123.074 37.3622 112.294 32.8666 101.139 33.2945C104.844 32.4617 100.63 32.0222 112.656 32.0222C124.682 32.0222 162.19 43.2507 155.603 72.7302C153.281 83.1249 163.138 89.0719 168.606 97.3357C161.458 101.866 155.334 103.031 159.197 108.207C160.027 109.321 161.113 110.45 162.454 111.593L155.456 114.388C161.513 116.479 160.859 118.797 153.495 121.341C162.553 132.822 157.371 138.179 137.95 137.414C125.64 142.164 118.448 154.999 120.824 167.978H75.2422Z"
+            fill="white" />
+        <path className="path" d="M99.5 56.5L65 80.5" stroke="white" strokeWidth="2" strokeLinecap="round" />
+        <path className="path" d="M105 60.5L111 83" stroke="white" strokeWidth="2" strokeLinecap="round" />
+        <path className="path" d="M130.5 68.5L89.5 98" stroke="white" strokeWidth="2" strokeLinecap="round" />
+        <path className="path" d="M82 46L130 65" stroke="white" strokeWidth="2" strokeLinecap="round" />
+        <path className="path" d="M79.5 49L87 95.5" stroke="white" strokeWidth="2" strokeLinecap="round" />
+        <path className="path" d="M67 87L86.5 98.5" stroke="white" strokeWidth="2" strokeLinecap="round" />
+        <path className="path" d="M113 109L90 100.5" stroke="white" strokeWidth="2" strokeLinecap="round" />
+        <path className="path" d="M112 86L117.5 105" stroke="white" strokeWidth="2" strokeLinecap="round" />
+        <path className="path" d="M121 130L120 114.5" stroke="white" strokeWidth="2" />
+        <path className="path" d="M114 114.5L86 126.5" stroke="white" strokeWidth="2" strokeLinecap="round" />
+        <path className="path" d="M87 102.5L84 124.5" stroke="white" strokeWidth="2" strokeLinecap="round" />
+        <path d="M118.5 133L88 148.5" stroke="white" strokeWidth="2" strokeLinecap="round"
+            strokeLinejoin="round" />
 
-      {/* Gradient orbs */}
-      <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-gradient-to-br from-primary/20 to-purple-500/20 rounded-full blur-3xl animate-pulse-float opacity-60" />
-      <div className="absolute bottom-1/4 right-1/4 w-80 h-80 bg-gradient-to-br from-indigo-500/20 to-primary/20 rounded-full blur-3xl animate-pulse-float-delayed opacity-60" />
-
-      {/* Main loading content */}
-      <div className="relative z-10 flex flex-col items-center space-y-8">
-        {/* Logo with floating animation */}
-        <motion.div
-          initial={{ scale: 0.8, opacity: 0 }}
-          animate={{ scale: 1, opacity: 1 }}
-          transition={{ duration: 0.8, ease: "easeOut" }}
-          className="relative"
-        >
-          <motion.div
-            animate={{ 
-              y: [-10, 10, -10],
-              rotate: [0, 2, -2, 0]
-            }}
-            transition={{ 
-              duration: 4,
-              repeat: Infinity,
-              ease: "easeInOut"
-            }}
-            className="relative"
-          >
-            <img 
-              src={logo} 
-              alt="EchoVerse Logo" 
-              className="h-24 w-24 object-contain drop-shadow-2xl" 
-            />
-            
-            {/* Glowing ring around logo */}
-            <motion.div
-              className="absolute inset-0 rounded-full border-2 border-primary/30"
-              animate={{ 
-                scale: [1, 1.2, 1],
-                opacity: [0.3, 0.8, 0.3]
-              }}
-              transition={{ 
-                duration: 2,
-                repeat: Infinity,
-                ease: "easeInOut"
-              }}
-            />
-            
-            {/* Outer glowing ring */}
-            <motion.div
-              className="absolute inset-0 rounded-full border border-primary/20"
-              animate={{ 
-                scale: [1, 1.4, 1],
-                opacity: [0.2, 0.6, 0.2]
-              }}
-              transition={{ 
-                duration: 2,
-                repeat: Infinity,
-                ease: "easeInOut",
-                delay: 0.5
-              }}
-            />
-          </motion.div>
-        </motion.div>
-
-        {/* Brand name with gradient */}
-        <motion.div
-          initial={{ y: 20, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          transition={{ duration: 0.8, delay: 0.3 }}
-          className="text-center"
-        >
-          <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-primary via-primary/80 to-primary bg-clip-text text-transparent mb-2">
-            EchoVerse
-          </h1>
-          <p className="text-muted-foreground text-lg">AI-Powered Learning Hub</p>
-        </motion.div>
-
-        {/* Loading progress bar */}
-        <motion.div
-          initial={{ width: 0, opacity: 0 }}
-          animate={{ width: "100%", opacity: 1 }}
-          transition={{ duration: 0.8, delay: 0.6 }}
-          className="w-64 h-1 bg-muted/30 rounded-full overflow-hidden backdrop-blur-sm"
-        >
-          <motion.div
-            className="h-full bg-gradient-to-r from-primary to-primary/70 rounded-full shadow-lg shadow-primary/30"
-            initial={{ width: "0%" }}
-            animate={{ width: `${Math.min(progress, 100)}%` }}
-            transition={{ duration: 0.3, ease: "easeOut" }}
-          />
-        </motion.div>
-
-        {/* Loading text with typing animation */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.8, delay: 0.9 }}
-          className="text-center"
-        >
-          <motion.p 
-            className="text-muted-foreground text-sm"
-            animate={{ opacity: [0.5, 1, 0.5] }}
-            transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-          >
-            Initializing your learning experience...
-          </motion.p>
-        </motion.div>
-
-        {/* Floating dots animation */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.8, delay: 1.2 }}
-          className="flex space-x-2"
-        >
-          {[0, 1, 2].map((i) => (
-            <motion.div
-              key={i}
-              className="w-2 h-2 bg-primary/60 rounded-full"
-              animate={{ 
-                scale: [1, 1.5, 1],
-                opacity: [0.4, 1, 0.4]
-              }}
-              transition={{ 
-                duration: 1.5,
-                repeat: Infinity,
-                delay: i * 0.2,
-                ease: "easeInOut"
-              }}
-            />
-          ))}
-        </motion.div>
-      </div>
+        {/* section 1 */}
+        <circle className="c10" cx="65.5" cy="126.5" r="4.5" fill="white" />
+        <circle className="c9" cx="51" cy="111" r="7" fill="white" />
+        <circle className="c8" cx="37" cy="111" r="4" fill="white" />
+        <circle className="c7" cx="34.5" cy="98.5" r="3.5" fill="white" />
+        <circle className="c6" cx="42" cy="88" r="4" fill="white" />
+        <circle className="c5" cx="37.5" cy="77.5" r="3.5" fill="white" />
+        <circle className="c4" cx="47.5" cy="67.5" r="5.5" fill="white" />
+        <circle className="c3" cx="32.5" cy="66.5" r="3.5" fill="white" />
+        <circle className="c2" cx="42.5" cy="55.5" r="3.5" fill="white" />
+        <circle className="c1" cx="57" cy="48" r="4" fill="white" />
+        
+        {/* section 2 */}
+        <circle className="lg-middle" cx="88" cy="99" r="7" fill="white" />
+        <circle className="lg-circle" cx="103" cy="56" r="9" fill="white" />
+        <circle className="lg-circle" cx="118" cy="110" r="9" fill="white" />
+        <circle className="lg-middle" cx="83" cy="68" r="5" fill="white" />
+        <circle className="lg-middle" cx="120" cy="131" r="5" fill="white" />
+        <circle className="lg-middle" cx="131.5" cy="66.5" r="5.5" fill="white" />
+        <circle className="lg-edge" cx="111" cy="83" r="6" fill="white" />
+        <circle className="lg-middle" cx="84.5" cy="126.5" r="5.5" fill="white" />
+        <circle className="lg-edge" cx="80.5" cy="46.5" r="5.5" fill="white" />
+        <circle className="lg-circle" cx="62" cy="84" r="9" fill="white" />
+      </svg>
     </div>
   );
 }
