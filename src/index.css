@@ -221,6 +221,22 @@ div[style*="z-index: 999999"] {
   border-width: 3px;
 }
 
+.hero-highlight::before {
+  content: '';
+  position: absolute;
+  left: calc(100% + 4px);
+  top: calc(100% - 4px);
+  width: 2px;
+  height: 16px;
+  background-color: rgb(255, 98, 0);
+  animation: blink 1s infinite;
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
 .hero-content {
   min-height: 32%;
   position: absolute;
