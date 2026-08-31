@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/components/auth/SupabaseAuthProvider';
 import AuthForm from '@/components/auth/AuthForm';
 import EchoVerseLogo from '@/components/ui/EchoVerseLogo';
@@ -9,13 +10,14 @@ import { ArrowUp } from 'lucide-react';
 export default function LoginPage() {
   const { user } = useAuth();
   const [mounted, setMounted] = useState(false);
+  const navigate = useNavigate();
   
   useEffect(() => {
     setMounted(true);
     if (user) {
-      window.location.href = '/dashboard';
+      navigate('/dashboard');
     }
-  }, [user]);
+  }, [user, navigate]);
 
   if (!mounted) {
     return null;
@@ -27,9 +29,9 @@ export default function LoginPage() {
       <div className="w-full md:w-1/2 p-8 md:p-12 lg:p-16 flex flex-col justify-center">
         <div className="max-w-sm mx-auto w-full">
           <div className="mb-8">
-            <a href="/">
+            <Link to="/">
               <EchoVerseLogo className="h-10 w-auto text-primary" />
-            </a>
+            </Link>
           </div>
           <h1 className="text-3xl font-bold text-white mb-6">Log in</h1>
           

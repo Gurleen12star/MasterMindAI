@@ -58,7 +58,7 @@ export default function HeroSection() {
   }, []);
 
   return (
-    <section className="relative min-h-screen flex items-center justify-center px-4 py-20 overflow-hidden">
+    <section className="relative min-h-screen flex items-center justify-center px-4 pt-20 overflow-hidden">
       <div className="container mx-auto max-w-7xl">
         <div 
           className="hero-card"

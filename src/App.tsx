@@ -1,4 +1,5 @@
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { useAuth } from '@/components/auth/SupabaseAuthProvider';
 import { ThemeProvider } from '@/components/theme/ThemeProvider';
 import CustomCursor from '@/components/ui/CustomCursor';
@@ -16,12 +17,44 @@ import { Toaster } from '@/components/ui/toaster';
 import LoginPage from '@/pages/auth/LoginPage';
 import SignupPage from '@/pages/auth/SignupPage';
 import DashboardPage from '@/pages/dashboard/DashboardPage';
-import RoadmapGeneratorPage from '@/pages/dashboard/RoadmapGeneratorPage';
+import ScrollReveal from '@/components/ui/ScrollReveal';
+
+// Protected Route Component
+function ProtectedRoute({ children }: { children: React.ReactNode }) {
+  const { user, loading } = useAuth();
+  
+  if (loading) {
+    return null; // Let the HTML preloader handle loading
+  }
+  
+  if (!user) {
+    return <Navigate to="/login" replace />;
+  }
+  
+  return <>{children}</>;
+}
+
+// Homepage Component
+function Homepage() {
+  return (
+    <>
+      <Header />
+      <main className="relative z-10 max-w-7xl mx-auto px-4 md:px-6 lg:px-8">
+        <HeroSection />
+      </main>
+      <LogoMarquee />
+      <ScrollReveal><FeaturesGrid /></ScrollReveal>
+      <ScrollReveal><DemoSection /></ScrollReveal>
+      <ScrollReveal><TestimonialsSection /></ScrollReveal>
+      <ScrollReveal><PricingSection /></ScrollReveal>
+      <ScrollReveal><EarlyAdopterSection /></ScrollReveal>
+      <ScrollReveal><FAQSection /></ScrollReveal>
+      <Footer />
+    </>
+  );
+}
 
 function App() {
-  const [currentPath, setCurrentPath] = useState(window.location.pathname);
-  const { user, loading, session } = useAuth();
-
   useEffect(() => {
     document.title = 'EchoVerse - AI-Powered Learning Hub';
     
@@ -42,94 +75,51 @@ function App() {
     
     window.addEventListener('keydown', handleKeyDown);
     
-    const handlePathChange = () => {
-      setCurrentPath(window.location.pathname);
-    };
-
-    window.addEventListener('popstate', handlePathChange);
-    
     return () => {
-      window.removeEventListener('popstate', handlePathChange);
       window.removeEventListener('keydown', handleKeyDown);
     };
   }, []);
 
-  const renderContent = () => {
-    if (loading) {
-      // Return null while loading, let the HTML preloader handle the loading state
-      return null;
-    }
-    
-    switch (currentPath) {
-      case '/login':
-        return <LoginPage />;
-      case '/signup':
-        return <SignupPage />;
-      default:
-        if (currentPath.startsWith('/dashboard')) {
-          if (!user) {
-            window.location.href = '/login';
-            return null;
-          }
-          return <DashboardPage />;
-        }
-        // If not /login, /signup, or /dashboard/*, render homepage content
-        return (
-          <>
-            <Header />
-            <main className="relative z-10 max-w-7xl mx-auto px-4 md:px-6 lg:px-8">
-              <HeroSection />
-              {/* Move LogoMarquee here and apply absolute positioning */}
-              <LogoMarquee />
-            </main>
-            <FeaturesGrid />
-            <DemoSection />
-            <TestimonialsSection />
-            <PricingSection />
-            <EarlyAdopterSection />
-            <FAQSection />
-            <Footer />
-          </>
-        );
-    }
-  };
-
   return (
     <ThemeProvider defaultTheme="dark" storageKey="echoverse-theme">
-      <div className="min-h-screen relative bg-transparent antialiased overflow-x-hidden">
-        {/* SVG Filter for grainy texture */}
-        <svg width="0" height="0" aria-hidden="true">
-          <filter id="grainy" x="0" y="0" width="100%" height="100%">
-            <feTurbulence type="fractalNoise" baseFrequency="0.537" />
-            <feColorMatrix type="saturate" values="0" />
-            <feBlend mode="multiply" in="SourceGraphic" />
-          </filter>
-        </svg>
-        
-        <CustomCursor />
-        {renderContent()}
-        <Toaster />
-        
-        {/* Powered by Bolt Badge - Floating in bottom right */}
-        <div className="fixed bottom-4 right-4 z-[60]">
-          <a
-            href="https://bolt.new/"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="group block transition-transform duration-300 hover:scale-105"
-            title="Powered by Bolt"
-          >
-            <div className="relative">
-              <img
-                src="/black_circle_360x360.svg"
-                alt="Powered by Bolt"
-                className="transition-all duration-300 rounded-full shadow-lg w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16 group-hover:shadow-xl group-hover:shadow-primary/25 backdrop-blur-sm"
-              />
-              <div className="absolute inset-0 rounded-full bg-gradient-to-r from-primary/10 to-purple-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-            </div>
-          </a>
+      <Router>
+        <div className="min-h-screen relative bg-transparent antialiased overflow-x-hidden">
+          <CustomCursor />
+          
+          <Routes>
+            <Route path="/" element={<Homepage />} />
+            <Route path="/login" element={<LoginPage />} />
+            <Route path="/signup" element={<SignupPage />} />
+            <Route path="/dashboard/*" element={
+              <ProtectedRoute>
+                <DashboardPage />
+              </ProtectedRoute>
+            } />
+          </Routes>
+          
+          <Toaster />
+          
+          {/* Powered by Bolt Badge - Floating in bottom right */}
+          <div className="fixed bottom-4 right-4 z-[60]">
+            <a
+              href="https://bolt.new/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="group block transition-transform duration-300 hover:scale-105"
+              title="Powered by Bolt"
+            >
+              <div className="relative">
+                <img
+                  src="/black_circle_360x360.svg"
+                  alt="Powered by Bolt"
+                  className="transition-all duration-300 rounded-full shadow-lg w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16 group-hover:shadow-xl group-hover:shadow-primary/25 backdrop-blur-sm"
+                />
+                <div className="absolute inset-0 rounded-full bg-gradient-to-r from-primary/10 to-purple-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+              </div>
+            </a>
+          </div>
         </div>
-      </div>
+      </Router>
     </ThemeProvider>
   );
 }

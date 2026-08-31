@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/components/auth/SupabaseAuthProvider';
 import { useTheme } from '@/components/theme/ThemeProvider';
 import { Button } from '@/components/ui/button';
@@ -19,6 +20,7 @@ export default function Header() {
   const [activeItem, setActiveItem] = useState<string | null>(null);
   const { user } = useAuth();
   const { theme, setTheme } = useTheme();
+  const navigate = useNavigate();
   
   useEffect(() => {
     const handleScroll = () => {
@@ -49,7 +51,7 @@ export default function Header() {
             <div className="absolute inset-0 bg-gradient-to-r from-background/90 via-background/70 to-background/90 backdrop-blur-[2px] z-10" />
           </div>
           
-          <a href="#" className="flex items-center gap-2 group z-20 relative">
+          <Link to="/" className="flex items-center gap-2 group z-20 relative">
             <div className="relative flex items-center justify-center">
               <EchoVerseLogo 
                 className="h-20 w-20 -my-8 transition-transform duration-300 group-hover:scale-105 text-primary" 
@@ -58,7 +60,7 @@ export default function Header() {
             <span className="bg-gradient-to-r from-indigo-500 to-purple-500 bg-clip-text text-xl font-bold text-transparent hover:scale-105 transition-transform duration-300">
               {/* EchoVerse*/}
             </span>
-          </a>
+          </Link>
         
           {/* Desktop Navigation */}
           <nav className="absolute left-1/2 -translate-x-1/2 hidden md:block z-20">
@@ -111,7 +113,7 @@ export default function Header() {
                 variant="ghost" 
                 size="sm" 
                 className="hidden md:flex hover:bg-primary/10 transition-all duration-300 relative rounded-xl font-medium"
-                onClick={() => window.location.href = '/login'}
+                onClick={() => navigate('/login')}
               >
                 Log in
                 <div className="absolute inset-0 bg-gradient-to-r from-primary/5 to-primary/10 opacity-0 hover:opacity-100 rounded-xl transition-opacity duration-300" />
@@ -122,7 +124,7 @@ export default function Header() {
               <Button 
                 size="sm" 
                 className="hidden md:flex bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 transition-all duration-300 shadow-lg hover:shadow-xl hover:shadow-primary/25 relative overflow-hidden group rounded-xl font-medium"
-                onClick={() => window.location.href = '/dashboard'}
+                onClick={() => navigate('/dashboard')}
               >
                 <div className="absolute inset-0 bg-gradient-to-r from-white/10 to-white/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                 <span className="relative z-10">
@@ -133,7 +135,7 @@ export default function Header() {
               <Button 
                 size="sm" 
                 className="hidden md:flex bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 transition-all duration-300 shadow-lg hover:shadow-xl hover:shadow-primary/25 relative overflow-hidden group rounded-xl font-medium"
-                onClick={() => window.location.href = '/signup'}
+                onClick={() => navigate('/signup')}
               >
                 <div className="absolute inset-0 bg-gradient-to-r from-white/10 to-white/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                 <span className="relative z-10">
@@ -174,7 +176,7 @@ export default function Header() {
                       variant="ghost" 
                       size="sm" 
                       className="justify-start px-0 hover:bg-primary/10 rounded-xl"
-                      onClick={() => window.location.href = '/login'}
+                      onClick={() => navigate('/login')}
                     >
                       Log in
                     </Button>
@@ -183,7 +185,7 @@ export default function Header() {
                     <Button 
                       size="sm"
                       className="bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 rounded-xl"
-                      onClick={() => window.location.href = '/dashboard'}
+                      onClick={() => navigate('/dashboard')}
                     >
                       Go to Dashboard
                     </Button>
@@ -191,7 +193,7 @@ export default function Header() {
                     <Button 
                       size="sm"
                       className="bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 rounded-xl"
-                      onClick={() => window.location.href = '/signup'}
+                      onClick={() => navigate('/signup')}
                     >
                       Get Started
                     </Button>

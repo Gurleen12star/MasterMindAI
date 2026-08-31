@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/components/auth/SupabaseAuthProvider';
 import AuthForm from '@/components/auth/AuthForm';
 import { ArrowLeft, Sparkles } from 'lucide-react';
@@ -7,13 +8,14 @@ import { Button } from '@/components/ui/button';
 export default function SignupPage() {
   const { user } = useAuth();
   const [mounted, setMounted] = useState(false);
+  const navigate = useNavigate();
   
   useEffect(() => {
     setMounted(true);
     if (user) {
-      window.location.href = '/dashboard';
+      navigate('/dashboard');
     }
-  }, [user]);
+  }, [user, navigate]);
 
   if (!mounted) {
     return null;
@@ -24,7 +26,7 @@ export default function SignupPage() {
       <Button
         variant="ghost"
         className="absolute left-4 top-4 md:left-8 md:top-8"
-        onClick={() => window.location.href = '/'}
+        onClick={() => navigate('/')}
       >
         <ArrowLeft className="mr-2 h-4 w-4" />
         Back
@@ -69,12 +71,12 @@ export default function SignupPage() {
           
           <p className="text-center text-sm text-muted-foreground">
             Already have an account?{" "}
-            <a 
-              href="/login" 
+            <Link 
+              to="/login" 
               className="font-medium text-primary hover:text-primary/80 transition-colors"
             >
               Sign in
-            </a>
+            </Link>
           </p>
         </div>
       </div>

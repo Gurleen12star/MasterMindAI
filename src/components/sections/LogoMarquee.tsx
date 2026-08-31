@@ -112,7 +112,7 @@ export default function LogoMarquee() {
   };
 
   return (
-    <section className="py-16 bg-gradient-to-b from-background via-muted/20 to-background relative overflow-hidden">      
+    <section className="relative overflow-hidden pb-8 bg-transparent">
       <style dangerouslySetInnerHTML={{ __html: keyframes }} />
       
       <div 

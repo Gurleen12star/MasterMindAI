@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/components/auth/SupabaseAuthProvider';
 import { useProfile } from '@/hooks/useProfile';
 import { Card } from '@/components/ui/card';
@@ -14,6 +15,7 @@ export default function ProfileGuard({ children }: ProfileGuardProps) {
   const { user, loading } = useAuth();
   const { profile, isLoading, needsProfileSetup } = useProfile();
   const [showSetupPrompt, setShowSetupPrompt] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (!loading && user && !isLoading) {
@@ -21,13 +23,13 @@ export default function ProfileGuard({ children }: ProfileGuardProps) {
         // Show setup prompt for 3 seconds, then redirect
         setShowSetupPrompt(true);
         const timer = setTimeout(() => {
-          window.location.href = '/dashboard/profile-setup';
+          navigate('/dashboard/profile-setup');
         }, 3000);
         
         return () => clearTimeout(timer);
       }
     }
-  }, [loading, user, isLoading, needsProfileSetup]);
+  }, [loading, user, isLoading, needsProfileSetup, navigate]);
 
   // Show loading while checking authentication and profile
   if (loading || isLoading) {
@@ -65,7 +67,7 @@ export default function ProfileGuard({ children }: ProfileGuardProps) {
             <Progress value={66} className="w-full" />
             
             <Button 
-              onClick={() => window.location.href = '/dashboard/profile-setup'}
+              onClick={() => navigate('/dashboard/profile-setup')}
               className="w-full"
             >
               Set Up Profile Now
