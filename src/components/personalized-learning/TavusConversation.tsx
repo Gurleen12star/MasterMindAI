@@ -206,7 +206,7 @@ const TavusConversation = () => {
         )}
       </div>
 
-      <CardContent className="p-6 space-y-6">
+      <CardContent className="p-5 space-y-6">
         <div className="space-y-2">
           <label className="text-sm font-semibold text-white">Choose AI Persona</label>
           <Select
