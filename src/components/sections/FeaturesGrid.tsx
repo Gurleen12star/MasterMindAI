@@ -26,7 +26,7 @@ export default function FeaturesGrid() {
         ></div>
       </div>
       <div className="container px-4 max-w-[1200px] mx-auto">
-        <div className="mx-auto max-w-5xl text-center">
+        <div className="mx-auto max-w-5xl text-center mb-16">
           <h2 className="text-3xl font-bold tracking-tight md:text-4xl">
             Amplify Your Learning Journey
           </h2>
@@ -35,7 +35,7 @@ export default function FeaturesGrid() {
           </p>
         </div>
         
-        <div className="mt-16 grid grid-cols-1 md:grid-cols-3 gap-6 [grid-template-areas:'a_b_b'_'a_c_d'_'e_f_f'] md:auto-rows-[28rem]">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 [grid-template-areas:'a_b_b'_'a_c_d'_'e_f_f'] md:auto-rows-[28rem]">
           <BentoBox gradient="purple" className="flex flex-col md:[grid-area:a] row-span-2 relative overflow-hidden group backdrop-blur-md bg-background/30 border-primary/20">
             <img
               src="https://images.pexels.com/photos/8386440/pexels-photo-8386440.jpeg"
