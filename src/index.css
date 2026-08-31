@@ -187,7 +187,7 @@
   width: var(--cursor-size);
   height: var(--cursor-size);
   pointer-events: none;
-  z-index: 999999;
+  z-index: 9999999;
   top: 0;
   left: 0;
   will-change: transform;
@@ -711,7 +711,7 @@ html {
   fill: var(--mermaid-purple-darker);
   stroke: var(--mermaid-purple);
 }
-.mermaid-render-area .classPurple .label { color: var(--mermaid-node-text-color); }
+.mermaid-render-area .classPurple .label { fill: var(--mermaid-node-text-color); }
 
 /* Green Node */
 .mermaid-render-area .classGreen > rect,
@@ -721,7 +721,7 @@ html {
   fill: var(--mermaid-green-darker);
   stroke: var(--mermaid-green);
 }
-.mermaid-render-area .classGreen .label { color: var(--mermaid-node-text-color); }
+.mermaid-render-area .classGreen .label { fill: var(--mermaid-node-text-color); }
 
 /* Yellow Node */
 .mermaid-render-area .classYellow > rect,
@@ -731,7 +731,7 @@ html {
   fill: var(--mermaid-yellow-darker);
   stroke: var(--mermaid-yellow);
 }
-.mermaid-render-area .classYellow .label { color: var(--mermaid-node-text-color); }
+.mermaid-render-area .classYellow .label { fill: var(--mermaid-node-text-color); }
 
 /* Blue Node */
 .mermaid-render-area .classBlue > rect,
@@ -741,7 +741,7 @@ html {
   fill: var(--mermaid-blue-darker);
   stroke: var(--mermaid-blue);
 }
-.mermaid-render-area .classBlue .label { color: var(--mermaid-node-text-color); }
+.mermaid-render-area .classBlue .label { fill: var(--mermaid-node-text-color); }
 
 /* Orange Node */
 .mermaid-render-area .classOrange > rect,
@@ -751,7 +751,7 @@ html {
   fill: var(--mermaid-orange-darker);
   stroke: var(--mermaid-orange);
 }
-.mermaid-render-area .classOrange .label { color: var(--mermaid-node-text-color); }
+.mermaid-render-area .classOrange .label { fill: var(--mermaid-node-text-color); }
 
 /* If you have a specific container for the roadmap, ensure it has a dark background */
 .roadmap-display-container { /* Assuming you might wrap the <MermaidDiagram> component */
