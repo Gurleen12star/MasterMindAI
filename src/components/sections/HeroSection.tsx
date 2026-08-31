@@ -74,8 +74,7 @@ export default function HeroSection() {
         '[data-us-watermark]',
         '.unicorn-studio-bg div[style*="position: fixed"]',
         '.unicorn-studio-bg div[style*="bottom: 0"]',
-        '.unicorn-studio-bg div[style*="right: 0"]',
-        'div[style*="z-index: 999999"]'
+        '.unicorn-studio-bg div[style*="right: 0"]'
       ].join(','));
       
       // Remove each watermark element
@@ -93,8 +92,7 @@ export default function HeroSection() {
               '[class*="watermark"]',
               'div[style*="position: fixed"]',
               'div[style*="bottom: 0"]',
-              'div[style*="right: 0"]',
-              'div[style*="z-index: 999999"]'
+              'div[style*="right: 0"]'
             ].join(','));
             
             iframeWatermarks.forEach(el => el.remove());
@@ -129,7 +127,8 @@ export default function HeroSection() {
               inset: 0,
               borderRadius: 'inherit',
               overflow: 'hidden',
-              zIndex: 0
+              zIndex: 0,
+              pointerEvents: 'none'
             }}
           ></div>
           <div className="absolute inset-0 overflow-hidden" style={{ zIndex: 1 }}>
