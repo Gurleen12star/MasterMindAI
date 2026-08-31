@@ -2,7 +2,6 @@ import { useUser } from '@clerk/clerk-react';
 import DashboardHeader from '@/components/dashboard/DashboardHeader';
 import Sidebar from '@/components/dashboard/Sidebar';
 import RoadmapGeneratorPage from './RoadmapGeneratorPage';
-import LearningPathsPage from './LearningPathsPage';
 import ExploreHubPage from './ExploreHubPage';
 
 export default function DashboardPage() {
@@ -20,8 +19,6 @@ export default function DashboardPage() {
             switch (path) {
               case '/dashboard/roadmap-generator':
                 return <RoadmapGeneratorPage />;
-              case '/dashboard/paths':
-                return <LearningPathsPage />;
               case '/dashboard/explore':
                 return <ExploreHubPage />;
               default:
