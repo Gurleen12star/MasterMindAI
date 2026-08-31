@@ -349,7 +349,7 @@ export default function QuickSummariesPage() {
 
       <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
         {/* Input Section */}
-        <Card className="p-6 space-y-6">
+        <Card className="p-6 space-y-6 rounded-2xl">
           <div className="space-y-4">
             <h3 className="text-lg font-medium flex items-center gap-2">
               <FileText className="h-5 w-5" />
@@ -447,7 +447,7 @@ export default function QuickSummariesPage() {
         </Card>
 
         {/* Output Section */}
-        <Card className="p-6">
+        <Card className="p-6 rounded-2xl">
           <div className="space-y-4">
             <div className="flex items-center justify-between">
               <h3 className="text-lg font-medium flex items-center gap-2">
@@ -657,7 +657,7 @@ export default function QuickSummariesPage() {
       </div>
 
       {/* Tips Section */}
-      <Card className="p-6 bg-gradient-to-r from-primary/5 via-primary/3 to-transparent border-primary/10">
+      <Card className="p-6 bg-gradient-to-r from-primary/5 via-primary/3 to-transparent border-primary/10 rounded-2xl">
         <div className="flex items-start gap-3">
           <AlertCircle className="h-5 w-5 text-primary mt-0.5" />
           <div>

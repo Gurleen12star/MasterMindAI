@@ -240,7 +240,7 @@ export default function AnimationStudioPage() {
         {/* Input Section */}
         <div className="space-y-6">
           {/* ChatGPT-style Input */}
-          <Card className="p-6">
+          <Card className="p-6 rounded-2xl">
             <div className="space-y-4">
               <div className="flex items-center gap-2 mb-4">
                 <Sparkles className="h-5 w-5 text-primary" />
@@ -328,12 +328,12 @@ export default function AnimationStudioPage() {
 
         {/* Video Display Section */}
         <div className="space-y-6">
-          <Card className="p-6">
-            <div className="space-y-4">
-              <div className="flex items-center gap-2 mb-4">
-                <Play className="h-5 w-5 text-primary" />
-                <h3 className="text-lg font-medium">Animation Player</h3>
-              </div>
+                  <Card className="p-6 rounded-2xl">
+          <div className="space-y-4">
+            <div className="flex items-center gap-2 mb-4">
+              <Play className="h-5 w-5 text-primary" />
+              <h3 className="text-lg font-medium">Animation Player</h3>
+            </div>
               
               <div className="aspect-video bg-muted rounded-lg flex items-center justify-center border-2 border-dashed border-border">
                 {(isGenerating || isLoading) && video && (
@@ -439,7 +439,7 @@ export default function AnimationStudioPage() {
       </div>
 
       {/* Artifacts Section */}
-      <Card className="p-6">
+      <Card className="p-6 rounded-2xl">
         <div className="flex items-center gap-3 mb-4">
           <Archive className="h-5 w-5 text-primary" />
           <h3 className="text-lg font-medium">Rendered Artifacts</h3>

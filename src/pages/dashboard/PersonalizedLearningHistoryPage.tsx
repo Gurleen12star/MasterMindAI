@@ -179,7 +179,7 @@ export default function PersonalizedLearningHistoryPage() {
           <Loader2 className="h-8 w-8 animate-spin text-primary" />
         </div>
       ) : sessions.length === 0 ? (
-        <Card className="p-12 text-center">
+        <Card className="p-12 text-center rounded-2xl">
           <BookOpen className="h-16 w-16 mx-auto text-muted-foreground mb-4 opacity-50" />
           <h3 className="text-lg font-semibold mb-2">No Learning Sessions Yet</h3>
           <p className="text-muted-foreground mb-6">
@@ -199,7 +199,7 @@ export default function PersonalizedLearningHistoryPage() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.3 }}
             >
-              <Card className="group hover:shadow-lg transition-all duration-300 hover:border-primary/20">
+              <Card className="group hover:shadow-lg transition-all duration-300 hover:border-primary/20 rounded-xl">
                 <CardHeader className="pb-3">
                   <div className="flex items-start justify-between">
                     <div className="flex-1">

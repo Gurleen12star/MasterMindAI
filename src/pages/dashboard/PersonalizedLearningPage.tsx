@@ -28,7 +28,7 @@ export default function PersonalizedLearningPage() {
             <p className="text-muted-foreground">Experience interactive AI-powered learning journeys tailored just for you</p>
           </div>
 
-          <Card className="relative overflow-hidden border-primary/10 shadow-md p-6 backdrop-blur-sm bg-card/80">
+          <Card className="relative overflow-hidden border-primary/10 shadow-md p-6 backdrop-blur-sm bg-card/80 rounded-2xl">
             <AnimatePresence mode='popLayout'>
               {introduction.show && (
                 <motion.div

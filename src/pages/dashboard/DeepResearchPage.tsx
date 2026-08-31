@@ -468,7 +468,7 @@ export default function DeepResearchPage() {
       </div>
 
       <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
-        <Card className="p-6 space-y-6">
+        <Card className="p-6 space-y-6 rounded-2xl">
           <div className="space-y-4">
             <h3 className="text-lg font-medium flex items-center gap-2"><Target className="h-5 w-5" /> Research Configuration</h3>
             <div className="space-y-4">
@@ -504,7 +504,7 @@ export default function DeepResearchPage() {
         </Card>
 
         <div className="xl:col-span-2">
-          <Card className="p-6">
+          <Card className="p-6 rounded-2xl">
             <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
               <div className="flex items-center justify-between mb-4 z-10">
                 <TabsList>
@@ -559,7 +559,7 @@ export default function DeepResearchPage() {
                     <motion.div 
                       initial={{ opacity: 0, y: 20 }}
                       animate={{ opacity: 1, y: 0 }}
-                      className="mb-6 mt-4 p-4 rounded-lg bg-card border border-primary/20 shadow-lg"
+                      className="mb-6 mt-4 p-4 rounded-xl bg-card border border-primary/20 shadow-lg"
                     >
                       <div className="flex items-center justify-between mb-2">
                         <div className="flex items-center gap-2">
@@ -643,7 +643,7 @@ export default function DeepResearchPage() {
                           initial={{ opacity: 0, y: 20 }} 
                           animate={{ opacity: 1, y: 0 }} 
                           transition={{ delay: index * 0.1 }} 
-                          className="p-4 rounded-lg border bg-card hover:bg-accent transition-colors"
+                          className="p-4 rounded-xl border bg-card hover:bg-accent transition-colors"
                         >
                           <div className="flex items-start justify-between gap-3">
                             <div className="flex-1">

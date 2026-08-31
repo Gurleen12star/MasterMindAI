@@ -239,7 +239,7 @@ export default function LearningPathsPage() {
       </div>
 
       <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
-        <Card className="p-6">
+        <Card className="p-6 rounded-2xl">
           <div className="space-y-6">
             <div className="space-y-2">
               <h3 className="text-lg font-medium">What would you like to learn?</h3>
@@ -294,7 +294,7 @@ export default function LearningPathsPage() {
           </div>
         </Card>
 
-        <Card className="p-6">
+        <Card className="p-6 rounded-2xl">
           <Tabs defaultValue="text" className="w-full">
             <TabsList className="mb-4">
               <TabsTrigger value="text" className="flex items-center gap-2">
@@ -331,7 +331,7 @@ export default function LearningPathsPage() {
             </TabsContent>
             
             <TabsContent value="visual" className="h-[70vh] xl:h-auto">
-              <Card className="h-full w-full flex flex-col relative">
+              <Card className="h-full w-full flex flex-col relative rounded-xl">
                 <div className="flex-grow relative">
                   {isGenerating && !mermaidDiagram && (
                     <div className="absolute inset-0 flex flex-col items-center justify-center bg-background/50 z-10">

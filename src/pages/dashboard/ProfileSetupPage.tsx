@@ -540,7 +540,7 @@ export default function ProfileSetupPage() {
         </div>
 
         {/* Progress Bar */}
-        <Card className="p-6 mb-8">
+        <Card className="p-6 mb-8 rounded-2xl">
           <div className="flex items-center justify-between mb-4">
             <span className="text-sm font-medium">Profile Setup Progress</span>
             <span className="text-sm text-muted-foreground">{Math.round(progress)}% Complete</span>
@@ -578,7 +578,7 @@ export default function ProfileSetupPage() {
         </Card>
 
         {/* Form Content */}
-        <Card className="p-8">
+        <Card className="p-8 rounded-2xl">
           <motion.div
             key={currentStep}
             initial={{ opacity: 0, x: 20 }}

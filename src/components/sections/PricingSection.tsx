@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import GlassIcons from '@/components/ui/GlassIcons';
 import { Check, Star, Zap, Crown, ArrowRight, Sparkles } from 'lucide-react';
 
 const plans = [
@@ -23,7 +24,7 @@ const plans = [
     popular: false,
     gradient: 'from-blue-500/20 to-cyan-500/20',
     borderGradient: 'from-blue-500/50 to-cyan-500/50',
-    iconColor: 'text-blue-500'
+    iconColor: 'blue'
   },
   {
     name: 'Pro',
@@ -46,7 +47,7 @@ const plans = [
     popular: true,
     gradient: 'from-primary/30 to-purple-500/30',
     borderGradient: 'from-primary to-purple-500',
-    iconColor: 'text-primary'
+    iconColor: 'purple'
   },
   {
     name: 'Enterprise',
@@ -69,7 +70,7 @@ const plans = [
     popular: false,
     gradient: 'from-orange-500/20 to-red-500/20',
     borderGradient: 'from-orange-500/50 to-red-500/50',
-    iconColor: 'text-orange-500'
+    iconColor: 'orange'
   }
 ];
 
@@ -146,9 +147,11 @@ export default function PricingSection() {
                 {/* Content */}
                 <div className="relative z-10">
                   {/* Plan Header */}
-                  <div className="flex items-center gap-3 mb-6">
-                    <div className={`p-3 rounded-xl bg-gradient-to-br ${plan.gradient} border border-border/20`}>
-                      <plan.icon className={`h-6 w-6 ${plan.iconColor}`} />
+                  <div className="flex flex-col items-center text-center mb-6">
+                    <div className="mb-4" style={{ height: '80px' }}>
+                      <div className="scale-75">
+                        <GlassIcons items={[{ icon: <plan.icon className="h-6 w-6" />, color: plan.iconColor, label: plan.name }]} />
+                      </div>
                     </div>
                     <div>
                       <h3 className="text-xl sm:text-2xl font-bold text-foreground">{plan.name}</h3>
@@ -158,7 +161,7 @@ export default function PricingSection() {
 
                   {/* Pricing */}
                   <div className="mb-8">
-                    <div className="flex items-baseline gap-1">
+                    <div className="flex items-baseline justify-center gap-1">
                       <span className={`text-4xl sm:text-5xl lg:text-6xl font-bold ${plan.popular ? 'bg-gradient-to-r from-primary to-purple-500 bg-clip-text text-transparent' : 'text-foreground'}`}>
                         {plan.price}
                       </span>
@@ -199,7 +202,7 @@ export default function PricingSection() {
                     }`}
                   >
                     {plan.buttonText}
-                    <ArrowRight className="ml-2 h-4 w-4" />
+                    <ArrowRight className={`ml-2 h-5 w-5 transition-transform duration-300 ${hoveredCard === index ? 'translate-x-1' : ''}`} />
                   </Button>
                 </div>
               </div>
@@ -208,26 +211,15 @@ export default function PricingSection() {
         </div>
 
         {/* Bottom CTA */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6, delay: 0.4 }}
-          className="text-center mt-16 md:mt-20 lg:mt-24"
-        >
-          <div className="p-6 sm:p-8 lg:p-12 rounded-2xl lg:rounded-3xl bg-gradient-to-br from-primary/10 via-purple-500/10 to-primary/10 border border-primary/20 backdrop-blur-xl max-w-4xl mx-auto">
-            <h3 className="text-2xl sm:text-3xl lg:text-4xl font-bold mb-4">
-              Need a custom solution?
-            </h3>
-            <p className="text-lg text-muted-foreground mb-6 max-w-2xl mx-auto">
-              We offer tailored enterprise solutions with custom integrations, dedicated support, and flexible pricing.
-            </p>
-            <Button size="lg" className="bg-gradient-to-r from-primary to-purple-500 hover:from-primary/90 hover:to-purple-500/90 text-primary-foreground shadow-lg hover:shadow-xl">
-              Contact Enterprise Sales
-              <ArrowRight className="ml-2 h-5 w-5" />
-            </Button>
-          </div>
-        </motion.div>
+        <div className="text-center mt-16">
+          <p className="text-muted-foreground mb-6 text-lg font-medium">
+            Need something custom? Let's talk.
+          </p>
+          <Button variant="outline" size="lg" className="bg-background/80 hover:bg-primary hover:text-primary-foreground transition-all duration-300 border-2 border-primary/20 hover:border-primary">
+            <Sparkles className="mr-2 h-5 w-5" />
+            Contact Sales
+          </Button>
+        </div>
       </div>
     </section>
   );

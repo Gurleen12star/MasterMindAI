@@ -21,7 +21,7 @@ const TavusConversationPage = () => {
         <TavusConversation />
         
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="bg-card/50 backdrop-blur-sm border border-primary/10 rounded-lg p-6">
+          <div className="bg-card/50 backdrop-blur-sm border border-primary/10 rounded-2xl p-6">
             <div className="flex items-center gap-3 mb-4">
               <Video className="h-5 w-5 text-primary" />
               <h3 className="font-semibold">How It Works</h3>
@@ -46,7 +46,7 @@ const TavusConversationPage = () => {
             </ul>
           </div>
           
-          <div className="bg-card/50 backdrop-blur-sm border border-primary/10 rounded-lg p-6">
+          <div className="bg-card/50 backdrop-blur-sm border border-primary/10 rounded-2xl p-6">
             <div className="flex items-center gap-3 mb-4">
               <FileText className="h-5 w-5 text-primary" />
               <h3 className="font-semibold">Tips for Better Conversations</h3>

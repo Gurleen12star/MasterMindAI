@@ -292,7 +292,7 @@ export default function RoadmapGeneratorPage() {
         {/* Main content area - Form and Selected Roadmap */}
         <div className={`flex-1 space-y-6 ${isSidebarCollapsed ? 'xl:pr-14' : ''}`}>
           {/* Generation Form */}
-          <Card className="p-6">
+          <Card className="p-6 rounded-2xl">
             <h3 className="font-semibold text-lg mb-4">Generate New Roadmap</h3>
             <div className="space-y-4">
               <div>
@@ -324,7 +324,7 @@ export default function RoadmapGeneratorPage() {
 
           {/* Selected Roadmap Display */}
           {selectedRoadmap && (
-            <Card className="p-6 flex-1">
+            <Card className="p-6 flex-1 rounded-2xl">
               <div className="flex justify-between items-center mb-2">
                 <h3 className="font-semibold text-lg">{selectedRoadmap.topic}</h3>
                 <div className="flex items-center gap-2">
@@ -405,7 +405,7 @@ export default function RoadmapGeneratorPage() {
           </button>
 
           {/* Sidebar content - can be collapsed */}
-          <Card className={`sticky top-6 shadow-md transition-all duration-300 ${isSidebarCollapsed ? 'w-10 overflow-hidden' : 'w-full'}`}>
+          <Card className={`sticky top-6 shadow-md transition-all duration-300 rounded-2xl ${isSidebarCollapsed ? 'w-10 overflow-hidden' : 'w-full'}`}>
             <div className={`p-4 border-b bg-muted/50 ${isSidebarCollapsed ? 'flex justify-center' : ''}`}>
               {!isSidebarCollapsed ? (
                 <h3 className="font-semibold text-lg">Your Roadmaps</h3>

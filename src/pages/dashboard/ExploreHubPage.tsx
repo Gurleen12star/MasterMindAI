@@ -192,10 +192,10 @@ export default function ExploreHubPage() {
       <motion.div
         key={activity.id}
         whileHover={{ x: 5 }}
-        className="p-4 rounded-lg bg-accent/50 hover:bg-accent transition-colors"
+        className="p-4 rounded-xl bg-accent/50 transition-colors"
       >
         <div className="flex items-start gap-3">
-          <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center mt-1 flex-shrink-0">
+          <div className="h-10 w-10 rounded-2xl bg-primary/10 flex items-center justify-center mt-1 flex-shrink-0">
             {getActivityIcon()}
           </div>
           
@@ -245,7 +245,12 @@ export default function ExploreHubPage() {
     : recentActivities.filter(activity => activity.type === activeTab);
 
   return (
-    <div className="p-4 md:p-6 space-y-8">
+    <div 
+      className="p-4 md:p-6 space-y-8"
+      onClick={(e) => {
+        console.log('Page clicked - Target:', e.target, 'Current Target:', e.currentTarget);
+      }}
+    >
       <div className="flex flex-col gap-4">
         <h1 className="text-3xl font-bold tracking-tight">Explore Hub</h1>
         <p className="text-muted-foreground">
@@ -255,7 +260,7 @@ export default function ExploreHubPage() {
 
       <div className="relative">
         <div className="absolute inset-0 bg-gradient-to-r from-primary/10 via-primary/5 to-transparent rounded-2xl" />
-        <Card className="p-6 backdrop-blur-xl bg-background/20 border-primary/10">
+        <Card className="p-6 backdrop-blur-xl bg-background/20 border-primary/10 rounded-2xl">
           <div className="relative flex items-center">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <Input
@@ -276,7 +281,7 @@ export default function ExploreHubPage() {
       <OverviewStats />
       
       {/* Recent Activities */}
-      <Card className="p-6">
+      <Card className="p-6 rounded-2xl">
         <CardHeader className="px-0 pt-0">
           <div className="flex items-center justify-between mb-6">
             <CardTitle className="text-xl font-semibold flex items-center gap-2">
@@ -347,30 +352,23 @@ export default function ExploreHubPage() {
                       <Button 
                         variant="outline" 
                         className="gap-2"
-                        onClick={() => {
-                          switch (activeTab) {
-                            case 'learning_session':
-                              window.location.href = '/dashboard/personalized-learning';
-                              break;
-                            case 'deep_research':
-                              window.location.href = '/dashboard/research';
-                              break;
-                            case 'roadmap':
-                              window.location.href = '/dashboard/roadmap-generator';
-                              break;
-                            default:
-                              window.location.href = '/dashboard/personalized-learning';
-                          }
-                        }}
+                        onClick={() => setActiveTab('all')}
                       >
-                        <Sparkles className="h-4 w-4" />
-                        {activeTab === 'all' 
-                          ? 'Explore Features' 
-                          : `Create ${activeTab === 'learning_session' 
-                              ? 'Learning Session' 
-                              : activeTab === 'deep_research' 
-                                ? 'Research Report' 
-                                : 'Roadmap'}`}
+                        <History className="h-4 w-4" />
+                        View All Activities
+                      </Button>
+                      <Button 
+                        variant="outline" 
+                        className="gap-2"
+                        onClick={fetchUserActivitiesAndStats}
+                        disabled={isLoadingActivities}
+                      >
+                        {isLoadingActivities ? (
+                          <Loader2 className="h-4 w-4 animate-spin" />
+                        ) : (
+                          <BarChart className="h-4 w-4" />
+                        )}
+                        Refresh
                       </Button>
                     </div>
                   </div>
@@ -382,7 +380,7 @@ export default function ExploreHubPage() {
       </Card>
 
       {/* Learning Resources Card */}
-      <Card className="p-6">
+      <Card className="p-6 rounded-2xl">
         <CardHeader className="px-0 pt-0">
           <CardTitle className="text-xl font-semibold flex items-center gap-2">
             <BookOpen className="h-5 w-5" />
@@ -425,12 +423,17 @@ export default function ExploreHubPage() {
             return (
               <Card 
                 key={index}
-                className="group overflow-hidden hover:shadow-md transition-all duration-300 cursor-pointer"
-                onClick={() => window.location.href = resource.path}
+                className="relative group overflow-hidden hover:shadow-md transition-all duration-300 cursor-pointer rounded-xl"
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  console.log('Card clicked:', resource.title, resource.path);
+                  window.location.href = resource.path;
+                }}
               >
-                <div className={`absolute inset-0 bg-gradient-to-br ${resource.color} opacity-10 group-hover:opacity-30 transition-opacity`} />
+                <div className={`pointer-events-none absolute inset-0 bg-gradient-to-br ${resource.color} opacity-10`} />
                 <div className="relative p-6">
-                  <div className="h-12 w-12 rounded-lg bg-primary/10 flex items-center justify-center mb-4">
+                  <div className="h-12 w-12 rounded-2xl bg-primary/10 flex items-center justify-center mb-4">
                     <Icon className="h-6 w-6 text-primary" />
                   </div>
                   <h3 className="font-semibold mb-2">{resource.title}</h3>

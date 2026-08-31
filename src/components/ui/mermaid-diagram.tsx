@@ -181,7 +181,7 @@ export function MermaidDiagram({ diagram, className = '', onRegenerate, isGenera
   };
 
   return (
-    <div className={`relative w-full h-full border rounded-lg overflow-hidden ${className}`}>
+    <div className={`relative w-full h-full border rounded-2xl overflow-hidden ${className}`}>
       <div
         ref={svgContainerRef}
         className="w-full h-full flex items-center justify-center"
