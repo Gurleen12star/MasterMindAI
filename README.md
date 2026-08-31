@@ -72,13 +72,14 @@ The core Gemini-powered agent synthesizes the gaps and generates a fully interac
 
 ---
 
-## 🔮 Upcoming Features (Phase 3 & Beyond)
+### 5. Concept-to-Animation Video Generation 🎬
+Complex theoretical topics (like "Backpropagation" or "React Reconciliation") on your roadmap are dynamically converted into bite-sized, visually engaging animated videos using integrated diffusion and animation APIs. 
 
-MasterMindAI is rapidly evolving into a full-scale AI University. The following features are actively in development:
+### 6. ConvoAI (Conversational AI Tutor) 🗣️
+An always-on, voice-and-text enabled AI tutor that lives alongside your roadmap. It guides you through modules, answers questions in real-time, and dynamically tests your knowledge through conversational probing.
 
-- **🎬 Concept-to-Animation Video Generation:** Complex theoretical topics (like "Backpropagation" or "React Reconciliation") on your roadmap will be dynamically converted into bite-sized, visually engaging animated videos using integrated diffusion and animation APIs. 
-- **🗣️ ConvoAI (Conversational AI Tutor):** An always-on, voice-and-text enabled AI tutor that lives alongside your roadmap. It guides you through modules, answers questions in real-time, and dynamically tests your knowledge through conversational probing.
-- **🔍 Deep Research Mode:** An autonomous agent that continuously scrapes the latest industry research papers, GitHub repositories, and live job postings to keep your personalized curriculum bleeding-edge, updating your roadmap as the industry shifts.
+### 7. Deep Research Mode 🔍
+An autonomous agent that continuously scrapes the latest industry research papers, GitHub repositories, and live job postings to keep your personalized curriculum bleeding-edge, updating your roadmap as the industry shifts.
 
 ---
 
