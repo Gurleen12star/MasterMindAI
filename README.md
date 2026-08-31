@@ -32,27 +32,53 @@ Instead of asking *"What course do you want to buy?"*, MasterMindAI autonomously
 
 ---
 
+## ⚙️ The MasterMind Workflow: Step-by-Step
+
+How does MasterMindAI achieve such unprecedented accuracy without hallucinating? It follows a strict, 4-step deterministic AI pipeline.
+
+### Step 1: The Diagnostic DNA Profiling Questionnaire
+We don't ask you what you want to learn. We extract your precise situational data through a carefully engineered onboarding flow that asks:
+1. **Target Role & Industry:** Are you aiming to be an AI Engineer in FinTech? Or a Frontend Dev in Healthcare?
+2. **Target Companies:** Are you aiming for FAANG, startups, or legacy enterprise?
+3. **Current Baselines:** What is your exact proficiency level in prerequisite skills?
+4. **Learning Constraints:** Do you have 5 hours a week or 40? Do you learn best via hands-on projects, visual diagrams, or academic reading?
+
+*📍 **Why this drives accuracy:** By constraining the LLM purely to these data points, we eliminate generic responses. The AI is forced to optimize the path mathematically for your unique constraints.*
+
+### Step 2: Deterministic Gap Analysis Processing
+Your DNA profile is fed into our proprietary `gap-engine`. Before the AI even touches the data, the engine measures the exact discrepancies between your current state and your destination. It yields a **Priority Score** for every missing skill.
+
+### Step 3: Explainable Curriculum Generation
+The Gemini agent takes the prioritized gaps and constructs a phased timeline. For every module added to your path, the **Intelligence Trace** layer documents *exactly why* it was added. (e.g., "Added RAG infrastructure because your target company requires GenAI deployment experience.")
+
+### Step 4: Interactive Execution & Persistence
+The generated JSON payload is natively synthesized into an interactive, zoomable `Mermaid.js` diagram and a structured Kanban board where you can begin your study execution instantly.
+
+---
+
 ## ✨ Core Architecture & Features
 
 ### 1. Learner DNA Profiling Engine 🧬
-Before generating any content, MasterMindAI constructs a multidimensional matrix of your cognitive profile. It captures:
-- **Career Intent:** Primary target roles, target industries, and timeline.
-- **Skill Baselines:** Current proficiency across 50+ normalized capability domains.
-- **Learning Constraints:** Modality preferences, project styles, and weekly temporal capacity.
+Before generating any content, MasterMindAI constructs a multidimensional matrix of your cognitive profile, capturing career intent, skill baselines, and temporal capacity.
 
 ### 2. Deterministic Skill Gap Analysis 📊
-Using our proprietary `GapEngine`, MasterMindAI cross-references your DNA against thousands of standardized role requirements.
-- **Precision:** Identifies exact deltas in knowledge (e.g., You are at 20% in TensorFlow, but an AI Engineer requires 85%).
-- **Prioritization Formula:** `Priority Score = Gap Size × Capability Importance × Skill Urgency`.
+Using our proprietary `GapEngine`, MasterMindAI cross-references your DNA against standardized role requirements, utilizing the formula: `Priority Score = Gap Size × Capability Importance × Skill Urgency`.
 
 ### 3. Explainable AI: The Intelligence Trace 🧠
-AI should not be a black box. Our **Intelligence Trace** system acts as an explainable AI layer that justifies every single recommendation.
-- **Why it matters:** If the AI recommends a 4-week module on "Retrieval-Augmented Generation", the Intelligence Trace proves *why* it was added based on your specific goal to work in FinTech.
+AI should not be a black box. Our **Intelligence Trace** system acts as an explainable AI layer that justifies every single recommendation, preventing hallucinations and building user trust.
 
 ### 4. Dynamic Trajectory Generation 🛤️
-The core Gemini-powered agent synthesizes the gaps and generates a fully interactive, phase-by-phase roadmap using Mermaid.js visualizations.
-- **Adaptive Modules:** Automatically skips what you know.
-- **Capstone Driven:** Culminates in industry-specific projects (e.g., "Fraud Detection Engine" for FinTech candidates).
+The core Gemini-powered agent synthesizes the gaps and generates a fully interactive, phase-by-phase roadmap using Mermaid.js visualizations, culminating in industry-specific capstone projects.
+
+---
+
+## 🔮 Upcoming Features (Phase 3 & Beyond)
+
+MasterMindAI is rapidly evolving into a full-scale AI University. The following features are actively in development:
+
+- **🎬 Concept-to-Animation Video Generation:** Complex theoretical topics (like "Backpropagation" or "React Reconciliation") on your roadmap will be dynamically converted into bite-sized, visually engaging animated videos using integrated diffusion and animation APIs. 
+- **🗣️ ConvoAI (Conversational AI Tutor):** An always-on, voice-and-text enabled AI tutor that lives alongside your roadmap. It guides you through modules, answers questions in real-time, and dynamically tests your knowledge through conversational probing.
+- **🔍 Deep Research Mode:** An autonomous agent that continuously scrapes the latest industry research papers, GitHub repositories, and live job postings to keep your personalized curriculum bleeding-edge, updating your roadmap as the industry shifts.
 
 ---
 
