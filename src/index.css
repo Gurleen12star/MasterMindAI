@@ -40,6 +40,10 @@
   --nav-item-gap: 0.5rem;
   --nav-animation-duration: 200ms;
   --nav-animation-easing: cubic-bezier(0.4, 0, 0.2, 1);
+  
+  /* Hero Section Variables */
+  --x: 0;
+  --y: 0;
 }
 
 /* Hero Section Styles */
@@ -75,6 +79,7 @@
   translate: -50% 0;
   height: 100%;
   width: 100%;
+  object-position: calc(50% + (var(--x) * 40px)) calc(50% + (var(--y) * 10px));
   object-fit: cover;
   user-select: none;
   pointer-events: none;
@@ -90,7 +95,7 @@
   text-transform: uppercase;
   font-family: "Bebas Neue", sans-serif;
   color: white;
-  translate: -50% 0;
+  translate: calc(-50% + (var(--x) * -30px)) calc(var(--y) * -20px);
   z-index: 4;
 }
 

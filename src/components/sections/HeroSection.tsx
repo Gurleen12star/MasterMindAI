@@ -1,6 +1,18 @@
 import { useEffect } from 'react';
 
 export default function HeroSection() {
+  useEffect(() => {
+    const UPDATE = ({ x, y }: { x: number; y: number }) => {
+      const xNorm = (x / window.innerWidth - 0.5) * 2;
+      const yNorm = (y / window.innerHeight - 0.5) * 2;
+      document.documentElement.style.setProperty("--x", String(xNorm));
+      document.documentElement.style.setProperty("--y", String(yNorm));
+    };
+
+    window.addEventListener("mousemove", UPDATE as any);
+    return () => window.removeEventListener("mousemove", UPDATE as any);
+  }, []);
+
   return (
     <section className="relative overflow-hidden pt-24 md:pt-32 bg-gradient-to-br from-indigo-500/10 via-purple-500/5 to-pink-500/10">
       <div className="container px-4 max-w-[1200px] mx-auto">
@@ -10,8 +22,8 @@ export default function HeroSection() {
             <img 
               src="robot.png"
               alt="Floating Icon"
-              className="foreground"
-              style={{ width: "800px", height: "675px", transform: "none" }}
+              className="foreground transition-transform duration-300"
+              style={{ width: "800px", height: "675px" }}
             />
           </div>
           <div className="hero-content">
