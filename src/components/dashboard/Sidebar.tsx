@@ -48,12 +48,14 @@ export default function Sidebar() {
   return (
     <div className="w-64 h-screen bg-card/50 backdrop-blur-sm border-r border-border/40 flex flex-col">
       <div className="p-6">
-        <div className="flex items-center gap-2">
-          <Sparkles className="h-6 w-6 text-primary" />
-          <h2 className="text-lg font-bold bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">
-          EchoVerse
+        <a href="/" className="flex items-center gap-2 group">
+          <div className="relative flex items-center justify-center">
+            <img src="/robot.png" alt="EchoVerse Logo" className="h-24 w-24 object-contain -my-8" />
+          </div>
+          <h2 className="bg-gradient-to-r from-indigo-500 to-purple-500 bg-clip-text text-xl font-bold text-transparent hover:scale-105 transition-transform">
+            EchoVerse
           </h2>
-        </div>
+        </a>
       </div>
       
       <ScrollArea className="flex-1 px-4">
