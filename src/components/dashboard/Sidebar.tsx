@@ -94,7 +94,6 @@ export default function Sidebar({ className }: SidebarProps) {
   
   const mainMenu = [
     { to: '/dashboard', icon: Home, label: 'Overview' },
-    { to: '/dashboard/explore', icon: Compass, label: 'Explore Hub' },
     { to: '/dashboard/paths', icon: BookOpen, label: 'Learning Paths' },
     { to: '/dashboard/research', icon: Search, label: 'Deep Research' },
     { to: '/dashboard/roadmap-generator', icon: Network, label: 'Roadmap Generator' },
