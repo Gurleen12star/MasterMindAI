@@ -127,11 +127,11 @@ export default function Sidebar({ onNavigate }: SidebarProps) {
   };
 
   return (
-    <div className={`${isCollapsed ? 'w-16' : 'w-64'} h-screen bg-gradient-to-b from-card/80 via-card/60 to-card/40 backdrop-blur-xl border-r border-border/20 flex flex-col relative transition-all duration-300 overflow-hidden shadow-xl`}>
+    <div className={`${isCollapsed ? 'w-16' : 'w-64'} h-screen bg-gradient-to-b from-card/80 via-card/60 to-card/40 backdrop-blur-xl border-r border-primary/10 flex flex-col relative transition-all duration-300 overflow-hidden shadow-sidebar-creative`}>
       {/* Toggle Button */}
       <Button
         variant="ghost" 
-        className="absolute -right-3 top-20 h-6 w-6 rounded-full bg-background border border-border/40 hover:bg-accent hover:scale-110 transition-all duration-300 group overflow-hidden z-20 hidden md:flex shadow-lg"
+        className="absolute -right-3 top-20 h-6 w-6 rounded-full bg-background border border-primary/20 hover:bg-accent hover:scale-110 transition-all duration-300 group overflow-hidden z-20 hidden md:flex shadow-lg hover:shadow-primary/20"
         onClick={toggleSidebar}
       >
         <div className="relative z-10 flex items-center justify-center">

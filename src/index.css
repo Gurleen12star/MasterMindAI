@@ -40,6 +40,14 @@
   --cursor-transition-duration: 150ms;
   --cursor-transition-timing: cubic-bezier(0.4, 0, 0.2, 1);
 
+  /* Creative Sidebar Shadow */
+  --shadow-sidebar-creative: 
+    0 0 0 1px rgba(var(--primary), 0.05),
+    0 4px 6px -1px rgba(0, 0, 0, 0.1),
+    0 2px 4px -1px rgba(0, 0, 0, 0.06),
+    0 0 20px rgba(var(--primary), 0.08),
+    0 0 40px rgba(var(--primary), 0.04);
+
   /* Navbar Animation */
   --nav-bg: rgba(255, 255, 255, 0.9);
   --nav-border: rgba(0, 0, 0, 0.05);
@@ -470,6 +478,14 @@ div[style*="z-index: 999999"] {
   --cursor-color-default: hsl(var(--foreground));
   --cursor-color-clickable: hsl(var(--primary));
 
+  /* Creative Sidebar Shadow for Dark Mode */
+  --shadow-sidebar-creative: 
+    0 0 0 1px rgba(var(--primary), 0.08),
+    0 4px 6px -1px rgba(0, 0, 0, 0.3),
+    0 2px 4px -1px rgba(0, 0, 0, 0.2),
+    0 0 20px rgba(var(--primary), 0.12),
+    0 0 40px rgba(var(--primary), 0.06);
+
   /* Mermaid Diagram Styles for Dark Mode */
   --mermaid-bg: #111827;
   --mermaid-node-text-color: hsl(var(--foreground));
@@ -629,6 +645,7 @@ body {
     grid-template-rows: repeat(3, 1fr);
     gap: 2rem;
   }
+
 
   .text-gradient {
     @apply bg-gradient-to-r from-purple-400 to-indigo-500 bg-clip-text text-transparent;
