@@ -23,7 +23,8 @@ import {
   Clock,
   Loader2,
   AlertCircle,
-  Zap
+  Zap,
+  Shield
 } from 'lucide-react';
 
 export default function AdminDashboardPage() {
