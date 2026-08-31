@@ -202,18 +202,23 @@ div[style*="z-index: 999999"] {
   max-width: 100%;
   aspect-ratio: 2 / 0.9;
   position: relative;
-  border-radius: 2.5rem;
-  min-height: 550px;
+  border-radius: 4em;
+  filter: drop-shadow(0 10px 20px rgba(0, 0, 0, 0.1));
+  min-height: 600px;
   overflow: hidden;
-  background: transparent;
 }
 
 .hero-assets {
   position: absolute;
   inset: 0;
-  border-radius: 2.5rem;
+  border-radius: 4em;
   z-index: 0;
-  background: transparent;
+  background: radial-gradient(
+    circle at 50% 50%,
+    hsl(var(--primary) / 0.15),
+    hsl(var(--primary) / 0.05) 40%,
+    transparent 100%
+  );
 }
 
 .hero-assets::before,
@@ -221,8 +226,13 @@ div[style*="z-index: 999999"] {
   content: "";
   position: absolute;
   inset: -50%;
-  background: transparent;
-  opacity: 0;
+  background: radial-gradient(
+    circle,
+    hsl(var(--primary) / 0.1) 0%,
+    transparent 70%
+  );
+  opacity: 0.5;
+  filter: blur(60px);
   animation: float-particle 10s infinite alternate;
 }
 
@@ -244,6 +254,7 @@ div[style*="z-index: 999999"] {
   user-select: none;
   pointer-events: none;
   z-index: 2;
+  filter: drop-shadow(0 20px 40px rgba(0, 0, 0, 0.2));
   transition: transform 0.8s cubic-bezier(0.33, 1, 0.68, 1);
 }
 
