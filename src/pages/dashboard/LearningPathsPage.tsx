@@ -13,7 +13,6 @@ import { supabaseClient } from '@/lib/supabase-admin';
 import { useToast } from '@/hooks/use-toast';
 import { Map, Loader2, FileText, BarChart as FlowChart, Maximize2, History, Clock } from 'lucide-react';
 import { useUser } from '@clerk/clerk-react';
-import { supabaseClient } from '@/lib/supabase-admin';
 
 type DifficultyLevel = 'beginner' | 'intermediate' | 'advanced';
 
