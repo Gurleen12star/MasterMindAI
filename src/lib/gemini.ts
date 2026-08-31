@@ -13,7 +13,33 @@ export async function generateSummary(content: string, instructions?: string): P
   try {
     const model = genAI.getGenerativeModel({ model: modelName });
     
-    const basePrompt = `Please create a comprehensive summary of the following content. Make it easy to understand and well-structured.`;
+    const basePrompt = `Create a concise, detailed summary of the following content. Follow these requirements:
+
+STRUCTURE & FORMAT:
+- Use clear headings and bullet points for organization
+- Keep the summary between 150-300 words (unless content is very short)
+- Write in simple, direct language that anyone can understand
+- Use active voice and short sentences
+
+CONTENT REQUIREMENTS:
+- Extract and highlight the most important key points
+- Include specific facts, numbers, and actionable insights
+- Maintain logical flow from main ideas to supporting details
+- Remove redundancy and filler content
+- Focus on what matters most to the reader
+
+TONE & STYLE:
+- Be direct and to-the-point
+- Use clear, professional language
+- Avoid jargon unless necessary (then explain it)
+- Make it scannable with proper formatting
+
+OUTPUT FORMAT:
+- Start with a one-sentence overview
+- Follow with 3-5 key points as bullet points
+- End with main takeaways or conclusions
+- Use markdown formatting for better readability`;
+
     const customInstructions = instructions ? `\n\nAdditional instructions: ${instructions}` : '';
     const fullPrompt = `${basePrompt}${customInstructions}\n\nContent to summarize:\n\n${content}`;
     
