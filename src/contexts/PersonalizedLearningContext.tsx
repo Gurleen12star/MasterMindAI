@@ -75,54 +75,137 @@ const PersonalizedLearningContext = createContext<PersonalizedLearningContextTyp
 
 export const PersonalizedLearningProvider = ({ children }: { children: ReactNode }) => {
     const [introduction, setIntroduction] = useState<IntroductionType>(() => {
-        let localData = null;
-        if (typeof window !== 'undefined') {
-            localData = localStorage.getItem('personalized_learning_introduction');
+        // Always start with a fresh state for now to ensure the page displays
+        const defaultIntroduction = {
+            show: true,
+            isLoading: false,
+            actPage: 1,
+            pages: {
+                page1: { input: false, button: false, visited: false },
+                page2: { input: false, button: false, visited: false },
+                page3: { input: false, button: false, visited: false }
+            }
+        };
+
+        if (typeof window === 'undefined') {
+            return defaultIntroduction;
         }
-        return localData ? JSON.parse(localData) : { show: true, isLoading: false, actPage: 1, pages: { page1: { input: false, button: false, visited: false }, page2: { input: false, button: false, visited: false }, page3: { input: false, button: false, visited: false } } };
+
+        try {
+            const localData = localStorage.getItem('personalized_learning_introduction');
+            const parsed = localData ? JSON.parse(localData) : null;
+            
+            // Validate the parsed data has required properties
+            if (parsed && typeof parsed.show === 'boolean' && typeof parsed.actPage === 'number') {
+                return parsed;
+            }
+        } catch (error) {
+            console.warn('Error parsing localStorage data for introduction:', error);
+        }
+        
+        return defaultIntroduction;
     });
+
     const [studyPlatform, setStudyPlatform] = useState<StudyPlatformType>(() => {
-        let localData = null;
-        if (typeof window !== 'undefined') {
-            localData = localStorage.getItem('personalized_learning_studyPlatform');
+        const defaultStudyPlatform = {
+            show: false,
+            isGettingModels: false,
+            isGettingModulo: false,
+            isLoading: false,
+            actModule: 0,
+            modulos: []
+        };
+
+        if (typeof window === 'undefined') {
+            return defaultStudyPlatform;
         }
-        return localData ? JSON.parse(localData) : { show: false, isGettingModels: false, isGettingModulo: false, isLoading: false, actModule: 0, modulos: [] };
+
+        try {
+            const localData = localStorage.getItem('personalized_learning_studyPlatform');
+            const parsed = localData ? JSON.parse(localData) : null;
+            
+            // Validate the parsed data has required properties
+            if (parsed && typeof parsed.show === 'boolean' && Array.isArray(parsed.modulos)) {
+                return parsed;
+            }
+        } catch (error) {
+            console.warn('Error parsing localStorage data for studyPlatform:', error);
+        }
+        
+        return defaultStudyPlatform;
     });
+
     const [userName, setUserName] = useState<string>(() => {
-        let localData = null;
-        if (typeof window !== 'undefined') {
-            localData = localStorage.getItem('personalized_learning_userName');
+        if (typeof window === 'undefined') {
+            return '';
         }
-        return localData ? JSON.parse(localData) : '';
+        
+        try {
+            const localData = localStorage.getItem('personalized_learning_userName');
+            return localData ? JSON.parse(localData) : '';
+        } catch (error) {
+            console.warn('Error parsing localStorage data for userName:', error);
+            return '';
+        }
     });
+
     const [personality, setPersonality] = useState<TeacherPersonality>(() => {
-        let localData = null;
-        if (typeof window !== 'undefined') {
-            localData = localStorage.getItem('personalized_learning_personality');
+        if (typeof window === 'undefined') {
+            return 'Default';
         }
-        return localData ? JSON.parse(localData) : 'Default';
+        
+        try {
+            const localData = localStorage.getItem('personalized_learning_personality');
+            return localData ? JSON.parse(localData) : 'Default';
+        } catch (error) {
+            console.warn('Error parsing localStorage data for personality:', error);
+            return 'Default';
+        }
     });
+
     const [studyMaterial, setStudyMaterial] = useState<string>(() => {
-        let localData = null;
-        if (typeof window !== 'undefined') {
-            localData = localStorage.getItem('personalized_learning_studyMaterial');
+        if (typeof window === 'undefined') {
+            return '';
         }
-        return localData ? JSON.parse(localData) : '';
+        
+        try {
+            const localData = localStorage.getItem('personalized_learning_studyMaterial');
+            return localData ? JSON.parse(localData) : '';
+        } catch (error) {
+            console.warn('Error parsing localStorage data for studyMaterial:', error);
+            return '';
+        }
     });
+
     const [generationHistory, setGenerationHistory] = useState<ChatHistoryType[]>(() => {
-        let localData = null;
-        if (typeof window !== 'undefined') {
-            localData = localStorage.getItem('personalized_learning_generationHistory');
+        if (typeof window === 'undefined') {
+            return [];
         }
-        return localData ? JSON.parse(localData) : [];
+        
+        try {
+            const localData = localStorage.getItem('personalized_learning_generationHistory');
+            const parsed = localData ? JSON.parse(localData) : [];
+            return Array.isArray(parsed) ? parsed : [];
+        } catch (error) {
+            console.warn('Error parsing localStorage data for generationHistory:', error);
+            return [];
+        }
     });
+
     const [sidebar, setSidebar] = useState<SidebarType>(() => {
-        let localData = null;
-        if (typeof window !== 'undefined') {
-            localData = localStorage.getItem('personalized_learning_sidebar');
+        if (typeof window === 'undefined') {
+            return { expanded: false };
         }
-        return localData ? JSON.parse(localData) : { expanded: false };
+        
+        try {
+            const localData = localStorage.getItem('personalized_learning_sidebar');
+            return localData ? JSON.parse(localData) : { expanded: false };
+        } catch (error) {
+            console.warn('Error parsing localStorage data for sidebar:', error);
+            return { expanded: false };
+        }
     });
+
     const [currentSessionId, setCurrentSessionId] = useState<string | null>(null);
 
     useEffect(() => {

@@ -220,6 +220,7 @@ export const generateModules = (
     model: string,
     studyPlatform: StudyPlatformType,
     setStudyPlatform: SetStudyPlatformType,
+    setIntroduction: SetIntroductionType,
 ) => {
     // Add validation to ensure model contains content
     if (!model || typeof model !== 'string' || model.trim().length === 0) {
@@ -247,6 +248,7 @@ export const generateModules = (
         console.error('Model response that caused error:', model);
         // Handle the error gracefully by reverting to introduction
         console.warn('generateModules: Reverting to introduction due to error');
+        resetContext(setIntroduction, setStudyPlatform);
     }
 };
 

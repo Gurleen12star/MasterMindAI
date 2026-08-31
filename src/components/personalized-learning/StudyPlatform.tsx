@@ -210,11 +210,11 @@ const StudyPlatform = () => {
         // Only call generateModules if we have a successful response and actual content
         if (studyPlatform.isGettingModels && studyPlatform.show === false && modulesGenerationSuccess && actualModuleRes && actualModuleRes.trim().length > 0) {
             console.log('StudyPlatform: Calling generateModules with content length:', actualModuleRes.length);
-            generateModules(actualModuleRes, studyPlatform, setStudyPlatform);
+            generateModules(actualModuleRes, studyPlatform, setStudyPlatform, setIntroduction);
         } else if (studyPlatform.isGettingModels && studyPlatform.show === false && !modulesGenerationSuccess) {
             console.warn('StudyPlatform: Not calling generateModules - no successful response');
         }
-    }, [actualModuleRes, modulesGenerationSuccess, setStudyPlatform, studyPlatform]);
+    }, [actualModuleRes, modulesGenerationSuccess, setStudyPlatform, setIntroduction, studyPlatform]);
 
     useEffect(() => {
         if (!studyPlatform.isGettingModulo && !studyPlatform.isLoading) {
