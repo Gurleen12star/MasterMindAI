@@ -12,9 +12,18 @@ export default function FeaturesGrid() {
   return (
     <section id="features" className="relative py-16 md:py-24 bg-gradient-to-b from-background via-background/95 to-background/90">
       <div className="absolute inset-0">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,_var(--tw-gradient-stops))] from-primary/5 via-transparent to-transparent"></div>
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_bottom_left,_var(--tw-gradient-stops))] from-primary/10 via-transparent to-transparent opacity-70"></div>
-        <div className="absolute inset-0 bg-grid-white/[0.02]"></div>
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,_var(--tw-gradient-stops))] from-primary/10 via-transparent to-transparent opacity-50"></div>
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_bottom_left,_var(--tw-gradient-stops))] from-primary/15 via-transparent to-transparent opacity-50"></div>
+        <div className="absolute inset-0 backdrop-blur-[100px]"></div>
+        <div 
+          className="absolute inset-0" 
+          style={{
+            backgroundImage: `linear-gradient(to right, hsl(var(--primary)/0.1) 1px, transparent 1px),
+                             linear-gradient(to bottom, hsl(var(--primary)/0.1) 1px, transparent 1px)`,
+            backgroundSize: '24px 24px',
+            maskImage: 'radial-gradient(circle at center, black, transparent 80%)'
+          }}
+        ></div>
       </div>
       <div className="container px-4 max-w-[1200px] mx-auto">
         <div className="mx-auto max-w-5xl text-center">
@@ -27,7 +36,7 @@ export default function FeaturesGrid() {
         </div>
         
         <div className="mt-16 grid grid-cols-1 md:grid-cols-3 gap-6 [grid-template-areas:'a_b_b'_'a_c_d'_'e_f_f'] md:auto-rows-[28rem]">
-          <BentoBox gradient="purple" className="flex flex-col md:[grid-area:a] row-span-2 relative overflow-hidden group">
+          <BentoBox gradient="purple" className="flex flex-col md:[grid-area:a] row-span-2 relative overflow-hidden group backdrop-blur-md bg-background/30 border-primary/20">
             <img
               src="https://images.pexels.com/photos/8386440/pexels-photo-8386440.jpeg"
               alt="AI Brain"
@@ -42,7 +51,7 @@ export default function FeaturesGrid() {
             </p>
           </BentoBox>
           
-          <BentoBox gradient="blue" className="flex flex-col md:[grid-area:b] md:col-span-2 relative overflow-hidden group">
+          <BentoBox gradient="blue" className="flex flex-col md:[grid-area:b] md:col-span-2 relative overflow-hidden group backdrop-blur-md bg-background/30 border-primary/20">
             <img
               src="https://images.pexels.com/photos/7014766/pexels-photo-7014766.jpeg"
               alt="Content Transformation"
@@ -57,7 +66,7 @@ export default function FeaturesGrid() {
             </p>
           </BentoBox>
           
-          <BentoBox gradient="teal" className="flex flex-col md:[grid-area:c] relative overflow-hidden group">
+          <BentoBox gradient="teal" className="flex flex-col md:[grid-area:c] relative overflow-hidden group backdrop-blur-md bg-background/30 border-primary/20">
             <img
               src="https://images.pexels.com/photos/7376/startup-photos.jpg"
               alt="Learning Dashboard"
@@ -72,7 +81,7 @@ export default function FeaturesGrid() {
             </p>
           </BentoBox>
           
-          <BentoBox gradient="green" className="flex flex-col md:[grid-area:d] relative overflow-hidden group">
+          <BentoBox gradient="green" className="flex flex-col md:[grid-area:d] relative overflow-hidden group backdrop-blur-md bg-background/30 border-primary/20">
             <img
               src="https://images.pexels.com/photos/3861969/pexels-photo-3861969.jpeg"
               alt="Language Translation"
@@ -87,7 +96,7 @@ export default function FeaturesGrid() {
             </p>
           </BentoBox>
           
-          <BentoBox gradient="blue" className="flex flex-col md:[grid-area:e] relative overflow-hidden group">
+          <BentoBox gradient="blue" className="flex flex-col md:[grid-area:e] relative overflow-hidden group backdrop-blur-md bg-background/30 border-primary/20">
             <img
               src="https://images.pexels.com/photos/8370752/pexels-photo-8370752.jpeg"
               alt="Decentralized Storage"
@@ -102,7 +111,7 @@ export default function FeaturesGrid() {
             </p>
           </BentoBox>
           
-          <BentoBox gradient="purple" className="flex flex-col md:[grid-area:f] md:col-span-2 relative overflow-hidden group">
+          <BentoBox gradient="purple" className="flex flex-col md:[grid-area:f] md:col-span-2 relative overflow-hidden group backdrop-blur-md bg-background/30 border-primary/20">
             <img
               src="https://images.pexels.com/photos/2882566/pexels-photo-2882566.jpeg"
               alt="Premium Content"

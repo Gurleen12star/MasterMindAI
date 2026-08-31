@@ -10,12 +10,12 @@
   --background: 0 0% 100%;
   --foreground: 0 0% 3.9%;
   --card: 0 0% 100%;
-  --card-foreground: 0 0% 3.9%;
+  --card-foreground: 240 10% 3.9%;
   --popover: 0 0% 100%;
   --popover-foreground: 0 0% 3.9%;
-  --primary: 0 0% 9%;
+  --primary: 252 87% 73%;
   --primary-foreground: 0 0% 98%;
-  --secondary: 0 0% 96.1%;
+  --secondary: 240 4.8% 95.9%;
   --secondary-foreground: 0 0% 9%;
   --muted: 0 0% 96.1%;
   --muted-foreground: 0 0% 45.1%;
@@ -23,19 +23,19 @@
   --accent-foreground: 0 0% 9%;
   --destructive: 0 84.2% 60.2%;
   --destructive-foreground: 0 0% 98%;
-  --border: 0 0% 89.8%;
+  --border: 240 5.9% 90%;
   --input: 0 0% 89.8%;
   --ring: 0 0% 3.9%;
-  --chart-1: 12 76% 61%;
-  --chart-2: 173 58% 39%;
-  --chart-3: 197 37% 24%;
-  --chart-4: 43 74% 66%;
-  --chart-5: 27 87% 67%;
+  --chart-1: 252 87% 73%;
+  --chart-2: 219 70% 55%;
+  --chart-3: 174 70% 40%;
+  --chart-4: 318 70% 65%;
+  --chart-5: 41 80% 65%;
   --radius: 0.5rem;
 
   /* Navbar Animation */
-  --nav-bg: rgba(255, 255, 255, 0.8);
-  --nav-border: rgba(255, 255, 255, 0.1);
+  --nav-bg: rgba(255, 255, 255, 0.9);
+  --nav-border: rgba(0, 0, 0, 0.05);
   --nav-item-width: 100px;
   --nav-item-gap: 0.5rem;
   --nav-animation-duration: 200ms;
@@ -79,8 +79,8 @@
   z-index: 0;
   background: radial-gradient(
     circle at 50% 50%,
-    hsl(var(--primary) / 0.3),
-    hsl(var(--primary) / 0.1) 40%,
+    hsl(var(--primary) / 0.15),
+    hsl(var(--primary) / 0.05) 40%,
     transparent 100%
   );
 }
@@ -92,7 +92,7 @@
   inset: -50%;
   background: radial-gradient(
     circle,
-    hsl(var(--primary) / 0.2) 0%,
+    hsl(var(--primary) / 0.1) 0%,
     transparent 70%
   );
   opacity: 0.5;
@@ -130,10 +130,12 @@
   font-size: clamp(5rem, 15vw, 12rem);
   text-transform: uppercase;
   font-family: "Bebas Neue", sans-serif;
-  color: white;
+  color: hsl(var(--primary));
   transform: translate(calc(-50% + var(--x) * -30px), calc(var(--y) * -20px));
   transition: transform 0.8s cubic-bezier(0.33, 1, 0.68, 1);
   z-index: 4;
+  mix-blend-mode: multiply;
+  opacity: 0.9;
 }
 
 .hero-content {
@@ -141,7 +143,7 @@
   position: absolute;
   bottom: 0;
   width: 100%;
-  color: white;
+  color: hsl(var(--foreground));
   display: grid;
   gap: 0.2rem;
   place-items: center;
