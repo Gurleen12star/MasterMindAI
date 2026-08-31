@@ -5,6 +5,7 @@ import CustomCursor from '@/components/ui/CustomCursor';
 import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
 import HeroSection from '@/components/sections/HeroSection';
+import LogoMarquee from '@/components/sections/LogoMarquee';
 import FeaturesGrid from '@/components/sections/FeaturesGrid';
 import DemoSection from '@/components/sections/DemoSection';
 import TestimonialsSection from '@/components/sections/TestimonialsSection';
@@ -79,6 +80,9 @@ function App() {
             <Header />
             <main className="relative z-10 max-w-7xl mx-auto px-4 md:px-6 lg:px-8">
               <HeroSection />
+            </main>
+            <LogoMarquee />
+            <main className="relative z-10 max-w-7xl mx-auto px-4 md:px-6 lg:px-8">
               <FeaturesGrid />
               <DemoSection />
               <TestimonialsSection />

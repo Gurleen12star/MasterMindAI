@@ -756,3 +756,116 @@ html {
   overflow-x: hidden;
   background: radial-gradient(circle at 30% 20%, hsl(var(--primary) / 0.15), transparent 50%);
 }
+
+/* Logo Marquee Styles */
+@layer marquee-explode {
+  .logo-marquee-main,
+  .logo-marquee-main ul:first-of-type {
+    transform-style: preserve-3d;
+  }
+  .logo-marquee-main ul {
+    transition: opacity 0.5s 1.5s;
+  }
+  .logo-marquee-main [data-marker] {
+    outline: 2px dashed hsl(0 100% 50% / 0.8);
+    opacity: 0;
+    outline-offset: 2px;
+  }
+  [data-explode='false'] .logo-marquee-main {
+    transition: transform 0.5s 0.5s;
+  }
+  [data-explode='false'] .logo-marquee-main [data-logo],
+  [data-explode='false'] .logo-marquee-main [data-marker] {
+    transition: opacity 0.5s, transform 0.5s;
+  }
+  [data-explode='false'] .logo-marquee-main ul:first-of-type {
+    transition: translate 0.5s 1s;
+  }
+
+  [data-explode='true'] .logo-marquee-main {
+    transition: transform 0.5s 1s;
+    transform: rotateX(24deg) rotateY(-45deg);
+  }
+  [data-explode='true'] .logo-marquee-main [data-logo],
+  [data-explode='true'] .logo-marquee-main [data-marker] {
+    transition: opacity 0.5s 1.5s, transform 0.5s 1.5s;
+    animation-name: appear;
+    animation-duration: calc(var(--duration) * 1s);
+    animation-fill-mode: both;
+    animation-iteration-count: infinite;
+    animation-delay: calc(
+      (var(--duration) / var(--items)) * (var(--items) - var(--i)) * -1s +
+      (var(--base-delay) * 1s)
+    );
+    transform-style: preserve-3d;
+    filter: blur(0px) !important;
+    transform: translate3d(0, 0, calc((var(--i) - 1) * 4rem));
+  }
+  [data-explode='true'] .logo-marquee-main ul:first-of-type {
+    transition: translate 0.5s 0.5s;
+    translate: calc(150% + 6rem) 0;
+  }
+  [data-explode='true'] .logo-marquee-main ul:not(:first-of-type) {
+    opacity: 0;
+  }
+  [data-explode='true'] .logo-marquee-main [data-marker] {
+    opacity: 1;
+  }
+  [data-explode='true'] .logo-marquee-main use {
+    animation: none;
+  }
+  [data-explode='true'] .logo-marquee-main ul:first-of-type [data-logo] {
+    --opacity: 0.25;
+  }
+  [data-explode='true'] .logo-marquee-main ul:first-of-type use {
+    opacity: 1 !important;
+  }
+}
+
+@layer marquee-loops {
+  .logo-marquee-main ul {
+    --base-delay: calc(
+      sin((var(--index) / var(--lists)) * 45deg) * var(--stagger, 0)
+    );
+  }
+
+  .logo-marquee-main [data-logo] use {
+    animation-name: appear;
+    animation-duration: calc(var(--duration) * 1s);
+    animation-fill-mode: both;
+    animation-iteration-count: infinite;
+    animation-delay: calc(
+      (var(--duration) / var(--items)) * (var(--items) - var(--i)) * -1s +
+      (var(--base-delay) * 1s)
+    );
+    mix-blend-mode: hard-light;
+    transform-box: fill-box;
+  }
+  .logo-marquee-main [data-logo] svg {
+    overflow: visible !important;
+    height: 3rem;
+  }
+}
+
+@layer marquee-demo {
+  .logo-marquee-main {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4rem;
+    justify-content: center;
+  }
+  .logo-marquee-main ul {
+    width: 100px;
+    display: grid;
+    grid-template: 1fr / 1fr;
+    padding: 0;
+    margin: 0;
+    list-style-type: none;
+  }
+
+  .logo-marquee-main li {
+    grid-area: 1 / 1;
+    display: grid;
+    place-items: center;
+  }
+}
