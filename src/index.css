@@ -41,9 +41,21 @@
   --nav-animation-duration: 200ms;
   --nav-animation-easing: cubic-bezier(0.4, 0, 0.2, 1);
   
+  /* Navbar Background */
+  --navbar-bg: url('https://images.pexels.com/photos/3861458/pexels-photo-3861458.jpeg?auto=compress&cs=tinysrgb&w=1280');
+  
   /* Hero Section Variables */
   --x: 0;
   --y: 0;
+}
+
+/* Navbar Background Styles */
+.navbar-bg-image {
+  background-image: var(--navbar-bg);
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  opacity: 0.15;
 }
 
 /* UnicornStudio Background Styles */

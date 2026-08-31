@@ -40,6 +40,9 @@ export default function Header() {
     >
       <div className="container flex h-20 items-center justify-center px-4 max-w-[1200px] mx-auto">
         <div className="relative mx-auto flex items-center justify-between w-full max-w-6xl rounded-2xl bg-background/60 backdrop-blur-md shadow-lg border border-border/5 px-6 py-4">
+          <div className="navbar-bg-image absolute inset-0 rounded-2xl overflow-hidden">
+            <div className="absolute inset-0 bg-gradient-to-r from-background/80 via-background/50 to-background/80 backdrop-blur-[2px] z-10" />
+          </div>
         <a href="#" className="flex items-center gap-2 group z-20">
           <div className="relative flex items-center justify-center">
             <img src={logo} alt="EchoVerse Logo" className="h-24 w-24 object-contain -my-8" />
