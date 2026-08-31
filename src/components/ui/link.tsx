@@ -11,7 +11,6 @@ const Link = forwardRef<HTMLAnchorElement, LinkProps>(
     const handleClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
       e.preventDefault();
       window.history.pushState({}, '', href);
-      // Dispatch a popstate event to trigger route updates
       window.dispatchEvent(new PopStateEvent('popstate'));
     };
 
