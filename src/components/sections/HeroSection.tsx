@@ -167,11 +167,20 @@ export default function HeroSection() {
       
       if (rendererRef.current && canvasContainerRef.current) {
         canvasContainerRef.current.removeChild(rendererRef.current.domElement);
+        rendererRef.current.dispose();
       }
 
       // Clean up Three.js resources
-      sceneRef.current?.dispose();
-      rendererRef.current?.dispose();
+      groupRef.current.traverse((object) => {
+        if (object instanceof THREE.Mesh) {
+          object.geometry.dispose();
+          if (object.material instanceof THREE.Material) {
+            object.material.dispose();
+          } else if (Array.isArray(object.material)) {
+            object.material.forEach(material => material.dispose());
+          }
+        }
+      });
     };
   }, []);
 
