@@ -35,7 +35,7 @@ serve(async (req) => {
     
     // Create AbortController with timeout to prevent hanging requests
     const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 30000); // 30 second timeout
+    const timeoutId = setTimeout(() => controller.abort(), 120000); // 120 second timeout
     
     try {
       const response = await fetch('https://api.tavus.io/v2/conversations', {
