@@ -77,16 +77,19 @@ export default function PricingSection() {
   const [hoveredCard, setHoveredCard] = useState<number | null>(null);
 
   return (
-    <section className="py-24 px-4">
-      <div className="container mx-auto max-w-7xl">
+    <section className="py-24 px-4 relative">
+      {/* Background overlay for better text visibility */}
+      <div className="absolute inset-0 bg-background/40 backdrop-blur-[1px]" />
+      
+      <div className="container mx-auto max-w-7xl relative z-10">
         <div className="text-center mb-16">
-          <h2 className="text-4xl md:text-5xl font-bold mb-6 bg-gradient-to-r from-primary via-primary/80 to-primary/60 bg-clip-text text-transparent">
+          <h2 className="text-4xl md:text-5xl font-bold mb-6 bg-gradient-to-r from-primary via-primary/80 to-primary/60 bg-clip-text text-transparent drop-shadow-sm">
             Choose Your
-            <span className="block bg-gradient-to-r from-primary via-purple-500 to-primary bg-clip-text text-transparent">
+            <span className="block bg-gradient-to-r from-primary via-purple-500 to-primary bg-clip-text text-transparent drop-shadow-sm">
               Learning Journey
             </span>
           </h2>
-          <p className="text-lg md:text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed">
+          <p className="text-lg md:text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed font-medium">
             Start free and scale as you grow. All plans include our core AI-powered learning features.
           </p>
         </div>

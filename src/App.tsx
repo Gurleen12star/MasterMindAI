@@ -37,7 +37,11 @@ function ProtectedRoute({ children }: { children: React.ReactNode }) {
 // Homepage Component
 function Homepage() {
   return (
-    <>
+    <div className="relative">
+      {/* Enhanced Lined/Grid Background */}
+      <div className="fixed inset-0 bg-grid-enhanced pointer-events-none" />
+      <div className="fixed inset-0 bg-gradient-to-b from-background/90 via-background/60 to-background/90 pointer-events-none" />
+      
       <Header />
       <main className="relative z-10 max-w-7xl mx-auto px-4 md:px-6 lg:px-8">
         <HeroSection />
@@ -50,7 +54,7 @@ function Homepage() {
       <ScrollReveal><EarlyAdopterSection /></ScrollReveal>
       <ScrollReveal><FAQSection /></ScrollReveal>
       <Footer />
-    </>
+    </div>
   );
 }
 

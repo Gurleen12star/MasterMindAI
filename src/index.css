@@ -608,6 +608,49 @@ div[style*="z-index: 999999"] {
   background-size: 20px 20px;
 }
 
+/* Enhanced Lined Background Patterns */
+.bg-lines-horizontal {
+  background-image: linear-gradient(to bottom, rgba(255,255,255,0.08) 1px, transparent 1px);
+  background-size: 100% 24px;
+}
+
+.bg-lines-vertical {
+  background-image: linear-gradient(to right, rgba(255,255,255,0.08) 1px, transparent 1px);
+  background-size: 24px 100%;
+}
+
+.bg-lines-diagonal {
+  background-image: 
+    linear-gradient(45deg, rgba(255,255,255,0.05) 1px, transparent 1px),
+    linear-gradient(-45deg, rgba(255,255,255,0.05) 1px, transparent 1px);
+  background-size: 28px 28px;
+}
+
+.bg-grid-enhanced {
+  background-image: 
+    linear-gradient(to right, rgba(255,255,255,0.08) 1px, transparent 1px), 
+    linear-gradient(to bottom, rgba(255,255,255,0.08) 1px, transparent 1px),
+    linear-gradient(to right, rgba(255,255,255,0.03) 1px, transparent 1px), 
+    linear-gradient(to bottom, rgba(255,255,255,0.03) 1px, transparent 1px);
+  background-size: 32px 32px, 32px 32px, 8px 8px, 8px 8px;
+}
+
+.bg-dots-pattern {
+  background-image: radial-gradient(circle, rgba(255,255,255,0.1) 1px, transparent 1px);
+  background-size: 20px 20px;
+}
+
+.bg-blueprint {
+  background-color: #0f1629;
+  background-image: 
+    linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px),
+    linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+  background-size: 100px 100px, 100px 100px, 20px 20px, 20px 20px;
+  background-position: -1px -1px, -1px -1px, -1px -1px, -1px -1px;
+}
+
 body {
   background-color: hsl(var(--background));
   color: hsl(var(--foreground));
@@ -1039,3 +1082,4 @@ html {
     place-items: center;
   }
 }
+

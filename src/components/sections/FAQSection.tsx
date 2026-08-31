@@ -40,13 +40,16 @@ const faqs = [
 
 export default function FAQSection() {
   return (
-    <section className="py-24 px-4">
-      <div className="container mx-auto max-w-7xl">
+    <section className="py-24 px-4 relative">
+      {/* Background overlay for better text visibility */}
+      <div className="absolute inset-0 bg-background/40 backdrop-blur-[1px]" />
+      
+      <div className="container mx-auto max-w-7xl relative z-10">
         <div className="text-center mb-16">
-          <h2 className="text-4xl md:text-5xl font-bold mb-6 bg-gradient-to-r from-primary via-primary/80 to-primary/60 bg-clip-text text-transparent">
+          <h2 className="text-4xl md:text-5xl font-bold mb-6 bg-gradient-to-r from-primary via-primary/80 to-primary/60 bg-clip-text text-transparent drop-shadow-sm">
             Frequently Asked Questions
           </h2>
-          <p className="mt-4 text-muted-foreground md:text-lg">
+          <p className="mt-4 text-muted-foreground md:text-lg font-medium">
             Have questions about EchoVerse? We've got answers.
           </p>
         </div>
