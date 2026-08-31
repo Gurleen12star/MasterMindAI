@@ -24,6 +24,11 @@ export default function Sidebar() {
   const { signOut } = useAuth();
   const [isCollapsed, setIsCollapsed] = useState(false);
   
+  const handleNavigation = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
+    e.preventDefault();
+    window.location.href = href;
+  };
+  
   const menuItems = [
     {
       section: 'Main',
@@ -92,6 +97,7 @@ export default function Sidebar() {
                   <li key={item.label}>
                     <Link
                       href={item.href}
+                      onClick={(e) => handleNavigation(e, item.href)}
                       className={`group flex items-center justify-between px-3 py-2 text-sm text-muted-foreground hover:text-foreground rounded-md hover:bg-accent/50 transition-colors ${
                         isCollapsed ? 'justify-center' : ''
                       } hover:shadow-sm hover:-translate-y-0.5 transition-all duration-300`}
