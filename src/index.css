@@ -95,7 +95,7 @@
   height: 100vh;
   z-index: 9999;
   pointer-events: none; /* Critical: allows interaction with elements below */
-  opacity: 0.6;
+  opacity: 0.5;
   
   /* Grain texture filter */
   filter: url(#subtle-grain);
@@ -206,7 +206,7 @@
 
 /* Dark mode adjustments for the overlay */
 .dark #global-overlay {
-  opacity: 0.8;
+  opacity: 0.7;
   
   /* Adjusted colors for dark mode */
   background-image: 
