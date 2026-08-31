@@ -296,7 +296,25 @@ const StudyPlatform = () => {
             if (response.error) throw new Error(response.error.message);
             
             // Convert response data to a blob and create URL
-            const audioBlob = new Blob([response.data], { type: 'audio/mpeg' });
+            // Ensure we have valid audio data
+            if (!response.data) {
+                throw new Error('No audio data received from ElevenLabs');
+            }
+            
+            // Convert the response data to ArrayBuffer if it isn't already
+            let audioArrayBuffer: ArrayBuffer;
+            if (response.data instanceof ArrayBuffer) {
+                audioArrayBuffer = response.data;
+            } else if (response.data instanceof Uint8Array) {
+                audioArrayBuffer = response.data.buffer;
+            } else {
+                // If it's a string or other format, convert it
+                const uint8Array = new Uint8Array(response.data);
+                audioArrayBuffer = uint8Array.buffer;
+            }
+            
+            // Create blob from ArrayBuffer
+            const audioBlob = new Blob([audioArrayBuffer], { type: 'audio/mpeg' });
             const blobUrl = URL.createObjectURL(audioBlob);
             
             // Set module ID to track which module this audio belongs to
@@ -446,9 +464,10 @@ const StudyPlatform = () => {
 
     // Check if current module already has audio
     useEffect(() => {
-        if (studyPlatform.modulos[studyPlatform.actModule]?.audioUrl) {
-            setAudioUrl(studyPlatform.modulos[studyPlatform.actModule].audioUrl);
-            console.log(`Loading saved audio for module ${studyPlatform.actModule}:`, studyPlatform.modulos[studyPlatform.actModule].audioUrl);
+        const currentModule = studyPlatform.modulos[studyPlatform.actModule];
+        if (currentModule?.audioUrl) {
+            setAudioUrl(currentModule.audioUrl || null);
+            console.log(`Loading saved audio for module ${studyPlatform.actModule}:`, currentModule.audioUrl);
             setActiveModuleId(`module-${studyPlatform.actModule}`);
         } else {
             console.log(`No audio URL found for module ${studyPlatform.actModule}`);

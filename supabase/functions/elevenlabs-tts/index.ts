@@ -58,6 +58,11 @@ serve(async (req) => {
 
     // Get audio as binary data
     const audioData = await response.arrayBuffer();
+    
+    // Validate that we received audio data
+    if (!audioData || audioData.byteLength === 0) {
+      throw new Error("No audio data received from ElevenLabs API");
+    }
 
     let contentType = "audio/mpeg"; // Default for default output format from API
     if (outputFormat) {
@@ -72,11 +77,14 @@ serve(async (req) => {
       }
     }
 
+    console.log(`Audio generated successfully: ${audioData.byteLength} bytes`);
+
     // Return the audio binary data
     return new Response(audioData, {
       headers: {
         ...corsHeaders,
         "Content-Type": contentType,
+        "Content-Length": audioData.byteLength.toString(),
       },
     });
   } catch (error) {
