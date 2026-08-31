@@ -23,7 +23,7 @@ export async function generateAudio(options: TextToSpeechOptions): Promise<strin
   const {
     text,
     voiceId = 'JBFqnCBsd6RMkjVDRZzb', // Default voice (George)
-    modelId = 'eleven_v3',
+    modelId = 'eleven_multilingual_v2',
     outputFormat = 'mp3_44100_128'
   } = options;
 
