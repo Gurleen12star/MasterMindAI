@@ -10,22 +10,7 @@ import {
 
 export default function FeaturesGrid() {
   return (
-    <section id="features" className="relative -mt-32 md:-mt-48 py-24 md:py-32 overflow-hidden">
-      <div className="absolute inset-0">
-        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-background/20 to-background/40"></div>
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,_var(--tw-gradient-stops))] from-primary/5 via-transparent to-transparent opacity-30"></div>
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_bottom_left,_var(--tw-gradient-stops))] from-primary/5 via-transparent to-transparent opacity-30"></div>
-        <div 
-          className="absolute inset-0" 
-          style={{
-            backgroundImage: `linear-gradient(to right, hsl(var(--primary)/0.1) 1px, transparent 1px),
-                             linear-gradient(to bottom, hsl(var(--primary)/0.1) 1px, transparent 1px)`,
-            backgroundSize: '24px 24px',
-            maskImage: 'radial-gradient(circle at center, black, transparent 100%)'
-          }}
-        ></div>
-        <div className="absolute inset-0 backdrop-blur-[100px] bg-background/5"></div>
-      </div>
+    <section id="features" className="relative -mt-32 md:-mt-48 py-24 md:py-32">
       <div className="container relative z-10 px-4 max-w-[1200px] mx-auto">
         <div className="relative mx-auto max-w-5xl text-center mb-16">
           <h2 className="text-4xl font-bold tracking-tight md:text-5xl bg-clip-text text-transparent bg-gradient-to-r from-primary to-primary/70">
@@ -36,7 +21,7 @@ export default function FeaturesGrid() {
           </p>
         </div>
         
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 [grid-template-areas:'a_b_b'_'a_c_d'_'e_f_f'] md:auto-rows-[28rem]">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 [grid-template-areas:'a_b_b'_'a_c_d'_'e_f_f'] md:auto-rows-[28rem] relative">
           <BentoBox gradient="purple" className="flex flex-col md:[grid-area:a] row-span-2 relative overflow-hidden group backdrop-blur-xl bg-background/20 border border-primary/10 hover:border-primary/20 transition-colors duration-300 shadow-[inset_0_0_1px_rgba(var(--primary),0.1)]">
             <img
               src="https://images.pexels.com/photos/8386440/pexels-photo-8386440.jpeg"
