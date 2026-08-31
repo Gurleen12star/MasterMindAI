@@ -20,27 +20,15 @@ export default function HeroSection() {
       const rect = heroCard.getBoundingClientRect();
       const x = e.clientX - rect.left;
       const y = e.clientY - rect.top;
-      
-      // Calculate center of the card
-      const centerX = rect.width / 2;
-      const centerY = rect.height / 2;
-      
-      // Calculate angle from center to mouse position
-      const angle = Math.atan2(y - centerY, x - centerX);
-      const angleDegrees = (angle * 180 / Math.PI + 360) % 360;
-      
-      // Set CSS variables for both parallax and shine effect
       const xNorm = (x / rect.width - 0.5) * 2;
       const yNorm = (y / rect.height - 0.5) * 2;
       document.documentElement.style.setProperty("--x", String(xNorm));
       document.documentElement.style.setProperty("--y", String(yNorm));
-      document.documentElement.style.setProperty("--shine-angle", `${angleDegrees}deg`);
     };
 
     const resetPosition = () => {
       document.documentElement.style.setProperty("--x", "0");
       document.documentElement.style.setProperty("--y", "0");
-      document.documentElement.style.setProperty("--shine-angle", "0deg");
     };
     
     const heroCard = heroCardRef.current;
