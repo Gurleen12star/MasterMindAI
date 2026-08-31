@@ -1,121 +1,167 @@
-import { BentoBox } from '@/components/ui/BentoBox';
-import { 
-  Brain, 
-  LanguagesIcon, 
-  LineChart, 
-  Lock, 
-  MessageSquareText, 
-  Video
-} from 'lucide-react';
+import { useEffect, useRef } from 'react';
+import robotImage from '../../assets/robott.png';
 
-export default function FeaturesGrid() {
+// Add type declaration for UnicornStudio
+declare global {
+  interface Window {
+    UnicornStudio?: {
+      isInitialized?: boolean;
+      init: (options?: { hideWatermark?: boolean }) => void;
+    };
+  }
+}
+
+export default function HeroSection() {
+  const heroCardRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleMouseMove = (e: MouseEvent) => {
+      const heroCard = e.currentTarget as HTMLElement;
+      const rect = heroCard.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+      const xNorm = (x / rect.width - 0.5) * 2;
+      const yNorm = (y / rect.height - 0.5) * 2;
+      document.documentElement.style.setProperty("--x", String(xNorm));
+      document.documentElement.style.setProperty("--y", String(yNorm));
+    };
+
+    const resetPosition = () => {
+      document.documentElement.style.setProperty("--x", "0");
+      document.documentElement.style.setProperty("--y", "0");
+    };
+    
+    const heroCard = heroCardRef.current;
+    heroCard?.addEventListener("mousemove", handleMouseMove as any);
+    heroCard?.addEventListener("mouseleave", resetPosition);
+    
+    // Try to modify UnicornStudio to disable watermark
+    if (window.UnicornStudio) {
+      // Try to patch UnicornStudio's init method to hide the watermark
+      const originalInit = window.UnicornStudio.init;
+      window.UnicornStudio.init = function(options) {
+        return originalInit.call(this, { ...options, hideWatermark: true });
+      };
+    }
+    
+    // Initialize UnicornStudio if it's available
+    if (window.UnicornStudio && typeof window.UnicornStudio.init === 'function') {
+      window.UnicornStudio.init({ hideWatermark: true });
+    } else {
+      // If UnicornStudio is not available, create and load the script
+      const script = document.createElement('script');
+      script.src = "https://cdn.jsdelivr.net/gh/hiunicornstudio/unicornstudio.js@v1.4.25/dist/unicornStudio.umd.js";
+      script.onload = () => {
+        if (window.UnicornStudio && typeof window.UnicornStudio.init === 'function') {
+          // Try to patch UnicornStudio's init method to hide the watermark
+          const originalInit = window.UnicornStudio.init;
+          window.UnicornStudio.init = function(options) {
+            return originalInit.call(this, { ...options, hideWatermark: true });
+          };
+          
+          window.UnicornStudio.init({ hideWatermark: true });
+        }
+      };
+      document.head.appendChild(script);
+    }
+    
+    // Hide UnicornStudio watermark
+    const removeWatermark = () => {
+      // Select potential watermark elements
+      const watermarks = document.querySelectorAll([
+        '[id*="us-watermark"]',
+        '[class*="us-watermark"]',
+        '[data-us-watermark]',
+        '.unicorn-studio-bg div[style*="position: fixed"]',
+        '.unicorn-studio-bg div[style*="bottom: 0"]',
+        '.unicorn-studio-bg div[style*="right: 0"]',
+        'div[style*="z-index: 999999"]'
+      ].join(','));
+      
+      // Remove each watermark element
+      watermarks.forEach(el => el.remove());
+      
+      // Also try to find watermarks in iframes
+      const iframes = document.querySelectorAll('.unicorn-studio-bg iframe');
+      iframes.forEach(iframe => {
+        try {
+          const iframeDoc = (iframe as HTMLIFrameElement).contentDocument || 
+                           (iframe as HTMLIFrameElement).contentWindow?.document;
+          if (iframeDoc) {
+            const iframeWatermarks = iframeDoc.querySelectorAll([
+              '[id*="watermark"]',
+              '[class*="watermark"]',
+              'div[style*="position: fixed"]',
+              'div[style*="bottom: 0"]',
+              'div[style*="right: 0"]',
+              'div[style*="z-index: 999999"]'
+            ].join(','));
+            
+            iframeWatermarks.forEach(el => el.remove());
+          }
+        } catch (e) {
+          // Ignore cross-origin errors
+        }
+      });
+    };
+    
+    // Run immediately and then every second for a short period to catch late-rendered watermarks
+    removeWatermark();
+    const interval = setInterval(removeWatermark, 1000);
+    setTimeout(() => clearInterval(interval), 10000);
+
+    return () => {
+      heroCard?.removeEventListener("mousemove", handleMouseMove as any);
+      heroCard?.removeEventListener("mouseleave", resetPosition);
+      clearInterval(interval);
+    };
+  }, []);
+
   return (
-    <section id="features" className="relative -mt-32 md:-mt-48 py-24 md:py-32">
-      <div className="container relative z-10 px-4 max-w-[1200px] mx-auto">
-        <div className="relative mx-auto max-w-5xl text-center mb-16 p-8 rounded-3xl bg-background/30 backdrop-blur-xl border border-white/10 shadow-xl">
-          <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-purple-500/10 to-blue-500/10 rounded-3xl"></div>
-          <div className="absolute inset-0 bg-grid-white/[0.02] rounded-3xl"></div>
-          <div className="relative z-10">
-          <h2 className="text-4xl font-bold tracking-tight md:text-5xl bg-clip-text text-transparent bg-gradient-to-r from-primary to-primary/70">
-            Amplify Your Learning Journey
-          </h2>
-          <p className="mt-4 text-muted-foreground md:text-lg max-w-2xl mx-auto">
-            Our AI-powered platform creates a personalized learning experience tailored to your needs.
-          </p>
+    <section className="relative overflow-hidden pt-24 pb-48 md:pt-32 md:pb-64 bg-gradient-to-b from-background via-background/95 to-transparent">
+      <div className="container px-4 max-w-[1200px] mx-auto">
+        <article className="hero-card" ref={heroCardRef}>
+          <div 
+            data-us-project="1gY80LcIkYtWkoIA4cVK" 
+            className="unicorn-studio-bg" 
+            style={{ 
+              position: 'absolute',
+              inset: 0,
+              borderRadius: 'inherit',
+              overflow: 'hidden',
+              zIndex: 0
+            }}
+          ></div>
+          <div className="absolute inset-0 overflow-hidden" style={{ zIndex: 1 }}>
+            {[...Array(20)].map((_, i) => (
+              <div
+                key={i}
+                className="absolute w-2 h-2 bg-primary/10 rounded-full"
+                style={{
+                  left: `${Math.random() * 100}%`,
+                  top: `${Math.random() * 100}%`,
+                  animation: `float-particle ${10 + Math.random() * 10}s infinite`,
+                  animationDelay: `${-Math.random() * 10}s`,
+                }}
+              />
+            ))}
           </div>
-        </div>
-        
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 [grid-template-areas:'a_b_b'_'a_c_d'_'e_f_f'] md:auto-rows-[28rem] relative">
-          <BentoBox gradient="purple" className="flex flex-col md:[grid-area:a] row-span-2 relative overflow-hidden group backdrop-blur-xl bg-background/20 border border-primary/10 hover:border-primary/20 transition-colors duration-300 shadow-[inset_0_0_1px_rgba(var(--primary),0.1)]">
-            <img
-              src="https://images.pexels.com/photos/8386440/pexels-photo-8386440.jpeg"
-              alt="AI Brain"
-              className="absolute inset-0 w-full h-full object-cover opacity-20 group-hover:scale-110 transition-transform duration-500"
+          <div className="hero-assets" style={{ zIndex: 2 }}>
+            <h3 className="hero-title">ECHOVERSE</h3>
+            <img 
+              src={robotImage}
+              alt="EchoVerse AI Assistant" 
+              loading="eager"
+              width="800"
+              height="675"
+              className="foreground"
             />
-            <div className="relative mb-4 inline-flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10 before:absolute before:inset-0 before:rounded-lg before:bg-primary/5 before:animate-pulse">
-              <Brain className="h-6 w-6 text-primary" />
-            </div>
-            <h3 className="mb-2 text-3xl font-bold tracking-tight">AI-Driven Content</h3>
-            <p className="text-muted-foreground text-lg">
-              Discover personalized content recommendations powered by advanced AI algorithms.
-            </p>
-          </BentoBox>
-          
-          <BentoBox gradient="blue" className="flex flex-col md:[grid-area:b] md:col-span-2 relative overflow-hidden group backdrop-blur-xl bg-background/20 border border-primary/10 hover:border-primary/20 transition-colors duration-300 shadow-[inset_0_0_1px_rgba(var(--primary),0.1)]">
-            <img
-              src="https://images.pexels.com/photos/7014766/pexels-photo-7014766.jpeg"
-              alt="Content Transformation"
-              className="absolute inset-0 w-full h-full object-cover opacity-20 group-hover:scale-110 transition-transform duration-500"
-            />
-            <div className="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10">
-              <Video className="h-6 w-6 text-primary" />
-            </div>
-            <h3 className="mb-2 text-3xl font-bold tracking-tight">Multi-Modal Transformations</h3>
-            <p className="text-muted-foreground text-lg">
-              Convert text to voice, video, and other formats instantly with our transformation tools.
-            </p>
-          </BentoBox>
-          
-          <BentoBox gradient="teal" className="flex flex-col md:[grid-area:c] relative overflow-hidden group backdrop-blur-md bg-background/30 border-primary/20">
-            <img
-              src="https://images.pexels.com/photos/7376/startup-photos.jpg"
-              alt="Learning Dashboard"
-              className="absolute inset-0 w-full h-full object-cover opacity-20 group-hover:scale-110 transition-transform duration-500"
-            />
-            <div className="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10">
-              <LineChart className="h-6 w-6 text-primary" />
-            </div>
-            <h3 className="mb-2 text-3xl font-bold tracking-tight">Custom Learning Dashboards</h3>
-            <p className="text-muted-foreground text-lg">
-              Track your progress and optimize your learning path with customizable dashboards.
-            </p>
-          </BentoBox>
-          
-          <BentoBox gradient="green" className="flex flex-col md:[grid-area:d] relative overflow-hidden group backdrop-blur-md bg-background/30 border-primary/20">
-            <img
-              src="https://images.pexels.com/photos/3861969/pexels-photo-3861969.jpeg"
-              alt="Language Translation"
-              className="absolute inset-0 w-full h-full object-cover opacity-20 group-hover:scale-110 transition-transform duration-500"
-            />
-            <div className="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10">
-              <LanguagesIcon className="h-6 w-6 text-primary" />
-            </div>
-            <h3 className="mb-2 text-3xl font-bold tracking-tight">Instant Translation</h3>
-            <p className="text-muted-foreground text-lg">
-              Break language barriers with real-time translation across multiple languages.
-            </p>
-          </BentoBox>
-          
-          <BentoBox gradient="blue" className="flex flex-col md:[grid-area:e] relative overflow-hidden group backdrop-blur-md bg-background/30 border-primary/20">
-            <img
-              src="https://images.pexels.com/photos/8370752/pexels-photo-8370752.jpeg"
-              alt="Decentralized Storage"
-              className="absolute inset-0 w-full h-full object-cover opacity-20 group-hover:scale-110 transition-transform duration-500"
-            />
-            <div className="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10">
-              <MessageSquareText className="h-6 w-6 text-primary" />
-            </div>
-            <h3 className="mb-2 text-3xl font-bold tracking-tight">Decentralized Storage</h3>
-            <p className="text-muted-foreground text-lg">
-              Secure your content with decentralized storage powered by Algorand and IPFS.
-            </p>
-          </BentoBox>
-          
-          <BentoBox gradient="purple" className="flex flex-col md:[grid-area:f] md:col-span-2 relative overflow-hidden group backdrop-blur-md bg-background/30 border-primary/20">
-            <img
-              src="https://images.pexels.com/photos/2882566/pexels-photo-2882566.jpeg"
-              alt="Premium Content"
-              className="absolute inset-0 w-full h-full object-cover opacity-20 group-hover:scale-110 transition-transform duration-500"
-            />
-            <div className="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10">
-              <Lock className="h-6 w-6 text-primary" />
-            </div>
-            <h3 className="mb-2 text-3xl font-bold tracking-tight">Premium Content Gating</h3>
-            <p className="text-muted-foreground text-lg">
-              Monetize your expertise with customizable content access controls and subscriptions.
-            </p>
-          </BentoBox>
-        </div>
+          </div>
+          <div className="hero-content" style={{ zIndex: 3 }}>
+            <p className="text-3xl md:text-4xl lg:text-5xl font-bold">AI-Powered Learning Hub</p>
+            <p className="text-lg md:text-xl lg:text-2xl opacity-100">Transform Your Learning Journey</p>
+          </div>
+        </article>
       </div>
     </section>
   );
