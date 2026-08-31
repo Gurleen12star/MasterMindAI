@@ -15,3 +15,7 @@ tsconfig.json
 tsconfig.node.json
 vite.config.ts
 vite.config.ts.timestamp-1748959622520-720580c0ef5358.mjs
+
+
+
+supabase/*
