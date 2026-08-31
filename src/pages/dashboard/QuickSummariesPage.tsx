@@ -8,6 +8,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { generateSummary } from '@/lib/gemini';
 import { generateAudio, AVAILABLE_VOICES } from '@/lib/elevenlabs';
 import { useToast } from '@/hooks/use-toast';
+import { supabase } from '@/lib/supabase'; // Import Supabase client
+import { useAuth } from '@/components/auth/SupabaseAuthProvider'; // Import Auth hook
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import AnimatedLoadingText from '@/components/ui/AnimatedLoadingText';
@@ -31,6 +33,7 @@ import {
 
 export default function QuickSummariesPage() {
   const { toast } = useToast();
+  const { user } = useAuth(); // Get authenticated user for Supabase Storage
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [content, setContent] = useState('');
   const [instructions, setInstructions] = useState('');
@@ -45,6 +48,13 @@ export default function QuickSummariesPage() {
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
   const audioRef = useRef<HTMLAudioElement>(null);
+
+  // New state for PDF handling
+  const [pdfFileUrl, setPdfFileUrl] = useState<string | null>(null);
+  const [uploadedFileName, setUploadedFileName] = useState<string | null>(null);
+  const [pdfFileSize, setPdfFileSize] = useState<string>('');
+  const [pdfUploadProgress, setPdfUploadProgress] = useState<number>(0);
+  const [isUploading, setIsUploading] = useState<boolean>(false);
 
   const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -63,20 +73,79 @@ export default function QuickSummariesPage() {
 
     try {
       if (file.type === 'text/plain') {
+        // Handle text file upload
         const text = await file.text();
         setContent(text);
+        setPdfFileUrl(null); // Clear PDF state
+        setUploadedFileName(null);
+        setPdfFileSize('');
         setActiveTab('text');
         toast({
           title: 'File Uploaded',
           description: 'Text file content loaded successfully.',
         });
       } else if (file.type === 'application/pdf') {
-        // For PDF files, we'll show a message that PDF parsing is not yet implemented
-        toast({
-          title: 'PDF Upload',
-          description: 'PDF parsing will be implemented soon. Please copy and paste the text content for now.',
-          variant: 'destructive',
-        });
+        // Handle PDF file upload to Supabase Storage
+        if (!user?.id) {
+          toast({
+            title: 'Authentication Required',
+            description: 'Please sign in to upload PDF files.',
+            variant: 'destructive',
+          });
+          return;
+        }
+        
+        // Format file size
+        const fileSizeInMB = (file.size / (1024 * 1024)).toFixed(2);
+        setPdfFileSize(`${fileSizeInMB} MB`);
+        
+        try {
+          setIsUploading(true);
+          setPdfUploadProgress(0);
+          setContent(''); // Clear text content when uploading PDF
+          
+          // Create a unique file path in the bucket
+          const timestamp = new Date().getTime();
+          const filePath = `${user.id}/${timestamp}-${file.name.replace(/[^a-zA-Z0-9.-]/g, '_')}`;
+          
+          // Upload PDF to Supabase Storage
+          const { data, error } = await supabase.storage
+            .from('uploaded_documents') // Make sure this bucket exists!
+            .upload(filePath, file, {
+              cacheControl: '3600',
+              upsert: false,
+            });
+            
+          if (error) throw error;
+          
+          // Get public URL for the uploaded file
+          const { data: urlData } = supabase.storage
+            .from('uploaded_documents')
+            .getPublicUrl(filePath);
+            
+          if (urlData?.publicUrl) {
+            setPdfFileUrl(urlData.publicUrl);
+            setUploadedFileName(file.name);
+            setActiveTab('upload');
+            setPdfUploadProgress(100);
+            
+            toast({
+              title: 'PDF Uploaded Successfully',
+              description: 'Your PDF is ready to be summarized.',
+            });
+          } else {
+            throw new Error('Failed to get public URL for the uploaded PDF.');
+          }
+        } catch (uploadError) {
+          console.error('PDF upload error:', uploadError);
+          toast({
+            title: 'PDF Upload Failed',
+            description: uploadError instanceof Error ? uploadError.message : 'Failed to upload PDF file.',
+            variant: 'destructive',
+          });
+        } finally {
+          setIsUploading(false);
+        }
       }
     } catch (error) {
       console.error('Error reading file:', error);
@@ -94,7 +163,7 @@ export default function QuickSummariesPage() {
   };
 
   const handleGenerateSummary = async () => {
-    if (!content.trim()) {
+    if (!content.trim() && !pdfFileUrl) {
       toast({
         title: 'Content Required',
         description: 'Please enter or upload content to summarize.',
@@ -111,7 +180,31 @@ export default function QuickSummariesPage() {
     setDuration(0);
     
     try {
-      const generatedSummary = await generateSummary(content, instructions);
+      let generatedSummary: string;
+      
+      if (pdfFileUrl) {
+        // PDF summarization using the Edge Function
+        toast({
+          title: 'Processing PDF',
+          description: 'This may take longer for large documents.',
+        });
+        
+        const { data, error } = await supabase.functions.invoke('gemini-pdf-summarizer', {
+          body: { 
+            pdfUrl: pdfFileUrl, 
+            prompt: instructions || "Please summarize this document concisely while capturing the key points."
+          },
+        });
+        
+        if (error) throw new Error(`Edge function error: ${error.message}`);
+        if (!data || !data.summarizedText) throw new Error('No summary received from PDF processor.');
+        
+        generatedSummary = data.summarizedText;
+      } else {
+        // Text summarization using the local Gemini function
+        generatedSummary = await generateSummary(content, instructions);
+      }
+      
       setSummary(generatedSummary);
       toast({
         title: 'Summary Generated',
@@ -386,7 +479,7 @@ export default function QuickSummariesPage() {
                   <Upload className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
                   <p className="text-lg font-medium mb-2">Upload a file</p>
                   <p className="text-muted-foreground mb-4">
-                    Supports TXT and PDF files (up to 10MB)
+                    Supports TXT and PDF files (up to 10MB) 
                   </p>
                   <Button
                     variant="outline"
@@ -398,7 +491,50 @@ export default function QuickSummariesPage() {
                   </Button>
                 </div>
                 
-                {content && (
+                {isUploading && (
+                  <div className="p-4 bg-accent/50 rounded-lg">
+                    <div className="flex items-center gap-2 text-sm text-primary mb-2">
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                      Uploading PDF...
+                    </div>
+                    <div className="w-full bg-primary/10 rounded-full h-2.5 mb-2">
+                      <div 
+                        className="bg-primary h-2.5 rounded-full"
+                        style={{ width: `${pdfUploadProgress}%` }}
+                      ></div>
+                    </div>
+                  </div>
+                )}
+                
+                {uploadedFileName && !isUploading && (
+                  <div className="p-4 bg-accent/50 rounded-lg">
+                    <div className="flex items-center justify-between text-sm mb-2">
+                      <div className="flex items-center gap-2 text-green-600">
+                        <CheckCircle className="h-4 w-4" />
+                        PDF uploaded successfully
+                      </div>
+                      {pdfFileSize && <span className="text-muted-foreground">{pdfFileSize}</span>}
+                    </div>
+                    <p className="font-medium truncate">{uploadedFileName}</p>
+                    <Button
+                      variant="ghost" 
+                      size="sm"
+                      onClick={() => {
+                        setPdfFileUrl(null);
+                        setUploadedFileName(null);
+                        setPdfFileSize('');
+                      }}
+                      className="mt-2 text-destructive hover:bg-destructive/10"
+                    >
+                      <span className="flex items-center gap-1">
+                        <RotateCcw className="h-3 w-3" />
+                        Clear PDF
+                      </span>
+                    </Button>
+                  </div>
+                )}
+                
+                {content && !uploadedFileName && (
                   <div className="p-4 bg-accent/50 rounded-lg">
                     <div className="flex items-center gap-2 text-sm text-green-600 mb-2">
                       <CheckCircle className="h-4 w-4" />
@@ -428,7 +564,7 @@ export default function QuickSummariesPage() {
 
           <Button
             onClick={handleGenerateSummary}
-            disabled={isGenerating || !content.trim()}
+            disabled={isGenerating || (!content.trim() && !pdfFileUrl)}
             className="w-full gap-2"
             size="lg"
           >
@@ -592,7 +728,10 @@ export default function QuickSummariesPage() {
                 >
                   <div 
                     className="h-full bg-gradient-to-r from-primary to-primary/80 rounded-full transition-all duration-150"
-                    style={{ width: duration ? `${(currentTime / duration) * 100}%` : '0%' }}
+                    <AnimatedLoadingText 
+                      message={pdfFileUrl ? "Analyzing your PDF document..." : "Processing your content..."} 
+                      className="font-medium" 
+                    />
                   />
                 </div>
                 
@@ -667,6 +806,7 @@ export default function QuickSummariesPage() {
               <li>• Use specific instructions to tailor the summary to your needs</li>
               <li>• For academic papers, mention "include methodology and conclusions"</li>
               <li>• For business documents, try "focus on key decisions and action items"</li>
+              <li>• When summarizing PDFs, the system can understand diagrams and tables</li>
               <li>• Choose different voices to match your preference for audio content</li>
               <li>• Audio generation uses ElevenLabs AI for high-quality voice synthesis</li>
               <li>• Changing voice will automatically regenerate audio with the new voice</li>
