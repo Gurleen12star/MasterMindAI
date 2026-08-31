@@ -14,6 +14,7 @@ import {
   BarChart,
   PieChart,
   Users,
+  ShieldCheck as Shield,
   Activity,
   BookOpen,
   Search,
@@ -22,9 +23,8 @@ import {
   Calendar,
   Clock,
   Loader2,
-  AlertCircle,
-  Zap,
-  Shield
+  AlertCircle, 
+  Zap
 } from 'lucide-react';
 
 export default function AdminDashboardPage() {
