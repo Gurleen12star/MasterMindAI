@@ -205,7 +205,10 @@ div[style*="z-index: 999999"] {
   border-radius: 2.5rem;
   min-height: 550px;
   overflow: hidden;
-  background: transparent;
+  background-image: url('/src/assets/background.jpg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
 }
 
 .hero-assets {
@@ -213,7 +216,8 @@ div[style*="z-index: 999999"] {
   inset: 0;
   border-radius: 2.5rem;
   z-index: 0;
-  background: transparent;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
 }
 
 .hero-assets::before,
