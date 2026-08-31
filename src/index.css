@@ -224,6 +224,16 @@
   fill: hsl(var(--primary)); /* Use the primary color (purple) when hovering clickables */
 }
 
+/* Ensure custom cursor is used in fullscreen dialog */
+body.fullscreen-dialog-open [data-radix-dialog-overlay][data-state="open"],
+body.fullscreen-dialog-open [data-radix-dialog-content][data-state="open"] {
+  cursor: none !important;
+}
+
+body.fullscreen-dialog-open [data-radix-dialog-content][data-state="open"] * {
+    cursor: none !important;
+}
+
 /* Navbar Background Styles */
 .navbar-bg-image {
   background-image: var(--navbar-bg);
@@ -462,7 +472,7 @@ div[style*="z-index: 999999"] {
 
   /* Mermaid Diagram Styles for Dark Mode */
   --mermaid-bg: #111827;
-  --mermaid-node-text-color: #F9FAFB;
+  --mermaid-node-text-color: hsl(var(--foreground));
   --mermaid-edge-color: #6B7280; /* Slightly darker gray for edges in dark mode */
 
   --mermaid-purple: hsl(var(--chart-1));

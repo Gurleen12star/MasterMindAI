@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
@@ -24,6 +24,18 @@ export default function LearningPathsPage() {
   const [generatedPath, setGeneratedPath] = useState<string | null>(null);
   const [mermaidDiagram, setMermaidDiagram] = useState<string | null>(null);
   const [isFullscreen, setIsFullscreen] = useState(false);
+
+  useEffect(() => {
+    const body = document.body;
+    if (isFullscreen) {
+      body.classList.add('fullscreen-dialog-open');
+    } else {
+      body.classList.remove('fullscreen-dialog-open');
+    }
+    return () => {
+      body.classList.remove('fullscreen-dialog-open');
+    };
+  }, [isFullscreen]);
 
   const handleGenerate = async () => {
     if (!topic) {
@@ -198,7 +210,7 @@ export default function LearningPathsPage() {
                     </div>
                     
                     <Dialog open={isFullscreen} onOpenChange={setIsFullscreen}>
-                      <DialogContent className="max-w-[90vw] w-[90vw] h-[90vh] p-6">
+                      <DialogContent className="max-w-[90vw] w-[90vw] h-[90vh] p-6 custom-cursor-enabled">
                         <DialogTitle>Learning Path Visualization</DialogTitle>
                         <div className="mermaid-diagram-wrapper h-full w-full flex items-center justify-center bg-gradient-to-br from-background to-background/95">
                           <MermaidDiagram 
