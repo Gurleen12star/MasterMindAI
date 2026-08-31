@@ -42,18 +42,6 @@ try {
     </StrictMode>
   );
   
-  // Hide the initial pre-loader once React has rendered
-  setTimeout(() => {
-    const initialLoader = document.getElementById('initial-loader');
-    if (initialLoader) {
-      initialLoader.style.opacity = '0';
-      initialLoader.style.transition = 'opacity 0.5s ease-out';
-      setTimeout(() => {
-        initialLoader.style.display = 'none';
-      }, 500);
-    }
-  }, 100);
-  
   console.log('Application rendered successfully');
 } catch (error) {
   console.error('Failed to render application:', error);
