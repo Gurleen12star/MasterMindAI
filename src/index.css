@@ -38,8 +38,8 @@
   --cursor-color-default: hsl(var(--foreground));
   --cursor-color-clickable: hsl(var(--primary));
   --cursor-size: 24px;
-  --cursor-transition-duration: 0.2s;
-  --cursor-transition-timing: ease;
+  --cursor-transition-duration: 150ms;
+  --cursor-transition-timing: cubic-bezier(0.4, 0, 0.2, 1);
 
   /* Navbar Animation */
   --nav-bg: rgba(255, 255, 255, 0.9);
@@ -78,10 +78,10 @@
   cursor: none;
 }
 
-.custom-cursor-enabled a,
-.custom-cursor-enabled button,
-.custom-cursor-enabled [role="button"] {
-  cursor: none;
+.custom-cursor-enabled *,
+.custom-cursor-enabled *::before,
+.custom-cursor-enabled *::after {
+  cursor: none !important;
 }
 
 .curzr-arrow-pointer {
@@ -92,6 +92,7 @@
   z-index: 9999;
   top: 0;
   left: 0;
+  pointer-events: none;
   will-change: transform;
   transition: transform 0.05s cubic-bezier(0.23, 1, 0.32, 1);
 }
@@ -110,14 +111,17 @@
   transition: fill var(--cursor-transition-duration) var(--cursor-transition-timing);
 }
 
-/* Interactive elements cursor color change */
-.custom-cursor-enabled a:hover + .curzr-arrow-pointer .outer,
-.custom-cursor-enabled button:hover + .curzr-arrow-pointer .outer,
-.custom-cursor-enabled [role="button"]:hover + .curzr-arrow-pointer .outer,
-.custom-cursor-enabled input:hover + .curzr-arrow-pointer .outer,
-.custom-cursor-enabled select:hover + .curzr-arrow-pointer .outer,
-.custom-cursor-enabled textarea:hover + .curzr-arrow-pointer .outer {
-  fill: var(--cursor-color-clickable);
+/* Interactive elements cursor color change - using event bubbling */
+.custom-cursor-enabled a:hover ~ .curzr-arrow-pointer .outer,
+.custom-cursor-enabled button:hover ~ .curzr-arrow-pointer .outer,
+.custom-cursor-enabled [role="button"]:hover ~ .curzr-arrow-pointer .outer,
+.custom-cursor-enabled input:hover ~ .curzr-arrow-pointer .outer,
+.custom-cursor-enabled select:hover ~ .curzr-arrow-pointer .outer,
+.custom-cursor-enabled textarea:hover ~ .curzr-arrow-pointer .outer,
+.custom-cursor-enabled label:hover ~ .curzr-arrow-pointer .outer,
+.custom-cursor-enabled [data-interactive]:hover ~ .curzr-arrow-pointer .outer,
+.custom-cursor-enabled [tabindex="0"]:hover ~ .curzr-arrow-pointer .outer {
+  fill: var(--cursor-color-clickable) !important;
 }
 
 /* Navbar Background Styles */
