@@ -17,6 +17,7 @@ import {
   PenTool,
   Users,
   MessageCircle,
+  MapPin,
   FileText,
   ListMusic,
   LineChart,
@@ -55,7 +56,7 @@ export default function Sidebar({ onNavigate }: SidebarProps) {
         { icon: Headphones, label: 'Listen Mode', href: '/dashboard/listen' },
         { icon: Video, label: 'Video Explainer', href: '/dashboard/video' },
         { icon: PenTool, label: 'Remix Studio', href: '/dashboard/remix' },
-        { icon: Map, label: 'Roadmap Generator', href: '/dashboard/roadmap-generator', badge: 'Featured' }
+        { icon: MapPin, label: 'Roadmap Generator', href: '/dashboard/roadmap-generator', badge: 'Featured' }
       ]
     },
     {
