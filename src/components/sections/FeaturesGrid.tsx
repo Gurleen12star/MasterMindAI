@@ -11,7 +11,14 @@ import {
 export default function FeaturesGrid() {
   return (
     <section className="py-24 px-4">
-      {/* Simplified overlay effects - Updated to use theme variable */}
+      {/* SVG filter definition for the grainy noise effect. It's hidden and available globally via its ID. */}
+      <svg className="absolute w-0 h-0" aria-hidden="true">
+        <filter id="grainy" x="0" y="0" width="100%" height="100%">
+          <feTurbulence type="fractalNoise" baseFrequency="0.5" />
+          <feColorMatrix type="saturate" values="0" />
+          <feBlend mode="multiply" in="SourceGraphic" />
+        </filter>
+      </svg>
       
       <div className="container relative z-10 px-4 max-w-[1200px] mx-auto">
         <div className="relative mx-auto max-w-5xl text-center mb-16">
@@ -23,10 +30,11 @@ export default function FeaturesGrid() {
           </p>
         </div>
         
-        {/* Grid with vibrant color cards */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 auto-rows-auto relative">
-          {/* AI-Driven Content - Updated to Primary Theme with Yellow Accent */}
-          <BentoBox gradient="purple" className="flex flex-col md:row-span-2 relative overflow-hidden group rounded-3xl min-h-[400px] border border-[hsl(var(--primary)/0.3)] bg-gradient-to-br from-[hsl(var(--primary)/0.9)] via-[hsl(var(--primary)/0.7)] to-[hsl(var(--chart-3)/0.5)] hover:from-[hsl(var(--primary)/1)] hover:via-[hsl(var(--primary)/0.8)] hover:to-[hsl(var(--chart-3)/0.6)] transition-all duration-300 shadow-lg shadow-[hsl(var(--primary)/0.2)]">
+          {/* AI-Driven Content */}
+          <BentoBox gradient="purple" className="flex flex-col md:row-span-2 relative overflow-hidden group rounded-3xl min-h-[400px] border border-[hsl(var(--primary)/0.3)] shadow-lg shadow-[hsl(var(--primary)/0.2)]">
+            {/* Grainy Gradient Background Layer */}
+            <div className="absolute inset-0 rounded-3xl bg-gradient-to-br from-[hsl(var(--primary)/0.9)] via-[hsl(var(--primary)/0.7)] to-[hsl(var(--chart-3)/0.5)] group-hover:from-[hsl(var(--primary)/1)] group-hover:via-[hsl(var(--primary)/0.8)] group-hover:to-[hsl(var(--chart-3)/0.6)] transition-all duration-300 [filter:url(#grainy)]" />
             <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent" />
             <div className="relative z-20 p-8 h-full flex flex-col justify-end">
               <div className="relative mb-6 inline-flex h-16 w-16 items-center justify-center rounded-2xl bg-white/20 backdrop-blur-sm shadow-lg">
@@ -39,8 +47,10 @@ export default function FeaturesGrid() {
             </div>
           </BentoBox>
           
-          {/* Multi-Modal Transformations - Updated to Theme Green */}
-          <BentoBox gradient="blue" className="flex flex-col md:col-span-2 relative overflow-hidden group rounded-3xl min-h-[280px] border border-[hsl(var(--chart-2)/0.3)] bg-gradient-to-br from-[hsl(var(--chart-2)/0.9)] via-[hsl(var(--chart-2)/0.7)] to-[#233038]/50 hover:from-[hsl(var(--chart-2))] hover:via-[hsl(var(--chart-2)/0.8)] hover:to-[#233038]/60 transition-all duration-300 shadow-lg shadow-[hsl(var(--chart-2)/0.2)]">
+          {/* Multi-Modal Transformations */}
+          <BentoBox gradient="blue" className="flex flex-col md:col-span-2 relative overflow-hidden group rounded-3xl min-h-[280px] border border-[hsl(var(--chart-2)/0.3)] shadow-lg shadow-[hsl(var(--chart-2)/0.2)]">
+            {/* Grainy Gradient Background Layer */}
+            <div className="absolute inset-0 rounded-3xl bg-gradient-to-br from-[hsl(var(--chart-2)/0.9)] via-[hsl(var(--chart-2)/0.7)] to-[#233038]/50 group-hover:from-[hsl(var(--chart-2))] group-hover:via-[hsl(var(--chart-2)/0.8)] group-hover:to-[#233038]/60 transition-all duration-300 [filter:url(#grainy)]" />
             <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent" />
             <div className="relative z-20 p-8 h-full flex flex-col justify-end">
               <div className="mb-6 inline-flex h-16 w-16 items-center justify-center rounded-2xl bg-white/20 backdrop-blur-sm shadow-lg">
@@ -53,8 +63,10 @@ export default function FeaturesGrid() {
             </div>
           </BentoBox>
           
-          {/* Custom Learning Dashboards - Updated to Theme Yellow */}
-          <BentoBox gradient="teal" className="flex flex-col relative overflow-hidden group rounded-3xl min-h-[280px] border border-[hsl(var(--chart-3)/0.3)] bg-gradient-to-br from-[hsl(var(--chart-3)/0.9)] via-[hsl(var(--chart-3)/0.7)] to-[hsl(var(--background)/0.5)] hover:from-[hsl(var(--chart-3))] hover:via-[hsl(var(--chart-3)/0.8)] hover:to-[hsl(var(--background)/0.6)] transition-all duration-300 shadow-lg shadow-[hsl(var(--chart-3)/0.2)]">
+          {/* Custom Learning Dashboards */}
+          <BentoBox gradient="teal" className="flex flex-col relative overflow-hidden group rounded-3xl min-h-[280px] border border-[hsl(var(--chart-3)/0.3)] shadow-lg shadow-[hsl(var(--chart-3)/0.2)]">
+             {/* Grainy Gradient Background Layer */}
+            <div className="absolute inset-0 rounded-3xl bg-gradient-to-br from-[hsl(var(--chart-3)/0.9)] via-[hsl(var(--chart-3)/0.7)] to-[hsl(var(--background)/0.5)] group-hover:from-[hsl(var(--chart-3))] group-hover:via-[hsl(var(--chart-3)/0.8)] group-hover:to-[hsl(var(--background)/0.6)] transition-all duration-300 [filter:url(#grainy)]" />
             <div className="absolute inset-0 bg-gradient-to-t from-black/10 via-transparent to-transparent" />
             <div className="relative z-20 p-8 h-full flex flex-col justify-end">
               <div className="mb-6 inline-flex h-16 w-16 items-center justify-center rounded-2xl bg-black/10 backdrop-blur-sm shadow-lg">
@@ -67,8 +79,10 @@ export default function FeaturesGrid() {
             </div>
           </BentoBox>
           
-          {/* Instant Translation - Updated to Theme Green with Dark Accent */}
-          <BentoBox gradient="green" className="flex flex-col relative overflow-hidden group rounded-3xl min-h-[280px] border border-[#233038]/30 bg-gradient-to-br from-[#233038]/90 via-[#233038]/70 to-[hsl(var(--chart-2)/0.5)] hover:from-[#233038] hover:via-[#233038]/80 hover:to-[hsl(var(--chart-2)/0.6)] transition-all duration-300 shadow-lg shadow-[#233038]/20">
+          {/* Instant Translation */}
+          <BentoBox gradient="green" className="flex flex-col relative overflow-hidden group rounded-3xl min-h-[280px] border border-[#233038]/30 shadow-lg shadow-[#233038]/20">
+            {/* Grainy Gradient Background Layer */}
+            <div className="absolute inset-0 rounded-3xl bg-gradient-to-br from-[#233038]/90 via-[#233038]/70 to-[hsl(var(--chart-2)/0.5)] group-hover:from-[#233038] group-hover:via-[#233038]/80 group-hover:to-[hsl(var(--chart-2)/0.6)] transition-all duration-300 [filter:url(#grainy)]" />
             <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent" />
             <div className="relative z-20 p-8 h-full flex flex-col justify-end">
               <div className="mb-6 inline-flex h-16 w-16 items-center justify-center rounded-2xl bg-white/20 backdrop-blur-sm shadow-lg">
@@ -81,8 +95,10 @@ export default function FeaturesGrid() {
             </div>
           </BentoBox>
           
-          {/* Decentralized Storage - Updated to Theme Secondary/Muted */}
-          <BentoBox gradient="blue" className="flex flex-col relative overflow-hidden group rounded-3xl min-h-[280px] border border-[hsl(var(--secondary)/0.3)] bg-gradient-to-br from-[hsl(var(--secondary)/0.9)] via-[hsl(var(--secondary)/0.7)] to-[hsl(var(--background)/0.5)] hover:from-[hsl(var(--secondary))] hover:via-[hsl(var(--secondary)/0.8)] hover:to-[hsl(var(--background)/0.6)] transition-all duration-300 shadow-lg shadow-[hsl(var(--secondary)/0.2)]">
+          {/* Decentralized Storage */}
+          <BentoBox gradient="blue" className="flex flex-col relative overflow-hidden group rounded-3xl min-h-[280px] border border-[hsl(var(--secondary)/0.3)] shadow-lg shadow-[hsl(var(--secondary)/0.2)]">
+            {/* Grainy Gradient Background Layer */}
+            <div className="absolute inset-0 rounded-3xl bg-gradient-to-br from-[hsl(var(--secondary)/0.9)] via-[hsl(var(--secondary)/0.7)] to-[hsl(var(--background)/0.5)] group-hover:from-[hsl(var(--secondary))] group-hover:via-[hsl(var(--secondary)/0.8)] group-hover:to-[hsl(var(--background)/0.6)] transition-all duration-300 [filter:url(#grainy)]" />
             <div className="absolute inset-0 bg-gradient-to-t from-black/10 via-transparent to-transparent" />
             <div className="relative z-20 p-8 h-full flex flex-col justify-end">
               <div className="mb-6 inline-flex h-16 w-16 items-center justify-center rounded-2xl bg-black/10 backdrop-blur-sm shadow-lg">
@@ -95,8 +111,10 @@ export default function FeaturesGrid() {
             </div>
           </BentoBox>
           
-          {/* Premium Content Gating - Updated to Primary with Green and Yellow Accents */}
-          <BentoBox gradient="purple" className="flex flex-col md:col-span-2 relative overflow-hidden group rounded-3xl min-h-[280px] border border-[hsl(var(--primary)/0.3)] bg-gradient-to-br from-[hsl(var(--chart-2)/0.9)] via-[hsl(var(--primary)/0.7)] to-[hsl(var(--chart-3)/0.5)] hover:from-[hsl(var(--chart-2))] hover:via-[hsl(var(--primary)/0.8)] hover:to-[hsl(var(--chart-3)/0.6)] transition-all duration-300 shadow-lg shadow-[hsl(var(--primary)/0.2)]">
+          {/* Premium Content Gating */}
+          <BentoBox gradient="purple" className="flex flex-col md:col-span-2 relative overflow-hidden group rounded-3xl min-h-[280px] border border-[hsl(var(--primary)/0.3)] shadow-lg shadow-[hsl(var(--primary)/0.2)]">
+            {/* Grainy Gradient Background Layer */}
+            <div className="absolute inset-0 rounded-3xl bg-gradient-to-br from-[hsl(var(--chart-2)/0.9)] via-[hsl(var(--primary)/0.7)] to-[hsl(var(--chart-3)/0.5)] group-hover:from-[hsl(var(--chart-2))] group-hover:via-[hsl(var(--primary)/0.8)] group-hover:to-[hsl(var(--chart-3)/0.6)] transition-all duration-300 [filter:url(#grainy)]" />
             <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent" />
             <div className="relative z-20 p-8 h-full flex flex-col justify-end">
               <div className="mb-6 inline-flex h-16 w-16 items-center justify-center rounded-2xl bg-white/20 backdrop-blur-sm shadow-lg">
