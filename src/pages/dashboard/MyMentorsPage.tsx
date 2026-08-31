@@ -25,7 +25,8 @@ import {
   Video,
   CalendarPlus,
   CheckCircle2,
-  User
+  User,
+  GraduationCap
 } from 'lucide-react';
 
 export default function MyMentorsPage() {
