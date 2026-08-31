@@ -28,6 +28,7 @@ export type ModuleType = {
     description: string;
     content: ModuleContentType[];
     isOpen: boolean;
+    audioUrl?: string;
     chatHistory: ChatHistoryType[];
 };
 

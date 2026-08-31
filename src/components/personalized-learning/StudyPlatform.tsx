@@ -9,9 +9,10 @@ import Typed from "typed.js";
 import { AnimatePresence, motion } from "framer-motion";
 import prompts from "@/lib/personalized-learning/prompts";
 import interactionGemini from "@/lib/personalized-learning/geminiClient";
-import { Award, ArrowLeft, ArrowRight, Loader2, Copy, SendToBack, BoxSelect as SelectAll, MessageSquare, Expand } from "lucide-react";
+import { Award, ArrowLeft, ArrowRight, Loader2, Copy, SendToBack, BoxSelect as SelectAll, MessageSquare, Expand, Volume2, Headphones, Play, Pause, VolumeX, X } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { Progress } from "@/components/ui/progress";
 import {
   ContextMenu,
   ContextMenuContent,
@@ -24,6 +25,7 @@ import { useToast } from "@/hooks/use-toast";
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm'; 
 import { ChevronDown } from 'lucide-react';
+import { generateAudio } from "@/lib/elevenlabs";
 
 interface ExpandedContent {
   originalText: string;
@@ -96,6 +98,14 @@ const StudyPlatform = () => {
     const navigate = useNavigate();
     const contentRef = useRef<HTMLDivElement>(null);
     const [selectedText, setSelectedText] = useState<string>("");
+    const [audioUrl, setAudioUrl] = useState<string | null>(null);
+    const [isGeneratingAudio, setIsGeneratingAudio] = useState(false);
+    const [isPlaying, setIsPlaying] = useState(false);
+    const [isMuted, setIsMuted] = useState(false);
+    const [currentTime, setCurrentTime] = useState(0);
+    const [duration, setDuration] = useState(0);
+    const [activeModuleId, setActiveModuleId] = useState<string | null>(null);
+    const audioRef = useRef<HTMLAudioElement>(null);
     const [modulo, setModulo] = useState<number>(studyPlatform.actModule);
     const [actualModuleRes, setActualModuleRes] = useState<string>("");
     const [timeModule, setTimeModule] = useState<boolean>(false);
@@ -179,6 +189,206 @@ const StudyPlatform = () => {
             setSelectedText(""); // Clear selection after action
         }
     };
+
+    // Extract plain text from HTML content
+    const extractPlainText = (html: string): string => {
+        const tempDiv = document.createElement('div');
+        tempDiv.innerHTML = html;
+        return tempDiv.textContent || tempDiv.innerText || "";
+    };
+
+    // Generate audio from current module content
+    const handleGenerateAudio = async () => {
+        if (!studyPlatform.modulos[studyPlatform.actModule]?.content?.length) {
+            toast({
+                title: "No content",
+                description: "No content available to convert to audio",
+                variant: "destructive"
+            });
+            return;
+        }
+
+        setIsGeneratingAudio(true);
+        
+        try {
+            // Extract text from current module
+            const allHtmlContent = studyPlatform.modulos[studyPlatform.actModule].content
+                .map(item => extractPlainText(item.html))
+                .join(" ");
+            
+            // Limit text length to avoid very large audio files
+            const maxTextLength = 5000;
+            const trimmedContent = allHtmlContent.length > maxTextLength 
+                ? allHtmlContent.substring(0, maxTextLength) + "... (content trimmed for audio)"
+                : allHtmlContent;
+
+            // Generate audio using ElevenLabs
+            const blobUrl = await generateAudio({
+                text: trimmedContent,
+                voiceId: 'EXAVITQu4vr4xnSDxMaL', // Bella voice
+            });
+            
+            // Fetch the blob from the URL
+            const response = await fetch(blobUrl);
+            const blob = await response.blob();
+            
+            // Set module ID to track which module this audio belongs to
+            const moduleId = `module-${studyPlatform.actModule}`;
+            setActiveModuleId(moduleId);
+            
+            // If user is authenticated, store in Supabase
+            if (user?.id) {
+                try {
+                    // Create a file name using the topic and module number
+                    const sanitizedTopic = studyMaterial.replace(/[^a-z0-9]/gi, '_').toLowerCase();
+                    const fileName = `${sanitizedTopic}-module-${studyPlatform.actModule}.mp3`;
+                    
+                    // Upload to Supabase Storage
+                    const { data: storageData, error: storageError } = await supabase.storage
+                        .from('learning_audio')
+                        .upload(`${user.id}/${fileName}`, blob, {
+                            contentType: 'audio/mpeg',
+                            upsert: true
+                        });
+                    
+                    if (storageError) {
+                        console.error('Error storing audio:', storageError);
+                        throw new Error(storageError.message);
+                    }
+                    
+                    // Get public URL
+                    const { data: publicUrlData } = supabase.storage
+                        .from('learning_audio')
+                        .getPublicUrl(`${user.id}/${fileName}`);
+                    
+                    // Store the public URL
+                    if (publicUrlData) {
+                        setAudioUrl(publicUrlData.publicUrl);
+                        
+                        // Revoke the temporary blob URL to free memory
+                        URL.revokeObjectURL(blobUrl);
+                        
+                        // Update module data with audio URL
+                        if (currentSessionId) {
+                            const updatedModulos = [...studyPlatform.modulos];
+                            if (!updatedModulos[studyPlatform.actModule].audioUrl) {
+                                updatedModulos[studyPlatform.actModule].audioUrl = publicUrlData.publicUrl;
+                                
+                                // Update in database
+                                await supabase
+                                    .from('personalized_learning_sessions')
+                                    .update({
+                                        modules_data: updatedModulos,
+                                    })
+                                    .eq('id', currentSessionId);
+                                
+                                setStudyPlatform(prev => ({
+                                    ...prev,
+                                    modulos: updatedModulos
+                                }));
+                            }
+                        }
+                    } else {
+                        // If we can't get the public URL, fallback to the blob URL
+                        setAudioUrl(blobUrl);
+                    }
+                } catch (error) {
+                    console.error('Storage error:', error);
+                    // Fallback to using the blob URL directly if storage fails
+                    setAudioUrl(blobUrl);
+                    toast({
+                        title: "Storage Error",
+                        description: "Audio generated but couldn't be stored. It will be available for this session only.",
+                        variant: "destructive"
+                    });
+                }
+            } else {
+                // If not authenticated, just use the blob URL
+                setAudioUrl(blobUrl);
+            }
+            
+            toast({
+                title: "Audio Generated",
+                description: "Your content has been converted to audio!",
+            });
+        } catch (error) {
+            console.error('Error generating audio:', error);
+            toast({
+                title: "Audio Generation Failed",
+                description: error instanceof Error ? error.message : "An unexpected error occurred",
+                variant: "destructive"
+            });
+        } finally {
+            setIsGeneratingAudio(false);
+        }
+    };
+
+    // Audio player control functions
+    const handlePlayPause = () => {
+        if (!audioRef.current) return;
+        
+        if (isPlaying) {
+            audioRef.current.pause();
+        } else {
+            audioRef.current.play();
+        }
+    };
+
+    const handleMuteToggle = () => {
+        if (!audioRef.current) return;
+        
+        audioRef.current.muted = !audioRef.current.muted;
+        setIsMuted(audioRef.current.muted);
+    };
+
+    const handleTimeUpdate = () => {
+        if (!audioRef.current) return;
+        setCurrentTime(audioRef.current.currentTime);
+    };
+
+    const handleLoadedMetadata = () => {
+        if (!audioRef.current) return;
+        setDuration(audioRef.current.duration);
+    };
+
+    const handleSeek = (e: React.MouseEvent<HTMLDivElement>) => {
+        if (!audioRef.current || !duration) return;
+        
+        const rect = e.currentTarget.getBoundingClientRect();
+        const clickX = e.clientX - rect.left;
+        const newTime = (clickX / rect.width) * duration;
+        
+        audioRef.current.currentTime = newTime;
+        setCurrentTime(newTime);
+    };
+
+    const formatTime = (time: number) => {
+        const minutes = Math.floor(time / 60);
+        const seconds = Math.floor(time % 60);
+        return `${minutes}:${seconds.toString().padStart(2, '0')}`;
+    };
+
+    // Close audio player
+    const handleCloseAudio = () => {
+        if (audioRef.current) {
+            audioRef.current.pause();
+        }
+        setAudioUrl(null);
+        setIsPlaying(false);
+    };
+
+    // Check if current module already has audio
+    useEffect(() => {
+        if (studyPlatform.modulos[studyPlatform.actModule]?.audioUrl) {
+            setAudioUrl(studyPlatform.modulos[studyPlatform.actModule].audioUrl);
+            setActiveModuleId(`module-${studyPlatform.actModule}`);
+        } else {
+            setAudioUrl(null);
+        }
+        setIsPlaying(false);
+        setCurrentTime(0);
+        setDuration(0);
+    }, [studyPlatform.actModule, studyPlatform.modulos]);
 
     const handleGetModules = useCallback(async () => {
         if (!studyMaterial) return;
@@ -349,6 +559,23 @@ const StudyPlatform = () => {
                             <Card className="mb-6 bg-[#2A2B32] border-0 rounded-xl">
                                 <ScrollArea className="h-[calc(100vh-250px)]">
                                     <CardContent className="p-6 studyPlatform-content">
+                                        {/* Floating Audio Generation Button */}
+                                        <div className="fixed bottom-28 right-8 z-30">
+                                            <Button 
+                                                variant="default"
+                                                size="icon"
+                                                className="h-12 w-12 rounded-full shadow-lg bg-primary text-primary-foreground hover:bg-primary/90 transition-all duration-200"
+                                                onClick={handleGenerateAudio}
+                                                disabled={isGeneratingAudio}
+                                            >
+                                                {isGeneratingAudio ? (
+                                                    <Loader2 className="h-6 w-6 animate-spin" />
+                                                ) : (
+                                                    <Headphones className="h-6 w-6" />
+                                                )}
+                                            </Button>
+                                        </div>
+
                                         {studyPlatform.modulos[studyPlatform.actModule] && 
                                          studyPlatform.modulos[studyPlatform.actModule].content && 
                                          <ContextMenu>
@@ -408,6 +635,84 @@ const StudyPlatform = () => {
                                     </CardContent>
                                 </ScrollArea>
                             </Card>
+
+                            {/* Audio Player */}
+                            {audioUrl && (
+                                <motion.div 
+                                    initial={{ opacity: 0, y: 20 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    className="mb-6 p-4 rounded-xl bg-[#2A2B32]/80 backdrop-blur-sm border border-primary/20 shadow-lg"
+                                >
+                                    <div className="flex items-center justify-between mb-2">
+                                        <div className="flex items-center gap-2">
+                                            <Volume2 className="h-5 w-5 text-primary" />
+                                            <h3 className="font-medium">Audio Version</h3>
+                                        </div>
+                                        <div className="flex items-center gap-2">
+                                            <span className="text-xs text-muted-foreground">
+                                                {formatTime(currentTime)} / {formatTime(duration)}
+                                            </span>
+                                            <Button 
+                                                variant="ghost" 
+                                                size="icon" 
+                                                className="h-7 w-7"
+                                                onClick={handleCloseAudio}
+                                            >
+                                                <X className="h-4 w-4" />
+                                            </Button>
+                                        </div>
+                                    </div>
+                                    
+                                    {/* Progress bar */}
+                                    <div 
+                                        className="w-full h-2 bg-primary/20 rounded-full mb-3 cursor-pointer"
+                                        onClick={handleSeek}
+                                    >
+                                        <div 
+                                            className="h-full bg-primary rounded-full"
+                                            style={{ width: `${(currentTime / duration) * 100 || 0}%` }}
+                                        />
+                                    </div>
+                                    
+                                    <div className="flex items-center gap-4">
+                                        <Button
+                                            variant="outline"
+                                            size="icon"
+                                            className="h-10 w-10 rounded-full"
+                                            onClick={handlePlayPause}
+                                        >
+                                            {isPlaying ? (
+                                                <Pause className="h-5 w-5" />
+                                            ) : (
+                                                <Play className="h-5 w-5" />
+                                            )}
+                                        </Button>
+                                        <Button
+                                            variant="outline"
+                                            size="icon"
+                                            className="h-8 w-8 rounded-full"
+                                            onClick={handleMuteToggle}
+                                        >
+                                            {isMuted ? (
+                                                <VolumeX className="h-4 w-4" />
+                                            ) : (
+                                                <Volume2 className="h-4 w-4" />
+                                            )}
+                                        </Button>
+                                    </div>
+                                    
+                                    <audio
+                                        ref={audioRef}
+                                        src={audioUrl}
+                                        onPlay={() => setIsPlaying(true)}
+                                        onPause={() => setIsPlaying(false)}
+                                        onEnded={() => setIsPlaying(false)}
+                                        onTimeUpdate={handleTimeUpdate}
+                                        onLoadedMetadata={handleLoadedMetadata}
+                                        className="hidden"
+                                    />
+                                </motion.div>
+                            )}
                             
                             {/* Render Expanded Content */}
                             {expansions.length > 0 && (
