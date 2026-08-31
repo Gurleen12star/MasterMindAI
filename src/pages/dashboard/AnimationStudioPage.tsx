@@ -7,9 +7,11 @@ import { Textarea } from '@/components/ui/textarea';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
-import { supabase } from '@/lib/supabase';
 import { useAuth } from '@/components/auth/SupabaseAuthProvider';
 import AnimatedLoadingText from '@/components/ui/AnimatedLoadingText';
+import { useVideoStatus } from '@/hooks/useVideoStatus';
+import { generateVideo } from '@/lib/api';
+import { VideoDocument, SceneDocument, listVideoFiles, getFileUrl, FINAL_VIDEOS_BUCKET_ID } from '@/lib/appwrite';
 import {
   Film,
   Sparkles,
@@ -25,21 +27,11 @@ import {
   Eye
 } from 'lucide-react';
 
-interface AnimationJob {
-  id: string;
-  user_id: string;
-  query: string;
-  subject: string;
-  difficulty_level: string;
-  status: 'pending' | 'processing' | 'completed' | 'failed';
-  progress: number;
-  current_step?: string;
-  video_url?: string;
-  audio_url?: string;
-  script?: string;
-  error_message?: string;
-  created_at: string;
-  updated_at: string;
+interface VideoFile {
+  $id: string;
+  name: string;
+  sizeOriginal: number;
+  $createdAt: string;
 }
 
 export default function AnimationStudioPage() {
@@ -50,33 +42,33 @@ export default function AnimationStudioPage() {
   const [subject, setSubject] = useState('general');
   const [difficultyLevel, setDifficultyLevel] = useState('intermediate');
   const [isGenerating, setIsGenerating] = useState(false);
-  const [currentJob, setCurrentJob] = useState<AnimationJob | null>(null);
-  const [history, setHistory] = useState<AnimationJob[]>([]);
-  const [selectedVideo, setSelectedVideo] = useState<AnimationJob | null>(null);
+  const [currentVideoId, setCurrentVideoId] = useState<string | null>(null);
+  const [videoHistory, setVideoHistory] = useState<VideoFile[]>([]);
+  const [selectedVideo, setSelectedVideo] = useState<VideoDocument | null>(null);
+
+  const { video, scenes, isLoading } = useVideoStatus(currentVideoId);
 
   useEffect(() => {
-    if (user?.id) {
-      fetchAnimationHistory();
+    loadVideoHistory();
+  }, []);
+
+  // Update current video when real-time data comes in
+  useEffect(() => {
+    if (video) {
+      setSelectedVideo(video);
+      setIsGenerating(false);
     }
-  }, [user?.id]);
+  }, [video]);
 
-  const fetchAnimationHistory = async () => {
-    if (!user?.id) return;
-
+  const loadVideoHistory = async () => {
     try {
-      const { data, error } = await supabase
-        .from('animation_jobs')
-        .select('*')
-        .eq('user_id', user.id)
-        .order('created_at', { ascending: false });
-
-      if (error) throw error;
-      setHistory(data || []);
+      const files = await listVideoFiles();
+      setVideoHistory(files);
     } catch (error) {
-      console.error('Error fetching animation history:', error);
+      console.error('Error loading video history:', error);
       toast({
         title: 'Error',
-        description: 'Failed to load animation history',
+        description: 'Failed to load video history',
         variant: 'destructive',
       });
     }
@@ -102,53 +94,55 @@ export default function AnimationStudioPage() {
     }
 
     setIsGenerating(true);
-    setCurrentJob(null);
+    setCurrentVideoId(null);
     setSelectedVideo(null);
 
     try {
-      const { data, error } = await supabase
-        .from('animation_jobs')
-        .insert([{
-          user_id: user.id,
-          query: topic.trim(),
-          subject: subject,
-          difficulty_level: difficultyLevel,
-          status: 'pending',
-          progress: 0,
-          current_step: 'Initializing animation request...'
-        }])
-        .select()
-        .single();
+      const result = await generateVideo(topic.trim(), instructions, subject, difficultyLevel);
+      
+      if (result.success && result.videoId) {
+        setCurrentVideoId(result.videoId);
+        toast({
+          title: 'Animation Request Submitted',
+          description: 'Your animation is being processed. This may take 20+ minutes.',
+        });
 
-      if (error) throw error;
+        // Refresh history
+        loadVideoHistory();
 
-      setCurrentJob(data);
-      toast({
-        title: 'Animation Request Submitted',
-        description: 'Your animation is being processed. This may take 20+ minutes.',
-      });
-
-      // Refresh history
-      fetchAnimationHistory();
-
-      // Clear form
-      setTopic('');
-      setInstructions('');
+        // Clear form
+        setTopic('');
+        setInstructions('');
+      } else {
+        throw new Error(result.error || 'Failed to start video generation');
+      }
     } catch (error) {
-      console.error('Error creating animation job:', error);
+      console.error('Error generating animation:', error);
       toast({
-        title: 'Submission Failed',
-        description: 'Failed to submit animation request. Please try again.',
+        title: 'Generation Failed',
+        description: error instanceof Error ? error.message : 'Failed to generate animation. Please try again.',
         variant: 'destructive',
       });
-    } finally {
       setIsGenerating(false);
     }
   };
 
-  const loadHistoryVideo = (job: AnimationJob) => {
-    setSelectedVideo(job);
-    setCurrentJob(null);
+  const loadHistoryVideo = async (file: VideoFile) => {
+    // For now, we'll create a mock VideoDocument from the file
+    // In a real implementation, you'd fetch the video document from Appwrite
+    const mockVideo: VideoDocument = {
+      $id: file.$id,
+      topic: file.name.replace('.mp4', ''),
+      status: 'completed',
+      progress: 100,
+      scene_count: 1,
+      combined_video_url: file.$id,
+      created_at: file.$createdAt,
+      updated_at: file.$createdAt
+    };
+    
+    setSelectedVideo(mockVideo);
+    setCurrentVideoId(null);
   };
 
   const getStatusIcon = (status: string) => {
@@ -157,7 +151,8 @@ export default function AnimationStudioPage() {
         return <CheckCircle className="h-4 w-4 text-green-500" />;
       case 'failed':
         return <XCircle className="h-4 w-4 text-red-500" />;
-      case 'processing':
+      case 'rendering':
+      case 'planning':
         return <Loader2 className="h-4 w-4 text-blue-500 animate-spin" />;
       default:
         return <Clock className="h-4 w-4 text-yellow-500" />;
@@ -170,7 +165,8 @@ export default function AnimationStudioPage() {
         return 'bg-green-100 text-green-800';
       case 'failed':
         return 'bg-red-100 text-red-800';
-      case 'processing':
+      case 'rendering':
+      case 'planning':
         return 'bg-blue-100 text-blue-800';
       default:
         return 'bg-yellow-100 text-yellow-800';
@@ -305,7 +301,7 @@ export default function AnimationStudioPage() {
               </div>
               
               <div className="aspect-video bg-muted rounded-lg flex items-center justify-center border-2 border-dashed border-border">
-                {currentJob && (
+                {(isGenerating || isLoading) && video && (
                   <div className="text-center space-y-4">
                     <motion.div
                       initial={{ opacity: 0, scale: 0.8 }}
@@ -319,42 +315,37 @@ export default function AnimationStudioPage() {
                       <div>
                         <h4 className="font-medium mb-2">Processing Animation</h4>
                         <p className="text-sm text-muted-foreground mb-2">
-                          Topic: {currentJob.query}
+                          Topic: {video.topic}
                         </p>
                         <div className="flex items-center gap-2 text-sm text-muted-foreground">
                           <Clock className="h-4 w-4" />
-                          <span>Progress: {currentJob.progress}%</span>
+                          <span>Progress: {video.progress || 0}%</span>
                         </div>
-                        {currentJob.current_step && (
-                          <p className="text-xs text-muted-foreground mt-1">
-                            {currentJob.current_step}
-                          </p>
-                        )}
+                        <p className="text-xs text-muted-foreground mt-1">
+                          Status: {video.status}
+                        </p>
                       </div>
                     </motion.div>
                   </div>
                 )}
                 
-                {selectedVideo && selectedVideo.video_url ? (
+                {selectedVideo && selectedVideo.status === 'completed' && selectedVideo.combined_video_url ? (
                   <video
                     controls
                     className="w-full h-full rounded-lg"
-                    src={selectedVideo.video_url}
+                    src={getFileUrl(FINAL_VIDEOS_BUCKET_ID, selectedVideo.combined_video_url)}
                   >
                     Your browser does not support the video tag.
                   </video>
-                ) : selectedVideo ? (
+                ) : selectedVideo && selectedVideo.status === 'failed' ? (
                   <div className="text-center space-y-2">
                     <XCircle className="h-12 w-12 text-muted-foreground mx-auto" />
-                    <p className="font-medium">Video Not Available</p>
+                    <p className="font-medium">Animation Failed</p>
                     <p className="text-sm text-muted-foreground">
-                      {selectedVideo.status === 'failed' 
-                        ? selectedVideo.error_message || 'Animation generation failed'
-                        : 'Video is still processing or not yet available'
-                      }
+                      {selectedVideo.error_message || 'Animation generation failed'}
                     </p>
                   </div>
-                ) : !currentJob && (
+                ) : !selectedVideo && !isGenerating && !isLoading ? (
                   <div className="text-center space-y-2">
                     <Film className="h-12 w-12 text-muted-foreground mx-auto" />
                     <p className="font-medium">No Animation Selected</p>
@@ -362,21 +353,42 @@ export default function AnimationStudioPage() {
                       Generate a new animation or select one from your history
                     </p>
                   </div>
-                )}
+                ) : null}
               </div>
               
               {selectedVideo && (
                 <div className="p-4 bg-accent/50 rounded-lg">
                   <div className="flex items-center justify-between mb-2">
-                    <h4 className="font-medium">{selectedVideo.query}</h4>
+                    <h4 className="font-medium">{selectedVideo.topic}</h4>
                     <Badge className={getStatusColor(selectedVideo.status)}>
                       {selectedVideo.status}
                     </Badge>
                   </div>
                   <div className="text-sm text-muted-foreground space-y-1">
-                    <p>Subject: {selectedVideo.subject}</p>
-                    <p>Difficulty: {selectedVideo.difficulty_level}</p>
                     <p>Created: {new Date(selectedVideo.created_at).toLocaleDateString()}</p>
+                    {selectedVideo.progress && (
+                      <p>Progress: {selectedVideo.progress}%</p>
+                    )}
+                  </div>
+                </div>
+              )}
+
+              {/* Scene Information */}
+              {scenes.length > 0 && (
+                <div className="p-4 bg-accent/30 rounded-lg">
+                  <h4 className="font-medium mb-2">Scenes ({scenes.length})</h4>
+                  <div className="grid gap-2">
+                    {scenes.map((scene) => (
+                      <div key={scene.$id} className="flex justify-between items-center p-2 bg-background/50 rounded">
+                        <span>Scene {scene.scene_number}</span>
+                        <div className="flex items-center gap-2">
+                          {getStatusIcon(scene.status)}
+                          <span className="text-xs px-2 py-1 rounded bg-muted">
+                            {scene.status}
+                          </span>
+                        </div>
+                      </div>
+                    ))}
                   </div>
                 </div>
               )}
@@ -393,48 +405,39 @@ export default function AnimationStudioPage() {
         </div>
         
         <ScrollArea className="h-[400px] w-full">
-          {history.length > 0 ? (
+          {videoHistory.length > 0 ? (
             <div className="space-y-3">
-              {history.map((job) => (
+              {videoHistory.map((file) => (
                 <motion.div
-                  key={job.id}
+                  key={file.$id}
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   className={`p-4 rounded-lg border transition-all duration-200 cursor-pointer hover:bg-accent/50 ${
-                    selectedVideo?.id === job.id ? 'border-primary bg-primary/5' : 'border-border bg-card'
+                    selectedVideo?.combined_video_url === file.$id ? 'border-primary bg-primary/5' : 'border-border bg-card'
                   }`}
-                  onClick={() => loadHistoryVideo(job)}
+                  onClick={() => loadHistoryVideo(file)}
                 >
                   <div className="flex items-start justify-between gap-3">
                     <div className="flex-1">
                       <div className="flex items-center gap-2 mb-2">
-                        {getStatusIcon(job.status)}
-                        <h4 className="font-medium truncate">{job.query}</h4>
-                        <Badge variant="outline" className="text-xs">
-                          {job.subject}
-                        </Badge>
+                        <CheckCircle className="h-4 w-4 text-green-500" />
+                        <h4 className="font-medium truncate">{file.name}</h4>
                       </div>
                       <div className="flex items-center gap-4 text-sm text-muted-foreground">
-                        <span>Difficulty: {job.difficulty_level}</span>
-                        <span>Progress: {job.progress}%</span>
-                        <span>{new Date(job.created_at).toLocaleDateString()}</span>
+                        <span>Size: {(file.sizeOriginal / 1024 / 1024).toFixed(2)} MB</span>
+                        <span>{new Date(file.$createdAt).toLocaleDateString()}</span>
                       </div>
-                      {job.current_step && (
-                        <p className="text-xs text-muted-foreground mt-1">
-                          {job.current_step}
-                        </p>
-                      )}
                     </div>
                     <div className="flex items-center gap-2">
-                      <Badge className={getStatusColor(job.status)}>
-                        {job.status}
+                      <Badge className="bg-green-100 text-green-800">
+                        completed
                       </Badge>
                       <Button
                         variant="ghost"
                         size="sm"
                         onClick={(e) => {
                           e.stopPropagation();
-                          loadHistoryVideo(job);
+                          loadHistoryVideo(file);
                         }}
                         className="gap-1"
                       >
