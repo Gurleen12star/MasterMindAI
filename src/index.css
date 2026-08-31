@@ -731,3 +731,4 @@ body {
   .project-box-footer {
     @apply flex justify-between items-center mt-6 pt-4 border-t;
   }
+}
