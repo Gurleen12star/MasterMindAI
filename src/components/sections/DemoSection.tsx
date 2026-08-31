@@ -5,7 +5,8 @@ import { Button } from '@/components/ui/button';
 import { FileText, Headphones, Video, Wand2, Sparkles } from 'lucide-react';
 
 export default function DemoSection() {
-  const [useState] = useState(false);
+  // CORRECTED: Restored the original state declaration
+  const [isPlaying, setIsPlaying] = useState(false);
   const [content, setContent] = useState('');
 
   return (
@@ -32,12 +33,8 @@ export default function DemoSection() {
         <div className="grid grid-cols-1 gap-8 lg:grid-cols-12">
           {/* Input Content Card */}
           <div className="lg:col-span-5">
-            {/* BentoBox is now a positioning container */}
             <BentoBox gradient="purple" className="relative overflow-hidden border-2 border-primary/20 hover:border-primary/30 transition-all duration-500 bento-modern shadow-inner-modern rounded-3xl h-full">
-              {/* Grainy background layer holds the color, blur, and noise filter */}
               <div className="absolute inset-0 backdrop-blur-xl bg-background/30 [filter:url(#grainy)]" />
-
-              {/* Content is wrapped to sit on top of the background layer */}
               <div className="relative z-10 h-full flex flex-col p-6">
                 <div className="flex items-center gap-4 mb-6">
                   <div className="relative inline-flex h-12 w-12 items-center justify-center rounded-xl bg-primary/20 before:absolute before:inset-0 before:rounded-xl before:bg-primary/10 before:animate-pulse shadow-lg">
@@ -63,12 +60,8 @@ export default function DemoSection() {
           
           {/* AI Transformations Card */}
           <div className="lg:col-span-7">
-            {/* BentoBox is now a positioning container */}
             <BentoBox gradient="blue" className="relative overflow-hidden border-2 border-primary/20 hover:border-primary/30 transition-all duration-500 bento-modern shadow-inner-modern rounded-3xl h-full">
-              {/* Grainy background layer holds the color, blur, and noise filter */}
               <div className="absolute inset-0 backdrop-blur-xl bg-background/30 [filter:url(#grainy)]" />
-
-              {/* Content is wrapped to sit on top of the background layer */}
               <div className="relative z-10 h-full p-6">
                 <div className="flex items-center gap-4 mb-6">
                   <div className="relative inline-flex h-12 w-12 items-center justify-center rounded-xl bg-primary/20 before:absolute before:inset-0 before:rounded-xl before:bg-primary/10 before:animate-pulse shadow-lg">
@@ -102,7 +95,6 @@ export default function DemoSection() {
                     </div>
                   </TabsContent>
                   
-                  {/* Other TabsContent remain the same */}
                   <TabsContent value="audio" className="mt-0">
                     <div className="flex items-center justify-center rounded-xl border-2 border-primary/20 bg-card/60 backdrop-blur-sm p-8 shadow-lg">
                       <div className="flex flex-col items-center gap-4">
@@ -115,6 +107,7 @@ export default function DemoSection() {
                       </div>
                     </div>
                   </TabsContent>
+
                   <TabsContent value="video" className="mt-0">
                     <div className="flex items-center justify-center rounded-xl border-2 border-primary/20 bg-card/60 backdrop-blur-sm p-8 shadow-lg">
                       <div className="flex flex-col items-center gap-4">
