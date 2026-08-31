@@ -812,5 +812,3 @@ export default function DeepResearchPage() {
     </div>
   );
 }
-
-export default DeepResearchPage
