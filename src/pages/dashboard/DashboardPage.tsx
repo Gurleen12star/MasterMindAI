@@ -12,13 +12,14 @@ export default function DashboardPage() {
   return (
     <div className="flex h-screen bg-background">
       <Sidebar />
+      
       <div className="flex-1 flex flex-col">
         <DashboardHeader />
         <main className="flex-1 overflow-y-auto">
           {path === '/dashboard/roadmap-generator' ? (
             <RoadmapGeneratorPage />
           ) : (
-            <div className="p-6 space-y-6"> 
+            <div className="p-6 space-y-6">
               <div className="flex items-center justify-between">
                 <div>
                   <h2 className="text-2xl font-bold tracking-tight">
@@ -98,7 +99,6 @@ export default function DashboardPage() {
                   </div>
                 </div>
               </div>
-            </div>
             </div>
           )}
         </main>
