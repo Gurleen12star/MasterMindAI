@@ -43,32 +43,10 @@ try {
   );
   
   console.log('Application rendered successfully');
-  
-  // Hide the initial pre-loader after React app is rendered
-  setTimeout(() => {
-    const initialLoader = document.getElementById('initial-loader');
-    if (initialLoader) {
-      initialLoader.classList.add('hidden');
-      // Remove the loader from DOM after transition completes
-      setTimeout(() => {
-        initialLoader.remove();
-      }, 800); // Match the CSS transition duration
-    }
-  }, 100); // Small delay to ensure React has started rendering
-  
 } catch (error) {
   console.error('Failed to render application:', error);
   rootElement.innerHTML = `<div style="color:red; padding: 20px;">
     <h2>Error Rendering Application</h2>
     <p>${error instanceof Error ? error.message : 'Unknown error'}</p>
   </div>`;
-  
-  // Hide the pre-loader even on error
-  const initialLoader = document.getElementById('initial-loader');
-  if (initialLoader) {
-    initialLoader.classList.add('hidden');
-    setTimeout(() => {
-      initialLoader.remove();
-    }, 800);
-  }
 }
