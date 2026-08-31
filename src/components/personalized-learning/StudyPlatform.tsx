@@ -9,7 +9,7 @@ import Typed from "typed.js";
 import { AnimatePresence, motion } from "framer-motion";
 import prompts from "@/lib/personalized-learning/prompts";
 import interactionGemini from "@/lib/personalized-learning/geminiClient";
-import { Award, ArrowLeft, ArrowRight, Loader2, Copy, SendToBack, BoxSelect as SelectAll, MessageSquare } from "lucide-react";
+import { Award, ArrowLeft, ArrowRight, Loader2, Copy, SendToBack, BoxSelect as SelectAll, MessageSquare, Expand } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import {
@@ -21,6 +21,15 @@ import {
 import { supabase } from "@/lib/supabase";
 import { useAuth } from "@/components/auth/SupabaseAuthProvider";
 import { useToast } from "@/hooks/use-toast";
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
+
+interface ExpandedContent {
+  originalText: string;
+  expandedText: string | null;
+  isLoading: boolean;
+  id: string; // Unique ID for rendering
+}
 
 const StudyPlatformLoading = () => {
     const studyPlatformLoadingEl = useRef<HTMLDivElement>(null);
@@ -89,6 +98,7 @@ const StudyPlatform = () => {
     const [modulo, setModulo] = useState<number>(studyPlatform.actModule);
     const [actualModuleRes, setActualModuleRes] = useState<string>("");
     const [timeModule, setTimeModule] = useState<boolean>(false);
+    const [expansions, setExpansions] = useState<ExpandedContent[]>([]); // New state for expanded content
 
     const delay = (ms: number) => new Promise(res => setTimeout(res, ms));
 
@@ -130,6 +140,42 @@ const StudyPlatform = () => {
                 description: "Navigating to Convo AI page...",
             });
             navigate("/dashboard/convo-ai");
+        }
+    };
+
+    const handleExpandText = async () => {
+        if (!selectedText) return;
+
+        const newExpansionId = `exp-${Date.now()}`;
+        setExpansions(prev => [...prev, { id: newExpansionId, originalText: selectedText, expandedText: null, isLoading: true }]);
+
+        try {
+            const { data, error } = await supabase.functions.invoke('expand-content', {
+                body: { textToExpand: selectedText },
+            });
+
+            if (error) throw error;
+            if (!data || !data.expandedText) throw new Error("No expanded text received.");
+
+            setExpansions(prev => prev.map(exp => 
+                exp.id === newExpansionId ? { ...exp, expandedText: data.expandedText, isLoading: false } : exp
+            ));
+            toast({
+                title: "Text Expanded",
+                description: "Detailed explanation generated.",
+            });
+        } catch (error) {
+            console.error("Error expanding text:", error);
+            setExpansions(prev => prev.map(exp => 
+                exp.id === newExpansionId ? { ...exp, expandedText: "Failed to expand text.", isLoading: false } : exp
+            ));
+            toast({
+                title: "Expansion Failed",
+                description: error instanceof Error ? error.message : "An unexpected error occurred.",
+                variant: "destructive",
+            });
+        } finally {
+            setSelectedText(""); // Clear selection after action
         }
     };
 
@@ -351,12 +397,40 @@ const StudyPlatform = () => {
                                                          <MessageSquare className="h-4 w-4" />
                                                          Send to Convo AI
                                                      </ContextMenuItem>
+                                                     <ContextMenuItem onClick={handleExpandText} className="gap-2">
+                                                         <Expand className="h-4 w-4" />
+                                                         Expand
+                                                     </ContextMenuItem>
                                                  </ContextMenuContent>
                                              )}
                                          </ContextMenu>}
                                     </CardContent>
                                 </ScrollArea>
                             </Card>
+                            
+                            {/* Render Expanded Content */}
+                            {expansions.length > 0 && (
+                                <div className="mt-6 space-y-4">
+                                    <h3 className="text-lg font-semibold">Expanded Content</h3>
+                                    {expansions.map((exp) => (
+                                        <details key={exp.id} className="group rounded-lg border bg-[#2A2B32] p-4">
+                                            <summary className="flex cursor-pointer items-center justify-between font-medium text-foreground">
+                                                Original: "{exp.originalText.substring(0, 50)}..."
+                                                {exp.isLoading && <Loader2 className="h-4 w-4 animate-spin text-primary" />}
+                                            </summary>
+                                            <div className="prose prose-neutral dark:prose-invert mt-4 max-w-none text-muted-foreground">
+                                                {exp.expandedText ? (
+                                                    <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                                                        {exp.expandedText}
+                                                    </ReactMarkdown>
+                                                ) : (
+                                                    !exp.isLoading && <p>No expanded content available.</p>
+                                                )}
+                                            </div>
+                                        </details>
+                                    ))}
+                                </div>
+                            )}
                             
                             <div className="flex items-center justify-between gap-4">
                                 <Button
