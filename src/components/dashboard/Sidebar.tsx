@@ -104,17 +104,11 @@ export default function Sidebar({ className }: SidebarProps) {
   ];
 
   const adminMenu = [
-    { to: '/admin', icon: Shield, label: 'Admin Dashboard' },
-    { to: '/admin/users', icon: User, label: 'User Management' },
-    { to: '/admin/settings', icon: Settings, label: 'System Settings' },
+    { to: '/dashboard/admin', icon: Shield, label: 'Admin Dashboard' },
+    { to: '/dashboard/admin/users', icon: User, label: 'User Management' },
+    { to: '/dashboard/admin/settings', icon: Settings, label: 'System Settings' },
   ];
 
-  const projects = [
-    { to: '#', icon: Folder, label: 'All Projects' },
-    { to: '#', icon: Folder, label: 'Testing' },
-    { to: '#', icon: Folder, label: 'Final Projects' },
-    { to: '#', icon: Folder, label: 'Favs' },
-  ];
 
   return (
     <div className={`${isCollapsed ? 'w-16' : 'w-64'} h-screen bg-[#111111] text-white flex flex-col border-r border-white/10 transition-all duration-300 ease-in-out ${className}`}>
