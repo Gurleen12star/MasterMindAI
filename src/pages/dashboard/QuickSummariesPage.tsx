@@ -9,6 +9,7 @@ import { generateSummary } from '@/lib/gemini';
 import { useToast } from '@/hooks/use-toast';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
+import AnimatedLoadingText from '@/components/ui/AnimatedLoadingText';
 import { 
   Wand2, 
   Upload, 
@@ -250,7 +251,7 @@ export default function QuickSummariesPage() {
             {isGenerating ? (
               <>
                 <Loader2 className="h-4 w-4 animate-spin" />
-                Generating Summary...
+                <AnimatedLoadingText message="Analyzing content..." />
               </>
             ) : (
               <>
@@ -310,8 +311,8 @@ export default function QuickSummariesPage() {
                     >
                       <Loader2 className="h-8 w-8 animate-spin text-primary" />
                       <div>
-                        <p className="font-medium">Generating your summary...</p>
-                        <p className="text-sm">This may take a few moments</p>
+                        <AnimatedLoadingText message="Processing your content..." className="font-medium" />
+                        <p className="text-sm mt-2">Extracting key insights...</p>
                       </div>
                     </motion.div>
                   ) : (

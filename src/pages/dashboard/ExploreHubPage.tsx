@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { Search, Sparkles, TrendingUp, Clock, BookOpen, Star } from 'lucide-react';
+import AnimatedLoadingText from '@/components/ui/AnimatedLoadingText';
 
 const trendingTopics = [
   { id: 1, name: 'Machine Learning', count: '2.3k learners' },
@@ -88,7 +89,7 @@ export default function ExploreHubPage() {
             />
             <Button className="ml-2 gap-2">
               <Sparkles className="h-4 w-4" />
-              Search
+              <AnimatedLoadingText message="Discovering content..." />
             </Button>
           </div>
         </Card>

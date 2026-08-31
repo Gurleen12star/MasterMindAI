@@ -8,6 +8,7 @@ import { generateRoadmapMermaid } from '@/lib/gemini';
 import { MermaidDiagram } from '@/components/ui/mermaid-diagram';
 import { Card } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
+import AnimatedLoadingText from '@/components/ui/AnimatedLoadingText';
 
 type Roadmap = {
   id: string;
@@ -263,7 +264,11 @@ export default function RoadmapGeneratorPage() {
                     onClick={handleGenerate}
                     disabled={isGenerating}
                   >
-                    {isGenerating ? 'Generating...' : 'Generate'}
+                    {isGenerating ? (
+                      <AnimatedLoadingText message="Creating roadmap..." />
+                    ) : (
+                      'Generate'
+                    )}
                   </Button>
                 </div>
               </div>

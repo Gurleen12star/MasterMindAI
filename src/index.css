@@ -768,6 +768,46 @@ html {
   background-color: transparent !important; /* Override potential inline styles from mermaid */
 }
 
+/* Animated Loading Text Styles */
+.animated-loading-text {
+  color: hsl(var(--muted-foreground));
+  font-size: 16px;
+  font-family: 'Open Sans', sans-serif;
+  font-weight: 600;
+  display: inline-block;
+}
+
+.animated-loading-text span {
+  transition: all 0.3s ease;
+  display: inline-block;
+  animation: glow 2.6s ease infinite;
+  letter-spacing: 0.01em;
+}
+
+@keyframes glow {
+  0% {
+    transform: translate3d(0,0,0) scale(1);
+    color: hsl(var(--muted-foreground));
+    text-shadow: 0 0 0 hsl(var(--muted-foreground) / 0);
+  }
+  13% {
+    transform: translate3d(1px,-1px,0) scale(1.2);
+    color: hsl(var(--foreground));
+  }
+  16% {
+    text-shadow: 0 0 8px hsl(var(--primary) / 0.8);
+  }
+  26% {
+    transform: translate3d(0,0,0) scale(1);
+    color: hsl(var(--muted-foreground));
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 0.8;
+  }
+}
+
 /* Default Node Styles (applied if no specific class matches) */
 .mermaid-render-area .node > rect,
 .mermaid-render-area .node > circle,

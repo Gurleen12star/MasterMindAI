@@ -16,6 +16,7 @@ import { BookOpen, Loader2, FileText, BarChart as FlowChart, Maximize2, History,
 import { useUser } from '@clerk/clerk-react';
 import { useSupabaseAuth } from '@/components/auth/ClerkSupabaseProvider';
 import { getUserIdForSupabase } from '@/lib/supabase-admin';
+import AnimatedLoadingText from '@/components/ui/AnimatedLoadingText';
 
 type DifficultyLevel = 'beginner' | 'intermediate' | 'advanced';
 
@@ -274,7 +275,7 @@ export default function LearningPathsPage() {
                     {isGenerating ? (
                       <div className="flex flex-col items-center gap-2">
                         <Loader2 className="h-8 w-8 animate-spin" />
-                        <p>Generating your learning path...</p>
+                        <AnimatedLoadingText message="Analyzing your learning goals..." />
                       </div>
                     ) : (
                       <p>Your learning path will appear here</p>
@@ -324,7 +325,7 @@ export default function LearningPathsPage() {
                     {isGenerating ? (
                       <div className="flex flex-col items-center gap-2">
                         <Loader2 className="h-8 w-8 animate-spin" />
-                        <p className="animate-pulse">Creating your visual learning journey...</p>
+                        <AnimatedLoadingText message="Crafting your visual roadmap..." />
                       </div>
                     ) : (
                       <div className="text-center space-y-2">
