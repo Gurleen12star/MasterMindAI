@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useAuth, useSession } from '@clerk/clerk-react';
 import { ThemeProvider } from '@/components/theme/ThemeProvider';
 import CustomCursor from '@/components/ui/CustomCursor';
+import LoadingScreen from '@/components/ui/LoadingScreen';
 import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
 import HeroSection from '@/components/sections/HeroSection';
@@ -50,7 +51,7 @@ function App() {
   }, []);
 
   if (!isLoaded) {
-    return <div className="min-h-screen flex items-center justify-center">Loading...</div>;
+    return <LoadingScreen />;
   }
 
   const renderContent = () => {
