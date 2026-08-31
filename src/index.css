@@ -121,6 +121,15 @@
   --shine-duration: 1.5s;
 }
 
+/* Hide default details marker in all browsers */
+details > summary::-webkit-details-marker {
+  display: none;
+}
+
+details > summary {
+  list-style: none;
+}
+
 /* Scrolling Banner Animation */
 @keyframes scroll-right-to-left {
   0% {
@@ -1084,4 +1093,3 @@ html {
     place-items: center;
   }
 }
-
