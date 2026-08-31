@@ -12,16 +12,13 @@ export default function DemoSection() {
   return (
     <section id="demo" className="py-16 md:py-24 lg:py-32">
       <div className="container px-4 max-w-[1200px] mx-auto">
-        <div className="mx-auto max-w-5xl text-center">
+        <div className="mx-auto max-w-5xl text-center mb-16">
           <h2 className="text-3xl font-bold tracking-tight md:text-4xl">
             See EchoVerse in Action
           </h2>
           <p className="mt-4 text-muted-foreground md:text-lg">
             Experience how our AI transforms content across different formats.
           </p>
-        </div>
-        
-        <div className="mt-16">
           <div className="grid grid-cols-1 gap-6 lg:grid-cols-12">
             <div className="lg:col-span-5">
               <BentoBox gradient="purple" className="h-full">
