@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import robotImage from '../../assets/robot.png';
+import robotImage from '../../assets/robott.png';
 
 export default function HeroSection() {
   useEffect(() => {

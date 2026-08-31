@@ -21,8 +21,8 @@ export default function AuthForm({ mode }: AuthFormProps) {
               dividerLine: "bg-border",
               dividerText: "text-muted-foreground",
               footerActionLink: "text-primary hover:text-primary/90",
-              socialButtonsIconButton: "border-border hover:bg-accent transition-colors",
-              socialButtonsBlockButton: "border-border hover:bg-accent transition-colors",
+              socialButtonsIconButton: "bg-white text-gray-600 border border-gray-200 hover:bg-gray-50 transition-all shadow-sm",
+              socialButtonsBlockButton: "bg-white text-gray-600 border border-gray-200 hover:bg-gray-50 transition-all shadow-sm font-medium",
             },
           }}
         />
@@ -40,8 +40,8 @@ export default function AuthForm({ mode }: AuthFormProps) {
               dividerLine: "bg-border",
               dividerText: "text-muted-foreground",
               footerActionLink: "text-primary hover:text-primary/90",
-              socialButtonsIconButton: "border-border hover:bg-accent transition-colors",
-              socialButtonsBlockButton: "border-border hover:bg-accent transition-colors",
+              socialButtonsIconButton: "bg-white text-gray-600 border border-gray-200 hover:bg-gray-50 transition-all shadow-sm",
+              socialButtonsBlockButton: "bg-white text-gray-600 border border-gray-200 hover:bg-gray-50 transition-all shadow-sm font-medium",
             },
           }}
         />
