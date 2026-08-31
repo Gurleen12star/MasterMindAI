@@ -1,21 +1,21 @@
-import { useAuth } from '@/components/auth/SupabaseAuthProvider';
+import { useAuth } from '@/components/auth/AuthContext';
 import { useAdmin } from '@/hooks/useAdmin';
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useSidebar } from './SidebarContext';
-import EchoVerseLogo from '@/components/ui/EchoVerseLogo';
+import MasterMindLogo from '@/components/ui/MasterMindLogo';
 import {
   Home,
   Shield,
-  Compass,
+  
   BookOpen,
   Search,
   Network,
   Wand2,
   Film,
   BotMessageSquare,
-  Folder,
-  Plus,
+  
+  
   User,
   LogOut,
   ChevronRight,
@@ -88,20 +88,20 @@ interface SidebarProps {
 }
 
 export default function Sidebar({ className }: SidebarProps) {
-  const { signOut, user } = useAuth();
+  const { signOut } = useAuth();
   const location = useLocation();
   const { isCollapsed, setIsCollapsed } = useSidebar();
   const { isAdmin } = useAdmin();
   
   const mainMenu = [
     { to: '/dashboard', icon: Home, label: 'Overview' },
-    { to: '/dashboard/paths', icon: BookOpen, label: 'Learning Paths' },
+    { to: '/dashboard/paths', icon: BookOpen, label: 'Roadmaps' },
     { to: '/dashboard/research', icon: Search, label: 'Deep Research' },
-    { to: '/dashboard/roadmap-generator', icon: Network, label: 'Roadmap Generator' },
+    { to: '/dashboard/roadmap-generator', icon: Network, label: 'Career Path' },
     { to: '/dashboard/summaries', icon: Wand2, label: 'Quick Summaries' },
     { to: '/dashboard/animation-studio', icon: Film, label: 'Animation Studio' },
     { to: '/dashboard/convo-ai', icon: BotMessageSquare, label: 'Convo AI' },
-    { to: '/dashboard/personalized-learning', icon: GraduationCap, label: 'Personalized Learning' },
+    { to: '/dashboard/personalized-learning', icon: GraduationCap, label: 'Learning DNA' },
   ];
 
   const adminMenu = [
@@ -116,8 +116,8 @@ export default function Sidebar({ className }: SidebarProps) {
       <div className={`${isCollapsed ? 'p-3' : 'p-5'} flex items-center ${isCollapsed ? 'justify-center' : 'justify-between'} relative`}>
         {/* Brand / Logo */}
         <Link to="/dashboard" className={`${isCollapsed ? 'flex items-center justify-center' : 'flex items-center gap-3'}`}>
-          <EchoVerseLogo className="h-8 w-8 text-primary" />
-          {!isCollapsed && <span className="text-lg font-bold">EchoVerse</span>}
+          <MasterMindLogo className="h-8 w-8 text-primary" />
+          {!isCollapsed && <span className="text-lg font-bold">MasterMindAI</span>}
         </Link>
 
         {/* Toggle Button */}

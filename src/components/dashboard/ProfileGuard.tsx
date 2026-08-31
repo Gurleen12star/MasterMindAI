@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '@/components/auth/SupabaseAuthProvider';
+import { useAuth } from '@/components/auth/AuthContext';
 import { useProfile } from '@/hooks/useProfile';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -13,7 +13,7 @@ interface ProfileGuardProps {
 
 export default function ProfileGuard({ children }: ProfileGuardProps) {
   const { user, loading } = useAuth();
-  const { profile, isLoading, needsProfileSetup } = useProfile();
+  const { isLoading, needsProfileSetup } = useProfile();
   const [showSetupPrompt, setShowSetupPrompt] = useState(false);
   const navigate = useNavigate();
 
@@ -55,7 +55,7 @@ export default function ProfileGuard({ children }: ProfileGuardProps) {
           
           <h2 className="text-2xl font-bold mb-2">Profile Setup Required</h2>
           <p className="text-muted-foreground mb-6">
-            To get the most out of EchoVerse, we need to learn a bit about you first.
+            To get the most out of MasterMindAI, we need to learn a bit about you first.
           </p>
           
           <div className="space-y-4">

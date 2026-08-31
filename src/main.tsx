@@ -2,10 +2,17 @@ import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import App from './App.tsx';
 import './index.css';
-import { SupabaseAuthProvider } from './components/auth/SupabaseAuthProvider.tsx';
+import { AuthProvider } from './components/auth/AuthProvider.tsx';
+
+// Migrate legacy theme if present
+const legacyTheme = localStorage.getItem('echoverse-theme');
+if (legacyTheme && !localStorage.getItem('mastermind-theme')) {
+  localStorage.setItem('mastermind-theme', legacyTheme);
+  localStorage.removeItem('echoverse-theme');
+}
 
 // Immediately apply dark theme to prevent white flash
-const storedTheme = localStorage.getItem('echoverse-theme');
+const storedTheme = localStorage.getItem('mastermind-theme');
 const theme = storedTheme || 'dark';
 const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
 
@@ -17,9 +24,11 @@ if (theme === 'dark' || (theme === 'system' && systemPrefersDark)) {
 
 // Add console logs for debugging
 console.log('Starting application...');
+const isDemoMode = import.meta.env.VITE_DEMO_MODE === 'true';
 console.log('Environment variables loaded:', {
   hasSupabaseUrl: !!import.meta.env.VITE_SUPABASE_URL,
-  hasSupabaseKey: !!import.meta.env.VITE_SUPABASE_ANON_KEY
+  hasSupabaseKey: !!import.meta.env.VITE_SUPABASE_ANON_KEY,
+  isDemoMode
 });
 
 // Get the root element
@@ -33,7 +42,7 @@ if (!rootElement) {
 }
 
 try {
-  if (!import.meta.env.VITE_SUPABASE_URL || !import.meta.env.VITE_SUPABASE_ANON_KEY) {
+  if (!isDemoMode && (!import.meta.env.VITE_SUPABASE_URL || !import.meta.env.VITE_SUPABASE_ANON_KEY)) {
     console.error('Missing Supabase environment variables');
     rootElement.innerHTML = '<div style="color:red; padding: 20px;">Error: Missing Supabase environment variables</div>';
     throw new Error('Missing Supabase environment variables');
@@ -43,9 +52,9 @@ try {
   
   createRoot(rootElement).render(
     <StrictMode>
-      <SupabaseAuthProvider>
+      <AuthProvider>
         <App />
-      </SupabaseAuthProvider>
+      </AuthProvider>
     </StrictMode>
   );
   

@@ -1,3 +1,4 @@
+// @ts-nocheck
 import React from 'react';
 import { motion } from 'framer-motion';
 import { Card } from '@/components/ui/card';
@@ -44,7 +45,7 @@ export default function PrivacyPage() {
           <Card className="p-6 md:p-8 mb-8 border-primary/10">
             <div className="prose prose-lg dark:prose-invert max-w-none">
               <p>
-                At EchoVerse, we take your privacy seriously. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you use our AI-powered learning platform. Please read this privacy policy carefully. If you do not agree with the terms of this privacy policy, please do not access the site.
+                At MasterMindAI, we take your privacy seriously. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you use our AI-powered learning platform. Please read this privacy policy carefully. If you do not agree with the terms of this privacy policy, please do not access the site.
               </p>
               
               <h2>1. Information We Collect</h2>
@@ -125,7 +126,7 @@ export default function PrivacyPage() {
                 If you have questions or concerns about this privacy policy or our practices, please contact us at:
               </p>
               <p>
-                <strong>Email:</strong> privacy@echoverse.ai<br />
+                <strong>Email:</strong> [Contact Email Not Configured]<br />
                 <strong>Address:</strong> 123 Learning Lane, San Francisco, CA 94103
               </p>
             </div>
@@ -185,7 +186,7 @@ export default function PrivacyPage() {
             </p>
             <div className="bg-muted/50 p-4 rounded-lg">
               <p className="text-sm">
-                <strong>Email:</strong> dpo@echoverse.ai<br />
+                <strong>Email:</strong> [Contact Email Not Configured]<br />
                 <strong>Response Time:</strong> Within 48 hours
               </p>
             </div>

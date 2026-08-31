@@ -130,9 +130,9 @@ export default function CareersPage() {
             <Card className="overflow-hidden border-primary/10">
               <div className="grid md:grid-cols-2">
                 <div className="bg-gradient-to-br from-primary/10 via-primary/5 to-background p-8 md:p-12">
-                  <h2 className="text-3xl font-bold mb-6">Life at EchoVerse</h2>
+                  <h2 className="text-3xl font-bold mb-6">Life at MasterMindAI</h2>
                   <p className="text-lg text-muted-foreground mb-6">
-                    At EchoVerse, we're building the future of education. Our team is passionate about 
+                    At MasterMindAI, we're building the future of education. Our team is passionate about 
                     creating innovative solutions that make learning more accessible, effective, and enjoyable.
                   </p>
                   <div className="space-y-6">
@@ -291,7 +291,7 @@ export default function CareersPage() {
             <div className="text-center mb-12">
               <h2 className="text-3xl font-bold mb-4">Our Hiring Process</h2>
               <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
-                What to expect when applying to EchoVerse
+                What to expect when applying to MasterMindAI
               </p>
             </div>
             
@@ -303,7 +303,7 @@ export default function CareersPage() {
                 <div className="space-y-12">
                   {[
                     { step: 1, title: "Application Review", description: "Our team reviews your application and resume." },
-                    { step: 2, title: "Initial Conversation", description: "A brief call to discuss your background and interest in EchoVerse." },
+                    { step: 2, title: "Initial Conversation", description: "A brief call to discuss your background and interest in MasterMindAI." },
                     { step: 3, title: "Technical/Skills Assessment", description: "Complete a relevant assignment based on the role you're applying for." },
                     { step: 4, title: "Team Interviews", description: "Meet with several team members to discuss your experience and fit." },
                     { step: 5, title: "Decision & Offer", description: "We'll get back to you with our decision as quickly as possible." }

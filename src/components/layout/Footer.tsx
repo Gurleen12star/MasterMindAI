@@ -1,7 +1,7 @@
 import { Github, Linkedin, Twitter, ArrowUpRight } from 'lucide-react';
 import { Separator } from '@/components/ui/separator';
 import { BentoBox } from '@/components/ui/BentoBox';
-import EchoVerseLogo from '@/components/ui/EchoVerseLogo';
+import MasterMindLogo from '@/components/ui/MasterMindLogo';
 
 export default function Footer() {
   return (
@@ -23,11 +23,11 @@ export default function Footer() {
           <div className="relative z-10 flex flex-col items-start justify-between gap-12 md:flex-row">
             <div className="flex flex-col items-start gap-6">
               <div className="flex items-center gap-3">
-                <EchoVerseLogo 
+                <MasterMindLogo 
                   className="h-20 w-20 -my-4 text-primary" 
                 />
                 <span className="bg-gradient-to-r from-indigo-500 to-purple-500 bg-clip-text text-2xl font-bold text-transparent">
-                  EchoVerse
+                  MasterMindAI
                 </span>
               </div>
               <p className="max-w-xs text-base text-muted-foreground leading-relaxed">
@@ -35,7 +35,7 @@ export default function Footer() {
               </p>
               <div className="flex items-center gap-6">
                 <a
-                  href="https://discord.gg/echoverse"
+                  href="#"
                   className="group flex items-center gap-2 text-sm text-muted-foreground transition-colors hover:text-foreground"
                 >
                   <span>Join Discord</span>
@@ -101,18 +101,18 @@ export default function Footer() {
           
           <div className="relative z-10 flex flex-col items-center justify-between gap-8 md:flex-row">
             <p className="text-sm text-muted-foreground">
-              © 2025 EchoVerse. All rights reserved.
+              © 2025 MasterMindAI. All rights reserved.
             </p>
             <div className="flex items-center gap-6">
               <a
-                href="https://twitter.com/echoverse_ai"
+                href="#"
                 className="text-muted-foreground/80 transition-all duration-300 hover:text-foreground hover:scale-110"
               >
                 <Twitter className="h-5 w-5" />
                 <span className="sr-only">Twitter</span>
               </a>
               <a
-                href="https://linkedin.com/company/echoverse-ai"
+                href="#"
                 className="text-muted-foreground/80 transition-all duration-300 hover:text-foreground hover:scale-110"
               >
                 <Linkedin className="h-5 w-5" />

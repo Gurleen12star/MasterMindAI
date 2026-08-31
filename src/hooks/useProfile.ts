@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
-import { useAuth } from '@/components/auth/SupabaseAuthProvider';
-import { supabase } from '@/lib/supabase';
+import { useAuth } from '@/components/auth/AuthContext';
 import { StudentProfile, ProfileFormData } from '@/types/profile';
 import { useToast } from '@/hooks/use-toast';
+import { PersistenceProvider } from '@/lib/persistence/PersistenceProvider';
 
 export function useProfile() {
   const { user } = useAuth();
@@ -22,22 +22,7 @@ export function useProfile() {
 
     try {
       setIsLoading(true);
-      const { data, error } = await supabase
-        .from('student_profiles')
-        .select('*')
-        .eq('user_id', user.id)
-        .single();
-
-      if (error) {
-        // If no profile exists (PGRST116), that's expected for new users
-        if (error.code === 'PGRST116') {
-          setProfile(null);
-          return;
-        }
-        // For other errors, throw to be caught below
-        throw error;
-      }
-
+      const data = await PersistenceProvider.getInstance().fetchProfile(user.id);
       setProfile(data);
     } catch (error) {
       console.error('Error fetching profile:', error);
@@ -57,22 +42,11 @@ export function useProfile() {
     try {
       setIsSaving(true);
       
-      const profilePayload = {
-        ...profileData,
-        user_id: user.id,
-        email: user.email || profileData.email,
-        updated_at: new Date().toISOString(),
-      };
-
-      const { data, error } = await supabase
-        .from('student_profiles')
-        .upsert(profilePayload, {
-          onConflict: 'user_id',
-        })
-        .select()
-        .single();
-
-      if (error) throw error;
+      const data = await PersistenceProvider.getInstance().saveProfile(
+        user.id,
+        user.email || profileData.email,
+        profileData
+      );
 
       setProfile(data);
       toast({

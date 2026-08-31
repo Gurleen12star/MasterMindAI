@@ -1,91 +1,57 @@
 import { useState, useEffect } from 'react';
-import { useAuth } from '@/components/auth/SupabaseAuthProvider';
+import { useAuth } from '@/components/auth/AuthContext';
 import { motion } from 'framer-motion';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Checkbox } from '@/components/ui/checkbox';
 import { Progress } from '@/components/ui/progress';
-import { useProfile } from '@/hooks/useProfile';
-import { ProfileFormData } from '@/types/profile';
 import { useToast } from '@/hooks/use-toast';
 import {
-  User,
-  GraduationCap,
-  Brain,
   Target,
+  Brain,
   Settings,
   CheckCircle,
   ArrowRight,
   ArrowLeft,
   Loader2,
-  UserCircle,
-  BookOpen,
+  Briefcase,
   Clock,
-  Star
+  Code
 } from 'lucide-react';
 
+import { ALL_SKILLS } from '@/lib/capabilities';
+import { PersistenceProvider } from '@/lib/persistence/PersistenceProvider';
+
 const STEPS = [
-  { id: 'personal', title: 'Personal Info', icon: User },
-  { id: 'academic', title: 'Academic Background', icon: GraduationCap },
-  { id: 'learning', title: 'Learning Preferences', icon: Brain },
-  { id: 'goals', title: 'Goals & Interests', icon: Target },
-  { id: 'preferences', title: 'Preferences', icon: Settings },
+  { id: 'intent', title: 'Career Intent', icon: Briefcase },
+  { id: 'skills', title: 'Current Skills', icon: Code },
+  { id: 'preferences', title: 'Learning Preferences', icon: Brain },
 ];
 
 export default function ProfileSetupPage() {
   const { user } = useAuth();
-  const { profile, saveProfile, isSaving } = useProfile();
   const { toast } = useToast();
   const [currentStep, setCurrentStep] = useState(0);
-  const [formData, setFormData] = useState<ProfileFormData>({
-    first_name: '',
-    last_name: '',
-    email: user?.primaryEmailAddress?.emailAddress || '',
-    phone: '',
-    date_of_birth: '',
-    profile_image: user?.imageUrl || '',
-    
-    education_level: 'undergraduate',
-    institution: '',
-    field_of_study: '',
-    graduation_year: new Date().getFullYear(),
-    current_gpa: undefined,
-    
-    learning_style: 'mixed',
-    preferred_difficulty: 'intermediate',
-    study_hours_per_week: undefined,
-    preferred_study_time: 'flexible',
-    
-    career_goals: [],
-    learning_objectives: [],
-    interests: [],
-    skills_to_develop: [],
-    
-    programming_experience: 'beginner',
-    languages_known: [],
-    previous_courses: [],
-    certifications: [],
-    
-    notification_preferences: {
-      email_notifications: true,
-      push_notifications: true,
-      weekly_progress: true,
-      course_recommendations: true,
-    },
-    
-    profile_completed: false,
-    onboarding_completed: false,
-  });
+  const [isSaving, setIsSaving] = useState(false);
 
-  useEffect(() => {
-    if (profile) {
-      setFormData(prev => ({ ...prev, ...profile }));
-    }
-  }, [profile]);
+  // Default pre-filled demo learner
+  const [formData, setFormData] = useState({
+    targetRole: 'ai-engineer',
+    industryFocus: 'FinTech',
+    timeframeMonths: 6,
+    
+    currentSkills: {
+      'python': 60,
+      'javascript': 80,
+      'machine-learning': 20,
+    } as Record<string, number>,
+    
+    weeklyHours: 10,
+    learningStyle: 'visual',
+    preferredFormat: 'project-based',
+  });
 
   const updateFormData = (field: string, value: any) => {
     setFormData(prev => ({
@@ -94,13 +60,20 @@ export default function ProfileSetupPage() {
     }));
   };
 
-  const updateArrayField = (field: keyof ProfileFormData, value: string) => {
-    const currentArray = formData[field] as string[] || [];
-    const newArray = currentArray.includes(value)
-      ? currentArray.filter(item => item !== value)
-      : [...currentArray, value];
-    
-    updateFormData(field, newArray);
+  const updateSkill = (skillId: string, level: number) => {
+    setFormData(prev => ({
+      ...prev,
+      currentSkills: {
+        ...prev.currentSkills,
+        [skillId]: level
+      }
+    }));
+  };
+
+  const removeSkill = (skillId: string) => {
+    const updatedSkills = { ...formData.currentSkills };
+    delete updatedSkills[skillId];
+    setFormData(prev => ({ ...prev, currentSkills: updatedSkills }));
   };
 
   const handleNext = () => {
@@ -116,240 +89,199 @@ export default function ProfileSetupPage() {
   };
 
   const handleSubmit = async () => {
-    const finalData = {
-      ...formData,
-      profile_completed: true,
-      onboarding_completed: true,
-    };
+    if (!user) return;
+    setIsSaving(true);
+    
+    try {
+      const profileData = {
+        careerIntent: {
+          targetRole: formData.targetRole,
+          industryFocus: formData.industryFocus,
+          timeframeMonths: formData.timeframeMonths
+        },
+        currentSkills: formData.currentSkills,
+        preferences: {
+          weeklyHours: formData.weeklyHours,
+          learningStyle: formData.learningStyle,
+          preferredFormat: formData.preferredFormat
+        }
+      };
 
-    const success = await saveProfile(finalData);
-    if (success) {
+      await PersistenceProvider.getInstance().saveProfile(user.id, user.email || '', profileData as any);
+      
+      // Auto-generate roadmap based on the new profile
+      try {
+        const { generateRoadmap } = await import('@/lib/gemini');
+        const { convertLearningPathToMermaid } = await import('@/lib/mermaid-adapter');
+        const { calculateSkillGaps } = await import('@/lib/gap-engine');
+        const { generateIntelligenceTrace } = await import('@/lib/explanations');
+
+        const gaps = calculateSkillGaps(profileData as any);
+        const traceData = generateIntelligenceTrace(gaps, profileData.careerIntent as any, []);
+        
+        const topic = profileData.careerIntent.targetRole || 'Target Role';
+        const roadmapData = await generateRoadmap(topic, profileData, gaps);
+        const mermaidCode = convertLearningPathToMermaid(roadmapData);
+
+        const newRoadmap = {
+          topic,
+          mermaid_code: mermaidCode,
+          structured_data: roadmapData,
+          intelligence_trace: traceData,
+          learner_snapshot: profileData,
+          user_id: user.id,
+          created_at: new Date().toISOString(),
+          id: crypto.randomUUID()
+        };
+
+        await PersistenceProvider.getInstance().saveRoadmap(user.id, newRoadmap);
+      } catch (aiError) {
+        console.error('Failed to auto-generate roadmap:', aiError);
+      }
+
       toast({
-        title: 'Welcome to EchoVerse!',
-        description: 'Your profile has been set up successfully. Let\'s start learning!',
+        title: 'Learning DNA Built!',
+        description: 'Your MasterMindAI profile and roadmap have been configured successfully.',
       });
-      // Redirect to dashboard
       window.location.href = '/dashboard';
+    } catch (error) {
+      console.error(error);
+      toast({
+        title: 'Error',
+        description: 'Failed to save your profile. Please try again.',
+        variant: 'destructive',
+      });
+    } finally {
+      setIsSaving(false);
     }
   };
 
   const progress = ((currentStep + 1) / STEPS.length) * 100;
 
-  const renderPersonalInfo = () => (
+  const renderCareerIntent = () => (
     <div className="space-y-6">
       <div className="text-center mb-6">
-        <UserCircle className="h-16 w-16 mx-auto text-primary mb-4" />
-        <h2 className="text-2xl font-bold">Tell us about yourself</h2>
-        <p className="text-muted-foreground">Let's start with your basic information</p>
+        <Briefcase className="h-16 w-16 mx-auto text-primary mb-4" />
+        <h2 className="text-2xl font-bold">Define Your Career Intent</h2>
+        <p className="text-muted-foreground">What is your ultimate goal?</p>
+      </div>
+      
+      <div>
+        <Label>Target Role</Label>
+        <Select value={formData.targetRole} onValueChange={(val) => updateFormData('targetRole', val)}>
+          <SelectTrigger><SelectValue /></SelectTrigger>
+          <SelectContent>
+            <SelectItem value="ai-engineer">AI Engineer</SelectItem>
+            <SelectItem value="full-stack-developer">Full Stack Developer</SelectItem>
+            <SelectItem value="data-scientist">Data Scientist</SelectItem>
+          </SelectContent>
+        </Select>
       </div>
       
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
-          <Label htmlFor="first_name">First Name *</Label>
+          <Label>Industry Focus</Label>
           <Input
-            id="first_name"
-            value={formData.first_name}
-            onChange={(e) => updateFormData('first_name', e.target.value)}
-            placeholder="Enter your first name"
+            value={formData.industryFocus}
+            onChange={(e) => updateFormData('industryFocus', e.target.value)}
+            placeholder="e.g., FinTech, HealthTech, Gaming"
           />
         </div>
         <div>
-          <Label htmlFor="last_name">Last Name *</Label>
+          <Label>Timeframe (Months)</Label>
           <Input
-            id="last_name"
-            value={formData.last_name}
-            onChange={(e) => updateFormData('last_name', e.target.value)}
-            placeholder="Enter your last name"
+            type="number"
+            min="1" max="60"
+            value={formData.timeframeMonths}
+            onChange={(e) => updateFormData('timeframeMonths', parseInt(e.target.value) || 1)}
           />
         </div>
       </div>
+    </div>
+  );
+
+  const renderCurrentSkills = () => (
+    <div className="space-y-6">
+      <div className="text-center mb-6">
+        <Code className="h-16 w-16 mx-auto text-primary mb-4" />
+        <h2 className="text-2xl font-bold">Your Current Skills</h2>
+        <p className="text-muted-foreground">Rate your proficiency from 1 to 100.</p>
+      </div>
+      
+      <div className="space-y-4">
+        {Object.entries(formData.currentSkills).map(([skillId, level]) => (
+          <div key={skillId} className="flex items-center gap-4">
+            <div className="flex-1 font-medium">{ALL_SKILLS[skillId]?.name || skillId}</div>
+            <Input
+              type="number"
+              min="0" max="100"
+              className="w-24 text-center"
+              value={level}
+              onChange={(e) => updateSkill(skillId, parseInt(e.target.value) || 0)}
+            />
+            <Button variant="ghost" size="sm" onClick={() => removeSkill(skillId)} className="text-destructive">
+              Remove
+            </Button>
+          </div>
+        ))}
+      </div>
+      
+      <div className="pt-4 border-t">
+        <Label>Add a Skill</Label>
+        <Select onValueChange={(val) => updateSkill(val, 10)}>
+          <SelectTrigger><SelectValue placeholder="Select a skill to add..." /></SelectTrigger>
+          <SelectContent>
+            {Object.entries(ALL_SKILLS).map(([id, meta]) => (
+              !formData.currentSkills[id] && (
+                <SelectItem key={id} value={id}>{meta.name}</SelectItem>
+              )
+            ))}
+          </SelectContent>
+        </Select>
+      </div>
+    </div>
+  );
+
+  const renderPreferences = () => (
+    <div className="space-y-6">
+      <div className="text-center mb-6">
+        <Brain className="h-16 w-16 mx-auto text-primary mb-4" />
+        <h2 className="text-2xl font-bold">Learning Preferences</h2>
+        <p className="text-muted-foreground">How do you prefer to learn?</p>
+      </div>
       
       <div>
-        <Label htmlFor="email">Email Address</Label>
+        <Label>Weekly Hours Available</Label>
         <Input
-          id="email"
-          type="email"
-          value={formData.email}
-          onChange={(e) => updateFormData('email', e.target.value)}
-          placeholder="your.email@example.com"
+          type="number"
+          min="1" max="168"
+          value={formData.weeklyHours}
+          onChange={(e) => updateFormData('weeklyHours', parseInt(e.target.value) || 1)}
         />
       </div>
       
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
-          <Label htmlFor="phone">Phone Number</Label>
-          <Input
-            id="phone"
-            value={formData.phone}
-            onChange={(e) => updateFormData('phone', e.target.value)}
-            placeholder="+1 (555) 123-4567"
-          />
-        </div>
-        <div>
-          <Label htmlFor="date_of_birth">Date of Birth</Label>
-          <Input
-            id="date_of_birth"
-            type="date"
-            value={formData.date_of_birth}
-            onChange={(e) => updateFormData('date_of_birth', e.target.value)}
-          />
-        </div>
-      </div>
-    </div>
-  );
-
-  const renderAcademicInfo = () => (
-    <div className="space-y-6">
-      <div className="text-center mb-6">
-        <GraduationCap className="h-16 w-16 mx-auto text-primary mb-4" />
-        <h2 className="text-2xl font-bold">Academic Background</h2>
-        <p className="text-muted-foreground">Help us understand your educational journey</p>
-      </div>
-      
-      <div>
-        <Label htmlFor="education_level">Education Level *</Label>
-        <Select value={formData.education_level} onValueChange={(value) => updateFormData('education_level', value)}>
-          <SelectTrigger>
-            <SelectValue />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="high_school">High School</SelectItem>
-            <SelectItem value="undergraduate">Undergraduate</SelectItem>
-            <SelectItem value="graduate">Graduate</SelectItem>
-            <SelectItem value="postgraduate">Postgraduate</SelectItem>
-            <SelectItem value="professional">Professional</SelectItem>
-          </SelectContent>
-        </Select>
-      </div>
-      
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div>
-          <Label htmlFor="institution">Institution/University</Label>
-          <Input
-            id="institution"
-            value={formData.institution}
-            onChange={(e) => updateFormData('institution', e.target.value)}
-            placeholder="e.g., Stanford University"
-          />
-        </div>
-        <div>
-          <Label htmlFor="field_of_study">Field of Study</Label>
-          <Input
-            id="field_of_study"
-            value={formData.field_of_study}
-            onChange={(e) => updateFormData('field_of_study', e.target.value)}
-            placeholder="e.g., Computer Science"
-          />
-        </div>
-      </div>
-      
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div>
-          <Label htmlFor="graduation_year">Graduation Year</Label>
-          <Input
-            id="graduation_year"
-            type="number"
-            value={formData.graduation_year}
-            onChange={(e) => updateFormData('graduation_year', parseInt(e.target.value))}
-            placeholder="2024"
-          />
-        </div>
-        <div>
-          <Label htmlFor="current_gpa">Current GPA (Optional)</Label>
-          <Input
-            id="current_gpa"
-            type="number"
-            step="0.01"
-            min="0"
-            max="4"
-            value={formData.current_gpa || ''}
-            onChange={(e) => updateFormData('current_gpa', parseFloat(e.target.value))}
-            placeholder="3.75"
-          />
-        </div>
-      </div>
-      
-      <div>
-        <Label htmlFor="programming_experience">Programming Experience *</Label>
-        <Select value={formData.programming_experience} onValueChange={(value) => updateFormData('programming_experience', value)}>
-          <SelectTrigger>
-            <SelectValue />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="none">No Experience</SelectItem>
-            <SelectItem value="beginner">Beginner (0-1 years)</SelectItem>
-            <SelectItem value="intermediate">Intermediate (1-3 years)</SelectItem>
-            <SelectItem value="advanced">Advanced (3-5 years)</SelectItem>
-            <SelectItem value="expert">Expert (5+ years)</SelectItem>
-          </SelectContent>
-        </Select>
-      </div>
-    </div>
-  );
-
-  const renderLearningPreferences = () => (
-    <div className="space-y-6">
-      <div className="text-center mb-6">
-        <Brain className="h-16 w-16 mx-auto text-primary mb-4" />
-        <h2 className="text-2xl font-bold">Learning Preferences</h2>
-        <p className="text-muted-foreground">How do you learn best?</p>
-      </div>
-      
-      <div>
-        <Label htmlFor="learning_style">Learning Style *</Label>
-        <Select value={formData.learning_style} onValueChange={(value) => updateFormData('learning_style', value)}>
-          <SelectTrigger>
-            <SelectValue />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="visual">Visual (diagrams, charts, images)</SelectItem>
-            <SelectItem value="auditory">Auditory (lectures, discussions)</SelectItem>
-            <SelectItem value="kinesthetic">Kinesthetic (hands-on, practice)</SelectItem>
-            <SelectItem value="reading_writing">Reading/Writing (text-based)</SelectItem>
-            <SelectItem value="mixed">Mixed (combination of styles)</SelectItem>
-          </SelectContent>
-        </Select>
-      </div>
-      
-      <div>
-        <Label htmlFor="preferred_difficulty">Preferred Difficulty Level *</Label>
-        <Select value={formData.preferred_difficulty} onValueChange={(value) => updateFormData('preferred_difficulty', value)}>
-          <SelectTrigger>
-            <SelectValue />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="beginner">Beginner - Start from basics</SelectItem>
-            <SelectItem value="intermediate">Intermediate - Some background knowledge</SelectItem>
-            <SelectItem value="advanced">Advanced - Challenge me</SelectItem>
-          </SelectContent>
-        </Select>
-      </div>
-      
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div>
-          <Label htmlFor="study_hours_per_week">Study Hours per Week</Label>
-          <Input
-            id="study_hours_per_week"
-            type="number"
-            min="1"
-            max="168"
-            value={formData.study_hours_per_week || ''}
-            onChange={(e) => updateFormData('study_hours_per_week', parseInt(e.target.value))}
-            placeholder="10"
-          />
-        </div>
-        <div>
-          <Label htmlFor="preferred_study_time">Preferred Study Time</Label>
-          <Select value={formData.preferred_study_time} onValueChange={(value) => updateFormData('preferred_study_time', value)}>
-            <SelectTrigger>
-              <SelectValue />
-            </SelectTrigger>
+          <Label>Primary Learning Style</Label>
+          <Select value={formData.learningStyle} onValueChange={(val) => updateFormData('learningStyle', val)}>
+            <SelectTrigger><SelectValue /></SelectTrigger>
             <SelectContent>
-              <SelectItem value="morning">Morning (6AM - 12PM)</SelectItem>
-              <SelectItem value="afternoon">Afternoon (12PM - 6PM)</SelectItem>
-              <SelectItem value="evening">Evening (6PM - 10PM)</SelectItem>
-              <SelectItem value="night">Night (10PM - 6AM)</SelectItem>
-              <SelectItem value="flexible">Flexible</SelectItem>
+              <SelectItem value="visual">Visual</SelectItem>
+              <SelectItem value="auditory">Auditory</SelectItem>
+              <SelectItem value="reading">Reading & Writing</SelectItem>
+              <SelectItem value="kinesthetic">Kinesthetic (Hands-on)</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+        <div>
+          <Label>Preferred Format</Label>
+          <Select value={formData.preferredFormat} onValueChange={(val) => updateFormData('preferredFormat', val)}>
+            <SelectTrigger><SelectValue /></SelectTrigger>
+            <SelectContent>
+              <SelectItem value="video">Video Lectures</SelectItem>
+              <SelectItem value="text">Text / Articles</SelectItem>
+              <SelectItem value="interactive">Interactive Coding</SelectItem>
+              <SelectItem value="project-based">Project-based Learning</SelectItem>
             </SelectContent>
           </Select>
         </div>
@@ -357,198 +289,33 @@ export default function ProfileSetupPage() {
     </div>
   );
 
-  const renderGoalsAndInterests = () => {
-    const careerGoalOptions = [
-      'Software Developer', 'Data Scientist', 'Product Manager', 'UX/UI Designer',
-      'DevOps Engineer', 'Machine Learning Engineer', 'Cybersecurity Specialist',
-      'Full-Stack Developer', 'Mobile App Developer', 'Cloud Architect'
-    ];
-    
-    const skillOptions = [
-      'JavaScript', 'Python', 'React', 'Node.js', 'Machine Learning',
-      'Data Analysis', 'UI/UX Design', 'Cloud Computing', 'DevOps',
-      'Mobile Development', 'Blockchain', 'Cybersecurity'
-    ];
-
-    return (
-      <div className="space-y-6">
-        <div className="text-center mb-6">
-          <Target className="h-16 w-16 mx-auto text-primary mb-4" />
-          <h2 className="text-2xl font-bold">Goals & Interests</h2>
-          <p className="text-muted-foreground">What do you want to achieve?</p>
-        </div>
-        
-        <div>
-          <Label>Career Goals (Select all that apply)</Label>
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-2 mt-2">
-            {careerGoalOptions.map((goal) => (
-              <div key={goal} className="flex items-center space-x-2">
-                <Checkbox
-                  id={`career-${goal}`}
-                  checked={formData.career_goals?.includes(goal)}
-                  onCheckedChange={() => updateArrayField('career_goals', goal)}
-                />
-                <Label htmlFor={`career-${goal}`} className="text-sm">{goal}</Label>
-              </div>
-            ))}
-          </div>
-        </div>
-        
-        <div>
-          <Label>Skills to Develop (Select all that apply)</Label>
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-2 mt-2">
-            {skillOptions.map((skill) => (
-              <div key={skill} className="flex items-center space-x-2">
-                <Checkbox
-                  id={`skill-${skill}`}
-                  checked={formData.skills_to_develop?.includes(skill)}
-                  onCheckedChange={() => updateArrayField('skills_to_develop', skill)}
-                />
-                <Label htmlFor={`skill-${skill}`} className="text-sm">{skill}</Label>
-              </div>
-            ))}
-          </div>
-        </div>
-        
-        <div>
-          <Label htmlFor="learning_objectives">Learning Objectives</Label>
-          <Textarea
-            id="learning_objectives"
-            value={formData.learning_objectives?.join('\n') || ''}
-            onChange={(e) => updateFormData('learning_objectives', e.target.value.split('\n').filter(Boolean))}
-            placeholder="What specific goals do you want to achieve? (One per line)"
-            className="min-h-[100px]"
-          />
-        </div>
-      </div>
-    );
-  };
-
-  const renderPreferences = () => (
-    <div className="space-y-6">
-      <div className="text-center mb-6">
-        <Settings className="h-16 w-16 mx-auto text-primary mb-4" />
-        <h2 className="text-2xl font-bold">Notification Preferences</h2>
-        <p className="text-muted-foreground">How would you like to stay updated?</p>
-      </div>
-      
-      <div className="space-y-4">
-        <div className="flex items-center space-x-2">
-          <Checkbox
-            id="email_notifications"
-            checked={formData.notification_preferences.email_notifications}
-            onCheckedChange={(checked) => 
-              updateFormData('notification_preferences', {
-                ...formData.notification_preferences,
-                email_notifications: checked
-              })
-            }
-          />
-          <Label htmlFor="email_notifications">Email notifications for important updates</Label>
-        </div>
-        
-        <div className="flex items-center space-x-2">
-          <Checkbox
-            id="push_notifications"
-            checked={formData.notification_preferences.push_notifications}
-            onCheckedChange={(checked) => 
-              updateFormData('notification_preferences', {
-                ...formData.notification_preferences,
-                push_notifications: checked
-              })
-            }
-          />
-          <Label htmlFor="push_notifications">Push notifications for reminders</Label>
-        </div>
-        
-        <div className="flex items-center space-x-2">
-          <Checkbox
-            id="weekly_progress"
-            checked={formData.notification_preferences.weekly_progress}
-            onCheckedChange={(checked) => 
-              updateFormData('notification_preferences', {
-                ...formData.notification_preferences,
-                weekly_progress: checked
-              })
-            }
-          />
-          <Label htmlFor="weekly_progress">Weekly progress reports</Label>
-        </div>
-        
-        <div className="flex items-center space-x-2">
-          <Checkbox
-            id="course_recommendations"
-            checked={formData.notification_preferences.course_recommendations}
-            onCheckedChange={(checked) => 
-              updateFormData('notification_preferences', {
-                ...formData.notification_preferences,
-                course_recommendations: checked
-              })
-            }
-          />
-          <Label htmlFor="course_recommendations">Personalized course recommendations</Label>
-        </div>
-      </div>
-    </div>
-  );
-
   const renderStepContent = () => {
     switch (currentStep) {
-      case 0: return renderPersonalInfo();
-      case 1: return renderAcademicInfo();
-      case 2: return renderLearningPreferences();
-      case 3: return renderGoalsAndInterests();
-      case 4: return renderPreferences();
+      case 0: return renderCareerIntent();
+      case 1: return renderCurrentSkills();
+      case 2: return renderPreferences();
       default: return null;
     }
   };
 
-  const isStepValid = () => {
-    switch (currentStep) {
-      case 0:
-        return formData.first_name && formData.last_name && formData.email;
-      case 1:
-        return formData.education_level && formData.programming_experience;
-      case 2:
-        return formData.learning_style && formData.preferred_difficulty;
-      case 3:
-      case 4:
-        return true;
-      default:
-        return false;
-    }
-  };
-
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-muted/30 to-background p-4">
-      <div className="max-w-4xl mx-auto">
-        {/* Header */}
-        <div className="text-center mb-8">
-          <motion.div
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="flex items-center justify-center gap-2 mb-4"
-          >
-            <Star className="h-8 w-8 text-primary" />
-            <h1 className="text-3xl font-bold bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">
-              Welcome to EchoVerse
-            </h1>
-          </motion.div>
-          <p className="text-lg text-muted-foreground">
-            Let's set up your profile to personalize your learning experience
+    <div className="min-h-screen bg-background flex flex-col pt-20">
+      <div className="flex-1 w-full max-w-4xl mx-auto p-4 md:p-8 flex flex-col justify-center">
+        <div className="mb-8">
+          <h1 className="text-3xl font-bold tracking-tight text-center mb-2">
+            Build Your Learning DNA
+          </h1>
+          <p className="text-muted-foreground text-center">
+            Let MasterMindAI personalize your intelligence trace.
           </p>
         </div>
 
-        {/* Progress Bar */}
-        <Card className="p-6 mb-8 rounded-2xl">
-          <div className="flex items-center justify-between mb-4">
-            <span className="text-sm font-medium">Profile Setup Progress</span>
-            <span className="text-sm text-muted-foreground">{Math.round(progress)}% Complete</span>
+        <div className="mb-8 relative px-4">
+          <div className="absolute top-1/2 left-0 right-0 -translate-y-1/2 flex items-center px-8 z-0">
+            <Progress value={progress} className="h-1" />
           </div>
-          <Progress value={progress} className="mb-4" />
           
-          {/* Step Indicators */}
-          <div className="flex items-center justify-between">
+          <div className="relative z-10 flex justify-between">
             {STEPS.map((step, index) => {
               const StepIcon = step.icon;
               const isActive = index === currentStep;
@@ -556,29 +323,25 @@ export default function ProfileSetupPage() {
               
               return (
                 <div key={step.id} className="flex flex-col items-center">
-                  <div className={`
-                    flex items-center justify-center w-10 h-10 rounded-full border-2 transition-colors
-                    ${isActive ? 'border-primary bg-primary text-primary-foreground' : 
-                      isCompleted ? 'border-green-500 bg-green-500 text-white' : 
-                      'border-muted-foreground bg-background'}
-                  `}>
-                    {isCompleted ? (
-                      <CheckCircle className="h-5 w-5" />
-                    ) : (
-                      <StepIcon className="h-5 w-5" />
-                    )}
+                  <div className={`w-10 h-10 rounded-full flex items-center justify-center border-2 transition-colors duration-300 ${
+                    isActive ? 'border-primary bg-background text-primary' :
+                    isCompleted ? 'border-primary bg-primary text-primary-foreground' :
+                    'border-muted bg-background text-muted-foreground'
+                  }`}>
+                    {isCompleted ? <CheckCircle className="h-5 w-5" /> : <StepIcon className="h-5 w-5" />}
                   </div>
-                  <span className={`text-xs mt-2 text-center ${isActive ? 'text-primary font-medium' : 'text-muted-foreground'}`}>
+                  <span className={`text-xs mt-2 font-medium hidden sm:block ${
+                    isActive ? 'text-primary' : 'text-muted-foreground'
+                  }`}>
                     {step.title}
                   </span>
                 </div>
               );
             })}
           </div>
-        </Card>
+        </div>
 
-        {/* Form Content */}
-        <Card className="p-8 rounded-2xl">
+        <Card className="p-6 md:p-10 shadow-lg border-primary/10">
           <motion.div
             key={currentStep}
             initial={{ opacity: 0, x: 20 }}
@@ -589,7 +352,6 @@ export default function ProfileSetupPage() {
             {renderStepContent()}
           </motion.div>
 
-          {/* Navigation Buttons */}
           <div className="flex justify-between mt-8 pt-6 border-t">
             <Button
               variant="outline"
@@ -604,25 +366,24 @@ export default function ProfileSetupPage() {
             {currentStep === STEPS.length - 1 ? (
               <Button
                 onClick={handleSubmit}
-                disabled={!isStepValid() || isSaving}
+                disabled={isSaving}
                 className="gap-2"
               >
                 {isSaving ? (
                   <>
                     <Loader2 className="h-4 w-4 animate-spin" />
-                    Setting up...
+                    Analyzing DNA...
                   </>
                 ) : (
                   <>
-                    Complete Setup
-                    <CheckCircle className="h-4 w-4" />
+                    Launch MasterMindAI
+                    <ArrowRight className="h-4 w-4" />
                   </>
                 )}
               </Button>
             ) : (
               <Button
                 onClick={handleNext}
-                disabled={!isStepValid()}
                 className="gap-2"
               >
                 Next

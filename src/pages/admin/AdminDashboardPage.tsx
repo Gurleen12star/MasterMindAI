@@ -201,7 +201,7 @@ export default function AdminDashboardPage() {
             <div>
               <h1 className="text-2xl font-bold tracking-tight">Admin Dashboard</h1>
               <p className="text-muted-foreground">
-                Monitor and manage your EchoVerse learning platform
+                Monitor and manage your MasterMindAI learning platform
               </p>
             </div>
           </div>
@@ -225,7 +225,7 @@ export default function AdminDashboardPage() {
           <AlertCircle className="h-4 w-4" />
           <AlertTitle>Welcome, Administrator</AlertTitle>
           <AlertDescription>
-            This is the EchoVerse admin dashboard where you can manage users, content, and system settings.
+            This is the MasterMindAI admin dashboard where you can manage users, content, and system settings.
           </AlertDescription>
         </Alert>
 
@@ -280,7 +280,7 @@ export default function AdminDashboardPage() {
               <CardHeader>
                 <CardTitle>Recently Registered Users</CardTitle>
                 <CardDescription>
-                  The newest users who have joined EchoVerse
+                  The newest users who have joined MasterMindAI
                 </CardDescription>
               </CardHeader>
               <CardContent>

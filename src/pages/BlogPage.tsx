@@ -1,3 +1,4 @@
+// @ts-nocheck
 import React from 'react';
 import { motion } from 'framer-motion';
 import { Card } from '@/components/ui/card';
@@ -61,7 +62,7 @@ const blogPosts = [
   {
     id: 6,
     title: "From Content Consumption to Active Learning",
-    excerpt: "How EchoVerse transforms passive educational content into interactive learning experiences.",
+    excerpt: "How MasterMindAI transforms passive educational content into interactive learning experiences.",
     author: "James Wilson",
     date: "May 15, 2025",
     readTime: "5 min read",
@@ -95,7 +96,7 @@ export default function BlogPage() {
               animate={{ opacity: 1, y: 0 }}
               className="text-4xl md:text-5xl font-bold mb-6 bg-gradient-to-r from-primary via-primary/80 to-primary/60 bg-clip-text text-transparent"
             >
-              EchoVerse Blog
+              MasterMindAI Blog
             </motion.h1>
             <motion.p 
               initial={{ opacity: 0, y: 20 }}

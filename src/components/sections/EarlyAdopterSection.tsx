@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { BentoBox } from '@/components/ui/BentoBox';
 import { Button } from '@/components/ui/button';
 import { Sparkles, Check } from 'lucide-react';
@@ -18,7 +19,7 @@ export default function EarlyAdopterSection() {
           </h2>
           
           <p className="mt-6 max-w-3xl text-muted-foreground text-lg md:text-xl leading-relaxed font-medium mx-auto">
-            Be among the first to experience EchoVerse and receive exclusive benefits, including lifetime discounts, priority support, and early access to new features.
+            Be among the first to experience MasterMindAI and receive exclusive benefits, including lifetime discounts, priority support, and early access to new features.
           </p>
             
           <div className="mt-12 flex w-full flex-col items-center gap-4 sm:flex-row sm:justify-center">

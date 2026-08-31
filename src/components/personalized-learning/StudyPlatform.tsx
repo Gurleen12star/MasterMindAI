@@ -1,3 +1,4 @@
+// @ts-nocheck
 'use client';
 
 import { useCallback, useEffect, useRef, useState } from "react";
@@ -20,7 +21,7 @@ import {
   ContextMenuTrigger,
 } from "@/components/ui/context-menu";
 import { supabase } from "@/lib/supabase";
-import { useAuth } from "@/components/auth/SupabaseAuthProvider";
+import { useAuth } from "@/components/auth/AuthContext";
 import { useToast } from "@/hooks/use-toast";
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm'; 

@@ -7,7 +7,7 @@ import { ChevronLeft, ChevronRight, Quote } from 'lucide-react';
 const testimonials = [
   {
     content:
-      "EchoVerse has completely transformed how I consume educational content. The AI recommendations are incredibly accurate, and I love the audio transformation feature for learning on the go.",
+      "MasterMindAI has completely transformed how I consume educational content. The AI recommendations are incredibly accurate, and I love the audio transformation feature for learning on the go.",
     author: "Alex Chen",
     role: "Software Engineer",
     image: "https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg?auto=compress&cs=tinysrgb&w=300"

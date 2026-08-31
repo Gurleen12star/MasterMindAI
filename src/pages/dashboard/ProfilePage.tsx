@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '@/components/auth/SupabaseAuthProvider';
+import { useAuth } from '@/components/auth/AuthContext';
 import GlassCard from '@/components/ui/GlassCard';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -22,7 +22,7 @@ import {
   Mail,
   Phone,
   Award,
-  BookOpen,
+  
   Clock,
   Star,
   TrendingUp,
@@ -31,7 +31,7 @@ import {
 import IconBubble from '@/components/ui/IconBubble';
 
 export default function ProfilePage() {
-  const { user } = useAuth();
+  const {  } = useAuth();
   const { profile, saveProfile, isSaving } = useProfile();
   const [isEditing, setIsEditing] = useState(false);
   const [editData, setEditData] = useState<ProfileFormData | null>(null);

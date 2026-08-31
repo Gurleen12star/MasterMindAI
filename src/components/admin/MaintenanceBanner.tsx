@@ -66,7 +66,7 @@ export default function MaintenanceBanner() {
       <AlertCircle className="h-4 w-4" />
       <AlertTitle>System Maintenance</AlertTitle>
       <AlertDescription>
-        EchoVerse is currently in maintenance mode. Some features may be unavailable. We apologize for any inconvenience.
+        MasterMindAI is currently in maintenance mode. Some features may be unavailable. We apologize for any inconvenience.
       </AlertDescription>
     </Alert>
   );

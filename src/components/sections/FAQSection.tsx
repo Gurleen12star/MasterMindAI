@@ -7,9 +7,9 @@ import {
 
 const faqs = [
   {
-    question: "What is EchoVerse?",
+    question: "What is MasterMindAI?",
     answer:
-      "EchoVerse is an AI-powered personalized learning hub that helps you discover, consume, and create content more effectively. It uses advanced AI to recommend content tailored to your interests and learning style, while offering tools to transform content between different formats."
+      "MasterMindAI is an AI-powered personalized learning hub that helps you discover, consume, and create content more effectively. It uses advanced AI to recommend content tailored to your interests and learning style, while offering tools to transform content between different formats."
   },
   {
     question: "How does the AI personalization work?",
@@ -17,9 +17,9 @@ const faqs = [
       "Our AI analyzes your interactions, preferences, and learning patterns to create a personalized experience. It considers factors like your reading history, engagement time, topic interests, and learning pace to recommend the most relevant content and optimize your learning journey."
   },
   {
-    question: "What content formats does EchoVerse support?",
+    question: "What content formats does MasterMindAI support?",
     answer:
-      "EchoVerse supports a wide range of content formats including text, audio, video, and interactive materials. Our multi-modal transformation tools allow you to convert content between these formats seamlessly, making it easier to consume information in your preferred way."
+      "MasterMindAI supports a wide range of content formats including text, audio, video, and interactive materials. Our multi-modal transformation tools allow you to convert content between these formats seamlessly, making it easier to consume information in your preferred way."
   },
   {
     question: "How does the monetization feature work for creators?",
@@ -27,12 +27,12 @@ const faqs = [
       "Creators can monetize their content through various methods including subscription models, pay-per-view content, tipping, and bundled packages. Our platform handles payment processing, access control, and analytics, allowing creators to focus on producing valuable content."
   },
   {
-    question: "Is my data secure on EchoVerse?",
+    question: "Is my data secure on MasterMindAI?",
     answer:
       "Yes, we take data security seriously. We use decentralized storage powered by Algorand and IPFS to ensure your data remains secure and private. Additionally, we implement encryption, secure authentication, and follow industry best practices for data protection."
   },
   {
-    question: "Can I use EchoVerse for my organization or team?",
+    question: "Can I use MasterMindAI for my organization or team?",
     answer:
       "Absolutely! Our Enterprise plan is designed specifically for organizations and teams. It includes features like team management, custom integrations, SSO authentication, and dedicated support to help your organization leverage AI-powered learning effectively."
   }
@@ -50,7 +50,7 @@ export default function FAQSection() {
             Frequently Asked Questions
           </h2>
           <p className="mt-4 text-muted-foreground md:text-lg font-medium">
-            Have questions about EchoVerse? We've got answers.
+            Have questions about MasterMindAI? We've got answers.
           </p>
         </div>
         
@@ -77,10 +77,10 @@ export default function FAQSection() {
           <p className="text-muted-foreground">
             Still have questions? Contact our support team at{" "}
             <a
-              href="mailto:support@echoverse.ai"
+              href="#"
               className="text-primary hover:text-primary/80 transition-colors duration-200 font-medium"
             >
-              support@echoverse.ai
+              [Contact Email Not Configured]
             </a>
           </p>
         </div>

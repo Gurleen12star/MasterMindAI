@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import { useAuth } from '@/components/auth/SupabaseAuthProvider';
+import { useAuth } from '@/components/auth/AuthContext';
 import { ThemeProvider } from '@/components/theme/ThemeProvider';
 import { CursorProvider } from '@/contexts/CursorContext';
 import CustomCursor from '@/components/ui/CustomCursor';
@@ -25,6 +25,10 @@ import TermsPage from '@/pages/TermsPage';
 import CookiePolicyPage from '@/pages/CookiePolicyPage';
 import DocsPage from '@/pages/DocsPage';
 import DashboardPage from '@/pages/dashboard/DashboardPage';
+import EntryPage from '@/pages/EntryPage';
+import OnboardingIntroPage from '@/pages/OnboardingIntroPage';
+import OnboardingPage from '@/pages/OnboardingPage';
+import AnalyzingPage from '@/pages/AnalyzingPage';
 import ScrollReveal from '@/components/ui/ScrollReveal';
 
 // Protected Route Component
@@ -68,7 +72,7 @@ function Homepage() {
 
 function App() {
   useEffect(() => {
-    document.title = 'EchoVerse - AI-Powered Learning Hub';
+    document.title = 'MasterMindAI - AI-Powered Learning Hub';
     
     // Enable custom cursor after preloader disappears
     setTimeout(() => {
@@ -93,11 +97,11 @@ function App() {
   }, []);
 
   return (
-    <ThemeProvider defaultTheme="dark" storageKey="echoverse-theme">
+    <ThemeProvider defaultTheme="dark" storageKey="mastermind-theme">
       <CursorProvider>
         <Router>
           <div className="min-h-screen relative bg-transparent antialiased overflow-x-hidden">
-            <CustomCursor />
+            {/* Custom cursor removed */}
             
             <Routes>
               <Route path="/" element={<Homepage />} />
@@ -110,6 +114,11 @@ function App() {
               <Route path="/terms" element={<TermsPage />} />
               <Route path="/cookie-policy" element={<CookiePolicyPage />} />
               <Route path="/docs" element={<DocsPage />} />
+              {/* Phase 2A: public routes — no auth required (works in demo mode) */}
+              <Route path="/entry" element={<EntryPage />} />
+              <Route path="/onboarding/intro" element={<OnboardingIntroPage />} />
+              <Route path="/onboarding" element={<OnboardingPage />} />
+              <Route path="/onboarding/analyzing" element={<AnalyzingPage />} />
               <Route path="/dashboard/*" element={
                 <ProtectedRoute>
                   <DashboardPage />

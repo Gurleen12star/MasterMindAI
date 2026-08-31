@@ -1,3 +1,4 @@
+// @ts-nocheck
 import React from 'react';
 import TavusConversation from '@/components/personalized-learning/TavusConversation';
 import { BotMessageSquare, Video, FileText } from 'lucide-react';

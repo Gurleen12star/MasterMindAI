@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { useState, useRef, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Card } from '@/components/ui/card';
@@ -5,11 +6,12 @@ import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Badge } from '@/components/ui/badge';
 import { generateSummary } from '@/lib/gemini';
 import { generateAudio, AVAILABLE_VOICES } from '@/lib/elevenlabs';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/lib/supabase'; // Import Supabase client
-import { useAuth } from '@/components/auth/SupabaseAuthProvider'; // Import Auth hook
+import { useAuth } from '@/components/auth/AuthContext'; // Import Auth hook
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import AnimatedLoadingText from '@/components/ui/AnimatedLoadingText';

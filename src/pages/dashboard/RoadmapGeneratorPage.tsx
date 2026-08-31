@@ -1,9 +1,14 @@
 import { useState, useEffect } from 'react';
-import { useAuth } from '@/components/auth/SupabaseAuthProvider';
+import { useAuth } from '@/components/auth/AuthContext';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { useToast } from '@/hooks/use-toast';
-import { supabaseClient } from '@/lib/supabase-admin';
+import { useRoadmaps } from '@/hooks/useRoadmaps';
+import { useProfile } from '@/hooks/useProfile';
+import { calculateSkillGaps } from '@/lib/gap-engine';
+import { generateIntelligenceTrace } from '@/lib/explanations';
+import IntelligenceTrace from '@/components/personalized-learning/IntelligenceTrace';
+import { SkillGap, MasterMindProfile } from '@/types/mastermind';
 
 import {
   Dialog,
@@ -13,11 +18,10 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 
-import { generateRoadmapMermaid } from '@/lib/gemini';
-import { MermaidDiagram } from '@/components/ui/mermaid-diagram';
 import { Card } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import AnimatedLoadingText from '@/components/ui/AnimatedLoadingText';
+import CustomRoadmapView from '@/components/roadmap/CustomRoadmapView';
 
 type Roadmap = {
   id: string;
@@ -25,73 +29,66 @@ type Roadmap = {
   mermaid_code: string;
   created_at: string;
   user_id: string;
+  intelligence_trace?: any;
+  structured_data?: any;
+  learner_snapshot?: any;
 };
 
 // Default mermaid code for fallback
-const DEFAULT_MERMAID_CODE = `flowchart TD
-  A[Start] --> B[Fundamentals]
-  B --> C[Intermediate Concepts]
-  C --> D[Advanced Topics]
-  D --> E[Projects & Practice]
-  E --> F[Mastery]`;
+// removed unused code
 
 export default function RoadmapGeneratorPage() {
   const { user } = useAuth();
   const { toast } = useToast();
   const [topic, setTopic] = useState('');
   const [isGenerating, setIsGenerating] = useState(false);
-  const [currentRoadmap, setCurrentRoadmap] = useState<string | null>(null);
-  const [userRoadmaps, setUserRoadmaps] = useState<Roadmap[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [loadingMessageIndex, setLoadingMessageIndex] = useState(0);
+  
+  const loadingMessages = [
+    "Understanding your career goal...",
+    "Analyzing your current capabilities...",
+    "Finding your highest-impact skill gaps...",
+    "Matching recommendations to your goals...",
+    "Building your personalized career path...",
+    "Optimizing your learning workload..."
+  ];
+
+  useEffect(() => {
+    let interval: NodeJS.Timeout;
+    if (isGenerating) {
+      interval = setInterval(() => {
+        setLoadingMessageIndex((prev) => (prev + 1) % loadingMessages.length);
+      }, 3000);
+    } else {
+      setLoadingMessageIndex(0);
+    }
+    return () => clearInterval(interval);
+  }, [isGenerating, loadingMessages.length]);
+  
+  const { roadmaps: userRoadmaps, fetchRoadmaps: fetchUserRoadmaps, saveRoadmap, isLoading: isLoadingRoadmaps } = useRoadmaps();
+  const { profile, isLoading: isLoadingProfile } = useProfile();
   const [selectedRoadmap, setSelectedRoadmap] = useState<Roadmap | null>(null);
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
 
   useEffect(() => {
     if (user?.id) {
       fetchUserRoadmaps();
-    } else {
-      setIsLoading(false);
     }
   }, [user?.id]);
 
-  const fetchUserRoadmaps = async () => {
-    if (!user?.id) return;
-    
-    try {
-      setIsLoading(true);
-      
-      // Use the standard client with user_id filter for RLS
-      const { data, error } = await supabaseClient
-        .from('roadmaps')
-        .select('*')
-        .eq('user_id', user.id)
-        .order('created_at', { ascending: false });
-
-      if (error) {
-        console.error('Error fetching roadmaps:', error);
-        console.error('Error details:', error.message);
-        toast({
-          title: 'Error loading roadmaps',
-          description: 'Could not load your saved roadmaps. Please try again later.',
-          variant: 'destructive',
-        });
-        setUserRoadmaps([]);
-      } else {
-        console.log(`Successfully loaded ${data?.length || 0} roadmaps for user ${user.id}`);
-        setUserRoadmaps(data || []);
-      }
-    } catch (error) {
-      console.error('Error fetching roadmaps:', error);
-      toast({
-        title: 'Error loading roadmaps',
-        description: 'Something went wrong while loading your roadmaps.',
-        variant: 'destructive',
+  useEffect(() => {
+    if (userRoadmaps && userRoadmaps.length > 0 && !selectedRoadmap) {
+      // Auto-select the most recently created roadmap
+      const sorted = [...userRoadmaps].sort((a, b) => {
+        const timeA = a.created_at ? new Date(a.created_at).getTime() : 0;
+        const timeB = b.created_at ? new Date(b.created_at).getTime() : 0;
+        return (isNaN(timeB) ? 0 : timeB) - (isNaN(timeA) ? 0 : timeA);
       });
-      setUserRoadmaps([]);
-    } finally {
-      setIsLoading(false);
+      setSelectedRoadmap(sorted[0] as Roadmap);
     }
-  };
+  }, [userRoadmaps, selectedRoadmap]);
+
+  // fetchUserRoadmaps logic is inside useRoadmaps
 
   const handleGenerate = async () => {
     if (!topic) {
@@ -113,148 +110,74 @@ export default function RoadmapGeneratorPage() {
     }
 
     setIsGenerating(true);
-    setCurrentRoadmap(null);
+    
     
     try {
-      // Generate roadmap with Gemini
+      // 1. Generate structured roadmap with Edge Function
+      let roadmapData = null;
       let mermaidCode = '';
+      let gaps: SkillGap[] = [];
+      let traceData = null;
+      
       try {
-        mermaidCode = await generateRoadmapMermaid(topic);
-        
-        // Basic validation of mermaid code
-        if (!mermaidCode || !mermaidCode.trim().startsWith('flow') && !mermaidCode.trim().startsWith('graph')) {
-          console.warn('Invalid mermaid code received, using default instead');
-          mermaidCode = DEFAULT_MERMAID_CODE;
+        const { generateRoadmap } = await import('@/lib/gemini');
+        const { convertLearningPathToMermaid } = await import('@/lib/mermaid-adapter');
+
+        if (profile) {
+          gaps = calculateSkillGaps(profile as unknown as MasterMindProfile);
+          traceData = generateIntelligenceTrace(gaps, (profile as unknown as MasterMindProfile).careerIntent, []);
         }
-      } catch (aiError) {
+        
+        roadmapData = await generateRoadmap(topic, profile, gaps);
+        
+        // 2. Convert to Mermaid for visualization (adapter handles fallback safely)
+        mermaidCode = convertLearningPathToMermaid(roadmapData);
+      } catch (aiError: any) {
         console.error('AI error:', aiError);
         toast({
           title: 'AI Generation Error',
-          description: 'Using a default roadmap template instead',
+          description: aiError.message || 'Failed to generate roadmap',
           variant: 'destructive',
         });
-        mermaidCode = DEFAULT_MERMAID_CODE;
+        
+        // Use fallback so the UI doesn't crash completely, but don't save this to DB
+        
+        setIsGenerating(false);
+        return; 
       }
       
-      setCurrentRoadmap(mermaidCode);
+      
 
-      // Create a new roadmap object
-      const newRoadmap: Omit<Roadmap, 'id' | 'created_at'> = {
+      // Create a new roadmap object matching the updated database schema
+      const newRoadmap: Partial<Roadmap> & { structured_data?: any } = {
         topic,
         mermaid_code: mermaidCode,
+        structured_data: roadmapData,
+        intelligence_trace: traceData,
+        learner_snapshot: profile,
         user_id: user.id
       };
 
-      // Save to local state as a temporary solution
-      const tempRoadmap = {
-        ...newRoadmap,
-        id: `temp-${Date.now()}`,
-        created_at: new Date().toISOString()
-      } as Roadmap;
-
-      setSelectedRoadmap(tempRoadmap);
-      setUserRoadmaps(prev => [tempRoadmap, ...prev]);
-
-      // Save to Supabase database
+      // Save using useRoadmaps
       try {
-        console.log("Attempting to save roadmap to Supabase for user:", user.id);
-        
-        // First, check if we can connect to the database
-        const { error: pingError } = await supabaseClient
-          .from('roadmaps')
-          .select('id')
-          .limit(1);
-          
-        if (pingError) {
-          console.error('Supabase connection test failed:', pingError);
-          
-          // Check if it's an auth-related error
-          if (pingError.message.includes('JWT') || pingError.message.includes('auth') || pingError.code === 'PGRST301') {
-            toast({
-              title: 'Authentication Issue',
-              description: 'Please refresh the page and try again. Your roadmap was generated successfully.',
-              variant: 'destructive',
-            });
-          } else {
-            toast({
-              title: 'Database Connection Failed',
-              description: `Unable to connect to database: ${pingError.message}`,
-              variant: 'destructive',
-            });
-          }
-          return;
-        }
-        
-        // Then try the actual insert
-        const { data, error } = await supabaseClient
-          .from('roadmaps')
-          .insert([newRoadmap])
-          .select();
+        const saved = await saveRoadmap(newRoadmap);
 
-        if (error) {
-          console.error('Supabase insert error:', error);
-          console.error('Error code:', error.code);
-          console.error('Error message:', error.message);
-          console.error('Error details:', error.details);
-          
-          // Provide more specific error messages based on error type
-          let errorMessage = error.message;
-          if (error.message.includes('JWT') || error.message.includes('auth') || error.code === 'PGRST301') {
-            errorMessage = 'Authentication expired. Please refresh the page and try again.';
-          } else if (error.code === '23505') {
-            errorMessage = 'A roadmap with this data already exists.';
-          }
-          
-          toast({
-            title: 'Failed to Save',
-            description: errorMessage,
-            variant: 'destructive',
-          });
-        } else if (data && data.length > 0) {
-          // Update the temporary roadmap with the real one from the database
-          setSelectedRoadmap(data[0]);
-          setUserRoadmaps(prev => 
-            prev.map(r => r.id === tempRoadmap.id ? data[0] : r)
-          );
-          console.log("Successfully saved roadmap to Supabase with ID:", data[0].id);
-          
-          toast({
-            title: 'Roadmap Saved',
-            description: 'Your roadmap has been successfully saved to your account.',
-          });
-          
-          // Refresh the roadmaps list to ensure we have the latest data
-          fetchUserRoadmaps();
+        if (saved) {
+          setSelectedRoadmap(saved);
         }
-      } catch (dbError) {
+      } catch (dbError: any) {
         console.error('Database error:', dbError);
-        
-        let errorMessage = 'Unknown error occurred while saving';
-        if (dbError instanceof Error) {
-          if (dbError.message.includes('JWT') || dbError.message.includes('auth')) {
-            errorMessage = 'Authentication issue. Please refresh the page and try again.';
-          } else {
-            errorMessage = dbError.message;
-          }
-        }
-        
-        toast({
-          title: 'Database Error',
-          description: errorMessage,
-          variant: 'destructive',
-        });
-        // Continue with the local fallback data
       }
 
       toast({
         title: 'Roadmap generated!',
-        description: 'Your learning roadmap has been created successfully.',
+        description: 'Your personalized learning path has been created successfully.',
       });
     } catch (error) {
-      console.error('Error generating roadmap:', error);
+      console.error('Error in handleGenerate:', error);
       toast({
         title: 'Error',
-        description: 'Failed to generate roadmap. Please try again.',
+        description: 'An unexpected error occurred. Please try again.',
         variant: 'destructive',
       });
     } finally {
@@ -270,8 +193,10 @@ export default function RoadmapGeneratorPage() {
     setIsSidebarCollapsed(!isSidebarCollapsed);
   };
 
-  const formatDate = (dateString: string) => {
+  const formatDate = (dateString?: string) => {
+    if (!dateString) return 'Unknown date';
     const date = new Date(dateString);
+    if (isNaN(date.getTime())) return 'Unknown date';
     return new Intl.DateTimeFormat('en-US', { 
       month: 'short', 
       day: 'numeric',
@@ -282,9 +207,9 @@ export default function RoadmapGeneratorPage() {
   return (
     <div className="p-4 md:p-6">
       <div className="mb-6">
-        <h2 className="text-2xl font-bold tracking-tight">Roadmap Generator</h2>
+        <h2 className="text-2xl font-bold tracking-tight">Build Your Career Path</h2>
         <p className="text-muted-foreground">
-          Generate personalized learning roadmaps powered by AI.
+          Generate personalized career paths powered by MasterMindAI.
         </p>
       </div>
 
@@ -293,7 +218,7 @@ export default function RoadmapGeneratorPage() {
         <div className={`flex-1 space-y-6 ${isSidebarCollapsed ? 'xl:pr-14' : ''}`}>
           {/* Generation Form */}
           <Card className="p-6 rounded-2xl">
-            <h3 className="font-semibold text-lg mb-4">Generate New Roadmap</h3>
+            <h3 className="font-semibold text-lg mb-4">Build Your Path</h3>
             <div className="space-y-4">
               <div>
                 <label className="text-sm font-medium mb-2 block">
@@ -312,7 +237,7 @@ export default function RoadmapGeneratorPage() {
                     disabled={isGenerating}
                   >
                     {isGenerating ? (
-                      <AnimatedLoadingText message="Creating roadmap..." />
+                      <AnimatedLoadingText message={loadingMessages[loadingMessageIndex]} />
                     ) : (
                       'Generate'
                     )}
@@ -324,54 +249,31 @@ export default function RoadmapGeneratorPage() {
 
           {/* Selected Roadmap Display */}
           {selectedRoadmap && (
-            <Card className="p-6 flex-1 rounded-2xl">
-              <div className="flex justify-between items-center mb-2">
+            <Card className="p-4 md:p-6 flex-1 rounded-2xl overflow-hidden">
+              <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 mb-4">
                 <h3 className="font-semibold text-lg">{selectedRoadmap.topic}</h3>
                 <div className="flex items-center gap-2">
                   <p className="text-sm text-muted-foreground">
                     Created on {formatDate(selectedRoadmap.created_at)}
                   </p>
-                  <Dialog>
-                    <DialogTrigger asChild>
-                      <Button variant="outline" size="sm">
-                        Expand
-                      </Button>
-                    </DialogTrigger>
-                    <DialogContent className="max-w-7xl h-[90vh] flex flex-col">
-                      <DialogHeader>
-                        <DialogTitle>{selectedRoadmap.topic}</DialogTitle>
-                      </DialogHeader>
-                      <div className="flex-grow w-full overflow-auto p-4">
-                        <MermaidDiagram
-                          diagram={selectedRoadmap.mermaid_code}
-                          key={`fullscreen-${selectedRoadmap.id}`}
-                          className="w-full h-full"
-                        />
-                      </div>
-                    </DialogContent>
-                  </Dialog>
                 </div>
               </div>
-              <div className="border rounded-md p-6 bg-background overflow-visible">
-                <div className="mb-2 text-xs text-muted-foreground">
-                  <span className="font-semibold">Roadmap:</span> {selectedRoadmap.topic} ({selectedRoadmap.mermaid_code.length} chars)
-                </div>
-                <div className="mermaid-container" style={{ minHeight: '500px', width: '100%' }}>
-                  <MermaidDiagram 
-                    diagram={selectedRoadmap.mermaid_code} 
-                    key={selectedRoadmap.id}
-                    className="w-full h-full" 
+              <div className="border rounded-xl p-3 md:p-6 bg-background shadow-inner overflow-x-hidden min-h-[600px]">
+                <CustomRoadmapView 
+                  dna={(selectedRoadmap.learner_snapshot || profile || {}) as unknown as MasterMindProfile}
+                  skillGaps={selectedRoadmap.intelligence_trace?.identifiedGaps || ((selectedRoadmap.learner_snapshot || profile) ? calculateSkillGaps((selectedRoadmap.learner_snapshot || profile) as unknown as MasterMindProfile) : [])}
+                  milestones={selectedRoadmap.structured_data?.milestones || []}
+                />
+              </div>
+
+              {selectedRoadmap.intelligence_trace && (
+                <div className="mt-8 pt-6 border-t">
+                  <IntelligenceTrace 
+                    profile={(selectedRoadmap.learner_snapshot || profile || {}) as unknown as MasterMindProfile} 
+                    gaps={selectedRoadmap.intelligence_trace.identifiedGaps || []} 
                   />
                 </div>
-              </div>
-              <div className="mt-4">
-                <details className="text-xs">
-                  <summary className="cursor-pointer text-muted-foreground">View Raw Mermaid Code</summary>
-                  <pre className="mt-2 p-2 bg-muted rounded-md overflow-auto whitespace-pre-wrap">
-                    {selectedRoadmap.mermaid_code}
-                  </pre>
-                </details>
-              </div>
+              )}
             </Card>
           )}
 
@@ -423,7 +325,7 @@ export default function RoadmapGeneratorPage() {
             {!isSidebarCollapsed && (
               <ScrollArea className="h-[calc(100vh-200px)]">
                 <div className="p-3 space-y-3">
-                  {isLoading ? (
+                  {isLoadingRoadmaps ? (
                     <div className="space-y-3">
                       {[...Array(3)].map((_, i) => (
                         <div key={i} className="flex items-center gap-2 p-3 rounded-lg border">

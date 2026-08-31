@@ -15,10 +15,10 @@ export default function FeaturesGrid() {
       <div className="container relative z-10 px-4 max-w-[1200px] mx-auto">
         <div className="relative mx-auto max-w-5xl text-center mb-16">
           <h2 className="text-4xl font-bold tracking-tight md:text-5xl bg-clip-text text-transparent bg-gradient-to-r from-primary to-primary/70">
-            The Future of Intelligence, at Your Fingertips.
+            Your Career Intelligence Engine.
           </h2>
           <p className="mt-4 text-muted-foreground md:text-lg max-w-3xl mx-auto">
-            EchoVerse is more than a learning tool—it's a complete ecosystem for knowledge acquisition, content creation, and monetization.
+            MasterMindAI is more than a learning tool—it's a complete ecosystem for career alignment, skill gap analysis, and personalized learning paths.
           </p>
         </div>
         
@@ -31,13 +31,13 @@ export default function FeaturesGrid() {
             <div className="relative z-20 p-8 h-full flex flex-col justify-between">
               <div className="flex justify-center mb-4" style={{ height: '80px' }}>
                 <div className="scale-75">
-                  <GlassIcons items={[{ icon: <Brain className="h-6 w-6" />, color: 'purple', label: 'AI Learning' }]} />
+                  <GlassIcons items={[{ icon: <Brain className="h-6 w-6" />, color: 'purple', label: 'DNA' }]} />
                 </div>
               </div>
               <div>
-                <h3 className="mb-4 text-3xl font-bold tracking-tight text-white">Intelligent Learning Paths</h3>
+                <h3 className="mb-4 text-3xl font-bold tracking-tight text-white">Learner DNA Engine</h3>
                 <p className="text-white/80 text-lg leading-relaxed">
-                  Go beyond simple tutorials. Our AI generates dynamic learning paths with interactive modules, AI tutors, and progress tracking tailored to your unique goals and style.
+                  MasterMindAI captures your career intent, current capability baselines, learning preferences, and target industry to build a complete profile of who you are and where you want to be.
                 </p>
               </div>
             </div>
@@ -51,13 +51,13 @@ export default function FeaturesGrid() {
             <div className="relative z-20 p-8 h-full flex flex-col justify-between">
               <div className="flex justify-center mb-4" style={{ height: '80px' }}>
                 <div className="scale-75">
-                  <GlassIcons items={[{ icon: <Video className="h-6 w-6" />, color: 'blue', label: 'Animation' }]} />
+                  <GlassIcons items={[{ icon: <Video className="h-6 w-6" />, color: 'blue', label: 'Analysis' }]} />
                 </div>
               </div>
               <div>
-                <h3 className="mb-4 text-3xl font-bold tracking-tight text-white">The Animation Studio</h3>
+                <h3 className="mb-4 text-3xl font-bold tracking-tight text-white">Skill Gap Analysis</h3>
                 <p className="text-white/80 text-lg leading-relaxed">
-                  Bring your ideas to life. Instantly transform text or articles into engaging video presentations and audible lessons, perfect for any audience or learning preference.
+                  Dynamically calculates priority skill gaps between your current level and your target role baselines. We focus only on what you need to learn, eliminating unnecessary coursework and optimizing your time.
                 </p>
               </div>
             </div>
@@ -71,13 +71,13 @@ export default function FeaturesGrid() {
             <div className="relative z-20 p-8 h-full flex flex-col justify-between">
               <div className="flex justify-center mb-4" style={{ height: '80px' }}>
                 <div className="scale-75">
-                  <GlassIcons items={[{ icon: <Search className="h-6 w-6" />, color: 'teal', label: 'Research' }]} />
+                  <GlassIcons items={[{ icon: <Search className="h-6 w-6" />, color: 'teal', label: 'Intelligence' }]} />
                 </div>
               </div>
               <div>
-                <h3 className="mb-4 text-3xl font-bold tracking-tight text-white">Deep-Dive Research Agent</h3>
+                <h3 className="mb-4 text-3xl font-bold tracking-tight text-white">MasterMind Intelligence Trace</h3>
                 <p className="text-white/80 text-lg leading-relaxed">
-                  Ask any question and receive comprehensive, AI-curated research reports. Our agent sifts through millions of sources to deliver structured insights, saving you hours of work.
+                  Experience explainable AI generation. MasterMindAI shows you exactly why each path is tailored to you, tracing from your current skills to your career goal and the capability gaps in between.
                 </p>
               </div>
             </div>
@@ -91,13 +91,13 @@ export default function FeaturesGrid() {
             <div className="relative z-20 p-8 h-full flex flex-col justify-between">
               <div className="flex justify-center mb-4" style={{ height: '80px' }}>
                 <div className="scale-75">
-                  <GlassIcons items={[{ icon: <MessagesSquare className="h-6 w-6" />, color: 'green', label: 'Converse' }]} />
+                  <GlassIcons items={[{ icon: <MessagesSquare className="h-6 w-6" />, color: 'green', label: 'Paths' }]} />
                 </div>
               </div>
               <div>
-                <h3 className="mb-4 text-3xl font-bold tracking-tight text-white">AI Video Conversations</h3>
+                <h3 className="mb-4 text-3xl font-bold tracking-tight text-white">Personalized Path Generator</h3>
                 <p className="text-white/80 text-lg leading-relaxed">
-                  Engage in live video conversations with AI personas. Practice interviews, discuss complex topics, or get personalized coaching in real-time through our Tavus integration.
+                  Automatically builds a custom curriculum tailored to your specific timeframe and goals, complete with an industry-specific capstone project that proves your readiness to top employers.
                 </p>
               </div>
             </div>
@@ -111,13 +111,13 @@ export default function FeaturesGrid() {
             <div className="relative z-20 p-8 h-full flex flex-col justify-between">
               <div className="flex justify-center mb-4" style={{ height: '80px' }}>
                 <div className="scale-75">
-                  <GlassIcons items={[{ icon: <ShieldCheck className="h-6 w-6" />, color: 'indigo', label: 'Security' }]} />
+                  <GlassIcons items={[{ icon: <ShieldCheck className="h-6 w-6" />, color: 'indigo', label: 'Visualize' }]} />
                 </div>
               </div>
               <div>
-                <h3 className="mb-4 text-3xl font-bold tracking-tight text-white">Fortress-Level Security</h3>
+                <h3 className="mb-4 text-3xl font-bold tracking-tight text-white">Interactive Visualizations</h3>
                 <p className="text-white/80 text-lg leading-relaxed">
-                  Your data is yours alone. We use Supabase for secure data storage with Row Level Security, and our architecture ensures API keys are protected using Edge Functions.
+                  Explore your learning roadmap through zoomable, interactive Mermaid diagrams. Every path is mapped natively to your goals, giving you a clear visual representation of your journey.
                 </p>
               </div>
             </div>
@@ -131,13 +131,13 @@ export default function FeaturesGrid() {
             <div className="relative z-20 p-8 h-full flex flex-col justify-between">
               <div className="flex justify-center mb-4" style={{ height: '80px' }}>
                 <div className="scale-75">
-                  <GlassIcons items={[{ icon: <DollarSign className="h-6 w-6" />, color: 'orange', label: 'Monetize' }]} />
+                  <GlassIcons items={[{ icon: <DollarSign className="h-6 w-6" />, color: 'orange', label: 'Instant' }]} />
                 </div>
               </div>
               <div>
-                <h3 className="mb-4 text-3xl font-bold tracking-tight text-white">Creator Hub & Monetization</h3>
+                <h3 className="mb-4 text-3xl font-bold tracking-tight text-white">Zero-Friction Demo Mode</h3>
                 <p className="text-white/80 text-lg leading-relaxed">
-                  Build your knowledge empire. Gate your premium content, manage subscriptions, and connect with your audience using our integrated monetization tools.
+                  Designed for immediate impact. Our application runs purely in the browser using session storage for instant demonstrations without any authentication blockers or friction.
                 </p>
               </div>
             </div>

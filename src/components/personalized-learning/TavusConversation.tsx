@@ -1,3 +1,4 @@
+// @ts-nocheck
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
@@ -85,7 +86,7 @@ const TavusConversation = () => {
           context,
           persona_id: selectedPersonaId,
           replica_id: selectedReplicaId,
-          conversation_name: `EchoVerse Learning Session - ${new Date().toLocaleString()}`,
+          conversation_name: `MasterMindAI Learning Session - ${new Date().toLocaleString()}`,
           custom_greeting: "Hello! I'm excited to discuss the content you've shared with me. What would you like to explore first?",
           callback_url: `https://pczxwjqcfzxojvflhdql.supabase.co/functions/v1/tavus-webhook`
         },

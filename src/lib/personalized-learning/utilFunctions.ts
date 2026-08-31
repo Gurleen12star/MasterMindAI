@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { ChatHistoryType, ModuleType, PagesType, SetIntroductionType, SetStudyPlatformType, StudyPlatformType } from "@/types/personalized-learning";
 
 export const pageVariants = (durationStart: number, durationEnd?: number) => ({

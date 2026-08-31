@@ -16,7 +16,7 @@ export default function DocsPage() {
       title: "Getting Started",
       icon: BookOpen,
       articles: [
-        { id: "introduction", title: "Introduction to EchoVerse" },
+        { id: "introduction", title: "Introduction to MasterMindAI" },
         { id: "quickstart", title: "Quickstart Guide" },
         { id: "account-setup", title: "Setting Up Your Account" },
         { id: "dashboard-overview", title: "Dashboard Overview" }
@@ -78,7 +78,7 @@ export default function DocsPage() {
               transition={{ delay: 0.1 }}
               className="text-xl text-muted-foreground mb-8"
             >
-              Everything you need to know about using the EchoVerse platform
+              Everything you need to know about using the MasterMindAI platform
             </motion.p>
             
             <motion.div 
@@ -146,17 +146,17 @@ export default function DocsPage() {
                       <div className="bg-primary/10 p-2 rounded-lg">
                         <BookOpen className="h-5 w-5 text-primary" />
                       </div>
-                      <h2 className="text-2xl font-bold">Introduction to EchoVerse</h2>
+                      <h2 className="text-2xl font-bold">Introduction to MasterMindAI</h2>
                     </div>
                     
                     <div className="prose prose-lg dark:prose-invert max-w-none">
                       <p>
-                        EchoVerse is an AI-powered learning platform designed to transform how you discover, consume, and create educational content. Our platform adapts to your unique learning style, helping you master any subject more effectively.
+                        MasterMindAI is an AI-powered learning platform designed to transform how you discover, consume, and create educational content. Our platform adapts to your unique learning style, helping you master any subject more effectively.
                       </p>
                       
-                      <h3>What Makes EchoVerse Different</h3>
+                      <h3>What Makes MasterMindAI Different</h3>
                       <p>
-                        Unlike traditional learning platforms, EchoVerse uses advanced AI to:
+                        Unlike traditional learning platforms, MasterMindAI uses advanced AI to:
                       </p>
                       <ul>
                         <li>Personalize content based on your learning style and preferences</li>
@@ -167,7 +167,7 @@ export default function DocsPage() {
 
                       <h3>Key Components</h3>
                       <p>
-                        The EchoVerse platform consists of several integrated components:
+                        The MasterMindAI platform consists of several integrated components:
                       </p>
                       <ul>
                         <li><strong>Personalized Learning:</strong> AI-powered teaching tailored to your style</li>
@@ -197,7 +197,7 @@ export default function DocsPage() {
                     
                     <div className="prose prose-lg dark:prose-invert max-w-none">
                       <p>
-                        Get up and running with EchoVerse in just a few minutes. This guide will walk you through the basics of setting up your account and starting your first learning session.
+                        Get up and running with MasterMindAI in just a few minutes. This guide will walk you through the basics of setting up your account and starting your first learning session.
                       </p>
                       
                       <h3>Step 1: Create Your Account</h3>
@@ -207,7 +207,7 @@ export default function DocsPage() {
                       <div className="not-prose bg-muted/30 p-4 rounded-lg">
                         <code className="text-sm whitespace-pre-wrap">
 {`// Visit the signup page
-https://echoverse.ai/signup`}
+/signup`}
                         </code>
                       </div>
 
@@ -314,7 +314,7 @@ Depth: 3
                     
                     <div className="prose prose-lg dark:prose-invert max-w-none">
                       <p>
-                        The EchoVerse API uses API keys to authenticate requests. You can view and manage your API keys in the Dashboard.
+                        The MasterMindAI API uses API keys to authenticate requests. You can view and manage your API keys in the Dashboard.
                       </p>
                       
                       <h3>Authentication Methods</h3>
@@ -345,9 +345,9 @@ Depth: 3
                       </p>
                       <div className="not-prose bg-muted/30 p-4 rounded-lg">
                         <code className="text-sm whitespace-pre-wrap">
-{`import { EchoVerseClient } from '@echoverse/client';
+{`import { MasterMindAIClient } from 'mastermind-client';
 
-const client = new EchoVerseClient({
+const client = new MasterMindAIClient({
   environment: 'production'
 });
 
@@ -375,7 +375,7 @@ const login = async () => {
                     
                     <div className="prose prose-lg dark:prose-invert max-w-none">
                       <p>
-                        This tutorial will guide you through creating your first learning roadmap with EchoVerse's Roadmap Generator.
+                        This tutorial will guide you through creating your first learning roadmap with MasterMindAI's Roadmap Generator.
                       </p>
                       
                       <h3>What You'll Learn</h3>

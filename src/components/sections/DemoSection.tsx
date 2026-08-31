@@ -23,7 +23,7 @@ export default function DemoSection() {
             From Idea to Insight, Instantly.
           </h2>
           <p className="mt-4 text-lg md:text-xl text-muted-foreground">
-            Watch how EchoVerse can take a single piece of content and transform it into a multi-format learning experience.
+            Watch how MasterMindAI can take a single piece of content and transform it into a multi-format learning experience.
           </p>
         </div>
         

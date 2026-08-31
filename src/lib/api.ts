@@ -29,13 +29,13 @@ export async function generateVideo(
   difficultyLevel: string = 'intermediate'
 ): Promise<GenerateResponse> {
   try {
-    const { databases, client, initializeAppwriteSession } = await import('./appwrite');
-    const { ID } = await import('appwrite');
+    const { databases, initializeAppwriteSession } = await import('./appwrite');
     
     // Initialize Appwrite session
     await initializeAppwriteSession();
     
     // Create video document in Appwrite
+    const { ID } = await import('appwrite');
     const videoId = ID.unique();
     const videoDocument = await databases.createDocument(
       'video_metadata',

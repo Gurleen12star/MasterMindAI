@@ -1,0 +1,22 @@
+import { createContext, useContext, useEffect, useState } from 'react';
+import { Session, User } from '@supabase/supabase-js';
+import { supabase } from '@/lib/supabase';
+
+// Abstracted Auth Context Type
+export interface AuthContextType {
+  session: Session | null;
+  user: User | null;
+  loading: boolean;
+  signOut: () => Promise<void>;
+  isDemoMode: boolean;
+}
+
+export const AuthContext = createContext<AuthContextType | undefined>(undefined);
+
+export const useAuth = () => {
+  const context = useContext(AuthContext);
+  if (context === undefined) {
+    throw new Error('useAuth must be used within an AuthProvider');
+  }
+  return context;
+};

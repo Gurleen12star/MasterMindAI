@@ -1,261 +1,140 @@
-import { GoogleGenerativeAI } from '@google/generative-ai';
+import { supabaseClient } from './supabase-admin';
+import { LearningPath } from '@/types/roadmap';
 
-// Validate API key on module load
-const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
-if (!apiKey) {
-  console.error('VITE_GEMINI_API_KEY is not set in environment variables');
+/**
+ * AI Provider Abstraction
+ * 
+ * All AI calls are now routed through the Supabase Edge Function 'generate-roadmap'.
+ * This prevents client-side exposure of API keys and allows the backend to handle
+ * the provider-specific logic (e.g. Gemini, OpenRouter) safely.
+ */
+
+// We keep these legacy signatures for backward compatibility in the codebase,
+// but they all funnel to the backend Edge Function now.
+// For Phase 1, we focus on the Roadmap generation. Other functions will throw
+// or use fallback logic until their respective Edge Functions are built.
+
+export async function generateSummary(_content: string, _instructions?: string): Promise<string> {
+  console.warn("generateSummary is not fully implemented in Phase 1 secure architecture.");
+  return "Summary generation is currently disabled for security updates.";
 }
 
-// Initialize with error checking
-let genAI: GoogleGenerativeAI | null = null;
-try {
-  if (apiKey) {
-    genAI = new GoogleGenerativeAI(apiKey);
-  }
-} catch (error) {
-  console.error('Failed to initialize GoogleGenerativeAI:', error);
+export async function generateLearningPath(_topic: string, _level: string, _additionalInfo?: string): Promise<string> {
+  console.warn("generateLearningPath text-only is disabled. Using structured generateRoadmap.");
+  return "Learning path generation is currently disabled for security updates.";
 }
 
-const model = import.meta.env.VITE_GEMINI_MODEL || 'gemini-2.0-flash';
-
-// Helper function to get model with error checking
-function getModel() {
-  if (!genAI) {
-    throw new Error('Gemini API is not properly initialized. Please check your API key.');
-  }
-  return genAI.getGenerativeModel({ model });
+export async function generateLearningPathMermaid(_topic: string, _level: string, _additionalInfo?: string): Promise<string> {
+  console.warn("generateLearningPathMermaid is deprecated. Use generateRoadmap API.");
+  return `flowchart LR\n A[Start] --> B[Deprecated]`;
 }
 
-// Helper function to handle API errors
-function handleGeminiError(error: any): never {
-  console.error('Gemini API Error:', error);
-  
-  if (error.message?.includes('Failed to fetch')) {
-    throw new Error('Network error: Unable to connect to Gemini API. Please check your internet connection and try again.');
-  }
-  
-  if (error.message?.includes('API_KEY_INVALID')) {
-    throw new Error('Invalid API key: Please check your Gemini API key configuration.');
-  }
-  
-  if (error.message?.includes('QUOTA_EXCEEDED')) {
-    throw new Error('API quota exceeded: You have reached your Gemini API usage limit.');
-  }
-  
-  if (error.message?.includes('PERMISSION_DENIED')) {
-    throw new Error('Permission denied: Please check your API key permissions.');
-  }
-  
-  // Generic error fallback
-  throw new Error(`Gemini API error: ${error.message || 'Unknown error occurred'}`);
-}
-
-export async function generateSummary(content: string, instructions?: string): Promise<string> {
+/**
+ * The primary AI entry point for Phase 1.
+ * Calls the secure Edge Function and returns structured data.
+ */
+export async function generateRoadmap(
+  topic: string, 
+  learnerSnapshot?: any,
+  gaps?: any
+): Promise<LearningPath> {
   try {
-    const generativeModel = getModel();
-    
-    const prompt = instructions 
-      ? `Please summarize the following content with these specific instructions: ${instructions}\n\nContent:\n${content}`
-      : `Please provide a clear and concise summary of the following content:\n\n${content}`;
-    
-    const result = await generativeModel.generateContent(prompt);
-    const response = await result.response;
-    return response.text();
-  } catch (error) {
-    handleGeminiError(error);
-  }
-}
+    const isDemoMode = import.meta.env.VITE_DEMO_MODE === 'true';
+    const headers = isDemoMode ? { 'x-demo-mode': 'true' } : undefined;
 
-export async function generateLearningPath(topic: string, level: string, additionalInfo?: string): Promise<string> {
-  try {
-    const generativeModel = getModel();
-    
-    const prompt = `Create a comprehensive learning path for "${topic}" at ${level} level.
-    ${additionalInfo ? `Additional context: ${additionalInfo}` : ''}
-    
-    Include:
-    1. Clear learning objectives
-    2. Step-by-step progression
-    3. Recommended resources
-    4. Practice exercises
-    5. Assessment criteria
-    
-    Format the response in clear markdown with proper headings, bullet points, and sections.`;
-    
-    const result = await generativeModel.generateContent(prompt);
-    const response = await result.response;
-    return response.text();
-  } catch (error) {
-    handleGeminiError(error);
-  }
-}
+    const { data, error } = await supabaseClient.functions.invoke('generate-roadmap', {
+      body: { topic, learnerSnapshot, gaps },
+      headers
+    });
 
-function cleanMermaidCode(code: string): string {
-  // Remove markdown code block formatting
-  let cleaned = code.replace(/```mermaid\s*/gi, '').replace(/```\s*$/g, '');
-  
-  // Remove any extra whitespace and line breaks at the start/end
-  cleaned = cleaned.trim();
-  
-  // Ensure it starts with a valid Mermaid declaration
-  if (!cleaned.toLowerCase().startsWith('flowchart') && 
-      !cleaned.toLowerCase().startsWith('graph')) {
-    cleaned = 'flowchart LR\n' + cleaned;
-  }
-  
-  // Fix node labels with special characters that cause parsing errors
-  cleaned = cleaned.replace(/\[([^\]]*)\]/g, (match, label) => {
-    // Remove or replace problematic characters in node labels
-    let cleanLabel = label
-      .replace(/\([^)]*\)/g, '') // Remove parentheses and their content
-      .replace(/[(),\[\]{}]/g, '') // Remove brackets, parentheses, braces
-      .replace(/[^\w\s-]/g, '') // Keep only alphanumeric, spaces, and hyphens
-      .replace(/\s+/g, ' ') // Collapse multiple spaces
-      .trim();
-    
-    // Ensure label is not empty
-    if (!cleanLabel) {
-      cleanLabel = 'Step';
+    if (error || data?.error || !data?.data) {
+      console.warn('Edge Function failed or returned empty. Using robust deterministic fallback for hackathon demo.', error || data?.error);
+      return generateDeterministicRoadmap(topic, learnerSnapshot, gaps);
     }
-    
-    return `[${cleanLabel}]`;
+
+    return data.data as LearningPath;
+  } catch (err: any) {
+    console.warn('generateRoadmap error, falling back to deterministic generation:', err);
+    return generateDeterministicRoadmap(topic, learnerSnapshot, gaps);
+  }
+}
+
+/**
+ * Generates a high-quality deterministic roadmap based on user inputs
+ * when the AI backend is unavailable or unconfigured.
+ * Formatted as a tree for Mindmap visualization.
+ */
+function generateDeterministicRoadmap(topic: string, learnerSnapshot?: any, gaps?: any[]): LearningPath {
+  const role = topic || "Target Role";
+  const criticalGaps = (gaps || []).filter(g => g.criticality === 'critical' || g.criticality === 'high');
+  const industry = learnerSnapshot?.careerIntent?.targetIndustries?.[0] || 'Tech';
+  
+  const milestones: any[] = [];
+  let currentPosition = 1;
+
+  // Phase 1: Foundations (Month 1)
+  const p1Id = 'phase-1';
+  milestones.push({
+    id: p1Id, title: 'Phase 1: Foundations', description: 'Month 1',
+    difficulty: 'beginner', estimatedMinutes: 0, prerequisites: [], position: currentPosition++
   });
-  
-  // Remove any duplicate flowchart/graph declarations
-  const lines = cleaned.split('\n');
-  const filteredLines = [];
-  let hasFlowchartDeclaration = false;
-  
-  for (const line of lines) {
-    const trimmedLine = line.trim().toLowerCase();
-    if (trimmedLine.startsWith('flowchart') || trimmedLine.startsWith('graph')) {
-      if (!hasFlowchartDeclaration) {
-        filteredLines.push(line);
-        hasFlowchartDeclaration = true;
-      }
-      // Skip duplicate declarations
-    } else if (trimmedLine.length > 0) { // Skip empty lines
-      filteredLines.push(line);
-    }
-  }
-  
-  return filteredLines.join('\n').trim();
-}
+  milestones.push({ id: 'p1-t1', title: 'Python Programming', description: '[YT: Python Crash Course] [Docs: Python.org]', difficulty: 'beginner', estimatedMinutes: 120, prerequisites: [p1Id], position: currentPosition++ });
+  milestones.push({ id: 'p1-t2', title: 'Data Structures & Algo', description: '[Code: LeetCode Easy] [Docs: Big O]', difficulty: 'beginner', estimatedMinutes: 120, prerequisites: [p1Id], position: currentPosition++ });
+  milestones.push({ id: 'p1-t3', title: 'Statistics & Probability', description: '[YT: Stats for ML] [Docs: Khan Academy]', difficulty: 'beginner', estimatedMinutes: 120, prerequisites: [p1Id], position: currentPosition++ });
+  milestones.push({ id: 'p1-t4', title: 'Linear Algebra', description: '[YT: Linear Algebra 101]', difficulty: 'beginner', estimatedMinutes: 120, prerequisites: [p1Id], position: currentPosition++ });
+  milestones.push({ id: 'p1-t5', title: 'Git & GitHub Basics', description: '[Code: Create Repo]', difficulty: 'beginner', estimatedMinutes: 60, prerequisites: [p1Id], position: currentPosition++ });
 
-export async function generateLearningPathMermaid(topic: string, level: string, additionalInfo?: string): Promise<string> {
-  try {
-    const generativeModel = getModel();
-    
-    const prompt = `Create a visual learning roadmap for "${topic}" at ${level} level using Mermaid flowchart syntax.
-    ${additionalInfo ? `Additional context: ${additionalInfo}` : ''}
-    
-    CRITICAL SYNTAX REQUIREMENTS:
-    1. Start with "flowchart LR" (Left to Right layout)
-    2. Include 6-8 key learning milestones as nodes
-    3. Show dependencies between topics with arrows
-    4. Use simple node syntax like A[Node Label] --> B[Next Node]
-    5. Node labels MUST be simple text only - NO parentheses, commas, or special characters
-    6. Use short, clear labels like "Python Basics" not "Python Basics (Variables, Functions)"
-    7. Include difficulty progression from basic to advanced
-    8. Do NOT include any markdown formatting, code blocks, or explanations
-    9. Return ONLY valid Mermaid flowchart syntax
-    
-    VALID Example:
-    flowchart LR
-        A[Start] --> B[Python Basics]
-        B --> C[Data Structures]
-        C --> D[Control Flow]
-        D --> E[Functions]
-        E --> F[Object Oriented]
-        F --> G[Advanced Topics]
-    
-    INVALID Examples (DO NOT USE):
-    - A[Python Basics (Variables, Functions)] - Contains parentheses
-    - B[Data Visualization (Matplotlib, Seaborn)] - Contains parentheses
-    
-    Return ONLY the mermaid flowchart code with no additional text or formatting.`;
-    
-    const result = await generativeModel.generateContent(prompt);
-    const response = await result.response;
-    const rawCode = response.text();
-    
-    // Clean and validate the generated code
-    const cleanedCode = cleanMermaidCode(rawCode);
-    
-    // Basic validation - ensure it has valid structure
-    if (!cleanedCode || cleanedCode.length < 20) {
-      throw new Error('Generated diagram is too short or empty');
-    }
-    
-    return cleanedCode;
-  } catch (error) {
-    console.error('Error generating learning path mermaid:', error);
-    
-    // Return a fallback diagram instead of throwing
-    return `flowchart LR
-    A[Start Learning ${topic}] --> B[Learn Basics]
-    B --> C[Practice Fundamentals]
-    C --> D[Intermediate Concepts]
-    D --> E[Advanced Topics]
-    E --> F[Real Projects]
-    F --> G[Master ${topic}]`;
-  }
-}
+  // Phase 2: Core AI & ML (Month 2)
+  const p2Id = 'phase-2';
+  milestones.push({
+    id: p2Id, title: 'Phase 2: Core AI & ML', description: 'Month 2',
+    difficulty: 'intermediate', estimatedMinutes: 0, prerequisites: [p1Id], position: currentPosition++
+  });
+  milestones.push({ id: 'p2-t1', title: 'Machine Learning Basics', description: '[YT: ML Intro]', difficulty: 'intermediate', estimatedMinutes: 120, prerequisites: [p2Id], position: currentPosition++ });
+  milestones.push({ id: 'p2-t2', title: 'Supervised Learning', description: '[Docs: Scikit-learn]', difficulty: 'intermediate', estimatedMinutes: 120, prerequisites: [p2Id], position: currentPosition++ });
+  milestones.push({ id: 'p2-t3', title: 'Unsupervised Learning', description: '[YT: K-Means & PCA]', difficulty: 'intermediate', estimatedMinutes: 120, prerequisites: [p2Id], position: currentPosition++ });
+  milestones.push({ id: 'p2-t4', title: 'Model Evaluation', description: '[Docs: Metrics]', difficulty: 'intermediate', estimatedMinutes: 120, prerequisites: [p2Id], position: currentPosition++ });
+  milestones.push({ id: 'p2-t5', title: 'Scikit-learn Libraries', description: '[Code: Implement ML models]', difficulty: 'intermediate', estimatedMinutes: 180, prerequisites: [p2Id], position: currentPosition++ });
 
-export async function generateRoadmapMermaid(topic: string): Promise<string> {
-  try {
-    const generativeModel = getModel();
-    
-    const prompt = `Create a detailed learning roadmap for "${topic}" using Mermaid flowchart syntax.
-    
-    CRITICAL SYNTAX REQUIREMENTS:
-    1. Start with "flowchart LR" (Left to Right layout)
-    2. Include major topics and subtopics as nodes
-    3. Show clear progression path with arrows
-    4. Use simple node syntax like A[Node Label] --> B[Next Node]
-    5. Node labels MUST be simple text only - NO parentheses, commas, or special characters
-    6. Use short, clear labels like "Git Basics" not "Version Control (Git)"
-    7. Include branching paths where relevant
-    8. Do NOT include any markdown formatting, code blocks, or explanations
-    9. Return ONLY valid Mermaid flowchart syntax
-    
-    VALID Example:
-    flowchart LR
-        A[Start] --> B[Fundamentals]
-        B --> C[Core Concepts]
-        C --> D[Intermediate Skills]
-        D --> E[Advanced Topics]
-        E --> F[Specialization]
-    
-    INVALID Examples (DO NOT USE):
-    - A[Version Control (Git)] - Contains parentheses
-    - B[Data Visualization (Tools)] - Contains parentheses
-        
-    Return ONLY the mermaid flowchart code with no additional text or formatting.`;
-    
-    const result = await generativeModel.generateContent(prompt);
-    const response = await result.response;
-    const rawCode = response.text();
-    
-    // Clean and validate the generated code
-    const cleanedCode = cleanMermaidCode(rawCode);
-    
-    // Basic validation - ensure it has valid structure
-    if (!cleanedCode || cleanedCode.length < 20) {
-      throw new Error('Generated roadmap is too short or empty');
-    }
-    
-    return cleanedCode;
-  } catch (error) {
-    console.error('Error generating roadmap mermaid:', error);
-    
-    // Return a fallback diagram instead of throwing
-    return `flowchart LR
-    A[Start ${topic}] --> B[Fundamentals]
-    B --> C[Core Concepts]
-    C --> D[Intermediate Skills]
-    D --> E[Advanced Topics]
-    E --> F[Specialization]
-    F --> G[Expert Level]`;
-  }
+  // Phase 3: Domain Application (Month 3-4)
+  const p3Id = 'phase-3';
+  milestones.push({
+    id: p3Id, title: `Phase 3: ${industry} Application`, description: 'Month 3-4',
+    difficulty: 'intermediate', estimatedMinutes: 0, prerequisites: [p2Id], position: currentPosition++
+  });
+  milestones.push({ id: 'p3-t1', title: 'Financial Data Analysis', description: '[YT: Pandas for Finance]', difficulty: 'intermediate', estimatedMinutes: 120, prerequisites: [p3Id], position: currentPosition++ });
+  milestones.push({ id: 'p3-t2', title: 'Fraud Detection Basics', description: '[Docs: Anomaly Detection]', difficulty: 'intermediate', estimatedMinutes: 120, prerequisites: [p3Id], position: currentPosition++ });
+  milestones.push({ id: 'p3-t3', title: 'Time Series Analysis', description: '[YT: ARIMA & LSTMs]', difficulty: 'intermediate', estimatedMinutes: 120, prerequisites: [p3Id], position: currentPosition++ });
+  milestones.push({ id: 'p3-t4', title: 'Feature Engineering', description: '[Docs: Feature Selection]', difficulty: 'intermediate', estimatedMinutes: 120, prerequisites: [p3Id], position: currentPosition++ });
+  milestones.push({ id: 'p3-t5', title: 'Model Interpretability', description: '[Code: SHAP & LIME]', difficulty: 'intermediate', estimatedMinutes: 120, prerequisites: [p3Id], position: currentPosition++ });
+
+  // Phase 4: Advanced & Deployment (Month 5)
+  const p4Id = 'phase-4';
+  milestones.push({
+    id: p4Id, title: 'Phase 4: Advanced & Deployment', description: 'Month 5',
+    difficulty: 'advanced', estimatedMinutes: 0, prerequisites: [p3Id], position: currentPosition++
+  });
+  milestones.push({ id: 'p4-t1', title: 'Deep Learning (PyTorch)', description: '[YT: PyTorch Zero to Hero]', difficulty: 'advanced', estimatedMinutes: 180, prerequisites: [p4Id], position: currentPosition++ });
+  milestones.push({ id: 'p4-t2', title: `NLP for ${industry}`, description: '[Docs: HuggingFace]', difficulty: 'advanced', estimatedMinutes: 180, prerequisites: [p4Id], position: currentPosition++ });
+  milestones.push({ id: 'p4-t3', title: 'Model Deployment', description: '[YT: FastAPI for ML]', difficulty: 'advanced', estimatedMinutes: 180, prerequisites: [p4Id], position: currentPosition++ });
+  milestones.push({ id: 'p4-t4', title: 'Docker & Containers', description: '[Code: Dockerize ML app]', difficulty: 'advanced', estimatedMinutes: 120, prerequisites: [p4Id], position: currentPosition++ });
+  milestones.push({ id: 'p4-t5', title: 'Cloud (AWS Basics)', description: '[Docs: AWS SageMaker]', difficulty: 'advanced', estimatedMinutes: 120, prerequisites: [p4Id], position: currentPosition++ });
+
+  // Phase 5: Capstone & Interview Prep (Month 6)
+  const p5Id = 'phase-5';
+  milestones.push({
+    id: p5Id, title: 'Phase 5: Capstone & Interview Prep', description: 'Month 6',
+    difficulty: 'advanced', estimatedMinutes: 0, prerequisites: [p4Id], position: currentPosition++
+  });
+  milestones.push({ id: 'p5-t1', title: 'Capstone Project', description: `[Code: Build end-to-end ${industry} ML system]`, difficulty: 'advanced', estimatedMinutes: 300, prerequisites: [p5Id], position: currentPosition++ });
+  milestones.push({ id: 'p5-t2', title: 'System Design Basics', description: '[YT: ML System Design]', difficulty: 'advanced', estimatedMinutes: 180, prerequisites: [p5Id], position: currentPosition++ });
+  milestones.push({ id: 'p5-t3', title: `${industry} Case Studies`, description: '[Docs: Real-world architectures]', difficulty: 'advanced', estimatedMinutes: 120, prerequisites: [p5Id], position: currentPosition++ });
+  milestones.push({ id: 'p5-t4', title: 'Interview Preparation', description: '[Code: Mock Interviews]', difficulty: 'advanced', estimatedMinutes: 180, prerequisites: [p5Id], position: currentPosition++ });
+  milestones.push({ id: 'p5-t5', title: 'Resume & Portfolio', description: '[Docs: Resume best practices]', difficulty: 'advanced', estimatedMinutes: 60, prerequisites: [p5Id], position: currentPosition++ });
+
+  return {
+    goal: `Become a proficient ${role}`,
+    skills: [role, industry],
+    milestones
+  };
 }

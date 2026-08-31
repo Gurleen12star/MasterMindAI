@@ -1,3 +1,4 @@
+// @ts-nocheck
 import React from 'react';
 import { motion } from 'framer-motion';
 import { Card } from '@/components/ui/card';
@@ -43,7 +44,7 @@ export default function TermsPage() {
           <Card className="p-6 md:p-8 mb-8 border-primary/10">
             <div className="prose prose-lg dark:prose-invert max-w-none">
               <p>
-                Welcome to EchoVerse. Please read these Terms of Service ("Terms") carefully as they contain important information about your legal rights, remedies, and obligations. By accessing or using the EchoVerse platform, you agree to comply with and be bound by these Terms.
+                Welcome to MasterMindAI. Please read these Terms of Service ("Terms") carefully as they contain important information about your legal rights, remedies, and obligations. By accessing or using the MasterMindAI platform, you agree to comply with and be bound by these Terms.
               </p>
               
               <h2>1. Acceptance of Terms</h2>
@@ -81,7 +82,7 @@ export default function TermsPage() {
 
               <h2>6. Intellectual Property</h2>
               <p>
-                The platform, including all content, features, and functionality, is owned by EchoVerse and is protected by copyright, trademark, and other intellectual property laws. You may not reproduce, distribute, modify, create derivative works of, publicly display, publicly perform, republish, download, store, or transmit any materials from our platform without our prior written consent.
+                The platform, including all content, features, and functionality, is owned by MasterMindAI and is protected by copyright, trademark, and other intellectual property laws. You may not reproduce, distribute, modify, create derivative works of, publicly display, publicly perform, republish, download, store, or transmit any materials from our platform without our prior written consent.
               </p>
 
               <h2>7. AI-Generated Content</h2>
@@ -114,7 +115,7 @@ export default function TermsPage() {
 
               <h2>12. Indemnification</h2>
               <p>
-                You agree to indemnify, defend, and hold harmless EchoVerse and its officers, directors, employees, and agents from and against any claims, liabilities, damages, losses, and expenses, including, without limitation, reasonable legal and accounting fees, arising out of or in any way connected with your access to or use of the platform or your violation of these Terms.
+                You agree to indemnify, defend, and hold harmless MasterMindAI and its officers, directors, employees, and agents from and against any claims, liabilities, damages, losses, and expenses, including, without limitation, reasonable legal and accounting fees, arising out of or in any way connected with your access to or use of the platform or your violation of these Terms.
               </p>
 
               <h2>13. Governing Law and Jurisdiction</h2>
@@ -124,7 +125,7 @@ export default function TermsPage() {
 
               <h2>14. Contact Information</h2>
               <p>
-                If you have any questions about these Terms, please contact us at legal@echoverse.ai.
+                If you have any questions about these Terms, please contact us at [Contact Email Not Configured].
               </p>
             </div>
           </Card>

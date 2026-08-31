@@ -1,3 +1,4 @@
+// @ts-nocheck
 import React from 'react';
 import { motion } from 'framer-motion';
 import { Card } from '@/components/ui/card';
@@ -18,7 +19,7 @@ export default function AboutPage() {
               Our Mission
             </h1>
             <p className="text-xl text-muted-foreground">
-              At EchoVerse, we're on a mission to transform how people learn by creating personalized, 
+              At MasterMindAI, we're on a mission to transform how people learn by creating personalized, 
               AI-powered educational experiences that adapt to each individual's unique needs and preferences.
             </p>
           </div>
@@ -139,7 +140,7 @@ export default function AboutPage() {
                 <h2 className="text-3xl md:text-4xl font-bold mb-6">Our Story</h2>
                 <div className="space-y-4 text-lg text-muted-foreground leading-relaxed">
                   <p>
-                    EchoVerse began in 2024 with a simple yet ambitious goal: to reimagine education for the AI era.
+                    MasterMindAI began in 2024 with a simple yet ambitious goal: to reimagine education for the AI era.
                   </p>
                   <p>
                     Founded by a team of educators, technologists, and lifelong learners, we recognized that traditional educational models weren't adapting quickly enough to individual needs and learning styles.

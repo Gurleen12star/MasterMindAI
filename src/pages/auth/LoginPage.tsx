@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { useAuth } from '@/components/auth/SupabaseAuthProvider';
+import { useAuth } from '@/components/auth/AuthContext';
 import AuthForm from '@/components/auth/AuthForm';
-import EchoVerseLogo from '@/components/ui/EchoVerseLogo';
+import MasterMindLogo from '@/components/ui/MasterMindLogo';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { ArrowUp } from 'lucide-react';
@@ -30,7 +30,7 @@ export default function LoginPage() {
         <div className="max-w-sm mx-auto w-full">
           <div className="mb-8">
             <Link to="/">
-              <EchoVerseLogo className="h-10 w-auto text-primary" />
+              <MasterMindLogo className="h-10 w-auto text-primary" />
             </Link>
           </div>
           <h1 className="text-3xl font-bold text-white mb-6">Log in</h1>
@@ -50,7 +50,7 @@ export default function LoginPage() {
         <div className="w-full max-w-md">
           <div className="relative">
             <Input
-              placeholder="EchoVerse, Education is important"
+              placeholder="MasterMindAI, Education is important"
               className="w-full h-14 bg-[#1E1E1E] backdrop-blur-sm text-foreground placeholder:text-muted-foreground border-border/20 rounded-full px-6 pr-16"
             />
             <Button size="icon" className="absolute right-2 top-1/2 -translate-y-1/2 h-10 w-10 rounded-full bg-primary text-primary-foreground hover:bg-primary/90">

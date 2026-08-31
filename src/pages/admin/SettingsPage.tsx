@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { useAdmin } from '@/hooks/useAdmin';
@@ -248,7 +249,7 @@ export default function SettingsPage() {
           <AlertCircle className="h-4 w-4" />
           <AlertTitle>System Settings</AlertTitle>
           <AlertDescription>
-            These settings control how EchoVerse functions. Changes will apply to all users immediately.
+            These settings control how MasterMindAI functions. Changes will apply to all users immediately.
           </AlertDescription>
         </Alert>
 

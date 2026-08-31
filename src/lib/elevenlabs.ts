@@ -33,17 +33,13 @@ export async function generateAudio(options: TextToSpeechOptions): Promise<strin
     const audioStream = await elevenlabs.textToSpeech.convert(voiceId, {
       text,
       model_id: modelId,
-      output_format: outputFormat,
+      output_format: outputFormat as any,
     });
 
     // Convert the stream to a blob and create a URL
     const chunks: Uint8Array[] = [];
-    const reader = audioStream.getReader();
-    
-    while (true) {
-      const { done, value } = await reader.read();
-      if (done) break;
-      chunks.push(value);
+    for await (const chunk of audioStream as any) {
+      chunks.push(chunk as Uint8Array);
     }
     
     const audioBlob = new Blob(chunks, { type: 'audio/mpeg' });

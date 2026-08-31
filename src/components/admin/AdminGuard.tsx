@@ -1,5 +1,4 @@
 import { ReactNode } from 'react';
-import { Navigate } from 'react-router-dom';
 import { useAdmin } from '@/hooks/useAdmin';
 import { Loader2, ShieldAlert } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';

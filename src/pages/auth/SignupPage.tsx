@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { useAuth } from '@/components/auth/SupabaseAuthProvider';
+import { useAuth } from '@/components/auth/AuthContext';
 import AuthForm from '@/components/auth/AuthForm';
 import { ArrowLeft, Sparkles } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -43,7 +43,7 @@ export default function SignupPage() {
                 "Join thousands of learners who have transformed their education journey with our AI-powered platform."
               </p>
               <footer className="text-lg">
-                <cite className="font-medium text-foreground">The EchoVerse Team</cite>
+                <cite className="font-medium text-foreground">The MasterMindAI Team</cite>
                 <p className="mt-1 text-muted-foreground">Empowering learners worldwide</p>
               </footer>
             </blockquote>
@@ -56,7 +56,7 @@ export default function SignupPage() {
           <div className="flex items-center justify-center space-x-2">
             <Sparkles className="h-6 w-6 text-primary" />
             <span className="text-2xl font-bold bg-gradient-to-r from-indigo-500 to-purple-500 bg-clip-text text-transparent">
-              EchoVerse
+              MasterMindAI
             </span>
           </div>
           

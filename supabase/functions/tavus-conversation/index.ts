@@ -49,7 +49,7 @@ serve(async (req) => {
           replica_id: replica_id,
           persona_id: persona_id,
           callback_url: callback_url || "https://yourwebsite.com/webhook",
-          conversation_name: conversation_name || "EchoVerse Learning Conversation",
+          conversation_name: conversation_name || "MasterMindAI Learning Conversation",
           conversational_context: context,
           custom_greeting: custom_greeting || "Hey there! I'm ready to discuss the content you've shared with me.",
           properties: {

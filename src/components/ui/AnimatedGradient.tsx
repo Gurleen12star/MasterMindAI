@@ -47,6 +47,10 @@ export function AnimatedGradient({
       vy: number;
 
       constructor() {
+        if (!canvas) {
+          this.x = 0; this.y = 0; this.radius = 0; this.color = colors[0]; this.vx = 0; this.vy = 0;
+          return;
+        }
         this.x = Math.random() * canvas.width;
         this.y = Math.random() * canvas.height;
         this.radius = maxRadius * (0.3 + Math.random() * 0.7);
@@ -59,6 +63,7 @@ export function AnimatedGradient({
         this.x += this.vx;
         this.y += this.vy;
 
+        if (!canvas) return;
         // Bounce off walls
         if (this.x < -this.radius) this.x = canvas.width + this.radius;
         if (this.x > canvas.width + this.radius)
@@ -98,6 +103,7 @@ export function AnimatedGradient({
 
     // Animation loop
     const animate = () => {
+      if (!canvas || !ctx) return;
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       circles.forEach((circle) => {
         circle.update();

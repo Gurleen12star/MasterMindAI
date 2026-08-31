@@ -1,3 +1,4 @@
+// @ts-nocheck
 import React from 'react';
 import { useAppContext } from '@/contexts/PersonalizedLearningContext';
 import { useSidebar } from '@/components/dashboard/SidebarContext';

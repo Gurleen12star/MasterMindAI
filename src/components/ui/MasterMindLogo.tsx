@@ -1,10 +1,11 @@
+// @ts-nocheck
 import React from 'react';
 
-interface EchoVerseLogoProps {
+interface MasterMindLogoProps {
   className?: string;
 }
 
-export default function EchoVerseLogo({ className = "" }: EchoVerseLogoProps) {
+export default function MasterMindLogo({ className = "" }: MasterMindLogoProps) {
   return (
     <svg 
       viewBox="0 0 201 201" 

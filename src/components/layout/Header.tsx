@@ -1,11 +1,11 @@
 import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { useAuth } from '@/components/auth/SupabaseAuthProvider';
+import { useAuth } from '@/components/auth/AuthContext';
 import { useTheme } from '@/components/theme/ThemeProvider';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { Menu, Moon, Sun } from 'lucide-react';
-import EchoVerseLogo from '@/components/ui/EchoVerseLogo';
+import MasterMindLogo from '@/components/ui/MasterMindLogo';
 import { cn } from '@/lib/utils';
 
 const navItems = [
@@ -53,12 +53,12 @@ export default function Header() {
           
           <Link to="/" className="flex items-center gap-2 group z-20 relative">
             <div className="relative flex items-center justify-center">
-              <EchoVerseLogo 
+              <MasterMindLogo 
                 className="h-20 w-20 -my-8 transition-transform duration-300 group-hover:scale-105 text-primary" 
               />
             </div>
             <span className="bg-gradient-to-r from-indigo-500 to-purple-500 bg-clip-text text-xl font-bold text-transparent hover:scale-105 transition-transform duration-300">
-              {/* EchoVerse*/}
+              {/* MasterMindAI*/}
             </span>
           </Link>
         
@@ -135,11 +135,12 @@ export default function Header() {
               <Button 
                 size="sm" 
                 className="hidden md:flex bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 transition-all duration-300 shadow-lg hover:shadow-xl hover:shadow-primary/25 relative overflow-hidden group rounded-xl font-medium"
-                onClick={() => navigate('/signup')}
+                onClick={() => navigate('/entry')}
+                id="header-cta-build"
               >
                 <div className="absolute inset-0 bg-gradient-to-r from-white/10 to-white/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                 <span className="relative z-10">
-                  Get Started
+                  Build My Career Path
                 </span>
               </Button>
             )}
@@ -193,9 +194,10 @@ export default function Header() {
                     <Button 
                       size="sm"
                       className="bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 rounded-xl"
-                      onClick={() => navigate('/signup')}
+                      onClick={() => navigate('/entry')}
+                      id="mobile-cta-build"
                     >
-                      Get Started
+                      Build My Career Path
                     </Button>
                   )}
                 </div>

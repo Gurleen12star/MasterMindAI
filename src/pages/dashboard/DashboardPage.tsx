@@ -1,7 +1,6 @@
 import { useState } from 'react';
-import { Routes, Route, Navigate } from 'react-router-dom';
+import { Routes, Route } from 'react-router-dom';
 import { PersonalizedLearningProvider } from '@/contexts/PersonalizedLearningContext';
-import { useAuth } from '@/components/auth/SupabaseAuthProvider';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { Menu } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -12,6 +11,7 @@ import ProfileGuard from '@/components/dashboard/ProfileGuard';
 import RoadmapGeneratorPage from './RoadmapGeneratorPage';
 import LearningPathsPage from './LearningPathsPage';
 import ExploreHubPage from './ExploreHubPage';
+import DashboardOverviewPage from './DashboardOverviewPage';
 import QuickSummariesPage from './QuickSummariesPage';
 import DeepResearchPage from './DeepResearchPage';
 import ProfileSetupPage from './ProfileSetupPage';
@@ -24,7 +24,6 @@ import PersonalizedLearningHistoryPage from './PersonalizedLearningHistoryPage';
 import MaintenanceBanner from '@/components/admin/MaintenanceBanner';
 
 function DashboardContent() {
-  const { user } = useAuth();
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
   const { isCollapsed } = useSidebar();
 
@@ -52,69 +51,25 @@ function DashboardContent() {
               {/* Profile setup route without ProfileGuard */}
               <Route path="profile-setup" element={<ProfileSetupPage />} />
               
-              {/* Protected routes with ProfileGuard */}
-              <Route path="roadmap-generator" element={
-                <ProfileGuard>
-                  <RoadmapGeneratorPage />
-                </ProfileGuard>
-              } />
-              <Route path="paths" element={
-                <ProfileGuard>
-                  <LearningPathsPage />
-                </ProfileGuard>
-              } />
-              <Route path="explore" element={
-                <ProfileGuard>
-                  <ExploreHubPage />
-                </ProfileGuard>
-              } />
-              <Route path="summaries" element={
-                <ProfileGuard>
-                  <QuickSummariesPage />
-                </ProfileGuard>
-              } />
-              <Route path="research" element={
-                <ProfileGuard>
-                  <DeepResearchPage />
-                </ProfileGuard>
-              } />
-              <Route path="profile" element={
-                <ProfileGuard>
-                  <ProfilePage />
-                </ProfileGuard>
-              } />
-              <Route path="animation-studio" element={
-                <ProfileGuard>
-                  <AnimationStudioPage />
-                </ProfileGuard>
-              } />
-              <Route path="convo-ai" element={
-                <ProfileGuard>
-                  <TavusConversationPage />
-                </ProfileGuard>
-              } />
-              <Route path="personalized-learning" element={
-                <ProfileGuard>
-                  <PersonalizedLearningPage />
-                </ProfileGuard>
-              } />
-              <Route path="personalized-learning-history" element={
-                <ProfileGuard>
-                  <PersonalizedLearningHistoryPage />
-                </ProfileGuard>
-              } />
+              {/* Protected routes without ProfileGuard for Phase 2 compatibility */}
+              <Route path="roadmap-generator" element={<RoadmapGeneratorPage />} />
+              <Route path="paths" element={<LearningPathsPage />} />
+              <Route path="explore" element={<ExploreHubPage />} />
+              <Route path="summaries" element={<QuickSummariesPage />} />
+              <Route path="research" element={<DeepResearchPage />} />
+              <Route path="profile" element={<ProfilePage />} />
+              <Route path="animation-studio" element={<AnimationStudioPage />} />
+              <Route path="convo-ai" element={<TavusConversationPage />} />
+              <Route path="personalized-learning" element={<PersonalizedLearningPage />} />
+              <Route path="personalized-learning-history" element={<PersonalizedLearningHistoryPage />} />
 
               {/* Admin Routes */}
               <Route path="admin/*" element={
                 <AdminRoutes />
               } />
               
-              {/* Default redirect to explore */}
-              <Route path="" element={
-                <ProfileGuard>
-                  <ExploreHubPage />
-                </ProfileGuard>
-              } />
+              {/* Default redirect to overview */}
+              <Route path="" element={<DashboardOverviewPage />} />
             </Routes>
           </main>
         </div>

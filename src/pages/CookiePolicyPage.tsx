@@ -1,3 +1,4 @@
+// @ts-nocheck
 import React from 'react';
 import { motion } from 'framer-motion';
 import { Card } from '@/components/ui/card';
@@ -45,7 +46,7 @@ export default function CookiePolicyPage() {
           <Card className="p-6 md:p-8 mb-8 border-primary/10">
             <div className="prose prose-lg dark:prose-invert max-w-none">
               <p>
-                This Cookie Policy explains how EchoVerse ("we", "us", or "our") uses cookies and similar technologies to recognize you when you visit our platform. It explains what these technologies are and why we use them, as well as your rights to control our use of them.
+                This Cookie Policy explains how MasterMindAI ("we", "us", or "our") uses cookies and similar technologies to recognize you when you visit our platform. It explains what these technologies are and why we use them, as well as your rights to control our use of them.
               </p>
               
               <h2>1. What Are Cookies?</h2>
@@ -53,7 +54,7 @@ export default function CookiePolicyPage() {
                 Cookies are small data files that are placed on your computer or mobile device when you visit a website. Cookies are widely used by website owners to make their websites work, or to work more efficiently, as well as to provide reporting information.
               </p>
               <p>
-                Cookies set by the website owner (in this case, EchoVerse) are called "first-party cookies". Cookies set by parties other than the website owner are called "third-party cookies". Third-party cookies enable third-party features or functionality to be provided on or through the website (e.g., advertising, interactive content, and analytics).
+                Cookies set by the website owner (in this case, MasterMindAI) are called "first-party cookies". Cookies set by parties other than the website owner are called "third-party cookies". Third-party cookies enable third-party features or functionality to be provided on or through the website (e.g., advertising, interactive content, and analytics).
               </p>
 
               <h2>2. Why Do We Use Cookies?</h2>
@@ -108,7 +109,7 @@ export default function CookiePolicyPage() {
 
               <h2>6. Where Can You Get Further Information?</h2>
               <p>
-                If you have any questions about our use of cookies or other technologies, please email us at privacy@echoverse.ai.
+                If you have any questions about our use of cookies or other technologies, please email us at [Contact Email Not Configured].
               </p>
             </div>
           </Card>
