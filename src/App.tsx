@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useAuth, useSession } from '@clerk/clerk-react';
 import { ThemeProvider } from '@/components/theme/ThemeProvider';
 import CustomCursor from '@/components/ui/CustomCursor';
+import { initSpotlights } from '@/lib/spotlight';
 import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
 import HeroSection from '@/components/sections/HeroSection';
@@ -32,6 +33,9 @@ function App() {
       console.log('App: Class present?', document.documentElement.classList.contains('custom-cursor-enabled'));
     }, 500); // Wait for preloader to fully disappear (100ms delay + 300ms fade + 100ms buffer)
     
+    // Initialize spotlight effects
+    const spotlightInstances = initSpotlights();
+    
     // Add keyboard shortcut (Escape) to toggle custom cursor for accessibility
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
@@ -51,6 +55,8 @@ function App() {
     return () => {
       window.removeEventListener('popstate', handlePathChange);
       window.removeEventListener('keydown', handleKeyDown);
+      // Cleanup spotlight instances
+      spotlightInstances.forEach(instance => instance.destroy());
     };
   }, []);
 
@@ -95,6 +101,15 @@ function App() {
   return (
     <ThemeProvider defaultTheme="dark" storageKey="echoverse-theme">
       <div className="min-h-screen relative bg-transparent antialiased overflow-x-hidden">
+        {/* Gradient Background */}
+        <div className="gradient-background__wrapper">
+          <div className="gradient-background">
+            <div className="gradient-background__shape gradient-background__shape--1"></div>
+            <div className="gradient-background__shape gradient-background__shape--2"></div>
+          </div>
+          <div className="gradient-background__noise"></div>
+        </div>
+        
         <CustomCursor />
         {renderContent()}
         <Toaster />
