@@ -142,7 +142,7 @@ export default function Sidebar({ onNavigate }: SidebarProps) {
   };
 
   return (
-    <div className={`${isCollapsed ? 'w-16' : 'w-72'} h-screen relative transition-all duration-500 ease-in-out overflow-hidden`}>
+    <div className={`${isCollapsed ? 'w-16' : 'w-72'} h-screen relative transition-all duration-500 ease-in-out overflow-visible`}>
       {/* Animated Background with subtle patterns */}
       <div className="absolute inset-0 bg-gradient-to-br from-background via-muted/30 to-background">
         {/* Subtle animated orbs */}
