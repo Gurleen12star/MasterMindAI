@@ -19,6 +19,7 @@ import ProfilePage from './ProfilePage';
 import AnimationStudioPage from './AnimationStudioPage';
 import PersonalizedLearningPage from './PersonalizedLearningPage';
 import TavusConversationPage from './TavusConversationPage';
+import MentorMatchingPage from './MentorMatchingPage';
 import AdminRoutes from '../admin/AdminRoutes';
 import PersonalizedLearningHistoryPage from './PersonalizedLearningHistoryPage';
 import MaintenanceBanner from '@/components/admin/MaintenanceBanner';
@@ -90,6 +91,11 @@ function DashboardContent() {
             <Route path="animation-studio" element={
               <ProfileGuard>
                 <AnimationStudioPage />
+              </ProfileGuard>
+            } />
+            <Route path="mentor-matching" element={
+              <ProfileGuard>
+                <MentorMatchingPage />
               </ProfileGuard>
             } />
             <Route path="convo-ai" element={
