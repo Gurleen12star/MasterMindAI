@@ -1,49 +1,29 @@
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
-import { 
-  Card, 
-  CardContent, 
-  CardDescription, 
-  CardHeader, 
-    replica_id: 'rc2146c13e81',
-    description: 'Learn sales techniques and practice pitches'
-  CardFooter 
-} from '@/components/ui/card';
-import { 
-  Select, 
-    replica_id: 'r6ae5b6efc9d',
-    description: 'Discuss historical events and concepts'
-  SelectItem, 
-  SelectTrigger, 
-  SelectValue 
-} from '@/components/ui/select';
-    replica_id: 'r9d30b0e55ac',
-    description: 'Practice job interviews and get feedback'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { supabase } from '@/lib/supabase';
 import { useToast } from '@/hooks/use-toast';
 import {
   Video,
-    replica_id: 'rf4703150052',
-    description: 'Explore research topics in depth'
+  MessageSquare,
   Loader2,
   BotMessageSquare,
   AlertCircle,
   ExternalLink,
-    replica_id: 'r4317e64d25a',
-    description: 'Practice patient intake conversations'
+  Info
 } from 'lucide-react';
 import AnimatedLoadingText from '@/components/ui/AnimatedLoadingText';
 
 const personas = [
-    replica_id: 'rfb51183fe',
-    description: 'Get help with academic subjects'
+  { name: 'Sales Coach', persona_id: 'pdced222244b', replica_id: 'rc2146c13e81' },
   { name: 'History Teacher', persona_id: 'pc55154f229a', replica_id: 'r6ae5b6efc9d' },
   { name: 'AI Interviewer', persona_id: 'pe13ed370726', replica_id: 'r9d30b0e55ac' },
   { name: 'Tavus Researcher', persona_id: 'p48fdf065d6b', replica_id: 'rf4703150052' },
   { name: 'Healthcare Intake Assistant', persona_id: 'p5d11710002a', replica_id: 'r4317e64d25a' },
-    replica_id: 'ra54d1d861',
-    description: 'Practice corporate training and presentations'
+  { name: 'College Tutor', persona_id: 'p88964a7', replica_id: 'rfb51183fe' },
   { name: 'Corporate Trainer', persona_id: 'p7fb0be3', replica_id: 'ra54d1d861' },
 ];
 
@@ -119,131 +99,113 @@ const TavusConversation = () => {
   };
 
   return (
-    <Card className="shadow-xl border-primary/10 bg-card/70 backdrop-blur-sm transition-all duration-300 hover:shadow-primary/5">
-      <CardHeader className="pb-3">
-        <CardTitle className="flex items-center gap-2 text-2xl">
+    <Card className="shadow-lg border-primary/10 bg-card/70 backdrop-blur-sm">
+      <CardHeader>
+        <CardTitle className="flex items-center gap-2">
           <BotMessageSquare className="h-5 w-5 text-primary" />
           Conversational AI Practice
         </CardTitle>
-        <CardDescription className="text-base">
+        <CardDescription>
           Paste any text-based content below (like an article, a report, or your own notes).
           We'll create a live AI conversation partner for you to discuss it with.
         </CardDescription>
       </CardHeader>
       
-      <CardContent className="space-y-6">
-        <div className="space-y-3">
-          <div className="flex items-center justify-between">
-            <label className="text-sm font-medium">Choose AI Persona</label>
-            <span className="text-xs text-primary font-medium px-2 py-1 bg-primary/10 rounded-full">
-              {conversationUrl ? 'Conversation Active' : 'Select to Begin'}
-            </span>
-          </div>
-          
-          <div className="relative">
-            <div className="absolute inset-0 bg-gradient-to-r from-primary/5 to-transparent rounded-lg opacity-30"></div>
-            <Select
-              value={`${selectedPersonaId}|${selectedReplicaId}`}
-              onValueChange={(value) => {
-                const [pId, rId] = value.split('|');
-                setSelectedPersonaId(pId);
-                setSelectedReplicaId(rId);
-              }}
-              disabled={isLoading || !!conversationUrl}
-            >
-              <SelectTrigger className="w-full bg-background/50 backdrop-blur-sm border-primary/20 focus:border-primary/40 focus:ring-2 focus:ring-primary/20 h-11 transition-all duration-200">
-                <SelectValue placeholder="Select a persona" />
-              </SelectTrigger>
-              <SelectContent>
-                {personas.map((p) => (
-                  <SelectItem key={p.persona_id} value={`${p.persona_id}|${p.replica_id}`} className="py-3">
-                    <div className="flex flex-col">
-                      <span className="font-medium">{p.name}</span>
-                      <span className="text-xs text-muted-foreground">{p.description}</span>
-                    </div>
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-          <p className="text-xs text-muted-foreground px-1">
-            Each persona specializes in different conversational styles and subject matters.
+      <CardContent className="space-y-4">
+        <div className="space-y-2">
+          <label className="text-sm font-medium">Choose AI Persona</label>
+          <Select
+            value={`${selectedPersonaId}|${selectedReplicaId}`}
+            onValueChange={(value) => {
+              const [pId, rId] = value.split('|');
+              setSelectedPersonaId(pId);
+              setSelectedReplicaId(rId);
+            }}
+            disabled={isLoading || !!conversationUrl}
+          >
+            <SelectTrigger className="w-full">
+              <SelectValue placeholder="Select a persona" />
+            </SelectTrigger>
+            <SelectContent>
+              {personas.map((p) => (
+                <SelectItem key={p.persona_id} value={`${p.persona_id}|${p.replica_id}`}>
+                  {p.name}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          <p className="text-xs text-muted-foreground">
+            Select an AI persona to interact with. Each persona has a unique style and role.
           </p>
         </div>
 
-        <div className="space-y-3">
-          <div className="flex items-center justify-between mb-1">
-            <label className="text-sm font-medium">Context for your conversation</label>
+        <div className="space-y-2">
+          <div className="flex items-center justify-between">
+            <label className="text-sm font-medium">Context for your AI conversation partner</label>
             <span className="text-xs text-muted-foreground">
               {context.length} / 10000 characters
             </span>
           </div>
           <Textarea
-            placeholder="Paste your content here... For example, an article about machine learning, a research paper, or notes from a lecture. The AI will have knowledge of this content and be prepared to discuss it with you."
+            placeholder="Paste your context here... For example, an article about machine learning, a research paper, or notes from a lecture."
             value={context}
             onChange={(e) => setContext(e.target.value)}
             rows={10}
             disabled={isLoading || !!conversationUrl}
-            className="resize-none min-h-[220px] font-mono text-sm border-primary/20 focus:border-primary/40 focus:ring-2 focus:ring-primary/20 transition-all duration-200 bg-background/50 backdrop-blur-sm rounded-lg shadow-inner"
+            className="resize-none min-h-[200px] font-mono text-sm"
             maxLength={10000}
           />
-          <p className="text-xs text-muted-foreground px-1">
-            Your AI conversation partner will analyze this content and be ready to discuss it in detail.
+          <p className="text-xs text-muted-foreground">
+            The AI will have knowledge of this content and be prepared to discuss it with you.
           </p>
         </div>
 
         {error && (
-          <Alert variant="destructive" className="border-destructive/30 bg-destructive/10">
-            <AlertCircle className="h-5 w-5" />
+          <Alert variant="destructive">
+            <AlertCircle className="h-4 w-4" />
             <AlertTitle>Error</AlertTitle>
-            <AlertDescription className="mt-1">{error}</AlertDescription>
+            <AlertDescription>{error}</AlertDescription>
           </Alert>
         )}
 
         {conversationUrl && (
-          <Alert className="bg-primary/10 text-foreground border-primary/30 shadow-lg">
-            <div className="absolute inset-0 bg-gradient-to-r from-primary/5 via-transparent to-primary/5 rounded-lg opacity-30"></div>
-            <Info className="h-5 w-5 text-primary" />
-            <AlertTitle className="font-bold">Conversation Ready!</AlertTitle>
-            <AlertDescription className="mt-2">
-              Your AI conversation partner has been created successfully and is waiting to talk with you. Click the button below to begin your video conversation.
+          <Alert className="bg-primary/10 text-foreground border-primary/30">
+            <Info className="h-4 w-4 text-primary" />
+            <AlertTitle>Conversation Ready!</AlertTitle>
+            <AlertDescription>
+              Your AI conversation partner has been created successfully. Click the button below to start talking.
             </AlertDescription>
           </Alert>
         )}
       </CardContent>
       
-      <CardFooter className="flex flex-col sm:flex-row sm:justify-between gap-4 items-center pt-4 border-t border-border/20">
-        <div className="text-sm text-muted-foreground flex items-center order-2 sm:order-1">
-          <Video className="h-4 w-4 mr-2 text-primary/70" />
+      <CardFooter className="flex justify-between items-center">
+        <div className="text-sm text-muted-foreground flex items-center">
+          <Video className="h-4 w-4 mr-2" />
           Video conversations powered by Tavus
         </div>
         
         {conversationUrl ? (
-          <Button 
-            onClick={openConversation} 
-            className="gap-2 bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 transition-all duration-300 shadow-lg hover:shadow-xl hover:shadow-primary/25 order-1 sm:order-2 w-full sm:w-auto"
-            size="lg"
-          >
-            <MessageSquare className="h-5 w-5" />
-            Start Video Conversation
-            <ExternalLink className="h-4 w-4" />
+          <Button onClick={openConversation} className="gap-2">
+            <MessageSquare className="h-4 w-4" />
+            Start Conversation
+            <ExternalLink className="h-4 w-4 ml-1" />
           </Button>
         ) : (
           <Button 
             onClick={handleStartConversation} 
             disabled={isLoading || !context.trim() || context.length < 50}
-            className="gap-2 bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 transition-all duration-300 shadow-lg hover:shadow-xl hover:shadow-primary/25 order-1 sm:order-2 w-full sm:w-auto"
-            size="lg"
+            className="gap-2"
           >
             {isLoading ? (
               <>
-                <Loader2 className="h-5 w-5 animate-spin" />
+                <Loader2 className="h-4 w-4 animate-spin" />
                 <AnimatedLoadingText message="Creating conversation..." />
               </>
             ) : (
               <>
-                <BotMessageSquare className="h-5 w-5" />
-                Generate AI Conversation
+                <BotMessageSquare className="h-4 w-4" />
+                Create Conversation
               </>
             )}
           </Button>
