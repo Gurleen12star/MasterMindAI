@@ -13,6 +13,7 @@ import FAQSection from '@/components/sections/FAQSection';
 import { Toaster } from '@/components/ui/toaster';
 import LoginPage from '@/pages/auth/LoginPage';
 import SignupPage from '@/pages/auth/SignupPage';
+import DashboardPage from '@/pages/dashboard/DashboardPage';
 
 function App() {
   const [currentPath, setCurrentPath] = useState(window.location.pathname);
@@ -40,13 +41,11 @@ function App() {
       case '/signup':
         return <SignupPage />;
       case '/dashboard':
-        return isSignedIn ? (
-          <div className="container mx-auto px-4 py-8">
-            <h1 className="text-2xl font-bold">Welcome to your Dashboard</h1>
-          </div>
-        ) : (
-          window.location.href = '/login'
-        );
+        if (!isSignedIn) {
+          window.location.href = '/login';
+          return null;
+        }
+        return <DashboardPage />;
       default:
         return (
           <>
