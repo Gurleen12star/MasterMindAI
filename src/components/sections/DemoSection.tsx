@@ -10,24 +10,30 @@ export default function DemoSection() {
   );
 
   return (
-    <section id="demo" className="relative py-16 md:py-24 lg:py-32 overflow-hidden">
-      {/* Blurred oval overlay effects */}
-      <div className="absolute top-20 -right-40 w-80 h-80 rounded-full bg-gradient-to-br from-blue-500/6 via-cyan-500/4 to-transparent blur-3xl opacity-50" />
-      <div className="absolute -bottom-20 -left-40 w-96 h-96 rounded-full bg-gradient-to-br from-purple-500/8 via-primary/4 to-transparent blur-3xl opacity-60" />
+    <section className="py-24 px-4 md:px-6 lg:px-8 relative bg-gradient-to-br from-background via-muted/30 to-background">
+      {/* Animated Background Elements */}
+      <div className="absolute inset-0 overflow-hidden">
+        <div className="absolute top-20 left-4 w-32 h-32 bg-primary/5 rounded-full blur-2xl animate-pulse"></div>
+        <div className="absolute bottom-20 right-4 w-24 h-24 bg-blue-500/5 rounded-full blur-2xl animate-pulse delay-1000"></div>
+        <div className="absolute top-1/2 left-8 w-16 h-16 bg-green-500/5 rounded-full blur-2xl animate-pulse delay-500"></div>
+        
+        {/* Grid pattern overlay */}
+        <div className="absolute inset-0 bg-grid-white opacity-[0.02]"></div>
+      </div>
       
-      <div className="absolute inset-0 bg-gradient-to-b from-background/50 via-background to-background/50" />
-      <div className="absolute inset-0 bg-grid-white/[0.02]" />
-      <div className="container px-4 max-w-[1200px] mx-auto">
-        <div className="relative mx-auto max-w-5xl text-center mb-16">
-          <h2 className="text-4xl md:text-5xl font-bold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-primary to-primary/70">
-            See EchoVerse in Action
+      <div className="max-w-7xl mx-auto">
+        <div className="text-center mb-16 relative z-10">
+          <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight mb-6">
+            <span className="bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">
+              See It In Action
+            </span>
           </h2>
           <p className="mt-4 text-lg md:text-xl text-muted-foreground">
             Experience how our AI transforms content across different formats.
           </p>
         </div>
         
-        <div className="grid grid-cols-1 gap-8 lg:grid-cols-12">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center relative z-10">
           <div className="lg:col-span-5">
             <BentoBox gradient="purple" className="h-full backdrop-blur-xl bg-background/30 border-2 border-primary/20 hover:border-primary/30 transition-all duration-500 bento-modern shadow-inner-modern rounded-3xl">
               <div className="flex items-center gap-4 mb-6">

@@ -52,15 +52,23 @@ export default function TestimonialsSection() {
   }, [nextTestimonial]);
 
   return (
-    <section className="relative py-16 md:py-24 overflow-hidden">
-      {/* Blurred oval overlay effects */}
-      <div className="absolute top-10 -right-32 w-72 h-72 rounded-full bg-gradient-to-br from-green-500/6 via-emerald-500/4 to-transparent blur-3xl opacity-50" />
-      <div className="absolute -bottom-10 -left-32 w-80 h-80 rounded-full bg-gradient-to-br from-primary/8 via-blue-500/4 to-transparent blur-3xl opacity-60" />
+    <section className="py-24 px-4 md:px-6 lg:px-8 relative bg-gradient-to-br from-background via-muted/30 to-background">
+      {/* Animated Background Elements */}
+      <div className="absolute inset-0 overflow-hidden">
+        <div className="absolute top-20 left-4 w-32 h-32 bg-primary/5 rounded-full blur-2xl animate-pulse"></div>
+        <div className="absolute bottom-20 right-4 w-24 h-24 bg-blue-500/5 rounded-full blur-2xl animate-pulse delay-1000"></div>
+        <div className="absolute top-1/2 left-8 w-16 h-16 bg-green-500/5 rounded-full blur-2xl animate-pulse delay-500"></div>
+        
+        {/* Grid pattern overlay */}
+        <div className="absolute inset-0 bg-grid-white opacity-[0.02]"></div>
+      </div>
       
-      <div className="container px-4 max-w-[1200px] mx-auto">
-        <div className="mx-auto max-w-5xl text-center mb-16">
-          <h2 className="text-3xl font-bold tracking-tight md:text-4xl bg-clip-text text-transparent bg-gradient-to-r from-primary to-primary/70">
-            What Our Users Say
+      <div className="max-w-7xl mx-auto">
+        <div className="text-center mb-16 relative z-10">
+          <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight mb-6">
+            <span className="bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">
+              What Our Users Say
+            </span>
           </h2>
           <p className="mt-4 text-muted-foreground md:text-lg">
             Join thousands of satisfied users who have transformed their learning journey.
