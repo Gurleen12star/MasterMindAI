@@ -2,11 +2,18 @@
 
 import { serve } from "https://deno.land/std@0.177.0/http/server.ts";
 
-const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
-  "Access-Control-Allow-Headers": "Content-Type, Authorization, x-client-info, apikey, X-Requested-With, Accept, Origin",
-};
+function buildCorsHeaders(origin?: string | null) {
+  return {
+    "Access-Control-Allow-Origin": origin || "*",
+    "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
+    // Explicitly allow all relevant headers (the list is case-sensitive for some browsers)
+    "Access-Control-Allow-Headers": "Content-Type, Authorization, X-Client-Info, x-client-info, apikey, X-Requested-With, Accept, Origin",
+    "Access-Control-Allow-Credentials": "true",
+  } as const;
+}
+
+// We build the default headers once (using * as a fallback)
+const corsHeaders = buildCorsHeaders();
 
 interface ResearchState {
   findings: Array<{ text: string; source: string }>;
@@ -121,11 +128,10 @@ async function geminiAnalysis(prompt: string) {
       body: JSON.stringify({
         contents: [{
           parts: [{
-            text: prompt
+            text: `${prompt}\n\nPlease format your response as a valid JSON object.`
           }]
         }],
         generationConfig: {
-          responseMimeType: 'application/json',
           temperature: 0.7,
         },
       }),
@@ -145,10 +151,19 @@ async function geminiAnalysis(prompt: string) {
     const responseText = data.candidates[0].content.parts[0].text;
     
     try {
-      return JSON.parse(responseText);
+      // Attempt to find a JSON object within the response text
+      const jsonMatch = responseText.match(/\{[\s\S]*\}/);
+      if (jsonMatch) {
+        return JSON.parse(jsonMatch[0]);
+      }
+      // Fallback for cases where Gemini doesn't return valid JSON
+      console.warn('Gemini response was not valid JSON, returning fallback object:', responseText);
+      return { findings: [], gaps: [], summary: 'Could not analyze content due to invalid format.' };
+
     } catch (parseError) {
-      console.error('Failed to parse Gemini JSON response:', responseText);
-      throw new Error('Gemini returned invalid JSON');
+      console.error('Failed to parse Gemini JSON response:', responseText, parseError);
+      // Even with the regex, parsing might fail. Return a fallback.
+      return { findings: [], gaps: [], summary: 'Could not analyze content due to a parsing error.' };
     }
   } catch (error) {
     console.error('Gemini analysis error:', error);
@@ -332,15 +347,18 @@ async function runDeepResearch(
 
 // Main Deno server logic
 serve(async (req) => {
+  const origin = req.headers.get("Origin");
+  const requestCorsHeaders = buildCorsHeaders(origin);
+
   if (req.method === "OPTIONS") {
-    return new Response("ok", { headers: corsHeaders });
+    return new Response("ok", { headers: requestCorsHeaders });
   }
 
   if (req.method !== 'POST') {
     return new Response(JSON.stringify({ error: 'Method Not Allowed' }), { 
       status: 405,
       headers: {
-        ...corsHeaders,
+        ...requestCorsHeaders,
         'Content-Type': 'application/json'
       }
     });
@@ -353,7 +371,7 @@ serve(async (req) => {
       return new Response(JSON.stringify({ error: 'Topic is required' }), {
         status: 400,
         headers: {
-          ...corsHeaders,
+          ...requestCorsHeaders,
           'Content-Type': 'application/json'
         },
       });
@@ -372,7 +390,7 @@ serve(async (req) => {
       }), {
         status: 500,
         headers: {
-          ...corsHeaders,
+          ...requestCorsHeaders,
           'Content-Type': 'application/json'
         },
       });
@@ -382,7 +400,7 @@ serve(async (req) => {
 
     return new Response(JSON.stringify(researchResult), {
       headers: {
-        ...corsHeaders,
+        ...requestCorsHeaders,
         'Content-Type': 'application/json'
       },
     });
@@ -406,7 +424,7 @@ serve(async (req) => {
     return new Response(JSON.stringify({ error: errorMessage }), {
       status: 500,
       headers: {
-        ...corsHeaders,
+        ...requestCorsHeaders,
         'Content-Type': 'application/json'
       },
     });
