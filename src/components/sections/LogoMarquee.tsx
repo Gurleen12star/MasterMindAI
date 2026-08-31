@@ -1,5 +1,5 @@
-import { useEffect, useRef } from 'react';
-import { logoPaths, shuffle, type LogoPath } from '@/utils/logoPaths';
+import { useEffect, useState } from 'react';
+import { logoPaths, type LogoPath } from '@/utils/logoPaths';
 
 interface MarqueeConfig {
   theme: 'dark' | 'light';
@@ -16,12 +16,7 @@ interface MarqueeConfig {
 }
 
 export default function LogoMarquee() {
-  const mainRef = useRef<HTMLElement>(null);
-  const sheetRef = useRef<HTMLStyleElement>(null);
-  const pathsRef = useRef<LogoPath[]>(shuffle([...logoPaths]));
-
-  // Default configuration matching the provided image
-  const config: MarqueeConfig = {
+  const [config] = useState({
     theme: 'dark',
     items: 4,
     x: -100,
@@ -33,52 +28,22 @@ export default function LogoMarquee() {
     transition: 1,
     underlap: 2,
     stagger: 0.6,
-  };
+  });
 
-  const generateList = () => {
-    if (!mainRef.current) return;
-    
-    pathsRef.current = shuffle([...logoPaths]);
-    const lists = mainRef.current.querySelectorAll('ul');
-    
-    lists.forEach((list, l) => {
-      list.style.setProperty('--index', l.toString());
-      list.style.setProperty('--items', config.items.toString());
-      
-      const items = Array.from({ length: config.items }, (_, index) => {
-        const pathIndex = (l * config.items + index) % pathsRef.current.length;
-        const { title, path } = pathsRef.current[pathIndex];
-        
-        return `
-          <li data-logo style="--i: ${index + 1};">
-            <svg role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-              <title>${title}</title>
-              <defs>
-                <path id="path-${pathIndex}-${l}" d="${path}" />
-              </defs>
-              <use fill="red" style="--u: 0;" href="#path-${pathIndex}-${l}" />
-              <use fill="yellow" style="--u: 1;" href="#path-${pathIndex}-${l}" />
-              <use fill="#1061ff" style="--u: 2;" href="#path-${pathIndex}-${l}" />
-              <use fill="currentColor" style="--u: 3;" href="#path-${pathIndex}-${l}" />
-            </svg>
-          </li>
-          ${l === 0 ? `<li data-marker style="--i: ${index + 1};"></li>` : ''}
-        `;
-      }).join('');
-      
-      list.innerHTML = items;
-    });
-  };
+  const [keyframes, setKeyframes] = useState('');
+  const [lists, setLists] = useState<string[]>([]);
+
+  useEffect(() => {
+    generateKeyframes();
+    generateLists();
+  }, []);
 
   const generateKeyframes = () => {
-    if (!sheetRef.current) return;
-    
     const base = parseFloat((100 - 100 / config.items).toFixed(2));
     const first = base - config.underlap;
     const mid = base + config.transition;
     const end = 100 - config.underlap - config.transition;
-    
-    const keyframes = `
+    const keyframesCSS = `
       @keyframes appear {
         0%, ${first}% {
           animation-timing-function: ease-out;
@@ -104,57 +69,76 @@ export default function LogoMarquee() {
         }
       }
     `;
-    
-    sheetRef.current.innerHTML = keyframes;
+    setKeyframes(keyframesCSS);
   };
 
-  const applyConfig = () => {
-    const root = document.documentElement;
-    root.dataset.theme = config.theme;
-    root.dataset.explode = config.explode.toString();
-    root.style.setProperty('--duration', config.duration.toString());
-    root.style.setProperty('--stagger', config.stagger.toString());
-    root.style.setProperty('--movement-x', config.x.toString());
-    root.style.setProperty('--movement-y', config.y.toString());
-    root.style.setProperty('--movement-step', config.step.toString());
-    root.style.setProperty('--blur', config.blur.toString());
-    
-    if (mainRef.current) {
-      const lists = mainRef.current.querySelectorAll('ul');
-      mainRef.current.style.setProperty('--lists', lists.length.toString());
+  const shuffle = (array: LogoPath[]) => {
+    const newArray = [...array];
+    for (let i = newArray.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
     }
+    return newArray;
   };
 
-  useEffect(() => {
-    applyConfig();
-    generateList();
-    generateKeyframes();
-  }, []);
+  const generateLists = () => {
+    const shuffledPaths = shuffle(logoPaths);
+    const newLists = [];
+    
+    for (let l = 0; l < 4; l++) {
+      const listItems = [];
+      for (let index = 0; index < config.items; index++) {
+        const pathIndex = (l * config.items + index) % shuffledPaths.length;
+        const { title, path } = shuffledPaths[pathIndex];
+        listItems.push(`
+          <li data-logo style="--i: ${index + 1};">
+            <svg role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <title>${title}</title>
+              <defs>
+                <path id="path-${pathIndex}-${l}" d="${path}" />
+              </defs>
+              <use fill="red" style="--u: 0;" href="#path-${pathIndex}-${l}" />
+              <use fill="yellow" style="--u: 1;" href="#path-${pathIndex}-${l}" />
+              <use fill="#1061ff" style="--u: 2;" href="#path-${pathIndex}-${l}" />
+              <use fill="currentColor" style="--u: 3;" href="#path-${pathIndex}-${l}" />
+            </svg>
+          </li>
+          ${l === 0 ? `<li data-marker style="--i: ${index + 1};"></li>` : ''}
+        `);
+      }
+      newLists.push(listItems.join(''));
+    }
+    setLists(newLists);
+  };
 
   return (
-    <section className="py-16 md:py-24 relative overflow-hidden">
-      <style ref={sheetRef} type="text/css" />
+    <section className="py-16 bg-gradient-to-b from-background via-muted/20 to-background relative overflow-hidden">      
+      <style dangerouslySetInnerHTML={{ __html: keyframes }} />
       
-      {/* Background gradient */}
-      <div className="absolute inset-0 bg-gradient-to-b from-transparent via-primary/5 to-transparent" />
-      
-      {/* Content */}
-      <div className="relative z-10">
-        <div className="text-center mb-12">
-          <h2 className="text-3xl md:text-4xl font-bold mb-4 bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">
-            Trusted by Industry Leaders
-          </h2>
-          <p className="text-muted-foreground max-w-2xl mx-auto">
-            Join thousands of companies already using our platform to accelerate their learning and development
-          </p>
-        </div>
-        
-        <main ref={mainRef} className="logo-marquee-main">
-          <ul></ul>
-          <ul></ul>
-          <ul></ul>
-          <ul></ul>
-        </main>
+      <div 
+        className="logo-marquee-main"
+        style={{
+          '--duration': config.duration,
+          '--stagger': config.stagger,
+          '--movement-x': config.x,
+          '--movement-y': config.y,
+          '--movement-step': config.step,
+          '--blur': config.blur,
+          '--lists': 4,
+        } as React.CSSProperties}
+        data-theme={config.theme}
+        data-explode={config.explode}
+      >
+        {lists.map((listContent, index) => (
+          <ul
+            key={index}
+            style={{
+              '--index': index,
+              '--items': config.items,
+            } as React.CSSProperties}
+            dangerouslySetInnerHTML={{ __html: listContent }}
+          />
+        ))}
       </div>
     </section>
   );
