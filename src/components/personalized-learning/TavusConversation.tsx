@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
@@ -17,15 +18,14 @@ import {
 } from 'lucide-react';
 import AnimatedLoadingText from '@/components/ui/AnimatedLoadingText';
 
-const personas = [
-  { name: 'Sales Coach', persona_id: 'pdced222244b', replica_id: 'rc2146c13e81' },
-  { name: 'History Teacher', persona_id: 'pc55154f229a', replica_id: 'r6ae5b6efc9d' },
-  { name: 'AI Interviewer', persona_id: 'pe13ed370726', replica_id: 'r9d30b0e55ac' },
-  { name: 'Tavus Researcher', persona_id: 'p48fdf065d6b', replica_id: 'rf4703150052' },
-  { name: 'Healthcare Intake Assistant', persona_id: 'p5d11710002a', replica_id: 'r4317e64d25a' },
-  { name: 'College Tutor', persona_id: 'p88964a7', replica_id: 'rfb51183fe' },
-  { name: 'Corporate Trainer', persona_id: 'p7fb0be3', replica_id: 'ra54d1d861' },
-];
+interface Persona {
+  id: string;
+  name: string;
+  persona_id: string;
+  replica_id: string;
+  description: string;
+  category?: string;
+}
 
 const TavusConversation = () => {
   const { toast } = useToast();
@@ -33,8 +33,42 @@ const TavusConversation = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [conversationUrl, setConversationUrl] = useState<string | null>(null);
-  const [selectedPersonaId, setSelectedPersonaId] = useState(personas[0].persona_id);
-  const [selectedReplicaId, setSelectedReplicaId] = useState(personas[0].replica_id);
+  const [selectedPersonaId, setSelectedPersonaId] = useState('');
+  const [selectedReplicaId, setSelectedReplicaId] = useState('');
+  const [personas, setPersonas] = useState<Persona[]>([]);
+  const [isLoadingPersonas, setIsLoadingPersonas] = useState(true);
+  
+  useEffect(() => {
+    async function fetchPersonas() {
+      try {
+        setIsLoadingPersonas(true);
+        const { data, error } = await supabase
+          .from('tavus_personas')
+          .select('*')
+          .eq('is_active', true)
+          .order('name');
+        
+        if (error) throw error;
+        
+        setPersonas(data || []);
+        if (data && data.length > 0) {
+          setSelectedPersonaId(data[0].persona_id);
+          setSelectedReplicaId(data[0].replica_id);
+        }
+      } catch (err) {
+        console.error('Error fetching personas:', err);
+        toast({
+          title: 'Failed to load personas',
+          description: 'Please try again later',
+          variant: 'destructive'
+        });
+      } finally {
+        setIsLoadingPersonas(false);
+      }
+    }
+    
+    fetchPersonas();
+  }, [toast]);
 
   const handleStartConversation = async () => {
     if (!context.trim()) {
@@ -99,65 +133,60 @@ const TavusConversation = () => {
   };
 
   return (
-    <Card className="shadow-lg border-primary/10 bg-card/70 backdrop-blur-sm">
-      <CardHeader>
-        <CardTitle className="flex items-center gap-2">
+    <Card className="shadow-lg border-primary/10 bg-card/70 backdrop-blur-sm h-full">
+      <CardHeader className="p-4 pb-0">
+        <CardTitle className="text-xl flex items-center gap-2">
           <BotMessageSquare className="h-5 w-5 text-primary" />
           Conversational AI Practice
         </CardTitle>
-        <CardDescription>
+        <CardDescription className="text-sm">
           Paste any text-based content below (like an article, a report, or your own notes).
-          We'll create a live AI conversation partner for you to discuss it with.
         </CardDescription>
       </CardHeader>
       
-      <CardContent className="space-y-4">
+      <CardContent className="p-4 pt-3 space-y-3">
         <div className="space-y-2">
-          <label className="text-sm font-medium">Choose AI Persona</label>
+          <div className="flex items-center justify-between">
+            <label className="text-sm font-medium">Choose AI Persona</label>
+          </div>
           <Select
-            value={`${selectedPersonaId}|${selectedReplicaId}`}
+            value={selectedPersonaId ? `${selectedPersonaId}|${selectedReplicaId}` : ""}
             onValueChange={(value) => {
               const [pId, rId] = value.split('|');
               setSelectedPersonaId(pId);
               setSelectedReplicaId(rId);
             }}
-            disabled={isLoading || !!conversationUrl}
+            disabled={isLoading || !!conversationUrl || isLoadingPersonas}
           >
             <SelectTrigger className="w-full">
-              <SelectValue placeholder="Select a persona" />
+              <SelectValue placeholder={isLoadingPersonas ? "Loading personas..." : "Select a persona"} />
             </SelectTrigger>
             <SelectContent>
               {personas.map((p) => (
-                <SelectItem key={p.persona_id} value={`${p.persona_id}|${p.replica_id}`}>
+                <SelectItem key={p.id || p.persona_id} value={`${p.persona_id}|${p.replica_id}`}>
                   {p.name}
                 </SelectItem>
               ))}
             </SelectContent>
           </Select>
-          <p className="text-xs text-muted-foreground">
-            Select an AI persona to interact with. Each persona has a unique style and role.
-          </p>
         </div>
 
         <div className="space-y-2">
           <div className="flex items-center justify-between">
-            <label className="text-sm font-medium">Context for your AI conversation partner</label>
+            <label className="text-sm font-medium">Conversation Context</label>
             <span className="text-xs text-muted-foreground">
               {context.length} / 10000 characters
             </span>
           </div>
           <Textarea
-            placeholder="Paste your context here... For example, an article about machine learning, a research paper, or notes from a lecture."
+            placeholder="Paste content to discuss (article, research paper, notes, etc.)"
             value={context}
             onChange={(e) => setContext(e.target.value)}
-            rows={10}
+            rows={7}
             disabled={isLoading || !!conversationUrl}
-            className="resize-none min-h-[200px] font-mono text-sm"
+            className="resize-none min-h-[160px] text-sm"
             maxLength={10000}
           />
-          <p className="text-xs text-muted-foreground">
-            The AI will have knowledge of this content and be prepared to discuss it with you.
-          </p>
         </div>
 
         {error && (
@@ -179,20 +208,21 @@ const TavusConversation = () => {
         )}
       </CardContent>
       
-      <CardFooter className="flex justify-between items-center">
-        <div className="text-sm text-muted-foreground flex items-center">
+      <CardFooter className="p-4 pt-0 flex justify-between items-center">
+        <div className="text-xs text-muted-foreground flex items-center">
           <Video className="h-4 w-4 mr-2" />
-          Video conversations powered by Tavus
+          Powered by Tavus
         </div>
         
         {conversationUrl ? (
-          <Button onClick={openConversation} className="gap-2">
+          <Button onClick={openConversation} size="sm" className="gap-2">
             <MessageSquare className="h-4 w-4" />
             Start Conversation
             <ExternalLink className="h-4 w-4 ml-1" />
           </Button>
         ) : (
           <Button 
+            size="sm"
             onClick={handleStartConversation} 
             disabled={isLoading || !context.trim() || context.length < 50}
             className="gap-2"
