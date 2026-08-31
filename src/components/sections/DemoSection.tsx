@@ -5,7 +5,6 @@ import { Button } from '@/components/ui/button';
 import { FileText, Headphones, Video, Wand2, Sparkles } from 'lucide-react';
 
 export default function DemoSection() {
-  // CORRECTED: Restored the original state declaration
   const [isPlaying, setIsPlaying] = useState(false);
   const [content, setContent] = useState('');
 
@@ -31,11 +30,14 @@ export default function DemoSection() {
         </div>
         
         <div className="grid grid-cols-1 gap-8 lg:grid-cols-12">
-          {/* Input Content Card */}
           <div className="lg:col-span-5">
-            <BentoBox gradient="purple" className="relative overflow-hidden border-2 border-primary/20 hover:border-primary/30 transition-all duration-500 bento-modern shadow-inner-modern rounded-3xl h-full">
-              <div className="absolute inset-0 backdrop-blur-xl bg-background/30 [filter:url(#grainy)]" />
-              <div className="relative z-10 h-full flex flex-col p-6">
+            {/* Updated Card 1: Added relative, group and separated background layer */}
+            <BentoBox gradient="purple" className="relative group h-full border-2 border-primary/20 hover:border-primary/30 transition-all duration-500 bento-modern shadow-inner-modern rounded-3xl">
+              {/* Grainy Background Layer */}
+              <div className="absolute inset-0 rounded-3xl backdrop-blur-xl bg-background/30 [filter:url(#grainy)]" />
+              
+              {/* All content is now in a relative container to sit on top of the background */}
+              <div className="relative z-10 p-6 flex flex-col h-full">
                 <div className="flex items-center gap-4 mb-6">
                   <div className="relative inline-flex h-12 w-12 items-center justify-center rounded-xl bg-primary/20 before:absolute before:inset-0 before:rounded-xl before:bg-primary/10 before:animate-pulse shadow-lg">
                     <FileText className="h-6 w-6 text-primary" />
@@ -43,7 +45,7 @@ export default function DemoSection() {
                   <h3 className="text-xl font-semibold text-foreground">Input Content</h3>
                 </div>
                 <textarea
-                  className="flex-grow w-full resize-none rounded-xl border-2 border-primary/20 bg-background/60 backdrop-blur-sm p-4 text-base focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary/40 transition-all duration-300 placeholder:text-muted-foreground/60"
+                  className="h-48 w-full resize-none rounded-xl border-2 border-primary/20 bg-background/60 backdrop-blur-sm p-4 text-base focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary/40 transition-all duration-300 placeholder:text-muted-foreground/60"
                   placeholder="Enter text content to transform..."
                   value={content}
                   onChange={(e) => setContent(e.target.value)}
@@ -58,11 +60,14 @@ export default function DemoSection() {
             </BentoBox>
           </div>
           
-          {/* AI Transformations Card */}
           <div className="lg:col-span-7">
-            <BentoBox gradient="blue" className="relative overflow-hidden border-2 border-primary/20 hover:border-primary/30 transition-all duration-500 bento-modern shadow-inner-modern rounded-3xl h-full">
-              <div className="absolute inset-0 backdrop-blur-xl bg-background/30 [filter:url(#grainy)]" />
-              <div className="relative z-10 h-full p-6">
+            {/* Updated Card 2: Added relative, group and separated background layer */}
+            <BentoBox gradient="blue" className="relative group h-full border-2 border-primary/20 hover:border-primary/30 transition-all duration-500 bento-modern shadow-inner-modern rounded-3xl">
+              {/* Grainy Background Layer */}
+              <div className="absolute inset-0 rounded-3xl backdrop-blur-xl bg-background/30 [filter:url(#grainy)]" />
+              
+              {/* All content is now in a relative container to sit on top of the background */}
+              <div className="relative z-10 p-6 flex flex-col h-full">
                 <div className="flex items-center gap-4 mb-6">
                   <div className="relative inline-flex h-12 w-12 items-center justify-center rounded-xl bg-primary/20 before:absolute before:inset-0 before:rounded-xl before:bg-primary/10 before:animate-pulse shadow-lg">
                     <Wand2 className="h-6 w-6 text-primary" />
@@ -107,7 +112,7 @@ export default function DemoSection() {
                       </div>
                     </div>
                   </TabsContent>
-
+                  
                   <TabsContent value="video" className="mt-0">
                     <div className="flex items-center justify-center rounded-xl border-2 border-primary/20 bg-card/60 backdrop-blur-sm p-8 shadow-lg">
                       <div className="flex flex-col items-center gap-4">
