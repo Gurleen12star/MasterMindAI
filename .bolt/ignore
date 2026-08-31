@@ -23,3 +23,11 @@ tsconfig.json
 tsconfig.node.json
 vite.config.ts
 vite.config.ts.timestamp-1748959622520-720580c0ef5358.mjs
+
+
+src/pages/dashboard/DeepResearchPage.tsx
+src/pages/dashboard/RoadmapGeneratorPage.tsx
+src/pages/dashboard/ExploreHubPage.tsx
+src/pages/dashboard/ProfileSetupPage.tsx
+src/pages/dashboard/QuickSummariesPage.tsx
+src/pages/dashboard/LearningPathsPage.tsx
