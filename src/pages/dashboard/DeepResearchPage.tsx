@@ -31,7 +31,8 @@ import {
   Target,
   Zap,
   History,
-  Trash2
+  Trash2,
+  Volume2
 } from 'lucide-react';
 
 // Interfaces remain the same
@@ -82,8 +83,23 @@ export default function DeepResearchPage() {
   
   const isFullyAuthenticated = !!session;
 
+  const handleTextSelection = () => {
+    const selection = window.getSelection();
+    if (selection && selection.toString().trim()) {
+      setSelectedText(selection.toString().trim());
+    }
+  };
+
+  const handleConvertToAudio = async () => {
+    // Audio conversion logic would go here
+  };
+
   useEffect(() => {
     const scrollToBottom = () => {
+      if (progressRef.current) {
+        progressRef.current.scrollTop = progressRef.current.scrollHeight;
+      }
+    };
     
     // Add click listener to hide context menu
     const handleClick = (e: MouseEvent) => {
@@ -93,11 +109,6 @@ export default function DeepResearchPage() {
     };
     
     document.addEventListener('click', handleClick);
-    return () => document.removeEventListener('click', handleClick);
-      if (progressRef.current) {
-        progressRef.current.scrollTop = progressRef.current.scrollHeight;
-      }
-    };
     
     if (isResearching) {
       progressIndexRef.current = 0;
@@ -123,7 +134,6 @@ export default function DeepResearchPage() {
       // Interval duration between 4 to 7 seconds.
       const randomInterval = () => Math.random() * 3000 + 4000;
       intervalRef.current = window.setInterval(addNextStep, randomInterval());
-
     }
 
     return () => {
@@ -131,6 +141,7 @@ export default function DeepResearchPage() {
         clearInterval(intervalRef.current);
         intervalRef.current = undefined;
       }
+      document.removeEventListener('click', handleClick);
     };
   }, [isResearching, maxDepth]);
 
@@ -318,7 +329,7 @@ export default function DeepResearchPage() {
               <div>
                 <label className="text-sm font-medium mb-2 block">Research Depth</label>
                 <div className="flex items-center gap-2">
-                  <Input type="number" min="1" max="5" value={maxDepth} onChange={(e) => setMaxDepth(parseInt(e.target.value) || 3)} disabled={isResearching} className="w-20" />
+                  <Input type="number" min={1} max={5} value={maxDepth} onChange={(e) => setMaxDepth(parseInt(e.target.value))} disabled={isResearching} />
                   <span className="text-sm text-muted-foreground">cycles (1-5)</span>
                 </div>
               </div>
@@ -341,52 +352,6 @@ export default function DeepResearchPage() {
             </div>
           )}
         </Card>
-        
-        {/* Context Menu */}
-        {contextMenu.visible && (
-          <div
-            ref={contextMenuRef}
-            className="fixed z-50 bg-background border border-border rounded-lg shadow-lg py-2 min-w-[160px]"
-            style={{
-              left: contextMenu.x,
-              top: contextMenu.y
-            }}
-          >
-            <button
-              onClick={handleCopy}
-              className="flex items-center gap-2 w-full px-3 py-2 text-sm hover:bg-accent hover:text-accent-foreground transition-colors"
-            >
-              <Copy className="h-4 w-4" />
-              Copy
-            </button>
-            <button
-              onClick={handleSelectAll}
-              className="flex items-center gap-2 w-full px-3 py-2 text-sm hover:bg-accent hover:text-accent-foreground transition-colors"
-            >
-              <MousePointer className="h-4 w-4" />
-              Select All
-            </button>
-            <button
-              onClick={handleSendToConvoAI}
-              className="flex items-center gap-2 w-full px-3 py-2 text-sm hover:bg-accent hover:text-accent-foreground transition-colors"
-            >
-              <FileText className="h-4 w-4" />
-              Send to Convo AI
-            </button>
-            <button
-              onClick={handleExpand}
-              disabled={isExpanding}
-              className="flex items-center gap-2 w-full px-3 py-2 text-sm hover:bg-accent hover:text-accent-foreground transition-colors disabled:opacity-50"
-            >
-              {isExpanding ? (
-                <Loader2 className="h-4 w-4 animate-spin" />
-              ) : (
-                <Expand className="h-4 w-4" />
-              )}
-              Expand
-            </button>
-          </div>
-        )}
 
         <div className="xl:col-span-2">
           <Card className="p-6">
