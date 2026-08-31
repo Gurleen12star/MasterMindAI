@@ -9,7 +9,7 @@ import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { useToast } from '@/hooks/use-toast';
 import { supabaseClient } from '@/lib/supabase-admin';
-import { useUser, useSession } from '@clerk/clerk-react';
+import { useUser } from '@clerk/clerk-react'; // We still use this for displaying user info
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import AnimatedLoadingText from '@/components/ui/AnimatedLoadingText';
@@ -32,6 +32,7 @@ import {
   Trash2
 } from 'lucide-react';
 
+// Interfaces remain the same...
 interface ResearchSource {
   url: string;
   title: string;
@@ -64,10 +65,10 @@ interface DeepResearchHistory {
   created_at: string;
 }
 
+
 export default function DeepResearchPage() {
   const { toast } = useToast();
-  const { user, isLoaded: isClerkLoaded } = useUser();
-  const { session } = useSession();
+  const { user } = useUser();
 
   const [isFullyAuthenticated, setIsFullyAuthenticated] = useState(false);
 
@@ -83,63 +84,71 @@ export default function DeepResearchPage() {
   const [selectedHistoryItem, setSelectedHistoryItem] = useState<DeepResearchHistory | null>(null);
   const progressRef = useRef<HTMLDivElement>(null);
 
+  // **THE DEFINITIVE FIX: Listen directly to Supabase's auth state**
   useEffect(() => {
-    if (isClerkLoaded && session) {
-      setIsFullyAuthenticated(true);
-      console.log("✅ Authentication is fully confirmed. It is now safe to make database requests.");
-    } else {
-      setIsFullyAuthenticated(false);
-    }
-  }, [session, isClerkLoaded]);
+    // Check for an existing session on initial component mount
+    const checkInitialSession = async () => {
+      const { data: { session } } = await supabaseClient.auth.getSession();
+      if (session) {
+        setIsFullyAuthenticated(true);
+        console.log("✅ Initial Supabase session confirmed on mount.");
+      }
+    };
+    checkInitialSession();
+
+    // Listen for future auth events like TOKEN_REFRESHED and SIGNED_IN
+    const { data: { subscription } } = supabaseClient.auth.onAuthStateChange((event, session) => {
+      console.log(`Supabase Auth Event: ${event}`);
+      if ((event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') && session) {
+        setIsFullyAuthenticated(true);
+        console.log(`✅ Supabase client is ready via ${event} event.`);
+      } else if (event === 'SIGNED_OUT') {
+        setIsFullyAuthenticated(false);
+      }
+    });
+
+    // Cleanup the listener when the component unmounts
+    return () => {
+      subscription.unsubscribe();
+    };
+  }, []); // Empty dependency array ensures this runs only once on mount
 
   const saveResearchToHistory = async (researchData: ResearchResult) => {
     if (!isFullyAuthenticated || !user) {
-      console.warn("Save aborted: Authentication is not fully ready or user is missing.");
       toast({
-        title: 'Authentication Not Ready',
-        description: 'Research completed but could not be saved to your account. Please try again.',
+        title: 'Authentication Error',
+        description: 'Your session is not fully ready. Please try again in a moment.',
         variant: 'destructive',
       });
       return;
     }
 
     try {
-      // **THE DEFINITIVE FIX: Use getSession() which is more robust than getUser()**
       const { data: { session: supabaseSession }, error: sessionError } = await supabaseClient.auth.getSession();
-
       if (sessionError || !supabaseSession) {
         throw new Error(`Could not retrieve Supabase session. Please try again. Error: ${sessionError?.message || 'No active session'}`);
       }
       
-      const supabaseUserId = supabaseSession.user.id; 
+      const supabaseUserId = supabaseSession.user.id;
       console.log(`Attempting to save research with Supabase UUID: ${supabaseUserId}`);
       
-      const { error: saveError } = await supabaseClient
-        .from('deep_research_history')
-        .insert([{
-          user_id: supabaseUserId,
-          topic: topic.trim(),
-          report: researchData.report,
-          sources: researchData.sources || [],
-          summaries: researchData.summaries || [],
-          total_findings: researchData.totalFindings || 0,
-          max_depth: maxDepth
-        }]);
+      const { error: saveError } = await supabaseClient.from('deep_research_history').insert([{
+        user_id: supabaseUserId,
+        topic: topic.trim(),
+        report: researchData.report,
+        sources: researchData.sources || [],
+        summaries: researchData.summaries || [],
+        total_findings: researchData.totalFindings || 0,
+        max_depth: maxDepth
+      }]);
 
-      if (saveError) {
-        console.error('Database save error:', saveError);
-        toast({
-          title: 'Failed to Save',
-          description: `Error: ${saveError.message}. Please try again.`,
-          variant: 'destructive',
-        });
-      } else {
-        console.log('✅ Deep research saved successfully!');
-        toast({
-          title: 'Research Saved',
-          description: 'Your research has been successfully saved to your account.',
-        });
-      }
+      if (saveError) throw saveError;
+
+      console.log('✅ Deep research saved successfully!');
+      toast({
+        title: 'Research Saved',
+        description: 'Your research has been successfully saved to your account.',
+      });
     } catch (error) {
       console.error('An unexpected error occurred during save:', error);
       toast({
@@ -149,9 +158,11 @@ export default function DeepResearchPage() {
       });
     }
   };
+  
+  // No changes needed below this line, but included for completeness. The `isFullyAuthenticated` state will now work correctly.
 
   const fetchResearchHistory = async () => {
-    if (!isFullyAuthenticated || !user?.id) return;
+    if (!isFullyAuthenticated) return;
     
     setIsLoadingHistory(true);
     try {
@@ -193,7 +204,7 @@ export default function DeepResearchPage() {
   };
 
   const deleteHistoryItem = async (id: string) => {
-    if (!isFullyAuthenticated || !user?.id) return;
+    if (!isFullyAuthenticated) return;
 
     try {
       const { error } = await supabaseClient
