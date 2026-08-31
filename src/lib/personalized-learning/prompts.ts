@@ -52,7 +52,10 @@ const prompts = {
             
             The content should be:
 
-            1. Rich and informative, containing images to illustrate information when possible. When it's not possible to include images, provide a link to a related image.
+            1. Rich and informative, containing images to illustrate information when possible. ALWAYS use Pexels stock images with valid, direct URLs like:
+               - https://images.pexels.com/photos/3861458/pexels-photo-3861458.jpeg
+               - https://images.pexels.com/photos/1181271/pexels-photo-1181271.jpeg
+               Use URLs that end with .jpg, .jpeg, or .png only. Do not attempt to download or embed images.
             2. Structured in JSON format and should strictly follow the model below:
 
             [
@@ -82,6 +85,12 @@ const prompts = {
             }
             ]
 
+            Image Guidelines:
+            - Only use Pexels image URLs in the format: https://images.pexels.com/photos/{ID}/pexels-photo-{ID}.jpeg
+            - Ensure the image URLs are direct links to JPG/JPEG/PNG files
+            - Always include proper alt text for accessibility 
+            - Example: <img src="https://images.pexels.com/photos/3861458/pexels-photo-3861458.jpeg" alt="Person typing on laptop with code on screen" width="600" />
+            
             Please return only the JSON as shown in the example above.`;
     }
 };
