@@ -95,22 +95,37 @@ const StudyPlatform = () => {
                     addStoriesChat(generationHistory, setGenerationHistory, prompt, response.text());
                     setActualModuleRes(response.text());
                     
-                    // Save to database after modules are generated
+                    // Save to database after modules are generated - check for existing session first
                     if (user?.id) {
                         try {
-                            const { data, error } = await supabase
+                            // First check if a session already exists for this user, topic, and personality
+                            const { data: existingSession, error: fetchError } = await supabase
                                 .from('personalized_learning_sessions')
-                                .insert({
-                                    user_id: user.id,
-                                    topic: studyMaterial,
-                                    personality: personality,
-                                    modules_data: [],
-                                    generation_history: generationHistory,
-                                })
-                                .select()
+                                .select('id')
+                                .eq('user_id', user.id)
+                                .eq('topic', studyMaterial)
+                                .eq('personality', personality)
                                 .single();
-                            if (data && !error) {
-                                setCurrentSessionId(data.id);
+
+                            if (existingSession && !fetchError) {
+                                // Use existing session
+                                setCurrentSessionId(existingSession.id);
+                            } else {
+                                // Create new session only if none exists
+                                const { data, error } = await supabase
+                                    .from('personalized_learning_sessions')
+                                    .insert({
+                                        user_id: user.id,
+                                        topic: studyMaterial,
+                                        personality: personality,
+                                        modules_data: [],
+                                        generation_history: generationHistory,
+                                    })
+                                    .select()
+                                    .single();
+                                if (data && !error) {
+                                    setCurrentSessionId(data.id);
+                                }
                             }
                         } catch (dbError) {
                             console.error('Error saving session to database:', dbError);

@@ -58,7 +58,22 @@ export default function PersonalizedLearningHistoryPage() {
         .order('created_at', { ascending: false });
 
       if (error) throw error;
-      setSessions(data || []);
+      
+      // Group sessions by topic and keep only the most recent one for each topic
+      const groupedSessions = (data || []).reduce((acc: LearningSession[], session: LearningSession) => {
+        const existingIndex = acc.findIndex(s => s.topic.toLowerCase() === session.topic.toLowerCase());
+        if (existingIndex === -1) {
+          acc.push(session);
+        } else {
+          // Keep the most recent session (assuming data is already ordered by created_at desc)
+          if (new Date(session.created_at) > new Date(acc[existingIndex].created_at)) {
+            acc[existingIndex] = session;
+          }
+        }
+        return acc;
+      }, []);
+      
+      setSessions(groupedSessions);
     } catch (error) {
       console.error('Error fetching sessions:', error);
       toast({
