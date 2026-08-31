@@ -2,24 +2,28 @@ import { useEffect } from 'react';
 
 export default function HeroSection() {
   useEffect(() => {
+    const handleMouseMove = (e: MouseEvent) => {
+      const heroCard = e.currentTarget as HTMLElement;
+      const rect = heroCard.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+      const xNorm = (x / rect.width - 0.5) * 2;
+      const yNorm = (y / rect.height - 0.5) * 2;
+      document.documentElement.style.setProperty("--x", String(xNorm));
+      document.documentElement.style.setProperty("--y", String(yNorm));
+    };
+
     const resetPosition = () => {
       document.documentElement.style.setProperty("--x", "0");
       document.documentElement.style.setProperty("--y", "0");
     };
-
-    const UPDATE = ({ x, y }: { x: number; y: number }) => {
-      const xNorm = (x / window.innerWidth - 0.5) * 2;
-      const yNorm = (y / window.innerHeight - 0.5) * 2;
-      document.documentElement.style.setProperty("--x", String(xNorm));
-      document.documentElement.style.setProperty("--y", String(yNorm));
-    };
     
     const heroCard = document.querySelector('.hero-card');
-    window.addEventListener("mousemove", UPDATE as any);
+    heroCard?.addEventListener("mousemove", handleMouseMove as any);
     heroCard?.addEventListener("mouseleave", resetPosition);
     
     return () => {
-      window.removeEventListener("mousemove", UPDATE as any);
+      heroCard?.removeEventListener("mousemove", handleMouseMove as any);
       heroCard?.removeEventListener("mouseleave", resetPosition);
     };
   }, []);
