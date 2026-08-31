@@ -316,7 +316,7 @@ const StudyPlatform = () => {
             });
         } catch (error) {
             console.error('Error generating audio:', error);
-            toast({
+            
             // Enhanced error handling for different types of errors from Edge Function
             let errorMessage = "An unexpected error occurred during audio generation.";
             if (error instanceof Error) {
@@ -331,6 +331,7 @@ const StudyPlatform = () => {
                 }
             }
             
+            toast({
                 title: "Audio Generation Failed",
                 description: errorMessage,
                 variant: "destructive"
