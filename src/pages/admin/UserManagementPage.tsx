@@ -37,11 +37,6 @@ export default function UserManagementPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [selectedUser, setSelectedUser] = useState<AdminUserData | null>(null);
   const [showUserDialog, setShowUserDialog] = useState(false);
-  const [totalUsers, setTotalUsers] = useState(0);
-  const [currentPage, setCurrentPage] = useState(0);
-  const [isLoadingMore, setIsLoadingMore] = useState(false);
-
-  const PAGE_SIZE = 20;
 
   useEffect(() => {
     if (isAdmin) {
@@ -64,42 +59,19 @@ export default function UserManagementPage() {
     }
   }, [searchQuery, users]);
 
-  const fetchUsers = async (page = 0) => {
+  const fetchUsers = async () => {
     try {
-      if (page === 0) {
-        setIsLoading(true);
-        setUsers([]);
-      } else {
-        setIsLoadingMore(true);
-      }
+      setIsLoading(true);
+      setUsers([]);
 
-      // First get total count
-      if (page === 0) {
-        const { count, error: countError } = await supabase
-          .from('student_profiles')
-          .select('id', { count: 'exact', head: true });
-        
-        if (!countError) {
-          setTotalUsers(count || 0);
-        }
-      }
-
-      // Then fetch page of users
       const { data, error } = await supabase
         .from('student_profiles')
         .select('id, user_id, first_name, last_name, email, is_admin, created_at')
-        .range(page * PAGE_SIZE, (page * PAGE_SIZE) + PAGE_SIZE - 1)
         .order('created_at', { ascending: false });
 
       if (error) throw error;
 
-      if (page === 0) {
-        setUsers(data || []);
-      } else {
-        setUsers(prev => [...prev, ...(data || [])]);
-      }
-      
-      setCurrentPage(page);
+      setUsers(data || []);
     } catch (error) {
       console.error('Error fetching users:', error);
       toast({
@@ -109,7 +81,6 @@ export default function UserManagementPage() {
       });
     } finally {
       setIsLoading(false);
-      setIsLoadingMore(false);
     }
   };
 
@@ -158,10 +129,6 @@ export default function UserManagementPage() {
   const viewUserDetails = (user: AdminUserData) => {
     setSelectedUser(user);
     setShowUserDialog(true);
-  };
-
-  const handleLoadMore = () => {
-    fetchUsers(currentPage + 1);
   };
 
   return (
@@ -230,9 +197,7 @@ export default function UserManagementPage() {
             <div className="flex items-center justify-between">
               <div>
                 <CardTitle>User Accounts</CardTitle>
-                <CardDescription>
-                  {totalUsers} total users
-                </CardDescription>
+                <CardDescription>{users.length} total users</CardDescription>
               </div>
             </div>
           </CardHeader>
@@ -311,25 +276,6 @@ export default function UserManagementPage() {
                       </div>
                     </motion.div>
                   ))}
-
-                  {users.length < totalUsers && (
-                    <div className="flex justify-center pt-4">
-                      <Button 
-                        variant="outline" 
-                        onClick={handleLoadMore}
-                        disabled={isLoadingMore}
-                      >
-                        {isLoadingMore ? (
-                          <>
-                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                            Loading...
-                          </>
-                        ) : (
-                          'Load More'
-                        )}
-                      </Button>
-                    </div>
-                  )}
                 </div>
               ) : (
                 <div className="flex flex-col items-center justify-center py-12 text-center">
