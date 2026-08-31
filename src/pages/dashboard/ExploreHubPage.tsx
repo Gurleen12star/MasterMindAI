@@ -428,7 +428,7 @@ export default function ExploreHubPage() {
                 className="group overflow-hidden hover:shadow-md transition-all duration-300 cursor-pointer"
                 onClick={() => window.location.href = resource.path}
               >
-                <div className={`absolute inset-0 bg-gradient-to-br ${resource.color} opacity-30 group-hover:opacity-60 transition-opacity`} />
+                <div className={`absolute inset-0 bg-gradient-to-br ${resource.color} opacity-10 group-hover:opacity-30 transition-opacity`} />
                 <div className="relative p-6">
                   <div className="h-12 w-12 rounded-lg bg-primary/10 flex items-center justify-center mb-4">
                     <Icon className="h-6 w-6 text-primary" />
