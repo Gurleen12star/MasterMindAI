@@ -306,8 +306,8 @@ export default function LearningPathsPage() {
                     </div>
                     
                     <Dialog open={isFullscreen} onOpenChange={setIsFullscreen}>
-                      <DialogContent className="max-w-[90vw] w-[90vw] h-[90vh] p-6 custom-cursor-enabled">
-                        <DialogTitle>Learning Path Visualization</DialogTitle>
+                      <DialogContent className="max-w-[90vw] w-[90vw] h-[90vh] p-6 custom-cursor-enabled" aria-labelledby="fullscreen-dialog-title">
+                        <DialogTitle id="fullscreen-dialog-title">Learning Path Visualization</DialogTitle>
                         <div className="mermaid-diagram-wrapper h-full w-full flex items-center justify-center bg-gradient-to-br from-background to-background/95">
                           <MermaidDiagram 
                             definition={mermaidDiagram}
@@ -339,9 +339,9 @@ export default function LearningPathsPage() {
       </div>
       
       <Dialog open={showHistoryDialog} onOpenChange={setShowHistoryDialog}>
-        <DialogContent className="max-w-2xl">
-          <DialogTitle>Learning Path History</DialogTitle>
-          <DialogDescription>
+        <DialogContent className="max-w-2xl" aria-labelledby="history-dialog-title">
+          <DialogTitle id="history-dialog-title">Learning Path History</DialogTitle>
+          <DialogDescription id="history-dialog-desc">
             Your previously generated learning paths
           </DialogDescription>
           
