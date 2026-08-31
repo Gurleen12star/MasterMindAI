@@ -35,12 +35,18 @@ export const logoPaths: LogoPath[] = [
     title: 'Mem0ai',
     type: 'file',
     file: '/mem0ai-logo.png',
+  },
+  
+  {
+    title: 'netlify',
+    type: 'file',
+    file: '/logo-netlify-small-fullcolor-lightmode.svg',
   }
-  // {
+   // {
   //   title: 'Cisco',
   //   type: 'file',
-  //   file: '/cisco-logo.svg',
-  // },
+  //   file: '/logo-netlify-small-fullcolor-lightmode.svg',
+  // }
   
 ];
 
