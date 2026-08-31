@@ -78,12 +78,12 @@ export default function Header() {
               >
                 <a
                   href={item.href}
-                className={cn(
-                  "relative z-10 px-3 py-2 text-sm font-medium rounded-lg transition-all duration-200 flex items-center gap-1",
-                  hoveredItem === item.label 
-                    ? "text-foreground bg-muted/50" 
-                    : "text-muted-foreground hover:text-foreground hover:bg-muted/30"
-                )}
+                  className={cn(
+                    "relative z-10 px-3 py-2 text-sm font-medium rounded-lg transition-all duration-200 flex items-center gap-1",
+                    hoveredItem === item.label 
+                      ? "text-foreground bg-muted/50" 
+                      : "text-muted-foreground hover:text-foreground hover:bg-muted/30"
+                  )}
                 >
                   {item.label}
                   {item.children && (
@@ -108,6 +108,7 @@ export default function Header() {
                 )}
               </div>
             ))}
+          </div>
         </nav>
         
         <div className="flex items-center gap-4">
