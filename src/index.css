@@ -50,7 +50,7 @@
   --nav-animation-easing: cubic-bezier(0.4, 0, 0.2, 1);
   
   /* Navbar Background */
-  --navbar-bg: url('https://images.pexels.com/photos/3861458/pexels-photo-3861458.jpeg?auto=compress&cs=tinysrgb&w=1280');
+  --navbar-bg: url('/src/assets/background.jpg');
   
   /* Hero Section Variables */
   --x: 0;
@@ -387,6 +387,10 @@ div[style*="z-index: 999999"] {
 body {
   background-color: hsl(var(--background));
   color: hsl(var(--foreground));
+  background-image: url('/src/assets/background.jpg');
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
   margin: 0;
   padding: 0;
   -webkit-font-smoothing: antialiased;
