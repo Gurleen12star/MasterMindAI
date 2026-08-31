@@ -263,7 +263,7 @@ export default function DeepResearchPage() {
             });
             
             // Direct insert like roadmaps and learning paths (no connection test)
-            const { data: insertResult, error: saveError } = await supabaseClient
+            const { error: saveError } = await supabaseClient
               .from('deep_research_history')
               .insert([{
                 user_id: supabaseUserId,
@@ -273,8 +273,7 @@ export default function DeepResearchPage() {
                 summaries: data.summaries || [],
                 total_findings: data.totalFindings || 0,
                 max_depth: maxDepth
-              }])
-              .select();
+              }]);
 
             if (saveError) {
               console.error('Database save error:', saveError);
@@ -298,7 +297,7 @@ export default function DeepResearchPage() {
                 variant: 'destructive',
               });
             } else {
-              console.log('Deep research saved successfully:', insertResult);
+              console.log('Deep research saved successfully');
               toast({
                 title: 'Research Saved',
                 description: 'Your research has been successfully saved to your account.',
