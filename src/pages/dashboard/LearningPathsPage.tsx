@@ -13,7 +13,7 @@ import { MermaidDiagram } from '@/components/ui/mermaid-diagram';
 import { useToast } from '@/hooks/use-toast';
 import { Map, Loader2, FileText, BarChart as FlowChart, Maximize2, History, Clock } from 'lucide-react';
 import { useUser } from '@clerk/clerk-react';
-import { supabase } from '@/lib/supabase';
+import { supabaseClient } from '@/lib/supabase-admin';
 
 type DifficultyLevel = 'beginner' | 'intermediate' | 'advanced';
 
@@ -46,7 +46,7 @@ export default function LearningPathsPage() {
     
     setIsLoadingHistory(true);
     try {
-      const { data, error } = await supabase
+      const { data, error } = await supabaseClient
         .from('learning_paths')
         .select('*')
         .eq('user_id', user.id)
@@ -113,7 +113,7 @@ export default function LearningPathsPage() {
       // Save to database if user is authenticated
       if (user?.id) {
         try {
-          const { error } = await supabase
+          const { error } = await supabaseClient
             .from('learning_paths')
             .insert([{
               topic,
