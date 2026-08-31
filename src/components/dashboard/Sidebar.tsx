@@ -127,11 +127,11 @@ export default function Sidebar({ onNavigate }: SidebarProps) {
   };
 
   return (
-    <div className={`${isCollapsed ? 'w-16' : 'w-64'} h-screen bg-gradient-to-b from-card/80 via-card/60 to-card/40 backdrop-blur-xl border-r border-primary/10 flex flex-col relative transition-all duration-300 overflow-hidden shadow-sidebar-creative`}>
+    <div className={`${isCollapsed ? 'w-16' : 'w-64'} h-screen bg-background/90 backdrop-blur-xl border-r border-border/30 flex flex-col relative transition-all duration-300 overflow-hidden shadow-2xl`}>
       {/* Toggle Button */}
       <Button
         variant="ghost" 
-        className="absolute -right-3 top-20 h-6 w-6 rounded-full bg-background border border-primary/20 hover:bg-accent hover:scale-110 transition-all duration-300 group overflow-hidden z-20 hidden md:flex shadow-lg hover:shadow-primary/20"
+        className="absolute -right-3 top-20 h-6 w-6 bg-background/80 border border-border/30 hover:bg-primary/10 transition-all duration-300 group overflow-hidden z-20 hidden md:flex shadow-xl hover:shadow-primary/20 rounded-full"
         onClick={toggleSidebar}
       >
         <div className="relative z-10 flex items-center justify-center">
@@ -144,7 +144,7 @@ export default function Sidebar({ onNavigate }: SidebarProps) {
       </Button>
       
       {/* Logo Section */}
-      <div className={`p-4 ${isCollapsed ? 'px-2' : ''} border-b border-border/10`}>
+      <div className={`p-4 ${isCollapsed ? 'px-2' : ''} border-b border-border/30`}>
         <div className="flex items-center group relative">
           <div className="relative flex items-center flex-shrink-0">
             <Link href="/" className="flex items-center gap-2">
@@ -152,7 +152,7 @@ export default function Sidebar({ onNavigate }: SidebarProps) {
                 <img 
                   src={logo}
                   alt="EchoVerse Logo" 
-                  className="object-contain transition-all duration-300 h-8 w-8" 
+                  className="object-contain transition-all duration-300 h-8 w-8 shadow-md rounded-lg" 
                 />
                 <div className="absolute inset-0 bg-primary/20 rounded-lg blur-sm opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
               </div>
@@ -181,8 +181,8 @@ export default function Sidebar({ onNavigate }: SidebarProps) {
                       size="icon"
                       className={`h-10 w-10 rounded-xl transition-all duration-300 relative group ${
                         isActive 
-                          ? 'bg-primary/15 text-primary shadow-lg shadow-primary/20 border border-primary/20' 
-                          : 'hover:bg-accent/60 text-muted-foreground hover:text-foreground'
+                          ? 'bg-primary/20 text-primary shadow-lg shadow-primary/30 border border-primary/30' 
+                          : 'hover:bg-muted/50 text-muted-foreground hover:text-foreground'
                       }`}
                       title={section.section}
                     >
@@ -209,18 +209,18 @@ export default function Sidebar({ onNavigate }: SidebarProps) {
                   <AccordionItem 
                     key={section.section} 
                     value={`section-${index}`}
-                    className={`border rounded-xl transition-all duration-300 ${
+                    className={`border-2 rounded-xl transition-all duration-300 ${
                       isActive 
-                        ? 'border-primary/30 bg-gradient-to-r from-primary/10 via-primary/5 to-transparent shadow-lg shadow-primary/10' 
-                        : 'border-border/20 bg-card/30 hover:bg-card/50'
+                        ? 'border-primary/40 bg-gradient-to-r from-primary/15 via-primary/10 to-transparent shadow-xl shadow-primary/20' 
+                        : 'border-border/30 bg-background/50 hover:bg-background/70'
                     } backdrop-blur-sm`}
                   >
                     <AccordionTrigger className="px-3 py-2.5 hover:no-underline group">
                       <div className="flex items-center gap-3">
                         <div className={`relative inline-flex h-8 w-8 items-center justify-center rounded-lg transition-all duration-300 ${
                           isActive 
-                            ? 'bg-primary/20 shadow-md shadow-primary/20' 
-                            : 'bg-primary/10 group-hover:bg-primary/15'
+                            ? 'bg-primary/30 shadow-lg shadow-primary/30' 
+                            : 'bg-primary/20 group-hover:bg-primary/30'
                         }`}>
                           <section.sectionIcon className={`h-4 w-4 transition-all duration-300 ${
                             isActive 
@@ -247,8 +247,8 @@ export default function Sidebar({ onNavigate }: SidebarProps) {
                                 href={item.href}
                                 className={`group flex items-center justify-between px-3 py-2.5 text-sm rounded-lg transition-all duration-300 relative overflow-hidden ${
                                   itemIsActive
-                                    ? 'bg-primary/15 text-primary font-semibold shadow-md shadow-primary/10 border border-primary/20'
-                                    : 'text-muted-foreground hover:text-foreground hover:bg-accent/60'
+                                    ? 'bg-primary/20 text-primary font-semibold shadow-lg shadow-primary/20 border border-primary/30'
+                                    : 'text-muted-foreground hover:text-foreground hover:bg-muted/50'
                                 }`}
                                 onClick={() => {
                                   setCurrentPath(item.href);
@@ -270,12 +270,12 @@ export default function Sidebar({ onNavigate }: SidebarProps) {
                                   <span className={`text-xs px-2 py-0.5 rounded-full transition-all duration-300 relative z-10 ${
                                     item.badge === 'New'
                                       ? itemIsActive 
-                                        ? 'bg-primary/20 text-primary' 
-                                        : 'bg-primary/10 text-primary group-hover:bg-primary/20'
+                                        ? 'bg-gradient-to-r from-green-500/30 to-green-500/20 text-green-400 shadow-lg shadow-green-500/20' 
+                                        : 'bg-gradient-to-r from-green-500/20 to-green-500/10 text-green-500 group-hover:from-green-500/30 group-hover:to-green-500/20'
                                       : item.badge === 'Featured'
                                       ? itemIsActive
-                                        ? 'bg-gradient-to-r from-primary/20 to-primary/30 text-primary'
-                                        : 'bg-gradient-to-r from-primary/10 to-primary/20 text-primary group-hover:from-primary/20 group-hover:to-primary/30'
+                                        ? 'bg-gradient-to-r from-primary/30 to-primary/20 text-primary shadow-lg shadow-primary/20'
+                                        : 'bg-gradient-to-r from-primary/20 to-primary/10 text-primary group-hover:from-primary/30 group-hover:to-primary/20'
                                       : itemIsActive
                                       ? 'bg-primary/20 text-primary'
                                       : 'bg-muted text-muted-foreground group-hover:bg-muted/80'
@@ -301,10 +301,10 @@ export default function Sidebar({ onNavigate }: SidebarProps) {
       </ScrollArea>
       
       {/* Sign Out Button */}
-      <div className={`p-3 border-t border-border/10 ${isCollapsed ? 'px-1' : ''}`}>
+      <div className={`p-3 border-t border-border/30 ${isCollapsed ? 'px-1' : ''}`}>
         <Button
           variant="ghost"
-          className={`w-full text-muted-foreground hover:text-destructive transition-all duration-300 hover:bg-destructive/10 rounded-xl ${
+          className={`w-full text-muted-foreground hover:text-destructive transition-all duration-300 hover:bg-destructive/10 rounded-xl font-medium ${
             isCollapsed ? 'justify-center h-10 w-10' : 'justify-start gap-2 h-10'
           }`}
           onClick={() => signOut()}
