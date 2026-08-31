@@ -43,7 +43,6 @@
     "@supabase/auth-ui-shared": "^0.1.8",
     "@supabase/supabase-js": "^2.39.8",
     "@types/react-router-dom": "^5.3.3",
-    "caniuse-lite": "^1.0.30001726",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
     "cmdk": "^1.0.0",
