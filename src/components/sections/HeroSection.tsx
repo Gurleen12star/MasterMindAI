@@ -116,7 +116,7 @@ export default function HeroSection() {
   }, []);
 
   return (
-    <section className="relative min-h-screen flex items-center justify-center overflow-hidden bg-background">
+    <section className="relative overflow-hidden pt-24 pb-48 md:pt-32 md:pb-64 bg-gradient-to-b from-background via-background/95 to-transparent">
       <div className="container px-4 max-w-[1200px] mx-auto">
         <article className="hero-card" ref={heroCardRef}>
           <div 

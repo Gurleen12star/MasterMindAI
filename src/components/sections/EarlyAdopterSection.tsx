@@ -4,7 +4,7 @@ import { Sparkles, Check } from 'lucide-react';
 
 export default function EarlyAdopterSection() {
   return (
-    <section className="py-24 relative overflow-hidden bg-background">
+    <section className="relative py-24 md:py-32 lg:py-40 overflow-hidden">
       {/* Blurred oval overlay effects */}
       <div className="absolute top-20 -right-32 w-80 h-80 rounded-full bg-gradient-to-br from-indigo-500/8 via-purple-500/6 to-transparent blur-3xl opacity-60" />
       <div className="absolute -bottom-32 -left-32 w-96 h-96 rounded-full bg-gradient-to-br from-pink-500/6 via-primary/4 to-transparent blur-3xl opacity-50" />

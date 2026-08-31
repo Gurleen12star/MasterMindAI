@@ -10,10 +10,8 @@ import {
 
 export default function FeaturesGrid() {
   return (
-    <section className="py-24 relative overflow-hidden bg-background">
-      <div className="absolute inset-0 bg-grid-white opacity-[0.02]"></div>
-      
-      {/* Background decoration */}
+    <section id="features" className="relative -mt-32 md:-mt-48 py-24 md:py-32 overflow-hidden">
+      {/* Simplified overlay effects - Updated to use theme variable */}
       
       <div className="container relative z-10 px-4 max-w-[1200px] mx-auto">
         <div className="relative mx-auto max-w-5xl text-center mb-16">
