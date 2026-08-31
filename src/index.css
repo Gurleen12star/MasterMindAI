@@ -203,7 +203,6 @@ div[style*="z-index: 999999"] {
   aspect-ratio: 2 / 0.9;
   position: relative;
   border-radius: 4em;
-  filter: drop-shadow(0 10px 20px rgba(0, 0, 0, 0.1));
   min-height: 600px;
   overflow: hidden;
 }
@@ -254,7 +253,6 @@ div[style*="z-index: 999999"] {
   user-select: none;
   pointer-events: none;
   z-index: 2;
-  filter: drop-shadow(0 20px 40px rgba(0, 0, 0, 0.2));
   transition: transform 0.8s cubic-bezier(0.33, 1, 0.68, 1);
 }
 
