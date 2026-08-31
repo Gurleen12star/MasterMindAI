@@ -5,15 +5,25 @@ import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
 import {
-  LayoutDashboard,
-  BookOpen,
-  History,
-  Settings,
-  LogOut,
-  Rocket,
-  Users,
+  Compass,
+  Map,
+  Search,
+  Network,
+  Newspaper,
+  Wand2,
   MessageSquare,
-  GitBranch,
+  Video,
+  Headphones,
+  PenTool,
+  Users,
+  MessageCircle,
+  FileText,
+  ListMusic,
+  LineChart,
+  AlertTriangle,
+  Bell,
+  Trophy,
+  LogOut,
   ChevronLeft,
   ChevronRight
 } from 'lucide-react';
@@ -24,26 +34,42 @@ export default function Sidebar() {
   
   const menuItems = [
     {
-      section: 'Main',
+      section: 'Content Discovery & Learning',
       items: [
-        { icon: LayoutDashboard, label: 'Overview', href: '/dashboard' },
-        { icon: BookOpen, label: 'My Courses', href: '/dashboard/courses', badge: '8' },
-        { icon: GitBranch, label: 'Roadmap Generator', href: '/dashboard/roadmap-generator' },
-        { icon: History, label: 'Learning History', href: '/dashboard/history' },
-        { icon: Rocket, label: 'Goals', href: '/dashboard/goals', badge: 'New' }
+        { icon: Compass, label: 'Explore Hub', href: '/dashboard/explore' },
+        { icon: Map, label: 'Learning Paths', href: '/dashboard/paths' },
+        { icon: Search, label: 'Smart Search', href: '/dashboard/search' },
+        { icon: Network, label: 'Knowledge Map', href: '/dashboard/knowledge-map' },
+        { icon: Newspaper, label: 'Daily Digest', href: '/dashboard/digest', badge: 'New' }
       ]
     },
     {
-      section: 'Social',
+      section: 'Content Transformation Tools',
+      items: [
+        { icon: Wand2, label: 'Quick Summaries', href: '/dashboard/summaries' },
+        { icon: MessageSquare, label: 'Chat with Content', href: '/dashboard/chat' },
+        { icon: Headphones, label: 'Listen Mode', href: '/dashboard/listen' },
+        { icon: Video, label: 'Video Explainer', href: '/dashboard/video' },
+        { icon: PenTool, label: 'Remix Studio', href: '/dashboard/remix' },
+        { icon: Map, label: 'Roadmap Generator', href: '/dashboard/roadmap-generator', badge: 'Featured' }
+      ]
+    },
+    {
+      section: 'Community & Collaboration',
       items: [
         { icon: Users, label: 'Study Groups', href: '/dashboard/groups' },
-        { icon: MessageSquare, label: 'Discussions', href: '/dashboard/discussions', badge: '3' }
+        { icon: MessageCircle, label: 'Ask Experts', href: '/dashboard/experts' },
+        { icon: FileText, label: 'Shared Notes', href: '/dashboard/notes' },
+        { icon: ListMusic, label: 'Playlists', href: '/dashboard/playlists' }
       ]
     },
     {
-      section: 'Preferences',
+      section: 'Progress & Analytics',
       items: [
-        { icon: Settings, label: 'Settings', href: '/dashboard/settings' }
+        { icon: LineChart, label: 'My Insights', href: '/dashboard/insights' },
+        { icon: AlertTriangle, label: 'Knowledge Gaps', href: '/dashboard/gaps' },
+        { icon: Bell, label: 'Study Reminders', href: '/dashboard/reminders' },
+        { icon: Trophy, label: 'Achievements', href: '/dashboard/achievements', badge: '3' }
       ]
     }
   ];
@@ -56,7 +82,7 @@ export default function Sidebar() {
     <div className={`${isCollapsed ? 'w-20' : 'w-64'} h-screen bg-card/50 backdrop-blur-sm border-r border-border/40 flex flex-col relative transition-all duration-300`}>
       <Button
         variant="ghost" 
-        className="absolute -right-6 top-20 h-12 w-12 rounded-full bg-gradient-to-r from-primary/90 to-primary shadow-lg hover:shadow-primary/25 hover:scale-110 transition-all duration-300 group overflow-hidden z-50"
+        className="absolute -right-6 top-32 h-12 w-12 rounded-full bg-gradient-to-r from-primary/90 to-primary shadow-lg hover:shadow-primary/25 hover:scale-110 transition-all duration-300 group overflow-hidden z-50"
         onClick={toggleSidebar}
       >
         <div className="absolute inset-0 bg-gradient-to-r from-primary/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
@@ -72,13 +98,15 @@ export default function Sidebar() {
       <div className={`p-6 ${isCollapsed ? 'px-2' : ''}`}>
         <div className="flex items-center group relative">
           <div className="relative flex items-center">
-            <img 
-              src="/src/assets/logo.png" 
-              alt="EchoVerse Logo" 
-              className={`object-contain transition-all duration-300 ${
-                isCollapsed ? 'h-12 w-12' : 'h-16 w-16'
-              } cursor-default`} 
-            />
+            <Link href="/dashboard" className="block">
+              <img 
+                src="/src/assets/logo.png" 
+                alt="EchoVerse Logo" 
+                className={`object-contain transition-all duration-300 ${
+                  isCollapsed ? 'h-12 w-12' : 'h-16 w-16'
+                }`} 
+              />
+            </Link>
           </div>
         </div>
       </div>
