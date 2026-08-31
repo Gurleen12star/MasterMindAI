@@ -93,17 +93,18 @@ export default function Sidebar({ onNavigate }: SidebarProps) {
   };
 
   return (
-    <aside className={`${isCollapsed ? 'w-20' : 'w-[250px]'} h-screen sidebar-gradient-bg text-white flex flex-col relative transition-all duration-300 overflow-hidden rounded-tr-80 pl-5`}>
+    <div className={`${isCollapsed ? 'w-20' : 'w-64'} h-screen bg-card/50 backdrop-blur-sm border-r border-border/40 flex flex-col relative transition-all duration-300 overflow-hidden`}>
       <Button
         variant="ghost" 
-        className="absolute -right-6 top-20 h-12 w-12 rounded-full bg-white/20 hover:bg-white/30 hover:scale-110 transition-all duration-300 group overflow-hidden z-10 hidden md:flex"
+        className="absolute -right-6 top-20 h-12 w-12 rounded-full bg-gradient-to-r from-primary/90 to-primary shadow-lg hover:shadow-primary/25 hover:scale-110 transition-all duration-300 group overflow-hidden z-10 hidden md:flex"
         onClick={toggleSidebar}
       >
+        <div className="absolute inset-0 bg-gradient-to-r from-primary/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
         <div className="relative z-10 flex items-center justify-center">
           {isCollapsed ? (
-            <ChevronRight className="h-5 w-5 text-white transition-transform duration-300 group-hover:translate-x-0.5" />
+            <ChevronRight className="h-5 w-5 text-primary-foreground transition-transform duration-300 group-hover:translate-x-0.5" />
           ) : (
-            <ChevronLeft className="h-5 w-5 text-white transition-transform duration-300 group-hover:-translate-x-0.5" />
+            <ChevronLeft className="h-5 w-5 text-primary-foreground transition-transform duration-300 group-hover:-translate-x-0.5" />
           )}
         </div>
       </Button>
@@ -118,7 +119,7 @@ export default function Sidebar({ onNavigate }: SidebarProps) {
                 className="object-contain transition-all duration-300 h-10" 
               />
               {!isCollapsed && (
-                <h1 className="text-xl font-bold text-white">
+                <h1 className="text-xl font-bold bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">
                   EchoVerse
                 </h1>
               )}
@@ -127,7 +128,7 @@ export default function Sidebar({ onNavigate }: SidebarProps) {
         </div>
       </div>
       
-      <ScrollArea className={`flex-1 ${isCollapsed ? 'px-2' : 'px-0'}`}>
+      <ScrollArea className={`flex-1 ${isCollapsed ? 'px-2' : 'px-4'}`}>
         <nav className="space-y-2">
           {isCollapsed ? (
             // Collapsed view - show only section icons
@@ -137,10 +138,10 @@ export default function Sidebar({ onNavigate }: SidebarProps) {
                   <Button
                     variant="ghost"
                     size="icon"
-                    className="h-10 w-10 rounded-lg hover:bg-white/20 transition-colors text-white"
+                    className="h-10 w-10 rounded-lg hover:bg-accent/50 transition-colors"
                     title={section.section}
                   >
-                    <section.sectionIcon className="h-5 w-5" />
+                    <section.sectionIcon className="h-5 w-5 text-muted-foreground hover:text-primary transition-colors" />
                   </Button>
                 </div>
               ))}
@@ -152,38 +153,38 @@ export default function Sidebar({ onNavigate }: SidebarProps) {
                 <AccordionItem 
                   key={section.section} 
                   value={`section-${index}`}
-                  className="border border-white/10 rounded-lg bg-white/10 backdrop-blur-sm hover:bg-white/20 transition-all duration-200"
+                  className="border border-border/20 rounded-lg bg-card/30 backdrop-blur-sm hover:bg-card/50 transition-all duration-200"
                 >
-                  <AccordionTrigger className="px-4 py-3 hover:no-underline group text-white">
+                  <AccordionTrigger className="px-4 py-3 hover:no-underline group">
                     <div className="flex items-center gap-3">
-                      <div className="relative inline-flex h-8 w-8 items-center justify-center rounded-lg bg-white/20 transition-all duration-200">
-                        <section.sectionIcon className="h-4 w-4 text-white transition-transform duration-200 group-hover:scale-110" />
+                      <div className="relative inline-flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10 before:absolute before:inset-0 before:rounded-lg before:bg-primary/5 before:animate-pulse group-hover:before:bg-primary/10 transition-all duration-200">
+                        <section.sectionIcon className="h-4 w-4 text-primary transition-transform duration-200 group-hover:scale-110" />
                       </div>
-                      <span className="text-sm font-medium text-white">
+                      <span className="text-sm font-medium text-foreground group-hover:text-primary transition-colors">
                         {section.section}
                       </span>
                     </div>
                   </AccordionTrigger>
                   <AccordionContent className="pb-2">
-                    <ul className="space-y-1">
+                    <ul className="space-y-1 pl-4">
                       {section.items.map((item) => (
                         <li key={item.label}>
                           <Link
                             href={item.href}
-                            className="sidebar-nav-link group flex items-center justify-between"
+                            className="group flex items-center justify-between px-3 py-2 text-sm text-muted-foreground hover:text-foreground rounded-md hover:bg-accent/50 transition-all duration-200 hover:shadow-sm hover:-translate-y-0.5"
                             onClick={onNavigate}
                           >
-                            <div className="flex items-center gap-2">
-                              <item.icon className="h-4 w-4" />
+                            <div className="flex items-center gap-3">
+                              <item.icon className="h-4 w-4 transition-all duration-200 group-hover:scale-110 group-hover:text-primary" />
                               <span>{item.label}</span>
                             </div>
                             {item.badge && (
                               <span className={`text-xs px-2 py-0.5 rounded-full transition-all duration-200 ${
                                 item.badge === 'New'
-                                  ? 'bg-white/20 text-white'
+                                  ? 'bg-primary/10 text-primary group-hover:bg-primary/20'
                                   : item.badge === 'Featured'
-                                  ? 'bg-white/20 text-white'
-                                  : 'bg-white/20 text-white'
+                                  ? 'bg-gradient-to-r from-primary/10 to-primary/20 text-primary group-hover:from-primary/20 group-hover:to-primary/30'
+                                  : 'bg-muted text-muted-foreground group-hover:bg-muted/80'
                               }`}>
                                 {item.badge}
                               </span>
@@ -200,10 +201,10 @@ export default function Sidebar({ onNavigate }: SidebarProps) {
         </nav>
       </ScrollArea>
       
-      <div className={`p-4 border-t border-white/20 ${isCollapsed ? 'px-2' : ''}`}>
+      <div className={`p-4 border-t border-border ${isCollapsed ? 'px-2' : ''}`}>
         <Button
           variant="ghost"
-          className={`w-full text-white/80 hover:text-white transition-all duration-200 hover:bg-white/20 ${
+          className={`w-full text-muted-foreground hover:text-destructive transition-all duration-200 hover:bg-destructive/10 ${
             isCollapsed ? 'justify-center' : 'justify-start gap-2'
           }`}
           onClick={() => signOut()}
@@ -213,6 +214,6 @@ export default function Sidebar({ onNavigate }: SidebarProps) {
           {!isCollapsed && 'Sign Out'}
         </Button>
       </div>
-    </aside>
+    </div>
   );
 }
