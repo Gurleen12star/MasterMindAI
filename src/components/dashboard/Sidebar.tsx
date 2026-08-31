@@ -1,5 +1,6 @@
 import { useAuth } from '@/components/auth/SupabaseAuthProvider';
 import React from 'react';
+import { useAppContext } from '@/contexts/PersonalizedLearningContext';
 import { Link, useLocation } from 'react-router-dom';
 import { useSidebar } from './SidebarContext';
 import EchoVerseLogo from '@/components/ui/EchoVerseLogo';
@@ -17,9 +18,13 @@ import {
   LogOut,
   ChevronRight,
   ChevronLeft,
-  GraduationCap
+  GraduationCap,
+  Lock,
+  Unlock,
+  Award
 } from 'lucide-react';
 import { Button } from '../ui/button';
+import { resetContext } from '@/lib/personalized-learning/utilFunctions';
 
 interface NavLinkProps {
   to: string;
@@ -85,6 +90,7 @@ interface SidebarProps {
 
 export default function Sidebar({ className }: SidebarProps) {
   const { signOut } = useAuth();
+  const { studyPlatform, setStudyPlatform, setIntroduction } = useAppContext();
   const location = useLocation();
   const { isCollapsed, setIsCollapsed } = useSidebar();
   
@@ -126,6 +132,62 @@ export default function Sidebar({ className }: SidebarProps) {
           {isCollapsed ? <ChevronRight className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />}
         </Button>
       </div>
+      
+      {/* Learning Modules Section (only show when in learning session) */}
+      {studyPlatform.show && (
+        <div className="p-3 border-b border-white/10">
+          {!isCollapsed && (
+            <h3 className="px-4 py-2 text-xs font-semibold tracking-wider text-gray-500 uppercase">
+              Learning Modules
+            </h3>
+          )}
+          <div className="space-y-1 max-h-64 overflow-y-auto">
+            {studyPlatform.modulos.map((modulo, index) => (
+              <button
+                key={index}
+                className={`flex items-center text-sm font-medium rounded-md transition-all duration-200 ease-in-out relative group w-full ${
+                  isCollapsed ? 'px-2 py-2' : 'px-4 py-2'
+                } ${
+                  studyPlatform.actModule === index
+                    ? 'text-white bg-white/10'
+                    : 'text-gray-400 hover:text-white hover:bg-white/5'
+                } ${!modulo.isOpen ? 'opacity-60 cursor-not-allowed' : 'cursor-pointer'}`}
+                disabled={!modulo.isOpen}
+                onClick={() => {
+                  if (!modulo.isOpen) return;
+                  setStudyPlatform(prevState => ({
+                    ...prevState,
+                    actModule: index,
+                    isGettingModulo: true,
+                    isLoading: true,
+                  }));
+                }}
+                title={isCollapsed ? modulo.title : ''}
+              >
+                {modulo.isOpen ? 
+                  <Unlock className={`${isCollapsed ? 'h-5 w-5' : 'mr-3 h-4 w-4'}`} /> : 
+                  <Lock className={`${isCollapsed ? 'h-5 w-5' : 'mr-3 h-4 w-4'}`} />
+                }
+                {!isCollapsed && <span className="truncate">{modulo.title}</span>}
+              </button>
+            ))}
+          </div>
+          
+          {/* Change Topic Button */}
+          <div className="mt-3 pt-3 border-t border-white/10">
+            <button
+              className={`flex items-center text-sm font-medium rounded-md transition-all duration-200 ease-in-out relative group w-full text-gray-400 hover:text-white hover:bg-white/5 ${
+                isCollapsed ? 'px-2 py-2' : 'px-4 py-2'
+              }`}
+              onClick={() => resetContext(setIntroduction, setStudyPlatform)}
+              title={isCollapsed ? 'Change Topic' : ''}
+            >
+              <Award className={`${isCollapsed ? 'h-5 w-5' : 'mr-3 h-4 w-4'}`} />
+              {!isCollapsed && <span>Change Topic</span>}
+            </button>
+          </div>
+        </div>
+      )}
       
       <div className="flex-1 p-3 space-y-4">
         <div>

@@ -42,7 +42,7 @@ const Introduction = () => {
 
     return (
         <div className="w-full h-full bg-background">
-            <div className="flex flex-col items-center justify-between gap-8 py-12 md:py-24 px-4 w-full h-full">
+            <div className="flex flex-col items-center justify-center gap-6 py-6 md:py-8 px-4 w-full min-h-[500px]">
                 <AnimatePresence mode='popLayout'>
                     <motion.div
                         key="introduction-logo"
@@ -52,7 +52,7 @@ const Introduction = () => {
                         variants={pageVariants(2)}
                         transition={pageTransition(2)}
                     >
-                        <div className="text-center">
+                        <div className="text-center mb-4">
                             <School className="h-20 w-20 text-primary mx-auto mb-2" />
                             <h2 className="text-2xl font-bold bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">Personalized Learning</h2>
                         </div>
@@ -141,7 +141,7 @@ const Introduction = () => {
                             }}
                             className="flex flex-col items-center justify-between gap-5 w-full"
                         >
-                            <h2 className="text-[40px] font-semibold text-center bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">Hello</h2>
+                            <h2 className="text-3xl md:text-4xl font-semibold text-center bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">Hello</h2>
 
                             {introduction.pages.page1.visited ? (
                                 <div className="text-[16px] text-foreground text-center">I am Gemini, and I will be your teacher during your learning journey. <br />I'm here to help you. But first, what should I call you?</div>
@@ -183,7 +183,7 @@ const Introduction = () => {
                                             }));
                                         }
                                     }}
-                                    className="flex items-center justify-center w-full pt-[20px]"
+                                    className="flex items-center justify-center w-full"
                                 >
                                     <Input
                                         placeholder="Enter your name"
@@ -333,7 +333,7 @@ const Introduction = () => {
                                             }));
                                         }
                                     }}
-                                    className="flex items-center justify-center w-full pt-[20px]"
+                                    className="flex items-center justify-center w-full"
                                 >
                                     <div className="w-full max-w-xl">
                                         <RadioGroup
@@ -450,7 +450,7 @@ const Introduction = () => {
                                     }
                                 });
                             }}
-                            className="flex flex-col items-center justify-between gap-14 w-full"
+                                    className="flex flex-col items-center justify-center gap-8 w-full"
                         >
                             <div className="flex flex-col items-center justify-center gap-2">
                                 <Rocket className="h-16 w-16 text-primary" />

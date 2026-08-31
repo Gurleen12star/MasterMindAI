@@ -8,7 +8,7 @@ import Typed from "typed.js";
 import { AnimatePresence, motion } from "framer-motion";
 import prompts from "@/lib/personalized-learning/prompts";
 import interactionGemini from "@/lib/personalized-learning/geminiClient";
-import { Award, ArrowLeft, ArrowRight, Lock, Unlock, Loader2 } from "lucide-react";
+import { Award, ArrowLeft, ArrowRight, Loader2 } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 
 const StudyPlatformLoading = () => {
@@ -40,7 +40,7 @@ const StudyPlatformInitial = ({ handleGetModule }: { handleGetModule: () => Prom
     const { setStudyPlatform } = useAppContext();
 
     return (
-        <div className="flex flex-col items-center justify-center gap-10 w-full h-full">
+        <div className="flex flex-col items-center justify-center gap-6 w-full min-h-[400px] py-8">
             <Award className="h-24 w-24 text-primary" />
             <h2 className="text-4xl text-primary font-semibold text-center">Ready to Start</h2>
 
@@ -73,7 +73,6 @@ const StudyPlatform = () => {
     const [modulo, setModulo] = useState<number>(studyPlatform.actModule);
     const [actualModuleRes, setActualModuleRes] = useState<string>("");
     const [timeModule, setTimeModule] = useState<boolean>(false);
-    const [sidebarOpen, setSidebarOpen] = useState(false);
 
     const delay = (ms: number) => new Promise(res => setTimeout(res, ms));
 
@@ -179,67 +178,7 @@ const StudyPlatform = () => {
     }, [handleGetModule, modulo, setStudyPlatform, studyPlatform.actModule, studyPlatform.modulos]);
 
     return (
-        <div className="flex flex-1 h-full">
-            {/* Sidebar */}
-            <div className={`fixed inset-y-0 left-0 z-50 w-64 bg-background border-r border-border transform ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'} lg:translate-x-0 transition-transform duration-300 ease-in-out pt-16`}>
-                <div className="flex flex-col h-full p-4 space-y-4 overflow-y-auto">
-                    <div className="mb-6">
-                        <h3 className="text-sm font-medium text-muted-foreground mb-2">Learning Modules</h3>
-                        <div className="space-y-1">
-                            {studyPlatform.modulos.map((modulo, index) => (
-                                <button
-                                    key={index}
-                                    className={`flex items-center w-full px-3 py-2 text-sm rounded-md ${studyPlatform.actModule === index ? 'bg-primary/10 text-primary' : 'text-foreground hover:bg-muted'} transition-colors ${!modulo.isOpen ? 'opacity-60 cursor-not-allowed' : 'cursor-pointer'}`}
-                                    disabled={!modulo.isOpen}
-                                    onClick={() => {
-                                        if (!modulo.isOpen) return;
-                                        setStudyPlatform(prevState => ({
-                                            ...prevState,
-                                            actModule: index,
-                                            isGettingModulo: true,
-                                            isLoading: true,
-                                        }));
-                                        setSidebarOpen(false);
-                                    }}
-                                >
-                                    {modulo.isOpen ? <Unlock className="h-4 w-4 mr-2 shrink-0" /> : <Lock className="h-4 w-4 mr-2 shrink-0" />}
-                                    <span className="truncate">{modulo.title}</span>
-                                </button>
-                            ))}
-                        </div>
-                    </div>
-                    <div className="mt-auto pt-4 border-t border-border">
-                        <button 
-                            className="flex items-center w-full px-3 py-2 text-sm rounded-md bg-muted hover:bg-primary/10 transition-colors"
-                            onClick={() => resetContext(setIntroduction, setStudyPlatform)}
-                        >
-                            <Award className="h-4 w-4 mr-2" />
-                            <span>Change Topic</span>
-                        </button>
-                    </div>
-                </div>
-            </div>
-            
-            {/* Main content */}
-            <div className="flex-1 lg:ml-64 pb-10">
-                {/* Header */}
-                <div className="sticky top-0 z-40 flex items-center justify-between h-16 px-4 border-b bg-background/95 backdrop-blur">
-                    <div className="flex items-center">
-                        <Button 
-                            variant="ghost" 
-                            size="icon" 
-                            className="lg:hidden mr-2"
-                            onClick={() => setSidebarOpen(!sidebarOpen)}
-                        >
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-menu"><line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="6" y2="6"/><line x1="4" x2="20" y1="18" y2="18"/></svg>
-                        </Button>
-                        <h2 className="text-lg font-semibold">
-                            {studyPlatform.modulos[studyPlatform.actModule]?.title || "Personalized Learning"}
-                        </h2>
-                    </div>
-                </div>
-                
-                {/* Content */}
+        <div className="w-full h-full">
                 <AnimatePresence mode="popLayout">
                     <motion.div
                         key="study-platform-content"
@@ -248,16 +187,17 @@ const StudyPlatform = () => {
                         exit="out"
                         variants={pageVariants(2)}
                         transition={pageTransition(2)}
-                        className="p-6"
+                        className="w-full h-full"
                     >
                         {studyPlatform.isLoading ? (
                             <StudyPlatformLoading />
                         ) : (studyPlatform.isGettingModels ? (
                             <StudyPlatformInitial handleGetModule={handleGetModule} />
                         ) : (
-                            <div className="max-w-4xl mx-auto">
-                                <Card className="mb-8">
-                                    <CardContent className="p-6">
+                            <div className="w-full">
+                                {/* Module Content */}
+                                <Card className="mb-6">
+                                    <CardContent className="p-6 studyPlatform-content">
                                         {studyPlatform.modulos[studyPlatform.actModule] && 
                                          studyPlatform.modulos[studyPlatform.actModule].content && 
                                          studyPlatform.modulos[studyPlatform.actModule].content.map((item, index) => {
@@ -270,14 +210,14 @@ const StudyPlatform = () => {
                                                         key={key}
                                                         srcDoc={htmlContent}
                                                         title={key}
-                                                        className="mb-8 w-full h-[500px] border-none"
+                                                        className="mb-6 w-full h-[400px] border-none rounded-lg"
                                                     />
                                                 );
                                             } else {
                                                 return (
                                                     <div
                                                         key={key}
-                                                        className="mb-8 prose prose-gray dark:prose-invert max-w-none"
+                                                        className="mb-4"
                                                         dangerouslySetInnerHTML={{ __html: htmlContent }}
                                                     />
                                                 );
@@ -286,7 +226,8 @@ const StudyPlatform = () => {
                                     </CardContent>
                                 </Card>
                                 
-                                <div className="flex items-center justify-between gap-4 mt-8">
+                                {/* Navigation */}
+                                <div className="flex items-center justify-between gap-4">
                                     <Button
                                         variant="outline"
                                         className={`${modulo === 0 ? "invisible" : ""}`}
@@ -338,15 +279,6 @@ const StudyPlatform = () => {
                     </motion.div>
                 </AnimatePresence>
             </div>
-            
-            {/* Overlay for sidebar on mobile */}
-            {sidebarOpen && (
-                <div 
-                    className="fixed inset-0 z-40 bg-black/50 lg:hidden"
-                    onClick={() => setSidebarOpen(false)}
-                />
-            )}
-        </div>
     );
 };
 

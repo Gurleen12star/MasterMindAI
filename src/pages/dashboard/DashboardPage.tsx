@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
+import { PersonalizedLearningProvider } from '@/contexts/PersonalizedLearningContext';
 import { useAuth } from '@/components/auth/SupabaseAuthProvider';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { Menu } from 'lucide-react';
@@ -23,6 +24,8 @@ function DashboardContent() {
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
   const { isCollapsed } = useSidebar();
 
+  return (
+    <PersonalizedLearningProvider>
   return (
     <div className="flex min-h-screen bg-background">
       <Sidebar className="hidden md:flex md:fixed" />
@@ -100,6 +103,7 @@ function DashboardContent() {
           </Routes>
         </main>
       </div>
+    </PersonalizedLearningProvider>
     </div>
   );
 }
