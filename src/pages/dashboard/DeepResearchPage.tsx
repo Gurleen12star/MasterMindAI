@@ -251,10 +251,33 @@ export default function DeepResearchPage() {
     setIsGeneratingAudio(true);
     
     try {
+      // ElevenLabs has a 10,000 character limit for TTS
+      const MAX_CHARACTERS = 9800; // Using 9800 to leave some buffer
+      let textToConvert = result.report;
+      
+      if (textToConvert.length > MAX_CHARACTERS) {
+        // Truncate the text and try to end at a complete sentence
+        textToConvert = textToConvert.substring(0, MAX_CHARACTERS);
+        const lastSentenceEnd = Math.max(
+          textToConvert.lastIndexOf('.'),
+          textToConvert.lastIndexOf('!'),
+          textToConvert.lastIndexOf('?')
+        );
+        
+        if (lastSentenceEnd > MAX_CHARACTERS * 0.8) {
+          textToConvert = textToConvert.substring(0, lastSentenceEnd + 1);
+        }
+        
+        toast({
+          title: "Content Truncated",
+          description: `Report was truncated to ${textToConvert.length} characters to fit audio generation limits.`,
+        });
+      }
+      
       // Call the Supabase Edge Function
       const response = await supabase.functions.invoke('elevenlabs-tts', {
         body: {
-          text: result.report,
+          text: textToConvert,
           voiceId: 'EXAVITQu4vr4xnSDxMaL', // Bella voice
         },
       });
