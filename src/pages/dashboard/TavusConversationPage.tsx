@@ -128,6 +128,8 @@ const TavusConversationPage = () => {
                 </div>
               </div>
             </div>
+              </li>
+            
           </div>
         </div>
         
