@@ -19,9 +19,9 @@ const CustomRadio = (props: any) => {
         <div className="flex flex-col items-center justify-center group">
             <Label
                 htmlFor={`radio-${value}`}
-                className="flex flex-col items-center justify-center p-4 cursor-pointer rounded-lg border-2 border-transparent hover:border-primary/60 transition-colors duration-200 group-has-[[data-state=checked]]:bg-primary/10 group-has-[[data-state=checked]]:border-primary"
+                className="flex flex-col items-center justify-center p-6 cursor-pointer rounded-xl border-2 border-border/50 hover:border-primary/60 transition-all duration-200 group-has-[[data-state=checked]]:bg-primary/20 group-has-[[data-state=checked]]:border-primary/80 group-has-[[data-state=checked]]:shadow-md"
             >
-                <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center mb-2">
+                <div className="w-16 h-16 rounded-full bg-primary/20 flex items-center justify-center mb-2 shadow-inner-modern">
                     <Icon className="h-8 w-8 text-primary" />
                 </div>
                 <RadioGroupItem value={value} id={`radio-${value}`} className="opacity-0 absolute" {...otherProps} />
@@ -42,7 +42,7 @@ const Introduction = () => {
 
     return (
         <div className="w-full h-full bg-background overflow-y-auto">
-            <div className="flex flex-col items-center justify-between gap-8 py-6 px-4 w-full min-h-[calc(100vh-200px)]">
+            <div className="flex flex-col items-center justify-between gap-8 py-12 md:py-24 px-4 w-full min-h-[calc(100vh-64px)]">
                 <AnimatePresence mode='popLayout'>
                     <motion.div
                         key="introduction-logo"
@@ -54,7 +54,7 @@ const Introduction = () => {
                     >
                         <div className="text-center">
                             <School className="h-20 w-20 text-primary mx-auto mb-2" />
-                            <h2 className="text-2xl font-bold">Personalized Learning</h2>
+                            <h2 className="text-2xl font-bold bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">Personalized Learning</h2>
                         </div>
                     </motion.div>
 
@@ -141,7 +141,7 @@ const Introduction = () => {
                             }}
                             className="flex flex-col items-center justify-between gap-5 w-full"
                         >
-                            <h2 className="text-[40px] text-primary font-semibold text-center">Hello</h2>
+                            <h2 className="text-[40px] font-semibold text-center bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">Hello</h2>
 
                             {introduction.pages.page1.visited ? (
                                 <div className="text-[16px] text-foreground text-center">I am Gemini, and I will be your teacher during your learning journey. <br />I'm here to help you. But first, what should I call you?</div>
@@ -187,7 +187,7 @@ const Introduction = () => {
                                 >
                                     <Input
                                         placeholder="Enter your name"
-                                        className="max-w-[300px]"
+                                        className="max-w-[300px] rounded-xl shadow-md"
                                         value={userName}
                                         onChange={(e) => {
                                             if (e.target.value.length > 2) {
@@ -337,7 +337,7 @@ const Introduction = () => {
                                 >
                                     <div className="w-full max-w-xl">
                                         <RadioGroup
-                                            className="grid grid-cols-2 gap-4 md:grid-cols-5"
+                                            className="grid grid-cols-2 gap-6 sm:grid-cols-3 lg:grid-cols-5"
                                             value={personality}
                                             onValueChange={(value) => {
                                                 setIntroduction(prevState => ({
@@ -454,7 +454,7 @@ const Introduction = () => {
                         >
                             <div className="flex flex-col items-center justify-center gap-2">
                                 <Rocket className="h-16 w-16 text-primary" />
-                                <h2 className="text-3xl text-primary font-semibold text-center">Excellent!</h2>
+                                <h2 className="text-3xl font-semibold text-center bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">Excellent!</h2>
                             </div>
 
                             {introduction.pages.page3.visited ? (
@@ -501,7 +501,7 @@ const Introduction = () => {
                                 >
                                     <Input
                                         placeholder="I want to learn about..."
-                                        className="max-w-[450px]"
+                                        className="max-w-[450px] rounded-xl shadow-md"
                                         value={studyMaterial}
                                         onChange={(e) => {
                                             if (e.target.value.length > 4) {
@@ -554,7 +554,7 @@ const Introduction = () => {
                             >
                                 <Button
                                     variant="outline"
-                                    className={`w-[143px] ${page === 1 ? "invisible select-none" : "visible"}`}
+                                    className={`w-[143px] rounded-xl shadow-md ${page === 1 ? "invisible select-none" : "visible"}`}
                                     onClick={() => {
                                         setPage(page - 1);
                                         setIntroduction(prevState => ({
@@ -585,7 +585,7 @@ const Introduction = () => {
                             >
                                 <Button
                                     variant="default"
-                                    className="min-w-[143px]"
+                                    className="min-w-[143px] rounded-xl shadow-md"
                                     disabled={!introduction.pages[`page${page}`].button}
                                     onClick={() => {
                                         if (page === 3) {

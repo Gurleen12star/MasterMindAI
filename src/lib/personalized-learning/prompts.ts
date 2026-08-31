@@ -2,87 +2,87 @@ import { ModuleType } from "@/types/personalized-learning";
 
 const prompts = {
     generateModules: (themeStudy: string) => {
-        return `Por favor, monte um plano de estudo personalizado para o tema: '${themeStudy}'. Você deve montar módulos para os diferentes subtemas a serem abordados.
+        return `Please create a personalized study plan for the topic: '${themeStudy}'. You should create modules for the different subtopics to be covered.
 
-            Instruções para o conteúdo dos módulos:
+            Instructions for module content:
 
-            1. Cada módulo deve conter:
-            - **Título**: Um título que resuma o foco do módulo.
-            - **Descrição**: Uma breve descrição do conteúdo que será abordado, rica em detalhes e informações.
-            2. Limite o plano a **no máximo 8 módulos**.
+            1. Each module should contain:
+            - **Title**: A title that summarizes the focus of the module.
+            - **Description**: A brief description of the content to be covered, rich in details and information.
+            2. Limit the plan to **a maximum of 8 modules**.
 
-            Formato de retorno:
+            Return format:
 
-            - O resultado deve ser devolvido em **formato JSON válido**, seguindo estritamente o modelo abaixo:
-
-            [
-            {
-                "title": "Título do Módulo",
-                "description": "Descrição breve do módulo."
-            },
-            {
-                "title": "Título do Módulo",
-                "description": "Descrição breve do módulo."
-            }
-            // ... demais módulos
-            ]
-
-            Observações importantes:
-
-            - Certifique-se de que **cada valor da chave "title" e "description" esteja entre aspas duplas** e que o JSON seja formatado corretamente.
-            - Não adicione mais do que o especificado e garanta que o JSON seja **válido e consistente**.
-
-            **Exemplo de resposta esperada:**
+            - The result should be returned in **valid JSON format**, strictly following the model below:
 
             [
             {
-                "title": "Introdução ao Tema",
-                "description": "Este módulo introduz os conceitos básicos do tema..."
+                "title": "Module Title",
+                "description": "Brief description of the module."
             },
             {
-                "title": "Subtema Importante",
-                "description": "Este módulo aborda o subtema com foco em..."
+                "title": "Module Title",
+                "description": "Brief description of the module."
+            }
+            // ... other modules
+            ]
+
+            Important notes:
+
+            - Make sure that **each value of the "title" and "description" key is in double quotes** and that the JSON is formatted correctly.
+            - Do not add more than specified and ensure that the JSON is **valid and consistent**.
+
+            **Expected response example:**
+
+            [
+            {
+                "title": "Introduction to the Topic",
+                "description": "This module introduces the basic concepts of the topic..."
+            },
+            {
+                "title": "Important Subtopic",
+                "description": "This module addresses the subtopic with focus on..."
             }
             ]
 
-            Por favor, devolva apenas o JSON conforme o exemplo acima.`
+            Please return only the JSON as shown in the example above.`
     },
     generateModule: (module: ModuleType) => {
-        return `Por favor, gere o conteúdo do módulo: '${module.title}'. Desenvolva com base na descrição: '${module.description}', sem fugir do tema.
+        return `Please generate the content for the module: '${module.title}'. Develop based on the description: '${module.description}', without straying from the topic.
             
-            O conteúdo deve ser:
+            The content should be:
 
-            1. Rico e informativo, contendo imagens para ilustrar as informações quando possível. Quando não for possível incluir imagens, forneça um link para uma imagem relacionada.
-            2. Estruturado no formato de JSON e deve seguir estritamente o modelo abaixo:
+            1. Rich and informative, containing images to illustrate information when possible. When it's not possible to include images, provide a link to a related image.
+            2. Structured in JSON format and should strictly follow the model below:
 
             [
             {
-                "html": "<elementos HTML aqui>"
+                "html": "<HTML elements here>"
             },
             {
-                "html": "<outros elementos HTML aqui>"
+                "html": "<other HTML elements here>"
             }
             ]
 
-            Observações importantes:
+            Important notes:
 
-            - **Apenas** os elementos dentro do body (exemplo: <h1>, <p>, <span>, etc.) devem ser incluídos. 
-            - Não inclua o <html>, <head>, ou <body>.
-            - **Cada valor da chave "html" deve ser uma string válida** com o conteúdo HTML escapado corretamente.
-            - O JSON deve ser **válido e consistente** com o formato especificado, com aspas duplas em todos os lugares corretos.
-            - Não adicione mais do que o especificado, e certifique-se de que o JSON esteja corretamente formatado e sem erros de sintaxe.
+            - **Only** elements inside the body (example: <h1>, <p>, <span>, etc.) should be included. 
+            - Do not include <html>, <head>, or <body>.
+            - **Each value of the "html" key must be a valid string** with properly escaped HTML content.
+            - The JSON must be **valid and consistent** with the specified format, with double quotes in all correct places.
+            - Do not add more than specified, and make sure the JSON is correctly formatted and without syntax errors.
 
-            **Exemplo de resposta esperada:**
+            **Expected response example:**
             [
             {
-                "html": "<h1>Título do Módulo</h1><p>Conteúdo do módulo...</p>"
+                "html": "<h1>Module Title</h1><p>Module content...</p>"
             },
             {
-                "html": "<h2>Subtítulo</h2><p>Mais conteúdo...</p><img src='link_para_imagem' alt='descrição da imagem'>"
+                "html": "<h2>Subtitle</h2><p>More content...</p><img src='image_link' alt='image description'>"
             }
             ]
 
-            Por favor, devolva apenas o JSON conforme o exemplo acima.`;
+            Please return only the JSON as shown in the example above.`;
     }
 };
 
