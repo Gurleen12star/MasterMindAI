@@ -356,7 +356,7 @@ const Introduction = () => {
                                                 setPersonality(value as TeacherPersonality);
                                             }}
                                         >
-                            value="Formal" icon={Briefcase} labelText="Formal" />
+                            <CustomRadio value="Formal" icon={Briefcase} labelText="Formal" />
                             <CustomRadio value="Informal" icon={MessageSquare} labelText="Informal" />
                             <CustomRadio value="Engraçado" icon={Sparkles} labelText="Playful" />
                             <CustomRadio value="Sério" icon={Flask} labelText="Serious" />
