@@ -10,7 +10,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import prompts from "@/lib/personalized-learning/prompts";
 import interactionGemini from "@/lib/personalized-learning/geminiClient";
 import { Award, ArrowLeft, ArrowRight, Loader2, Copy, SendToBack, BoxSelect as SelectAll, MessageSquare } from "lucide-react";
-import { Card } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import {
   ContextMenu,
@@ -197,7 +197,7 @@ const StudyPlatform = () => {
                 setStudyPlatform({ ...studyPlatform, isGettingModels: true });
             }
         }
-    }, [generationHistory, introduction, personality, setGenerationHistory, setIntroduction, setStudyPlatform, studyMaterial, studyPlatform]);
+    }, [generationHistory, introduction, personality, setGenerationHistory, setIntroduction, setStudyPlatform, studyMaterial, studyPlatform, user, currentSessionId, setCurrentSessionId]);
 
     const handleGetModule = useCallback(async () => {
         if (studyPlatform.modulos.length === 0) return;
@@ -243,7 +243,7 @@ const StudyPlatform = () => {
                 }));
             }
         }
-    }, [generationHistory, personality, setStudyPlatform, studyPlatform]);
+    }, [generationHistory, personality, setStudyPlatform, studyPlatform, user, currentSessionId]);
 
     useEffect(() => {
         if (introduction.isLoading) {
@@ -255,7 +255,7 @@ const StudyPlatform = () => {
         if (studyPlatform.isGettingModels && studyPlatform.show === false) {
             generateModules(actualModuleRes, studyPlatform, setStudyPlatform);
         }
-    }, [actualModuleRes, generationHistory, setStudyPlatform, studyPlatform]);
+    }, [actualModuleRes, setStudyPlatform, studyPlatform]);
 
     useEffect(() => {
         if (!studyPlatform.isGettingModulo && !studyPlatform.isLoading) {
@@ -360,6 +360,7 @@ const StudyPlatform = () => {
                                                  </ContextMenuContent>
                                              )}
                                          </ContextMenu>
+                                        }
                                         </CardContent>
                                     </ScrollArea>
                                 </Card>
