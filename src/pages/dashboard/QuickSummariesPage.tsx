@@ -6,10 +6,12 @@ import { Textarea } from '@/components/ui/textarea';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { generateSummary } from '@/lib/gemini';
+import { generateAudio, AVAILABLE_VOICES } from '@/lib/elevenlabs';
 import { useToast } from '@/hooks/use-toast';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import AnimatedLoadingText from '@/components/ui/AnimatedLoadingText';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { 
   Wand2, 
   Upload, 
@@ -19,7 +21,11 @@ import {
   Download, 
   Sparkles,
   AlertCircle,
-  CheckCircle
+  CheckCircle,
+  Volume2,
+  Play,
+  Pause,
+  VolumeX
 } from 'lucide-react';
 
 export default function QuickSummariesPage() {
@@ -30,6 +36,11 @@ export default function QuickSummariesPage() {
   const [summary, setSummary] = useState('');
   const [isGenerating, setIsGenerating] = useState(false);
   const [activeTab, setActiveTab] = useState('text');
+  const [audioUrl, setAudioUrl] = useState<string | null>(null);
+  const [isGeneratingAudio, setIsGeneratingAudio] = useState(false);
+  const [selectedVoice, setSelectedVoice] = useState(AVAILABLE_VOICES[0].id);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const audioRef = useRef<HTMLAudioElement>(null);
 
   const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
