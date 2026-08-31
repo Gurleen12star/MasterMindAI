@@ -33,7 +33,8 @@ import {
   UserCheck,
   BarChart3,
   Sparkles,
-  Star
+  Star,
+  Settings
 } from 'lucide-react';
 
 interface SidebarProps {
@@ -362,6 +363,21 @@ export default function Sidebar({ onNavigate }: SidebarProps) {
         
         {/* Sign Out Button */}
         <div className={`p-4 border-t border-border/30 ${isCollapsed ? 'px-2' : ''}`}>
+          {!isCollapsed && (
+            <Button
+              variant="ghost"
+              className="w-full justify-start gap-3 h-12 mb-2 text-muted-foreground hover:text-foreground transition-all duration-300 hover:bg-accent/50 rounded-xl font-medium border border-transparent hover:border-border/30"
+              onClick={() => {
+                setCurrentPath('/dashboard/profile');
+                window.history.pushState({}, '', '/dashboard/profile');
+                window.dispatchEvent(new PopStateEvent('popstate'));
+                onNavigate?.();
+              }}
+            >
+              <Settings className="h-5 w-5" />
+              <span>Profile Settings</span>
+            </Button>
+          )}
           <Button
             variant="ghost"
             className={`w-full text-muted-foreground hover:text-destructive transition-all duration-300 hover:bg-destructive/10 rounded-xl font-semibold border border-transparent hover:border-destructive/30 ${
