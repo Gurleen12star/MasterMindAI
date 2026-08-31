@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { Link } from '@/components/ui/link';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { Separator } from '@/components/ui/separator';
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import logo from '@/assets/logo.svg';
 import {
   Compass,
@@ -27,7 +27,11 @@ import {
   Trophy,
   LogOut,
   ChevronLeft,
-  ChevronRight
+  ChevronRight,
+  Layers,
+  Zap,
+  UserCheck,
+  BarChart3
 } from 'lucide-react';
 
 interface SidebarProps {
@@ -41,6 +45,7 @@ export default function Sidebar({ onNavigate }: SidebarProps) {
   const menuItems = [
     {
       section: 'Content Discovery & Learning',
+      sectionIcon: Layers,
       items: [
         { icon: Compass, label: 'Explore Hub', href: '/dashboard/explore' },
         { icon: BookOpen, label: 'Learning Paths', href: '/dashboard/paths' },
@@ -51,6 +56,7 @@ export default function Sidebar({ onNavigate }: SidebarProps) {
     },
     {
       section: 'Content Transformation Tools',
+      sectionIcon: Zap,
       items: [
         { icon: Wand2, label: 'Quick Summaries', href: '/dashboard/summaries' },
         { icon: MessageSquare, label: 'Chat with Content', href: '/dashboard/chat' },
@@ -62,6 +68,7 @@ export default function Sidebar({ onNavigate }: SidebarProps) {
     },
     {
       section: 'Community & Collaboration',
+      sectionIcon: UserCheck,
       items: [
         { icon: Users, label: 'Study Groups', href: '/dashboard/groups' },
         { icon: MessageCircle, label: 'Ask Experts', href: '/dashboard/experts' },
@@ -71,6 +78,7 @@ export default function Sidebar({ onNavigate }: SidebarProps) {
     },
     {
       section: 'Progress & Analytics',
+      sectionIcon: BarChart3,
       items: [
         { icon: LineChart, label: 'My Insights', href: '/dashboard/insights' },
         { icon: AlertTriangle, label: 'Knowledge Gaps', href: '/dashboard/gaps' },
@@ -121,52 +129,82 @@ export default function Sidebar({ onNavigate }: SidebarProps) {
       </div>
       
       <ScrollArea className={`flex-1 ${isCollapsed ? 'px-2' : 'px-4'}`}>
-        <nav className="space-y-6">
-          {menuItems.map((section) => (
-            <div key={section.section}>
-              <h4 className={`px-2 text-xs font-medium text-muted-foreground uppercase tracking-wider ${
-                isCollapsed ? 'sr-only' : ''
-              }`}>
-                {section.section}
-              </h4>
-              <ul className="mt-2 space-y-1">
-                {section.items.map((item) => (
-                  <li key={item.label}>
-                    <Link
-                      href={item.href}
-                      className={`group flex items-center justify-between px-3 py-2 text-sm text-muted-foreground hover:text-foreground rounded-md hover:bg-accent/50 transition-colors ${
-                        isCollapsed ? 'justify-center' : ''
-                      } hover:shadow-sm hover:-translate-y-0.5 transition-all duration-300`}
-                      title={isCollapsed ? item.label : undefined}
-                      onClick={onNavigate}
-                    >
-                      <div className={`flex items-center ${isCollapsed ? 'justify-center' : 'gap-3'}`}>
-                        <item.icon className="h-4 w-4 transition-all duration-300 group-hover:scale-110 group-hover:text-primary" />
-                        {!isCollapsed && item.label}
-                      </div>
-                      {!isCollapsed && item.badge && (
-                        <span className={`text-xs px-2 py-0.5 rounded-full ${
-                          item.badge === 'New'
-                            ? 'bg-primary/10 text-primary'
-                            : 'bg-muted text-muted-foreground'
-                        }`}>
-                          {item.badge}
-                        </span>
-                      )}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-              <Separator className="my-4 opacity-50" />
+        <nav className="space-y-2">
+          {isCollapsed ? (
+            // Collapsed view - show only section icons
+            <div className="space-y-4">
+              {menuItems.map((section) => (
+                <div key={section.section} className="flex justify-center">
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="h-10 w-10 rounded-lg hover:bg-accent/50 transition-colors"
+                    title={section.section}
+                  >
+                    <section.sectionIcon className="h-5 w-5 text-muted-foreground hover:text-primary transition-colors" />
+                  </Button>
+                </div>
+              ))}
             </div>
-          ))}
+          ) : (
+            // Expanded view - show accordion
+            <Accordion type="single" collapsible className="w-full space-y-2">
+              {menuItems.map((section, index) => (
+                <AccordionItem 
+                  key={section.section} 
+                  value={`section-${index}`}
+                  className="border border-border/20 rounded-lg bg-card/30 backdrop-blur-sm hover:bg-card/50 transition-all duration-200"
+                >
+                  <AccordionTrigger className="px-4 py-3 hover:no-underline group">
+                    <div className="flex items-center gap-3">
+                      <div className="relative inline-flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10 before:absolute before:inset-0 before:rounded-lg before:bg-primary/5 before:animate-pulse group-hover:before:bg-primary/10 transition-all duration-200">
+                        <section.sectionIcon className="h-4 w-4 text-primary transition-transform duration-200 group-hover:scale-110" />
+                      </div>
+                      <span className="text-sm font-medium text-foreground group-hover:text-primary transition-colors">
+                        {section.section}
+                      </span>
+                    </div>
+                  </AccordionTrigger>
+                  <AccordionContent className="pb-2">
+                    <ul className="space-y-1 pl-4">
+                      {section.items.map((item) => (
+                        <li key={item.label}>
+                          <Link
+                            href={item.href}
+                            className="group flex items-center justify-between px-3 py-2 text-sm text-muted-foreground hover:text-foreground rounded-md hover:bg-accent/50 transition-all duration-200 hover:shadow-sm hover:-translate-y-0.5"
+                            onClick={onNavigate}
+                          >
+                            <div className="flex items-center gap-3">
+                              <item.icon className="h-4 w-4 transition-all duration-200 group-hover:scale-110 group-hover:text-primary" />
+                              <span>{item.label}</span>
+                            </div>
+                            {item.badge && (
+                              <span className={`text-xs px-2 py-0.5 rounded-full transition-all duration-200 ${
+                                item.badge === 'New'
+                                  ? 'bg-primary/10 text-primary group-hover:bg-primary/20'
+                                  : item.badge === 'Featured'
+                                  ? 'bg-gradient-to-r from-primary/10 to-primary/20 text-primary group-hover:from-primary/20 group-hover:to-primary/30'
+                                  : 'bg-muted text-muted-foreground group-hover:bg-muted/80'
+                              }`}>
+                                {item.badge}
+                              </span>
+                            )}
+                          </Link>
+                        </li>
+                      ))}
+                    </ul>
+                  </AccordionContent>
+                </AccordionItem>
+              ))}
+            </Accordion>
+          )}
         </nav>
       </ScrollArea>
       
       <div className={`p-4 border-t border-border ${isCollapsed ? 'px-2' : ''}`}>
         <Button
           variant="ghost"
-          className={`w-full text-muted-foreground hover:text-destructive ${
+          className={`w-full text-muted-foreground hover:text-destructive transition-all duration-200 hover:bg-destructive/10 ${
             isCollapsed ? 'justify-center' : 'justify-start gap-2'
           }`}
           onClick={() => signOut()}
