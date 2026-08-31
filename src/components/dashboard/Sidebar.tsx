@@ -75,9 +75,9 @@ export default function Sidebar() {
             <img 
               src="/src/assets/logo.png" 
               alt="EchoVerse Logo" 
-              className={`object-contain transition-all duration-500 transform ${
+              className={`object-contain transition-all duration-300 ${
                 isCollapsed ? 'h-12 w-12' : 'h-16 w-16'
-              } ${isCollapsed ? 'rotate-180 scale-90' : 'rotate-0 scale-100'}`} 
+              }`} 
             />
           </div>
         </a>
