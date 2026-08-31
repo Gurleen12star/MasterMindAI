@@ -1,4 +1,4 @@
-import { createClient } from '@supabase/supabase-js';
+import { createClient, SupabaseClient } from '@supabase/supabase-js';
 
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
@@ -33,6 +33,11 @@ export const supabaseClient = createClient(supabaseUrl, supabaseAnonKey, {
     }
   }
 });
+
+// Function to set the auth token for the Supabase client
+export const setSupabaseToken = async (token: string | null) => {
+  if (token) await supabaseClient.auth.setSession({ access_token: token, refresh_token: '' });
+};
 
 // Export the client as supabaseAdmin for backward compatibility
 // This will prevent breaking changes in components
