@@ -48,7 +48,7 @@ export default function Header() {
         </a>
         
         {/* Desktop Navigation */}
-        <nav className="hidden md:block relative">
+        <nav className="hidden md:block relative absolute left-1/2 -translate-x-1/2">
           <div className="flex items-center justify-center rounded-xl bg-muted/30 p-1 relative min-w-[400px]">
             {navItems.map((item) => (
               <a
@@ -57,7 +57,7 @@ export default function Header() {
                 onMouseEnter={() => setActiveItem(item.label)}
                 onMouseLeave={() => setActiveItem(null)}
                 className={cn(
-                  "relative z-10 px-6 py-2 text-sm font-medium transition-colors duration-200 flex-1 text-center",
+                  "relative z-10 px-8 py-2 text-sm font-medium transition-colors duration-200 flex-1 text-center",
                   activeItem === item.label ? "text-foreground" : "text-muted-foreground hover:text-foreground"
                 )}
               >
