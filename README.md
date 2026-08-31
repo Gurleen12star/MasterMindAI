@@ -91,3 +91,21 @@ If diagrams aren't rendering correctly:
 ## License
 
 [MIT License](LICENSE)
+
+## Environment Variables
+
+1. Copy `.env.example` to `.env`:
+
+```bash
+cp .env.example .env
+```
+
+2. Fill in the placeholder values with your own credentials. **Do not commit the `.env` file to version control**; it is already listed in `.gitignore`.
+
+3. If you accidentally committed the `.env` file in the past, remove it from git history:
+
+```bash
+git rm --cached .env
+git commit -m "Remove .env from repository history"
+# Follow up with a force push if necessary (e.g., after using git filter-repo or BFG to purge history)
+```
