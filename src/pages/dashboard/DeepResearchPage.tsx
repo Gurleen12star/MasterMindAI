@@ -104,20 +104,20 @@ export default function DeepResearchPage() {
     }
 
     try {
-      // **FINAL FIX: Get the correct Supabase User UUID before inserting**
-      const { data: { user: supabaseUser }, error: userError } = await supabaseClient.auth.getUser();
+      // **THE DEFINITIVE FIX: Use getSession() which is more robust than getUser()**
+      const { data: { session: supabaseSession }, error: sessionError } = await supabaseClient.auth.getSession();
 
-      if (userError || !supabaseUser) {
-        throw new Error(`Could not retrieve Supabase user. Please try again. Error: ${userError?.message}`);
+      if (sessionError || !supabaseSession) {
+        throw new Error(`Could not retrieve Supabase session. Please try again. Error: ${sessionError?.message || 'No active session'}`);
       }
       
-      const supabaseUserId = supabaseUser.id; 
+      const supabaseUserId = supabaseSession.user.id; 
       console.log(`Attempting to save research with Supabase UUID: ${supabaseUserId}`);
       
       const { error: saveError } = await supabaseClient
         .from('deep_research_history')
         .insert([{
-          user_id: supabaseUserId, // Use the correct UUID
+          user_id: supabaseUserId,
           topic: topic.trim(),
           report: researchData.report,
           sources: researchData.sources || [],
@@ -155,13 +155,13 @@ export default function DeepResearchPage() {
     
     setIsLoadingHistory(true);
     try {
-        const { data: { user: supabaseUser }, error: userError } = await supabaseClient.auth.getUser();
-        if (userError || !supabaseUser) throw userError;
+      const { data: { session: supabaseSession }, error: sessionError } = await supabaseClient.auth.getSession();
+      if (sessionError || !supabaseSession) throw new Error(sessionError?.message || "No active session to fetch history.");
 
       const { data, error } = await supabaseClient
         .from('deep_research_history')
         .select('*')
-        .eq('user_id', supabaseUser.id) // Use correct UUID for fetching
+        .eq('user_id', supabaseSession.user.id)
         .order('created_at', { ascending: false });
 
       if (error) throw error;
