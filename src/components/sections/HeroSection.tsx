@@ -31,6 +31,20 @@ export default function HeroSection() {
 
   return (
     <section className="relative overflow-hidden pt-24 md:pt-32 bg-gradient-to-b from-background via-background/95 to-background/90">
+      <div className="absolute inset-0 overflow-hidden">
+        {[...Array(20)].map((_, i) => (
+          <div
+            key={i}
+            className="absolute w-2 h-2 bg-primary/10 rounded-full"
+            style={{
+              left: `${Math.random() * 100}%`,
+              top: `${Math.random() * 100}%`,
+              animation: `float-particle ${10 + Math.random() * 10}s infinite`,
+              animationDelay: `${-Math.random() * 10}s`,
+            }}
+          />
+        ))}
+      </div>
       <div className="container px-4 max-w-[1200px] mx-auto">
         <article className="hero-card">
           <div className="hero-assets">

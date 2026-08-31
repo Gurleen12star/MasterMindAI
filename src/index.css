@@ -46,6 +46,20 @@
   --y: 0;
 }
 
+@keyframes float-particle {
+  0% {
+    transform: translateY(0) translateX(0);
+    opacity: 0;
+  }
+  50% {
+    opacity: 0.5;
+  }
+  100% {
+    transform: translateY(-100px) translateX(100px);
+    opacity: 0;
+  }
+}
+
 /* Hero Section Styles */
 .hero-card {
   width: 100%;
@@ -55,6 +69,7 @@
   border-radius: 4em;
   filter: drop-shadow(0 10px 20px rgba(0, 0, 0, 0.1));
   min-height: 600px;
+  overflow: hidden;
 }
 
 .hero-assets {
@@ -62,12 +77,33 @@
   inset: 0;
   border-radius: 4em;
   z-index: 0;
-  background: linear-gradient(
-    135deg,
-    hsl(var(--primary) / 0.2),
-    hsl(var(--primary) / 0.05) 40%,
-    hsl(var(--secondary) / 0.1)
+  background: radial-gradient(
+    circle at 50% 50%,
+    hsl(var(--primary) / 0.3),
+    hsl(var(--primary) / 0.1) 40%,
+    transparent 100%
   );
+}
+
+.hero-assets::before,
+.hero-assets::after {
+  content: "";
+  position: absolute;
+  inset: -50%;
+  background: radial-gradient(
+    circle,
+    hsl(var(--primary) / 0.2) 0%,
+    transparent 70%
+  );
+  opacity: 0.5;
+  filter: blur(60px);
+  animation: float-particle 10s infinite alternate;
+}
+
+.hero-assets::after {
+  animation-delay: -5s;
+  animation-duration: 15s;
+  opacity: 0.3;
 }
 
 .hero-assets img.foreground {
