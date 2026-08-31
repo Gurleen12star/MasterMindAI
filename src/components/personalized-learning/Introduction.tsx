@@ -41,8 +41,8 @@ const Introduction = () => {
     const page3El = useRef<HTMLDivElement>(null);
 
     return (
-        <div className="w-full h-full bg-background overflow-y-auto">
-            <div className="flex flex-col items-center justify-between gap-8 py-12 md:py-24 px-4 w-full min-h-[calc(100vh-64px)]">
+        <div className="w-full h-full bg-background">
+            <div className="flex flex-col items-center justify-between gap-8 py-12 md:py-24 px-4 w-full h-full">
                 <AnimatePresence mode='popLayout'>
                     <motion.div
                         key="introduction-logo"

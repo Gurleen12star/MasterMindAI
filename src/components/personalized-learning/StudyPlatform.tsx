@@ -29,7 +29,7 @@ const StudyPlatformLoading = () => {
     }, []);
 
     return (
-        <div className="flex flex-col items-center justify-center gap-4 w-full h-full min-h-[calc(100vh-65px)]">
+        <div className="flex flex-col items-center justify-center gap-4 w-full h-full">
             <Loader2 className="h-12 w-12 text-primary animate-spin" />
             <div ref={studyPlatformLoadingEl} className="text-lg text-primary font-medium text-center min-h-[24px]" />
         </div>
@@ -40,7 +40,7 @@ const StudyPlatformInitial = ({ handleGetModule }: { handleGetModule: () => Prom
     const { setStudyPlatform } = useAppContext();
 
     return (
-        <div className="flex flex-col items-center justify-center gap-10 w-full h-full min-h-[calc(100vh-65px)]">
+        <div className="flex flex-col items-center justify-center gap-10 w-full h-full">
             <Award className="h-24 w-24 text-primary" />
             <h2 className="text-4xl text-primary font-semibold text-center">Ready to Start</h2>
 
@@ -179,7 +179,7 @@ const StudyPlatform = () => {
     }, [handleGetModule, modulo, setStudyPlatform, studyPlatform.actModule, studyPlatform.modulos]);
 
     return (
-        <div className="flex h-full min-h-[calc(100vh-64px)]">
+        <div className="flex flex-1 h-full">
             {/* Sidebar */}
             <div className={`fixed inset-y-0 left-0 z-50 w-64 bg-background border-r border-border transform ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'} lg:translate-x-0 transition-transform duration-300 ease-in-out pt-16`}>
                 <div className="flex flex-col h-full p-4 space-y-4 overflow-y-auto">

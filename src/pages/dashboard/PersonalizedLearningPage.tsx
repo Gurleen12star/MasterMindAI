@@ -31,7 +31,7 @@ function PersonalizedLearningContent() {
             exit="out"
             variants={pageVariants(2)}
             transition={pageTransition(1.5)}
-            className="w-full min-h-[calc(100vh-200px)]"
+            className="w-full"
           >
             <Introduction />
           </motion.div>
@@ -45,7 +45,7 @@ function PersonalizedLearningContent() {
             exit="out"
             variants={pageVariants(2)}
             transition={pageTransition(1.5)}
-            className="w-full min-h-[calc(100vh-64px)]"
+            className="w-full"
           >
             <IntroductionLoading />
           </motion.div>
@@ -58,7 +58,7 @@ function PersonalizedLearningContent() {
           exit="out"
           variants={pageVariants(2)}
           transition={pageTransition(1.5)}
-          className={`w-full min-h-[calc(100vh-64px)] ${studyPlatform.show ? "visible" : "invisible h-0 max-h-0 overflow-hidden"}`}
+          className={`w-full ${studyPlatform.show ? "visible" : "invisible h-0 max-h-0 overflow-hidden"}`}
         >
           <StudyPlatform />
         </motion.div>
