@@ -28,12 +28,15 @@ function App() {
     // Enable custom cursor after preloader disappears
     setTimeout(() => {
       document.documentElement.classList.add('custom-cursor-enabled');
+      console.log('App: Added custom-cursor-enabled class');
+      console.log('App: Class present?', document.documentElement.classList.contains('custom-cursor-enabled'));
     }, 500); // Wait for preloader to fully disappear (100ms delay + 300ms fade + 100ms buffer)
     
     // Add keyboard shortcut (Escape) to toggle custom cursor for accessibility
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
         document.documentElement.classList.toggle('custom-cursor-enabled');
+        console.log('App: Toggled custom cursor, enabled?', document.documentElement.classList.contains('custom-cursor-enabled'));
       }
     };
     

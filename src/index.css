@@ -179,7 +179,7 @@
   filter: drop-shadow(0 4px 6px rgba(var(--chart-5), 0.2));
 }
 
-/* Custom Cursor Styles - Now opt-in with class .custom-cursor-enabled */
+/* Custom Cursor Styles */
 .custom-cursor-enabled {
   cursor: none !important;
 }
@@ -188,76 +188,6 @@
 .custom-cursor-enabled *::before,
 .custom-cursor-enabled *::after {
   cursor: none !important;
-}
-
-.curzr-arrow-pointer {
-  position: fixed !important;
-  width: var(--cursor-size);
-  height: var(--cursor-size);
-  pointer-events: none !important;
-  z-index: 9999999 !important;
-  top: 0;
-  left: 0;
-  will-change: transform;
-  transition: opacity 0.2s ease;
-  opacity: 0;
-  visibility: hidden;
-  display: block;
-}
-
-/* Show cursor only when custom cursor is enabled */
-html.custom-cursor-enabled .curzr-arrow-pointer {
-  opacity: 1;
-  visibility: visible;
-}
-
-.curzr-arrow-pointer svg {
-  width: 100%;
-  height: 100%;
-}
-
-.curzr-arrow-pointer .inner {
-  fill: white;
-  stroke: currentColor;
-  stroke-width: 1;
-}
-
-.curzr-arrow-pointer .outer {
-  fill: var(--cursor-color-default);
-  transition: fill var(--cursor-transition-duration) var(--cursor-transition-timing);
-}
-
-/* Cursor color change when hovering clickable elements */
-.curzr-arrow-pointer.hovering-clickable .outer {
-  fill: hsl(var(--primary)) !important;
-}
-
-/* Force cursor visibility in ALL contexts - including modals, dialogs, popups */
-[data-radix-dialog-overlay],
-[data-radix-dialog-content],
-[data-radix-popover-content],
-[data-radix-dropdown-menu-content],
-[data-radix-sheet-overlay],
-[data-radix-sheet-content],
-.modal,
-.popup,
-.overlay,
-.dialog,
-.popover,
-.dropdown {
-  cursor: none !important;
-}
-
-/* Ensure cursor is ALWAYS visible and on top */
-body .curzr-arrow-pointer {
-  z-index: 9999999 !important;
-  position: fixed !important;
-  pointer-events: none !important;
-}
-
-/* Override any potential z-index conflicts */
-.curzr-arrow-pointer {
-  z-index: 2147483647 !important; /* Maximum z-index value */
 }
 
 /* Navbar Background Styles */
