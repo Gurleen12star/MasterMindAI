@@ -10,7 +10,7 @@ interface MermaidDiagramProps {
 // Initialize mermaid once at module level
 mermaid.initialize({
   startOnLoad: true, 
-  theme: 'neutral',
+  theme: 'base',
   securityLevel: 'loose',
   fontFamily: 'inherit',
   flowchart: {
@@ -19,6 +19,18 @@ mermaid.initialize({
     htmlLabels: true,
     rankSpacing: 100,
     nodeSpacing: 80,
+  },
+  themeVariables: {
+    primaryColor: 'hsl(252, 87%, 73%)',
+    primaryTextColor: 'hsl(0, 0%, 3.9%)',
+    primaryBorderColor: 'hsl(240, 5.9%, 90%)',
+    lineColor: 'hsl(0, 0%, 45.1%)',
+    secondaryColor: 'hsl(145, 63%, 49%)',
+    tertiaryColor: 'hsl(45, 100%, 51%)',
+    background: 'hsl(0, 0%, 100%)',
+    mainBkg: 'hsl(0, 0%, 96.1%)',
+    secondBkg: 'hsl(145, 63%, 49%)',
+    tertiaryBkg: 'hsl(45, 100%, 51%)',
   },
   htmlLabels: true,
 } as any);
@@ -148,54 +160,64 @@ export function MermaidDiagram({ definition, className = '' }: MermaidDiagramPro
         </div>
       )}
       
-      <div className="zoom-controls flex items-center gap-2 mb-2">
-        <button 
-          onClick={handleZoomOut}
-          className="p-1 bg-muted rounded hover:bg-accent"
-          aria-label="Zoom out"
-        >
-          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <circle cx="11" cy="11" r="8"></circle>
-            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-            <line x1="8" y1="11" x2="14" y2="11"></line>
+      <div className="flex justify-between items-center mb-3 p-2 bg-muted/30 rounded-lg border border-border/50">
+        <div className="flex items-center gap-1">
+          <button 
+            onClick={handleZoomOut}
+            className="p-1.5 bg-background rounded-md hover:bg-accent transition-colors shadow-sm border border-border/30"
+            aria-label="Zoom out"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <circle cx="11" cy="11" r="8"></circle>
+              <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+              <line x1="8" y1="11" x2="14" y2="11"></line>
+            </svg>
+          </button>
+          
+          <span className="text-xs font-mono px-2 py-1 bg-background rounded border border-border/30 min-w-[45px] text-center">
+            {(zoom * 100).toFixed(0)}%
+          </span>
+          
+          <button 
+            onClick={handleZoomIn}
+            className="p-1.5 bg-background rounded-md hover:bg-accent transition-colors shadow-sm border border-border/30"
+            aria-label="Zoom in"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <circle cx="11" cy="11" r="8"></circle>
+              <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+              <line x1="11" y1="8" x2="11" y2="14"></line>
+              <line x1="8" y1="11" x2="14" y2="11"></line>
+            </svg>
+          </button>
+          
+          <button 
+            onClick={handleZoomReset}
+            className="p-1.5 bg-background rounded-md hover:bg-accent transition-colors shadow-sm border border-border/30 ml-1"
+            aria-label="Reset zoom"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M3 12a9 9 0 1 0 18 0 9 9 0 0 0-18 0z"></path>
+              <path d="M17 12H7"></path>
+            </svg>
+          </button>
+        </div>
+        
+        <div className="flex items-center gap-2 text-xs text-muted-foreground">
+          <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M18 15l-6-6-6 6"/>
           </svg>
-        </button>
-        
-        <span className="text-xs font-mono">{(zoom * 100).toFixed(0)}%</span>
-        
-        <button 
-          onClick={handleZoomIn}
-          className="p-1 bg-muted rounded hover:bg-accent"
-          aria-label="Zoom in"
-        >
-          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <circle cx="11" cy="11" r="8"></circle>
-            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-            <line x1="11" y1="8" x2="11" y2="14"></line>
-            <line x1="8" y1="11" x2="14" y2="11"></line>
-          </svg>
-        </button>
-        
-        <button 
-          onClick={handleZoomReset}
-          className="p-1 bg-muted rounded hover:bg-accent ml-2"
-          aria-label="Reset zoom"
-        >
-          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M3 12a9 9 0 1 0 18 0 9 9 0 0 0-18 0z"></path>
-            <path d="M17 12H7"></path>
-          </svg>
-        </button>
-        
-        <span className="text-xs text-muted-foreground ml-auto">Drag to pan</span>
+          <span>Drag to pan</span>
+        </div>
       </div>
       
       <div 
-        className="diagram-container border rounded overflow-hidden"
+        className="diagram-container border border-border rounded-lg overflow-hidden bg-background"
         style={{ 
           cursor: dragging ? 'grabbing' : 'grab',
           position: 'relative',
-          height: '500px'
+          height: '460px',
+          backgroundColor: 'hsl(var(--background))'
         }}
         onMouseDown={handleMouseDown}
         onMouseMove={handleMouseMove}
@@ -210,7 +232,8 @@ export function MermaidDiagram({ definition, className = '' }: MermaidDiagramPro
             height: '100%',
             transform: `scale(${zoom}) translate(${position.x}px, ${position.y}px)`,
             transformOrigin: 'center center',
-            transition: dragging ? 'none' : 'transform 0.1s ease-out'
+            transition: dragging ? 'none' : 'transform 0.1s ease-out',
+            backgroundColor: 'hsl(var(--background))'
           }} 
         />
       </div>

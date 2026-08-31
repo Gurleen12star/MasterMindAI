@@ -48,6 +48,12 @@
     0 0 20px rgba(var(--primary), 0.08),
     0 0 40px rgba(var(--primary), 0.04);
 
+  /* Modern Sidebar Animations */
+  --glow-purple: 0 0 20px rgba(147, 51, 234, 0.3);
+  --glow-pink: 0 0 20px rgba(236, 72, 153, 0.3);
+  --glow-blue: 0 0 20px rgba(59, 130, 246, 0.3);
+  --glow-green: 0 0 20px rgba(34, 197, 94, 0.3);
+
   /* Navbar Animation */
   --nav-bg: rgba(255, 255, 255, 0.9);
   --nav-border: rgba(0, 0, 0, 0.05);
@@ -82,23 +88,24 @@
 
 /* Enhanced Mermaid Diagram Styles */
 .mermaid-diagram-wrapper {
-  background: var(--mermaid-bg);
+  background: hsl(var(--background));
   padding: 1.5rem;
   border-radius: var(--radius);
-  box-shadow: 0 0 30px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 0 30px rgba(0, 0, 0, 0.1);
   transition: all 0.3s ease;
   pointer-events: auto;
+  border: 1px solid hsl(var(--border));
 }
 
 .mermaid-render-area {
-  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.1));
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.05));
   transition: all 0.3s ease;
   pointer-events: none;
 }
 
 /* Dialog styles for fullscreen mermaid */
 [role="dialog"] .mermaid-diagram-wrapper {
-  background: var(--mermaid-bg);
+  background: hsl(var(--background));
   box-shadow: none;
   padding: 0;
 }
@@ -621,6 +628,78 @@ body {
     @apply block h-1 rounded-full;
   }
 
+  /* Modern Sidebar Animations */
+  @keyframes float {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-10px); }
+  }
+
+  @keyframes pulse-glow {
+    0%, 100% { 
+      box-shadow: 0 0 5px rgba(147, 51, 234, 0.3),
+                  0 0 10px rgba(147, 51, 234, 0.2),
+                  0 0 15px rgba(147, 51, 234, 0.1);
+    }
+    50% { 
+      box-shadow: 0 0 10px rgba(147, 51, 234, 0.4),
+                  0 0 20px rgba(147, 51, 234, 0.3),
+                  0 0 30px rgba(147, 51, 234, 0.2);
+    }
+  }
+
+  @keyframes shimmer {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(100%); }
+  }
+
+  .sidebar-float {
+    animation: float 6s ease-in-out infinite;
+  }
+
+  .sidebar-glow {
+    animation: pulse-glow 3s ease-in-out infinite;
+  }
+
+  .sidebar-shimmer::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgba(255, 255, 255, 0.1),
+      transparent
+    );
+    animation: shimmer 2s infinite;
+  }
+
+  /* Glass morphism effect */
+  .glass-morph {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  /* Hover glow effects */
+  .hover-glow-purple:hover {
+    box-shadow: var(--glow-purple);
+  }
+
+  .hover-glow-pink:hover {
+    box-shadow: var(--glow-pink);
+  }
+
+  .hover-glow-blue:hover {
+    box-shadow: var(--glow-blue);
+  }
+
+  .hover-glow-green:hover {
+    box-shadow: var(--glow-green);
+  }
+
   .project-box-footer {
     @apply flex justify-between items-center mt-6 pt-4 border-t border-border/10;
   }
@@ -675,10 +754,11 @@ html {
 
 /* Mermaid Diagram Custom Styles */
 .mermaid-diagram-wrapper {
-  background-color: var(--mermaid-bg);
+  background-color: hsl(var(--background));
   padding: 1rem;
   border-radius: var(--radius);
   overflow: auto; /* Add scroll for large diagrams */
+  border: 1px solid hsl(var(--border));
 }
 
 .mermaid-render-area svg {
@@ -693,8 +773,8 @@ html {
 .mermaid-render-area .node > circle,
 .mermaid-render-area .node > ellipse,
 .mermaid-render-area .node > polygon {
-  fill: #2d3748; /* Dark gray fill */
-  stroke: #4a5568; /* Slightly lighter gray border */
+  fill: hsl(var(--muted)) !important; /* Light gray fill */
+  stroke: hsl(var(--border)) !important; /* Border color */
   stroke-width: 2px;
   rx: 8px; /* Rounded corners */
   ry: 8px; /* Rounded corners */
@@ -709,11 +789,11 @@ html {
 
 /* Edge Path Styles */
 .mermaid-render-area .edgePath path.path {
-  stroke: var(--mermaid-edge-color);
+  stroke: hsl(var(--muted-foreground)) !important;
   stroke-width: 2px;
 }
 .mermaid-render-area .edgePath .arrowhead {
-  fill: var(--mermaid-edge-color);
+  fill: hsl(var(--muted-foreground)) !important;
 }
 
 /* Edge Label Styles (if any) */
