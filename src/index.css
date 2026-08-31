@@ -47,13 +47,43 @@
 }
 
 /* UnicornStudio Background Styles */
-[data-us-project] {
-  position: fixed !important;
+.unicorn-studio-bg {
+  position: absolute !important;
   top: 0;
   left: 0;
-  width: 100vw !important;
-  height: 100vh !important;
+  width: 100% !important;
+  height: 100% !important;
   z-index: 0;
+  border-radius: inherit;
+  overflow: hidden;
+}
+
+/* Hide UnicornStudio watermark */
+[id*="us-watermark"],
+[class*="us-watermark"],
+[data-us-watermark],
+.unicorn-studio-bg div[style*="position: fixed"],
+.unicorn-studio-bg div[style*="bottom: 0"],
+.unicorn-studio-bg div[style*="bottom:0"],
+.unicorn-studio-bg div[style*="right: 0"],
+.unicorn-studio-bg div[style*="right:0"],
+.unicorn-studio-bg div:has(> img[alt*="unicorn"]),
+.unicorn-studio-bg div:has(> span:contains("Made with")),
+.unicorn-studio-bg iframe div[style*="position: fixed"],
+.unicorn-studio-bg iframe div[style*="bottom: 0"],
+div[style*="z-index: 999999"] {
+  display: none !important;
+  opacity: 0 !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+}
+
+.unicorn-studio-bg iframe,
+.unicorn-studio-bg canvas {
+  width: 100% !important;
+  height: 100% !important;
+  border-radius: inherit !important;
+  overflow: hidden !important;
 }
 
 #root {
