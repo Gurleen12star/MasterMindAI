@@ -5,6 +5,14 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { useToast } from '@/hooks/use-toast';
 import { supabaseClient } from '@/lib/supabase-admin';
 
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+
 import { generateRoadmapMermaid } from '@/lib/gemini';
 import { MermaidDiagram } from '@/components/ui/mermaid-diagram';
 import { Card } from '@/components/ui/card';
@@ -150,8 +158,6 @@ export default function RoadmapGeneratorPage() {
       // Save to Supabase database
       try {
         console.log("Attempting to save roadmap to Supabase for user:", user.id);
-        
-        // Proceed with database save
         
         // First, check if we can connect to the database
         const { error: pingError } = await supabaseClient
@@ -321,9 +327,30 @@ export default function RoadmapGeneratorPage() {
             <Card className="p-6 flex-1">
               <div className="flex justify-between items-center mb-2">
                 <h3 className="font-semibold text-lg">{selectedRoadmap.topic}</h3>
-                <p className="text-sm text-muted-foreground">
-                  Created on {formatDate(selectedRoadmap.created_at)}
-                </p>
+                <div className="flex items-center gap-2">
+                  <p className="text-sm text-muted-foreground">
+                    Created on {formatDate(selectedRoadmap.created_at)}
+                  </p>
+                  <Dialog>
+                    <DialogTrigger asChild>
+                      <Button variant="outline" size="sm">
+                        Expand
+                      </Button>
+                    </DialogTrigger>
+                    <DialogContent className="max-w-7xl h-[90vh] flex flex-col">
+                      <DialogHeader>
+                        <DialogTitle>{selectedRoadmap.topic}</DialogTitle>
+                      </DialogHeader>
+                      <div className="flex-grow w-full overflow-auto p-4">
+                        <MermaidDiagram
+                          diagram={selectedRoadmap.mermaid_code}
+                          key={`fullscreen-${selectedRoadmap.id}`}
+                          className="w-full h-full"
+                        />
+                      </div>
+                    </DialogContent>
+                  </Dialog>
+                </div>
               </div>
               <div className="border rounded-md p-6 bg-background overflow-visible">
                 <div className="mb-2 text-xs text-muted-foreground">

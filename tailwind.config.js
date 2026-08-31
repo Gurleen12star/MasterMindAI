@@ -1,5 +1,7 @@
+const { fontFamily } = require("tailwindcss/defaultTheme");
+
 /** @type {import('tailwindcss').Config} */
-export default {
+module.exports = {
   darkMode: ['class'],
   content: [
     './pages/**/*.{ts,tsx}',
@@ -8,7 +10,17 @@ export default {
     './src/**/*.{ts,tsx}',
   ],
   theme: {
+    container: {
+      center: true,
+      padding: "2rem",
+      screens: {
+        "2xl": "1400px",
+      },
+    },
     extend: {
+      fontFamily: {
+        sans: ["Plus Jakarta Sans", ...fontFamily.sans],
+      },
       borderRadius: {
         lg: 'var(--radius)',
         md: 'calc(var(--radius) - 2px)',

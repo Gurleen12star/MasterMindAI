@@ -6,7 +6,7 @@ import { FileText, Headphones, Video, Wand2, Sparkles } from 'lucide-react';
 
 export default function DemoSection() {
   const [content, setContent] = useState<string>(
-    "Imagine having an AI companion that understands your unique learning style. EchoVerse adapts to your preferences, transforming complex content into formats that resonate with you. From detailed technical documentation to engaging video tutorials, watch as your content evolves into the perfect learning experience."
+    "The Attention mechanism in deep learning is a powerful technique that allows neural networks to focus on specific parts of an input sequence. Initially developed for machine translation, it has become a cornerstone of modern architectures like the Transformer, enabling significant advances in natural language processing, computer vision, and more."
   );
 
   return (
@@ -20,10 +20,10 @@ export default function DemoSection() {
       <div className="container px-4 max-w-[1200px] mx-auto">
         <div className="relative mx-auto max-w-5xl text-center mb-16">
           <h2 className="text-4xl md:text-5xl font-bold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-primary to-primary/70">
-            See EchoVerse in Action
+            From Idea to Insight, Instantly.
           </h2>
           <p className="mt-4 text-lg md:text-xl text-muted-foreground">
-            Experience how our AI transforms content across different formats.
+            Watch how EchoVerse can take a single piece of content and transform it into a multi-format learning experience.
           </p>
         </div>
         
@@ -38,14 +38,14 @@ export default function DemoSection() {
               </div>
               <textarea
                 className="h-48 w-full resize-none rounded-xl border-2 border-primary/20 bg-background/60 backdrop-blur-sm p-4 text-base focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary/40 transition-all duration-300 placeholder:text-muted-foreground/60"
-                placeholder="Enter text content to transform..."
+                placeholder="Paste an article, upload a document, or simply type a topic..."
                 value={content}
                 onChange={(e) => setContent(e.target.value)}
               />
               <div className="mt-6">
                 <Button className="w-full bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 transition-all duration-300 shadow-lg hover:shadow-xl hover:shadow-primary/25 rounded-xl h-12">
                   <Sparkles className="mr-2 h-5 w-5" />
-                  Transform Content
+                  See The Magic
                 </Button>
               </div>
             </BentoBox>
@@ -80,7 +80,7 @@ export default function DemoSection() {
                   <div className="rounded-xl border-2 border-primary/20 bg-card/60 backdrop-blur-sm p-6 shadow-lg">
                     <p className="mb-3 font-semibold text-foreground">AI-Generated Summary</p>
                     <p className="text-sm text-muted-foreground leading-relaxed">
-                      EchoVerse personalizes learning through AI-powered content recommendations and multi-modal transformations, analyzing user preferences and enabling seamless conversion between text, audio, and video formats for an optimized educational experience.
+                      The Attention mechanism enables neural networks to focus on key parts of an input, revolutionizing fields like NLP and forming the basis of modern Transformer models.
                     </p>
                   </div>
                 </TabsContent>

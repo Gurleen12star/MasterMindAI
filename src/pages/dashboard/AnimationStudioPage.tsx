@@ -179,14 +179,13 @@ export default function AnimationStudioPage() {
   return (
     <div className="p-4 md:p-6 space-y-6">
       {/* Warning Banner */}
-      <div className="relative overflow-hidden bg-gradient-to-r from-orange-100 via-red-100 to-pink-100 border-2 border-orange-200 rounded-xl p-4 group">
-        <div className="flex items-center gap-3 mb-2">
-          <AlertTriangle className="h-5 w-5 text-orange-600 flex-shrink-0" />
-          <h3 className="font-semibold text-orange-800">Important Processing Information</h3>
-        </div>
-        <div className="relative h-8 overflow-hidden bg-orange-50/50 rounded-md">
-          <div className="scrolling-text absolute whitespace-nowrap text-sm text-orange-700 font-medium leading-8 group-hover:animation-paused">
-            ⚠️ Animation processing is hosted on GitHub and may take 20+ minutes to complete • Please don't close the browser or disconnect from the network • The system may occasionally experience errors during processing • Check back periodically for updates • ⚠️
+      <div className="sticky top-0 z-10 group overflow-hidden bg-red-600 text-white rounded-md shadow-md">
+        <div className="flex items-center gap-2 p-2">
+          <AlertTriangle className="h-5 w-5 flex-shrink-0" />
+          <div className="relative flex-1 h-5 overflow-hidden">
+            <div className="scrolling-text absolute whitespace-nowrap text-sm font-medium leading-5 group-hover:animation-paused">
+              ⚠️ Animation processing is hosted on GitHub and may take 20+ minutes to complete • Please don't close the browser or disconnect from the network • The system may occasionally experience errors during processing • Check back periodically for updates • ⚠️
+            </div>
           </div>
         </div>
       </div>

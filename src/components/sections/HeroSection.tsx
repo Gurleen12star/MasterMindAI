@@ -1,16 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import robotImage from '../../assets/robott.png';
 
-// Add type declaration for UnicornStudio
-declare global {
-  interface Window {
-    UnicornStudio?: {
-      isInitialized?: boolean;
-      init: (options?: { hideWatermark?: boolean }) => void;
-    };
-  }
-}
-
 export default function HeroSection() {
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const heroCardRef = useRef<HTMLDivElement>(null);
@@ -36,21 +26,6 @@ export default function HeroSection() {
     heroCard?.addEventListener("mousemove", handleMouseMove as any);
     heroCard?.addEventListener("mouseleave", resetPosition);
     
-    // Initialize UnicornStudio if it's available
-    if (window.UnicornStudio && typeof window.UnicornStudio.init === 'function') {
-      window.UnicornStudio.init();
-    } else {
-      // If UnicornStudio is not available, create and load the script
-      const script = document.createElement('script');
-      script.src = "https://cdn.jsdelivr.net/gh/hiunicornstudio/unicornstudio.js@v1.4.25/dist/unicornStudio.umd.js";
-      script.onload = () => {
-        if (window.UnicornStudio && typeof window.UnicornStudio.init === 'function') {
-          window.UnicornStudio.init();
-        }
-      };
-      document.head.appendChild(script);
-    }
-    
     return () => {
       heroCard?.removeEventListener("mousemove", handleMouseMove as any);
       heroCard?.removeEventListener("mouseleave", resetPosition);
@@ -64,18 +39,6 @@ export default function HeroSection() {
           className="hero-card"
           ref={heroCardRef}
         >
-          <div 
-            data-us-project="1gY80LcIkYtWkoIA4cVK" 
-            className="unicorn-studio-bg" 
-            style={{ 
-              position: 'absolute',
-              inset: 0,
-              borderRadius: 'inherit',
-              overflow: 'hidden',
-              zIndex: 0,
-              pointerEvents: 'none'
-            }}
-          ></div>
           
           {/* Modern Overlay Effect */}
           <div className="hero-overlay-effect"></div>
@@ -106,8 +69,8 @@ export default function HeroSection() {
             />
           </div>
           <div className="hero-content" style={{ zIndex: 3 }}>
-            <p className="text-3xl md:text-4xl lg:text-5xl font-bold">AI-Powered Learning Hub</p>
-            <p className="text-lg md:text-xl lg:text-2xl opacity-100">Transform Your Learning Journey</p>
+            <p className="text-3xl md:text-4xl lg:text-5xl font-bold">Your Universe of Knowledge, Reimagined by AI.</p>
+            <p className="text-lg md:text-xl lg:text-2xl opacity-100">From deep research to dynamic content, master any subject your way.</p>
           </div>
         </div>
       </div>

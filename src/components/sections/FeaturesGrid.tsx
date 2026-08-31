@@ -2,9 +2,9 @@ import { BentoBox } from '@/components/ui/BentoBox';
 import { 
   Brain, 
   LanguagesIcon, 
-  LineChart, 
-  Lock, 
-  MessageSquareText, 
+  Search, 
+  ShieldCheck, 
+  DollarSign, 
   Video
 } from 'lucide-react';
 
@@ -14,15 +14,15 @@ export default function FeaturesGrid() {
       <div className="container relative z-10 px-4 max-w-[1200px] mx-auto">
         <div className="relative mx-auto max-w-5xl text-center mb-16">
           <h2 className="text-4xl font-bold tracking-tight md:text-5xl bg-clip-text text-transparent bg-gradient-to-r from-primary to-primary/70">
-            Amplify Your Learning Journey
+            The Future of Intelligence, at Your Fingertips.
           </h2>
-          <p className="mt-4 text-muted-foreground md:text-lg max-w-2xl mx-auto">
-            Our AI-powered platform creates a personalized learning experience tailored to your needs.
+          <p className="mt-4 text-muted-foreground md:text-lg max-w-3xl mx-auto">
+            EchoVerse is more than a learning tool—it's a complete ecosystem for knowledge acquisition, content creation, and monetization.
           </p>
         </div>
         
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 auto-rows-auto relative">
-          {/* AI-Driven Content */}
+          {/* Intelligent Learning Paths */}
           <BentoBox gradient="purple" className="flex flex-col md:row-span-2 relative overflow-hidden group rounded-3xl min-h-[400px] border border-[hsl(var(--primary)/0.3)] shadow-lg shadow-[hsl(var(--primary)/0.2)]">
             {/* Grainy Gradient Background Layer */}
             <div className="absolute inset-0 rounded-3xl bg-gradient-to-br from-[hsl(var(--primary)/0.9)] via-[hsl(var(--primary)/0.7)] to-[hsl(var(--chart-3)/0.5)] group-hover:from-[hsl(var(--primary)/1)] group-hover:via-[hsl(var(--primary)/0.8)] group-hover:to-[hsl(var(--chart-3)/0.6)] transition-all duration-300" />
@@ -31,14 +31,14 @@ export default function FeaturesGrid() {
               <div className="relative mb-6 inline-flex h-16 w-16 items-center justify-center rounded-2xl bg-white/20 backdrop-blur-sm shadow-lg">
                 <Brain className="h-8 w-8 text-white" />
               </div>
-              <h3 className="mb-4 text-3xl font-bold tracking-tight text-white">AI-Powered Personalized Learning</h3>
+              <h3 className="mb-4 text-3xl font-bold tracking-tight text-white">Intelligent Learning Paths</h3>
               <p className="text-white/90 text-lg leading-relaxed">
-                Experience fully customized learning sessions with AI teachers that adapt their personality and teaching style to match your preferences and learning goals.
+                Go beyond simple tutorials. Our AI generates dynamic learning paths with interactive modules, AI tutors, and progress tracking tailored to your unique goals and style.
               </p>
             </div>
           </BentoBox>
           
-          {/* Multi-Modal Transformations */}
+          {/* The Animation Studio */}
           <BentoBox gradient="blue" className="flex flex-col md:col-span-2 relative overflow-hidden group rounded-3xl min-h-[280px] border border-[hsl(var(--chart-2)/0.3)] shadow-lg shadow-[hsl(var(--chart-2)/0.2)]">
             {/* Grainy Gradient Background Layer */}
             <div className="absolute inset-0 rounded-3xl bg-gradient-to-br from-[hsl(var(--chart-2)/0.9)] via-[hsl(var(--chart-2)/0.7)] to-[#233038]/50 group-hover:from-[hsl(var(--chart-2))] group-hover:via-[hsl(var(--chart-2)/0.8)] group-hover:to-[#233038]/60 transition-all duration-300" />
@@ -47,30 +47,30 @@ export default function FeaturesGrid() {
               <div className="mb-6 inline-flex h-16 w-16 items-center justify-center rounded-2xl bg-white/20 backdrop-blur-sm shadow-lg">
                 <Video className="h-8 w-8 text-white" />
               </div>
-              <h3 className="mb-4 text-3xl font-bold tracking-tight text-white">Multi-Modal Transformations</h3>
+              <h3 className="mb-4 text-3xl font-bold tracking-tight text-white">The Animation Studio</h3>
               <p className="text-white/90 text-lg leading-relaxed">
-                Convert text to voice, video, and other formats instantly with our intelligent transformation tools.
+                Bring your ideas to life. Instantly transform text or articles into engaging video presentations and audible lessons, perfect for any audience or learning preference.
               </p>
             </div>
           </BentoBox>
           
-          {/* Custom Learning Dashboards */}
+          {/* Deep-Dive Research Agent */}
           <BentoBox gradient="teal" className="flex flex-col relative overflow-hidden group rounded-3xl min-h-[280px] border border-[hsl(var(--chart-3)/0.3)] shadow-lg shadow-[hsl(var(--chart-3)/0.2)]">
              {/* Grainy Gradient Background Layer */}
             <div className="absolute inset-0 rounded-3xl bg-gradient-to-br from-[hsl(var(--chart-3)/0.9)] via-[hsl(var(--chart-3)/0.7)] to-[hsl(var(--background)/0.5)] group-hover:from-[hsl(var(--chart-3))] group-hover:via-[hsl(var(--chart-3)/0.8)] group-hover:to-[hsl(var(--background)/0.6)] transition-all duration-300" />
             <div className="absolute inset-0 bg-gradient-to-t from-black/10 via-transparent to-transparent" />
             <div className="relative z-20 p-8 h-full flex flex-col justify-end">
               <div className="mb-6 inline-flex h-16 w-16 items-center justify-center rounded-2xl bg-black/10 backdrop-blur-sm shadow-lg">
-                <LineChart className="h-8 w-8 text-foreground" />
+                <Search className="h-8 w-8 text-foreground" />
               </div>
-              <h3 className="mb-4 text-3xl font-bold tracking-tight text-foreground">Custom Learning Dashboards</h3>
+              <h3 className="mb-4 text-3xl font-bold tracking-tight text-foreground">Deep-Dive Research Agent</h3>
               <p className="text-foreground/80 text-lg leading-relaxed">
-                Track your progress and optimize your learning path with customizable dashboards.
+                Ask any question and receive comprehensive, AI-curated research reports. Our agent sifts through millions of sources to deliver structured insights, saving you hours of work.
               </p>
             </div>
           </BentoBox>
           
-          {/* Instant Translation */}
+          {/* Global Content Creator */}
           <BentoBox gradient="green" className="flex flex-col relative overflow-hidden group rounded-3xl min-h-[280px] border border-[#233038]/30 shadow-lg shadow-[#233038]/20">
             {/* Grainy Gradient Background Layer */}
             <div className="absolute inset-0 rounded-3xl bg-gradient-to-br from-[#233038]/90 via-[#233038]/70 to-[hsl(var(--chart-2)/0.5)] group-hover:from-[#233038] group-hover:via-[#233038]/80 group-hover:to-[hsl(var(--chart-2)/0.6)] transition-all duration-300" />
@@ -79,41 +79,41 @@ export default function FeaturesGrid() {
               <div className="mb-6 inline-flex h-16 w-16 items-center justify-center rounded-2xl bg-white/20 backdrop-blur-sm shadow-lg">
                 <LanguagesIcon className="h-8 w-8 text-white" />
               </div>
-              <h3 className="mb-4 text-3xl font-bold tracking-tight text-white">Instant Translation</h3>
+              <h3 className="mb-4 text-3xl font-bold tracking-tight text-white">Global Content Creator</h3>
               <p className="text-white/90 text-lg leading-relaxed">
-                Break language barriers with real-time translation across multiple languages.
+                Break down barriers. Create and consume content in any language with seamless, real-time translation, expanding your reach and knowledge base.
               </p>
             </div>
           </BentoBox>
           
-          {/* Decentralized Storage */}
+          {/* Fortress-Level Security */}
           <BentoBox gradient="blue" className="flex flex-col relative overflow-hidden group rounded-3xl min-h-[280px] border border-[hsl(var(--secondary)/0.3)] shadow-lg shadow-[hsl(var(--secondary)/0.2)]">
             {/* Grainy Gradient Background Layer */}
             <div className="absolute inset-0 rounded-3xl bg-gradient-to-br from-[hsl(var(--secondary)/0.9)] via-[hsl(var(--secondary)/0.7)] to-[hsl(var(--background)/0.5)] group-hover:from-[hsl(var(--secondary))] group-hover:via-[hsl(var(--secondary)/0.8)] group-hover:to-[hsl(var(--background)/0.6)] transition-all duration-300" />
             <div className="absolute inset-0 bg-gradient-to-t from-black/10 via-transparent to-transparent" />
             <div className="relative z-20 p-8 h-full flex flex-col justify-end">
               <div className="mb-6 inline-flex h-16 w-16 items-center justify-center rounded-2xl bg-black/10 backdrop-blur-sm shadow-lg">
-                <MessageSquareText className="h-8 w-8 text-foreground" />
+                <ShieldCheck className="h-8 w-8 text-foreground" />
               </div>
-              <h3 className="mb-4 text-3xl font-bold tracking-tight text-foreground">Decentralized Storage</h3>
+              <h3 className="mb-4 text-3xl font-bold tracking-tight text-foreground">Fortress-Level Security</h3>
               <p className="text-foreground/80 text-lg leading-relaxed">
-                Secure your content with decentralized storage powered by Algorand and IPFS.
+                Your data is yours alone. We leverage decentralized storage and state-of-the-art encryption to ensure your content and personal information are always protected.
               </p>
             </div>
           </BentoBox>
           
-          {/* Premium Content Gating */}
+          {/* Creator Hub & Monetization */}
           <BentoBox gradient="purple" className="flex flex-col md:col-span-2 relative overflow-hidden group rounded-3xl min-h-[280px] border border-[hsl(var(--primary)/0.3)] shadow-lg shadow-[hsl(var(--primary)/0.2)]">
             {/* Grainy Gradient Background Layer */}
             <div className="absolute inset-0 rounded-3xl bg-gradient-to-br from-[hsl(var(--chart-2)/0.9)] via-[hsl(var(--primary)/0.7)] to-[hsl(var(--chart-3)/0.5)] group-hover:from-[hsl(var(--chart-2))] group-hover:via-[hsl(var(--primary)/0.8)] group-hover:to-[hsl(var(--chart-3)/0.6)] transition-all duration-300" />
             <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent" />
             <div className="relative z-20 p-8 h-full flex flex-col justify-end">
               <div className="mb-6 inline-flex h-16 w-16 items-center justify-center rounded-2xl bg-white/20 backdrop-blur-sm shadow-lg">
-                <Lock className="h-8 w-8 text-white" />
+                <DollarSign className="h-8 w-8 text-white" />
               </div>
-              <h3 className="mb-4 text-3xl font-bold tracking-tight text-white">Premium Content Gating</h3>
+              <h3 className="mb-4 text-3xl font-bold tracking-tight text-white">Creator Hub & Monetization</h3>
               <p className="text-white/90 text-lg leading-relaxed">
-                Monetize your expertise with customizable content access controls and subscriptions.
+                Build your knowledge empire. Gate your premium content, manage subscriptions, and connect with your audience using our integrated monetization tools.
               </p>
             </div>
           </BentoBox>
