@@ -54,14 +54,18 @@ serve(async (req) => {
 
     const contents = [
       {
-        fileData: {
-          mimeType: 'application/pdf',
-          data: pdfBase64,
-        },
-      },
-      {
-        text: prompt,
-      },
+        parts: [
+          {
+            inlineData: {
+              mimeType: 'application/pdf',
+              data: pdfBase64,
+            },
+          },
+          {
+            text: prompt,
+          },
+        ]
+      }
     ];
 
     const result = await model.generateContent({ contents });
