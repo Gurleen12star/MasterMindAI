@@ -758,6 +758,15 @@ html {
   filter: url(#grainy);
 }
 
+/* Prevent grainy effect on hero section */
+.hero-card {
+  filter: none !important;
+}
+
+.hero-card * {
+  filter: none !important;
+}
+
 /* Hide SVG filter from document flow */
 svg[height='0'] { 
   position: fixed;
