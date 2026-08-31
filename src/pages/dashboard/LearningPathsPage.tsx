@@ -301,6 +301,7 @@ export default function LearningPathsPage() {
                       <div className="mermaid-diagram-wrapper transform hover:scale-[1.02] transition-transform duration-300">
                         <MermaidDiagram 
                           definition={mermaidDiagram} 
+                          key={mermaidDiagram}
                           className="w-full min-h-[400px] flex items-center justify-center" 
                         />
                       </div>
@@ -314,6 +315,7 @@ export default function LearningPathsPage() {
                         <div className="mermaid-diagram-wrapper h-full w-full flex items-center justify-center bg-gradient-to-br from-background to-background/95">
                           <MermaidDiagram 
                             definition={mermaidDiagram}
+                            key={mermaidDiagram}
                             className="w-full h-full"
                           />
                         </div>

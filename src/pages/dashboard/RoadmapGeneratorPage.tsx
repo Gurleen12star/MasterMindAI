@@ -290,6 +290,11 @@ export default function RoadmapGeneratorPage() {
                 </div>
                 <div className="mermaid-container" style={{ minHeight: '500px', width: '100%' }}>
                   <MermaidDiagram definition={selectedRoadmap.mermaid_code} className="w-full h-full" />
+                  <MermaidDiagram 
+                    definition={selectedRoadmap.mermaid_code} 
+                    key={selectedRoadmap.mermaid_code}
+                    className="w-full h-full" 
+                  />
                 </div>
               </div>
               <div className="mt-4">

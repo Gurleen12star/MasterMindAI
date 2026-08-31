@@ -7,9 +7,9 @@ interface MermaidDiagramProps {
   className?: string;
 }
 
-// Initialize mermaid once at module level
+// Initialize mermaid once at module level with startOnLoad: false
 mermaid.initialize({
-  startOnLoad: true, 
+  startOnLoad: false, // Prevent automatic scanning, use manual rendering
   theme: 'base',
   securityLevel: 'loose',
   fontFamily: 'inherit',
@@ -101,41 +101,40 @@ export function MermaidDiagram({ definition, className = '' }: MermaidDiagramPro
       
       console.log('Rendering diagram with definition length:', processedDef.length);
       
-      // Create a div with mermaid class for auto-rendering
+      // Create a div with mermaid class for rendering
       const mermaidDiv = document.createElement('div');
       mermaidDiv.className = 'mermaid';
       mermaidDiv.style.width = '100%';
-      mermaidDiv.style.minHeight = '450px';
+      mermaidDiv.style.height = '100%'; // Use full height instead of minHeight
       mermaidDiv.textContent = processedDef;
       
       // Add to DOM
       containerRef.current.appendChild(mermaidDiv);
       
-      // Force rendering with a slight delay to ensure DOM is ready
-      setTimeout(() => {
-        console.log('Initializing mermaid render');
-        try {
-          mermaid.init(undefined, mermaidDiv);
-          
-          // Add observer to check if SVG was rendered and add zoom-fit if needed
-          setTimeout(() => {
-            const svg = containerRef.current?.querySelector('svg');
-            if (svg) {
-              console.log('SVG found and rendered with dimensions:', 
-                svg.getAttribute('width'), 'x', svg.getAttribute('height'));
-              
-              // Ensure SVG has proper dimensions
-              svg.setAttribute('width', '100%');
-              svg.style.minHeight = '400px';
-            } else {
-              console.warn('No SVG found after rendering');
-            }
-          }, 200);
-        } catch (initError) {
-          console.error('Error in mermaid initialization:', initError);
-          setError(`Initialization Error: ${initError instanceof Error ? initError.message : 'Unknown error'}`);
-        }
-      }, 100);
+      // Force rendering immediately after DOM insertion
+      console.log('Initializing mermaid render');
+      try {
+        mermaid.init(undefined, mermaidDiv);
+        
+        // Add observer to check if SVG was rendered and add zoom-fit if needed
+        setTimeout(() => {
+          const svg = containerRef.current?.querySelector('svg');
+          if (svg) {
+            console.log('SVG found and rendered with dimensions:', 
+              svg.getAttribute('width'), 'x', svg.getAttribute('height'));
+            
+            // Ensure SVG has proper dimensions
+            svg.setAttribute('width', '100%');
+            svg.setAttribute('height', '100%');
+            svg.style.minHeight = '400px';
+          } else {
+            console.warn('No SVG found after rendering');
+          }
+        }, 200);
+      } catch (initError) {
+        console.error('Error in mermaid initialization:', initError);
+        setError(`Initialization Error: ${initError instanceof Error ? initError.message : 'Unknown error'}`);
+      }
       
     } catch (err) {
       console.error('Error rendering Mermaid diagram:', err);
@@ -151,6 +150,21 @@ export function MermaidDiagram({ definition, className = '' }: MermaidDiagramPro
       }
     }
   }, [definition]);
+
+  // Add parseError handler for better error catching
+  useEffect(() => {
+    const handleParseError = (error: any) => {
+      console.error('Mermaid parse error:', error);
+      setError(`Parse Error: ${error.message || 'Invalid diagram syntax'}`);
+    };
+
+    mermaid.parseError = handleParseError;
+
+    return () => {
+      // Clean up the error handler
+      mermaid.parseError = undefined;
+    };
+  }, []);
 
   return (
     <div className={`mermaid-diagram-wrapper ${className}`}>
@@ -239,4 +253,4 @@ export function MermaidDiagram({ definition, className = '' }: MermaidDiagramPro
       </div>
     </div>
   );
-} 
+}
