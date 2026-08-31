@@ -105,12 +105,24 @@ export function getFileUrl(bucketId: string, fileId: string): string {
 
 export async function listVideoFiles(): Promise<any[]> {
   try {
+    // Validate configuration before attempting to connect
+    const endpoint = import.meta.env.VITE_APPWRITE_ENDPOINT;
+    const projectId = import.meta.env.VITE_APPWRITE_PROJECT_ID;
+    
+    if (!endpoint || !projectId || projectId === 'your_project_id_here') {
+      throw new Error('Appwrite configuration is missing. Please check your .env file and ensure VITE_APPWRITE_ENDPOINT and VITE_APPWRITE_PROJECT_ID are properly set.');
+    }
+    
     await initializeAppwriteSession();
     const response = await storage.listFiles(FINAL_VIDEOS_BUCKET_ID);
     return response.files;
   } catch (error) {
     console.error('Failed to list video files:', error);
-    return [];
+    // Re-throw with more specific error information
+    if (error instanceof Error) {
+      throw new Error(`Failed to list video files: ${error.message}`);
+    }
+    throw new Error('Failed to list video files: Unknown error occurred');
   }
 }
 
@@ -139,4 +151,4 @@ export async function testConnection(): Promise<{
   }
 }
 
-export { client }; 
+export { client };

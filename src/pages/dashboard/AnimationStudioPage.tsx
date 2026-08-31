@@ -69,9 +69,10 @@ export default function AnimationStudioPage() {
       setVideoHistory(files);
     } catch (error) {
       console.error('Error loading video history:', error);
+      const errorMessage = error instanceof Error ? error.message : 'Failed to load video history';
       toast({
         title: 'Error',
-        description: 'Failed to load video history',
+        description: errorMessage,
         variant: 'destructive',
       });
     }
