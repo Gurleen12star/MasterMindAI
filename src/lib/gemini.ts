@@ -109,20 +109,24 @@ export async function generateLearningPathMermaid(topic: string, level: 'beginne
     ${additionalInfo ? `Consider this context: ${additionalInfo}\n` : ''}
 
     Follow these CRITICAL guidelines:
-    1. Use 'flowchart LR' (Left-to-Right) format
+    1. Use 'flowchart LR' (Left-to-Right) format with subgraphs for visual organization
     2. Each node and connection MUST be on its own line
     3. Use descriptive node IDs (A, B, C1, etc.)
     4. Quote node text containing special characters
-    5. Use these style classes:
-       - Main topic/start: :::classPurple
-       - Core concepts: :::classGreen
-       - Practice/Projects: :::classYellow
-       - Advanced topics: :::classBlue
-       - Assessments/Milestones: :::classOrange
-    6. Keep node text concise (2-5 words)
-    7. Use --> for connections
-    8. Include 5-10 key learning milestones
-    9. Return ONLY valid Mermaid code
+    5. Use these node shapes and style classes for visual hierarchy:
+       - Main topic/start: A["Topic"]:::classPurple (rounded rectangle)
+       - Core concepts: B[("Concept")]:::classGreen (circle)
+       - Practice/Projects: C{{"Project"}}:::classYellow (hexagon)
+       - Advanced topics: D[/"Advanced"/]:::classBlue (parallelogram)
+       - Assessments/Milestones: E{{"Milestone"}}:::classOrange (hexagon)
+    6. Keep node text concise but descriptive (2-5 words)
+    7. Use creative connections:
+       - Main flow: -->
+       - Optional paths: -.->, -.->
+       - Prerequisites: ==>
+    8. Include 6-8 key learning milestones
+    9. Group related nodes using subgraphs
+    10. Return ONLY valid Mermaid code
 
     Example structure:
     flowchart LR
