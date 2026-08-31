@@ -238,7 +238,7 @@ export default function DeepResearchPage() {
     catch (error) { toast({ title: 'Copy Failed', variant: 'destructive' }); }
   };
 
-  const handleGenerateAudio = async () => {
+  const handleGenerateAudio = async (forceShortVersion = false) => {
     if (!result?.report) {
       toast({
         title: "No content",
@@ -251,8 +251,8 @@ export default function DeepResearchPage() {
     setIsGeneratingAudio(true);
     
     try {
-      // ElevenLabs has a 10,000 character limit for TTS
-      const MAX_CHARACTERS = 9800; // Using 9800 to leave some buffer
+      // ElevenLabs character limits - use different limits based on mode
+      const MAX_CHARACTERS = forceShortVersion ? 2000 : 9800; // Shorter for quota issues
       let textToConvert = result.report;
       
       if (textToConvert.length > MAX_CHARACTERS) {
@@ -269,8 +269,8 @@ export default function DeepResearchPage() {
         }
         
         toast({
-          title: "Content Truncated",
-          description: `Report was truncated to ${textToConvert.length} characters to fit audio generation limits.`,
+          title: forceShortVersion ? "Generating Summary Audio" : "Content Truncated",
+          description: `${forceShortVersion ? 'Using first' : 'Report was truncated to'} ${textToConvert.length} characters to ${forceShortVersion ? 'reduce credit usage' : 'fit audio generation limits'}.`,
         });
       }
       
@@ -372,6 +372,8 @@ export default function DeepResearchPage() {
           errorMessage = 'ElevenLabs authentication failed. Check your API key and account credits.';
         } else if (error.message.includes('rate limit')) {
           errorMessage = 'ElevenLabs rate limit exceeded. Please try again later.';
+        } else if (error.message.includes('quota exceeded') || error.message.includes('credits remaining')) {
+          errorMessage = error.message; // Use the detailed quota message from the Edge Function
         } else {
           errorMessage = error.message;
         }
@@ -386,6 +388,10 @@ export default function DeepResearchPage() {
       setIsGeneratingAudio(false);
     }
   };
+
+  // Handler functions for the UI
+  const handleGenerateFullAudio = () => handleGenerateAudio(false);
+  const handleGenerateShortAudio = () => handleGenerateAudio(true);
 
   // Audio player control functions
   const handlePlayPause = () => {
@@ -560,7 +566,7 @@ export default function DeepResearchPage() {
                         variant="default"
                         size="icon"
                         className="h-12 w-12 rounded-full shadow-lg bg-primary text-primary-foreground hover:bg-primary/90 transition-all duration-200"
-                        onClick={handleGenerateAudio}
+                        onClick={handleGenerateFullAudio}
                         disabled={isGeneratingAudio}
                       >
                         {isGeneratingAudio ? (

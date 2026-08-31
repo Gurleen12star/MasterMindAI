@@ -400,6 +400,8 @@ const StudyPlatform = () => {
                     errorMessage = 'ElevenLabs authentication failed. Check your API key and account credits.';
                 } else if (error.message.includes('rate limit')) {
                     errorMessage = 'ElevenLabs rate limit exceeded. Please try again later.';
+                } else if (error.message.includes('quota exceeded') || error.message.includes('credits remaining')) {
+                    errorMessage = error.message; // Use the detailed quota message from the Edge Function
                 } else {
                     errorMessage = error.message;
                 }

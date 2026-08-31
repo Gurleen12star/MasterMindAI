@@ -53,7 +53,24 @@ serve(async (req) => {
 
     if (!response.ok) {
       const errorData = await response.text();
-      throw new Error(`ElevenLabs API error: ${response.status} ${errorData}`);
+      
+      // Parse the error to provide better user feedback
+      let userFriendlyError = `ElevenLabs API error: ${response.status}`;
+      try {
+        const errorJson = JSON.parse(errorData);
+        if (errorJson.detail?.status === 'quota_exceeded') {
+          const remaining = errorJson.detail.message.match(/(\d+) credits remaining/)?.[1] || 'unknown';
+          const required = errorJson.detail.message.match(/(\d+) credits are required/)?.[1] || 'unknown';
+          userFriendlyError = `ElevenLabs quota exceeded. You have ${remaining} credits remaining, but ${required} credits are required. Please add credits to your ElevenLabs account or try with shorter text.`;
+        } else if (errorJson.detail?.message) {
+          userFriendlyError = errorJson.detail.message;
+        }
+      } catch (parseError) {
+        // If we can't parse the error, use the original
+        userFriendlyError = `ElevenLabs API error: ${response.status} ${errorData}`;
+      }
+      
+      throw new Error(userFriendlyError);
     }
 
     // Get audio as binary data
