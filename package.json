@@ -49,6 +49,7 @@
     "elevenlabs": "^0.8.2",
     "embla-carousel-react": "^8.3.0",
     "framer-motion": "^12.16.0",
+    "gsap": "^3.13.0",
     "input-otp": "^1.2.4",
     "lucide-react": "^0.446.0",
     "mermaid": "^11.6.0",
