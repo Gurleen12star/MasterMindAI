@@ -10,7 +10,7 @@ import {
 
 export default function FeaturesGrid() {
   return (
-    <section id="features" className="relative -mt-32 md:-mt-48 py-24 md:py-32 overflow-hidden">
+    <section className="py-24 px-4">
       {/* Simplified overlay effects - Updated to use theme variable */}
       
       <div className="container relative z-10 px-4 max-w-[1200px] mx-auto">

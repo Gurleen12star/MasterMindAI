@@ -52,14 +52,10 @@ export default function TestimonialsSection() {
   }, [nextTestimonial]);
 
   return (
-    <section className="relative py-16 md:py-24 overflow-hidden">
-      {/* Blurred oval overlay effects */}
-      <div className="absolute top-10 -right-32 w-72 h-72 rounded-full bg-gradient-to-br from-green-500/6 via-emerald-500/4 to-transparent blur-3xl opacity-50" />
-      <div className="absolute -bottom-10 -left-32 w-80 h-80 rounded-full bg-gradient-to-br from-primary/8 via-blue-500/4 to-transparent blur-3xl opacity-60" />
-      
-      <div className="container px-4 max-w-[1200px] mx-auto">
-        <div className="mx-auto max-w-5xl text-center mb-16">
-          <h2 className="text-3xl font-bold tracking-tight md:text-4xl bg-clip-text text-transparent bg-gradient-to-r from-primary to-primary/70">
+    <section className="py-24 px-4">
+      <div className="container mx-auto max-w-7xl">
+        <div className="text-center mb-16">
+          <h2 className="text-4xl md:text-5xl font-bold mb-6 bg-gradient-to-r from-primary via-primary/80 to-primary/60 bg-clip-text text-transparent">
             What Our Users Say
           </h2>
           <p className="mt-4 text-muted-foreground md:text-lg">

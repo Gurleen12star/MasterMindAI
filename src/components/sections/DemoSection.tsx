@@ -5,21 +5,13 @@ import { Button } from '@/components/ui/button';
 import { FileText, Headphones, Video, Wand2, Sparkles } from 'lucide-react';
 
 export default function DemoSection() {
-  const [content, setContent] = useState<string>(
-    "Imagine having an AI companion that understands your unique learning style. EchoVerse adapts to your preferences, transforming complex content into formats that resonate with you. From detailed technical documentation to engaging video tutorials, watch as your content evolves into the perfect learning experience."
-  );
+  const [isPlaying, setIsPlaying] = useState(false);
 
   return (
-    <section id="demo" className="relative py-16 md:py-24 lg:py-32 overflow-hidden">
-      {/* Blurred oval overlay effects */}
-      <div className="absolute top-20 -right-40 w-80 h-80 rounded-full bg-gradient-to-br from-blue-500/6 via-cyan-500/4 to-transparent blur-3xl opacity-50" />
-      <div className="absolute -bottom-20 -left-40 w-96 h-96 rounded-full bg-gradient-to-br from-purple-500/8 via-primary/4 to-transparent blur-3xl opacity-60" />
-      
-      <div className="absolute inset-0 bg-gradient-to-b from-background/50 via-background to-background/50" />
-      <div className="absolute inset-0 bg-grid-white/[0.02]" />
-      <div className="container px-4 max-w-[1200px] mx-auto">
-        <div className="relative mx-auto max-w-5xl text-center mb-16">
-          <h2 className="text-4xl md:text-5xl font-bold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-primary to-primary/70">
+    <section className="py-24 px-4">
+      <div className="container mx-auto max-w-7xl">
+        <div className="text-center mb-16">
+          <h2 className="text-4xl md:text-5xl font-bold mb-6 bg-gradient-to-r from-primary via-primary/80 to-primary/60 bg-clip-text text-transparent">
             See EchoVerse in Action
           </h2>
           <p className="mt-4 text-lg md:text-xl text-muted-foreground">
