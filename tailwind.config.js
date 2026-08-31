@@ -9,10 +9,21 @@ export default {
   ],
   theme: {
     extend: {
+      fontFamily: {
+        'roboto': ['Roboto', 'sans-serif'],
+      },
+      colors: {
+        'sidebar-start': '#0048bd',
+        'sidebar-end': '#44a7fd',
+        'sidebar-hover-text': '#3f5efb',
+      },
       borderRadius: {
         lg: 'var(--radius)',
         md: 'calc(var(--radius) - 2px)',
         sm: 'calc(var(--radius) - 4px)',
+        'tr-80': '0 80px 0 0',
+        'tl-20': '20px 0 0 20px',
+        'bl-20': '0 0 20px 20px',
       },
       colors: {
         background: 'hsl(var(--background))',

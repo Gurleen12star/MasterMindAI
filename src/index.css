@@ -497,8 +497,58 @@ body {
   color: hsl(var(--foreground));
   margin: 0;
   padding: 0;
+  font-family: 'Roboto', sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+/* Modern Sidebar Styles */
+.sidebar-gradient-bg {
+  background: linear-gradient(30deg, #0048bd, #44a7fd);
+}
+
+.sidebar-nav-link {
+  position: relative;
+  display: block;
+  font-size: 12px;
+  color: white;
+  padding: 12px;
+  padding-left: 30px;
+  text-decoration: none;
+  -webkit-tap-highlight-color: transparent;
+  transition: all 0.3s ease;
+}
+
+.sidebar-nav-link:hover {
+  color: #3f5efb;
+  background: white;
+  border-top-left-radius: 20px;
+  border-bottom-left-radius: 20px;
+  position: relative;
+}
+
+.sidebar-nav-link:hover::after {
+  content: "";
+  position: absolute;
+  background-color: transparent;
+  bottom: 100%;
+  right: 0;
+  height: 35px;
+  width: 35px;
+  border-bottom-right-radius: 18px;
+  box-shadow: 0 20px 0 0 white;
+}
+
+.sidebar-nav-link:hover::before {
+  content: "";
+  position: absolute;
+  background-color: transparent;
+  top: 38px;
+  right: 0;
+  height: 35px;
+  width: 35px;
+  border-top-right-radius: 18px;
+  box-shadow: 0 -20px 0 0 white;
 }
 
 @layer base {
