@@ -9,7 +9,7 @@ import Typed from "typed.js";
 import { AnimatePresence, motion } from "framer-motion";
 import prompts from "@/lib/personalized-learning/prompts";
 import interactionGemini from "@/lib/personalized-learning/geminiClient";
-import { Award, ArrowLeft, ArrowRight, Loader2, Copy, SendToBack, SelectAll, MessageSquare } from "lucide-react";
+import { Award, ArrowLeft, ArrowRight, Loader2, Copy, SendToBack, BoxSelect as SelectAll, MessageSquare } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import {
@@ -360,7 +360,6 @@ const StudyPlatform = () => {
                                                  </ContextMenuContent>
                                              )}
                                          </ContextMenu>
-                                         )}
                                         </CardContent>
                                     </ScrollArea>
                                 </Card>
