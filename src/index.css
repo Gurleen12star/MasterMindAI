@@ -115,6 +115,17 @@
 .custom-cursor-enabled input:hover ~ .curzr-arrow-pointer .outer,
 .custom-cursor-enabled select:hover ~ .curzr-arrow-pointer .outer,
 .custom-cursor-enabled textarea:hover ~ .curzr-arrow-pointer .outer {
+  fill: var(--cursor-color-default);
+  transition: fill 0.2s ease;
+}
+
+/* Change cursor color for clickable elements */
+.custom-cursor-enabled a:hover ~ .curzr-arrow-pointer .outer,
+.custom-cursor-enabled button:hover ~ .curzr-arrow-pointer .outer,
+.custom-cursor-enabled [role="button"]:hover ~ .curzr-arrow-pointer .outer,
+.custom-cursor-enabled input:hover ~ .curzr-arrow-pointer .outer,
+.custom-cursor-enabled select:hover ~ .curzr-arrow-pointer .outer,
+.custom-cursor-enabled textarea:hover ~ .curzr-arrow-pointer .outer {
   fill: var(--cursor-color-clickable);
 }
 
@@ -349,9 +360,10 @@ div[style*="z-index: 999999"] {
   --chart-3: 174 70% 40%;
   --chart-4: 318 70% 65%;
   --chart-5: 41 80% 65%;
-
-  /* Custom Cursor */
-  --cursor-color: hsl(var(--foreground));
+  
+  /* Custom Cursor Colors */
+  --cursor-color-default: hsl(var(--foreground));
+  --cursor-color-clickable: hsl(var(--primary));
 
   /* Mermaid Diagram Styles for Dark Mode */
   --mermaid-bg: #111827;
