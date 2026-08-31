@@ -52,7 +52,7 @@ export default function Header() {
           <a href="#" className="flex items-center gap-2 group z-20 relative">
             <div className="relative flex items-center justify-center">
               <EchoVerseLogo 
-                className="h-24 w-24 -my-8 transition-transform duration-300 group-hover:scale-105 text-primary" 
+                className="h-20 w-20 -my-8 transition-transform duration-300 group-hover:scale-105 text-primary" 
               />
             </div>
             <span className="bg-gradient-to-r from-indigo-500 to-purple-500 bg-clip-text text-xl font-bold text-transparent hover:scale-105 transition-transform duration-300">
