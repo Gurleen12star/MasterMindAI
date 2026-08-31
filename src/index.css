@@ -36,10 +36,6 @@
   /* Navbar Animation */
   --nav-bg: rgba(255, 255, 255, 0.8);
   --nav-border: rgba(255, 255, 255, 0.1);
-  --nav-item-width: 100px;
-  --nav-item-gap: 0.5rem;
-  --nav-animation-duration: 200ms;
-  --nav-animation-easing: cubic-bezier(0.4, 0, 0.2, 1);
   
   /* Hero Section Variables */
   --x: 0;
