@@ -54,16 +54,13 @@ export default function TestimonialsSection() {
   return (
     <section className="py-16 md:py-24">
       <div className="container px-4 max-w-[1200px] mx-auto">
-        <div className="mx-auto max-w-5xl text-center">
+        <div className="mx-auto max-w-5xl text-center mb-16">
           <h2 className="text-3xl font-bold tracking-tight md:text-4xl">
             What Our Users Say
           </h2>
           <p className="mt-4 text-muted-foreground md:text-lg">
             Join thousands of satisfied users who have transformed their learning journey.
           </p>
-        </div>
-        
-        <div className="relative mt-16">
           <div className="overflow-hidden">
             <div
               className="flex transition-transform duration-500 ease-in-out"

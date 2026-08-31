@@ -71,7 +71,7 @@ export default function PricingSection() {
   return (
     <section id="pricing" className="py-16 md:py-24 lg:py-32">
       <div className="container px-4 max-w-[1200px] mx-auto">
-        <div className="mx-auto max-w-5xl text-center">
+        <div className="mx-auto max-w-5xl text-center mb-16">
           <h2 className="text-3xl font-bold tracking-tight md:text-4xl">
             Choose Your Learning Journey
           </h2>
