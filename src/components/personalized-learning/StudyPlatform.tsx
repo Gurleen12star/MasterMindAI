@@ -22,7 +22,8 @@ import { supabase } from "@/lib/supabase";
 import { useAuth } from "@/components/auth/SupabaseAuthProvider";
 import { useToast } from "@/hooks/use-toast";
 import ReactMarkdown from 'react-markdown';
-import remarkGfm from 'remark-gfm';
+import remarkGfm from 'remark-gfm'; 
+import { ChevronDown } from 'lucide-react';
 
 interface ExpandedContent {
   originalText: string;
@@ -411,12 +412,20 @@ const StudyPlatform = () => {
                             {/* Render Expanded Content */}
                             {expansions.length > 0 && (
                                 <div className="mt-6 space-y-4">
-                                    <h3 className="text-lg font-semibold">Expanded Content</h3>
+                                    <h3 className="text-lg font-semibold flex items-center gap-2">
+                                        <Expand className="h-5 w-5 text-primary" />
+                                        Expanded Content
+                                    </h3>
                                     {expansions.map((exp) => (
                                         <details key={exp.id} className="group rounded-lg border bg-[#2A2B32] p-4">
-                                            <summary className="flex cursor-pointer items-center justify-between font-medium text-foreground">
-                                                Original: "{exp.originalText.substring(0, 50)}..."
-                                                {exp.isLoading && <Loader2 className="h-4 w-4 animate-spin text-primary" />}
+                                            <summary className="flex cursor-pointer items-center justify-between font-medium text-foreground list-none">
+                                                <div className="flex items-center gap-2 max-w-[90%]">
+                                                    <ChevronDown className="h-4 w-4 text-primary transition-transform duration-200 group-open:rotate-180 flex-shrink-0" />
+                                                    <span className="line-clamp-1" title={exp.originalText}>
+                                                        Original: "{exp.originalText}"
+                                                    </span>
+                                                </div>
+                                                {exp.isLoading && <Loader2 className="h-5 w-5 animate-spin text-primary ml-2 flex-shrink-0" />}
                                             </summary>
                                             <div className="prose prose-neutral dark:prose-invert mt-4 max-w-none text-muted-foreground">
                                                 {exp.expandedText ? (
