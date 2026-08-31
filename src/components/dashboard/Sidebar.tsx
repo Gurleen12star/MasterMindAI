@@ -14,8 +14,6 @@ import {
   Wand2,
   Film,
   BotMessageSquare,
-  Award,
-  Users,
   Folder,
   Plus,
   User,
@@ -103,8 +101,6 @@ export default function Sidebar({ className }: SidebarProps) {
     { to: '/dashboard/summaries', icon: Wand2, label: 'Quick Summaries' },
     { to: '/dashboard/animation-studio', icon: Film, label: 'Animation Studio' },
     { to: '/dashboard/convo-ai', icon: BotMessageSquare, label: 'Convo AI' },
-    { to: '/dashboard/mentors', icon: Users, label: 'My Mentors' },
-    { to: '/dashboard/become-mentor', icon: Award, label: 'Become a Mentor' },
     { to: '/dashboard/personalized-learning', icon: GraduationCap, label: 'Personalized Learning' },
   ];
 
