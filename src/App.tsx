@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useAuth } from '@clerk/clerk-react';
 import { ThemeProvider } from '@/components/theme/ThemeProvider';
+import CustomCursor from '@/components/ui/CustomCursor';
 import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
 import HeroSection from '@/components/sections/HeroSection';
@@ -68,6 +69,7 @@ function App() {
   return (
     <ThemeProvider defaultTheme="dark" storageKey="echoverse-theme">
       <div className="min-h-screen relative bg-transparent antialiased overflow-x-hidden">
+        <CustomCursor />
         {renderContent()}
         <Toaster />
       </div>
