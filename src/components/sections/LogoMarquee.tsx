@@ -3,143 +3,89 @@ import { logoPaths, type LogoPath } from '@/utils/logoPaths';
 
 interface MarqueeConfig {
   theme: 'dark' | 'light';
-  items: number;
-  x: number;
-  y: number;
-  blur: number;
-  explode: boolean;
   duration: number;
-  step: number;
-  transition: number;
-  underlap: number;
-  stagger: number;
 }
 
 export default function LogoMarquee() {
-  const [config] = useState({
+  const [config] = useState<MarqueeConfig>({
     theme: 'dark',
-    items: 4,
-    x: -100,
-    y: 0,
-    blur: 2,
-    explode: false,
-    duration: 20,
-    step: 2,
-    transition: 1,
-    underlap: 2,
-    stagger: 0.6,
+    duration: 30,
   });
 
-  const [keyframes, setKeyframes] = useState('');
-  const [lists, setLists] = useState<string[]>([]);
+  const shouldAnimate = logoPaths.length > 4;
 
-  useEffect(() => {
-    generateKeyframes();
-    generateLists();
-  }, []);
-
-  const generateKeyframes = () => {
-    const base = parseFloat((100 - 100 / config.items).toFixed(2));
-    const first = base - config.underlap;
-    const mid = base + config.transition;
-    const end = 100 - config.underlap - config.transition;
-    const keyframesCSS = `
-      @keyframes appear {
-        0%, ${first}% {
-          animation-timing-function: ease-out;
-          filter: blur(calc(var(--blur, 0) * 1px));
-          opacity: var(--opacity, 0);
-          translate:
-            calc((var(--movement-x, 0) + (var(--u, 0) * var(--movement-step, 0))) * -1px)
-            calc((var(--movement-y, 0) + (var(--u, 0) * var(--movement-step, 0))) * 1px);
-        }
-        ${mid}%, ${end}% {
-          animation-timing-function: ease-in;
-          filter: blur(0px);
-          opacity: 1;
-          translate: 0 0;
-          z-index: 2;
-        }
-        100% {
-          filter: blur(calc(var(--blur, 0) * 1px));
-          opacity: var(--opacity, 0);
-          translate:
-            calc((var(--movement-x, 0) + (var(--u, 0) * var(--movement-step, 0))) * 1px)
-            calc((var(--movement-y, 0) + (var(--u, 0) * var(--movement-step, 0))) * -1px);
-        }
-      }
-    `;
-    setKeyframes(keyframesCSS);
-  };
-
-  const shuffle = (array: LogoPath[]) => {
-    const newArray = [...array];
-    for (let i = newArray.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
+  const renderLogo = (logo: LogoPath) => {
+    if (logo.type === 'file') {
+      return (
+        <img 
+          src={logo.file} 
+          alt={logo.title}
+          className="h-10 w-auto object-contain max-w-[200px]"
+        />
+      );
     }
-    return newArray;
-  };
-
-  const generateLists = () => {
-    const shuffledPaths = shuffle(logoPaths);
-    const newLists = [];
-    
-    for (let l = 0; l < 4; l++) {
-      const listItems = [];
-      for (let index = 0; index < config.items; index++) {
-        const pathIndex = (l * config.items + index) % shuffledPaths.length;
-        const { title, path } = shuffledPaths[pathIndex];
-        listItems.push(`
-          <li data-logo style="--i: ${index + 1};">
-            <svg role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-              <title>${title}</title>
-              <defs>
-                <path id="path-${pathIndex}-${l}" d="${path}" />
-              </defs>
-              <use fill="red" style="--u: 0;" href="#path-${pathIndex}-${l}" />
-              <use fill="yellow" style="--u: 1;" href="#path-${pathIndex}-${l}" />
-              <use fill="#1061ff" style="--u: 2;" href="#path-${pathIndex}-${l}" />
-              <use fill="currentColor" style="--u: 3;" href="#path-${pathIndex}-${l}" />
-            </svg>
-          </li>
-          ${l === 0 ? `<li data-marker style="--i: ${index + 1};"></li>` : ''}
-        `);
-      }
-      newLists.push(listItems.join(''));
-    }
-    setLists(newLists);
+    return (
+      <svg
+        className="h-8 w-auto text-gray-800"
+        viewBox="0 0 24 24"
+        fill="currentColor"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path d={logo.path} />
+      </svg>
+    );
   };
 
   return (
-    <section className="relative overflow-hidden pb-8 bg-transparent">
-      <style dangerouslySetInnerHTML={{ __html: keyframes }} />
-      
-      <div 
-        className="logo-marquee-main"
-        style={{
-          '--duration': config.duration,
-          '--stagger': config.stagger,
-          '--movement-x': config.x,
-          '--movement-y': config.y,
-          '--movement-step': config.step,
-          '--blur': config.blur,
-          '--lists': 4,
-        } as React.CSSProperties}
-        data-theme={config.theme}
-        data-explode={config.explode}
-      >
-        {lists.map((listContent, index) => (
-          <ul
-            key={index}
+    <div className="relative flex w-full items-center overflow-hidden py-8">
+      {/* Container for the infinite scroll effect */}
+      <div className="flex w-full">
+        {/* First set of logos */}
+        <div 
+          className={`flex items-center gap-20 ${shouldAnimate ? 'animate-marquee' : 'justify-center w-full'}`}
+          style={
+            shouldAnimate 
+              ? {
+                  animationDuration: `${config.duration}s`,
+                  animationTimingFunction: 'linear',
+                  animationIterationCount: 'infinite',
+                  paddingRight: '20px', // Ensure consistent gap between sets
+                }
+              : {}
+          }
+        >
+          {logoPaths.map((logo, index) => (
+            <div
+              key={`${logo.title}-${index}`}
+              className="flex items-center justify-center min-w-[120px]"
+            >
+              {renderLogo(logo)}
+            </div>
+          ))}
+        </div>
+
+        {/* Second set of logos for seamless loop */}
+        {shouldAnimate && (
+          <div 
+            className="flex items-center gap-20 animate-marquee2"
             style={{
-              '--index': index,
-              '--items': config.items,
-            } as React.CSSProperties}
-            dangerouslySetInnerHTML={{ __html: listContent }}
-          />
-        ))}
+              animationDuration: `${config.duration}s`,
+              animationTimingFunction: 'linear',
+              animationIterationCount: 'infinite',
+              paddingRight: '20px', // Ensure consistent gap between sets
+            }}
+          >
+            {logoPaths.map((logo, index) => (
+              <div
+                key={`${logo.title}-second-${index}`}
+                className="flex items-center justify-center min-w-[120px]"
+              >
+                {renderLogo(logo)}
+              </div>
+            ))}
+          </div>
+        )}
       </div>
-    </section>
+    </div>
   );
 }
