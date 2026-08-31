@@ -93,6 +93,7 @@ export default function Sidebar({ onNavigate }: SidebarProps) {
       items: [
         { icon: Wand2, label: 'Quick Summaries', href: '/dashboard/summaries' },
         { icon: MessageSquare, label: 'Chat with Content', href: '/dashboard/chat' },
+        { icon: Search, label: 'Deep Research', href: '/dashboard/research', badge: 'New' },
         { icon: Headphones, label: 'Listen Mode', href: '/dashboard/listen' },
         { icon: Video, label: 'Video Explainer', href: '/dashboard/video' },
         { icon: PenTool, label: 'Remix Studio', href: '/dashboard/remix' },

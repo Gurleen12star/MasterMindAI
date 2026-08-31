@@ -9,6 +9,7 @@ import RoadmapGeneratorPage from './RoadmapGeneratorPage';
 import LearningPathsPage from './LearningPathsPage';
 import ExploreHubPage from './ExploreHubPage';
 import QuickSummariesPage from './QuickSummariesPage';
+import DeepResearchPage from './DeepResearchPage';
 
 export default function DashboardPage() {
   const { user } = useUser();
@@ -51,6 +52,8 @@ export default function DashboardPage() {
                 return <ExploreHubPage />;
               case '/dashboard/summaries':
                 return <QuickSummariesPage />;
+              case '/dashboard/research':
+                return <DeepResearchPage />;
               default:
                 return <ExploreHubPage />;
             }
