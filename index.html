@@ -9,6 +9,25 @@
     <script type="text/javascript">
       !function(){if(!window.UnicornStudio){window.UnicornStudio={isInitialized:!1};var i=document.createElement("script");i.src="https://cdn.jsdelivr.net/gh/hiunicornstudio/unicornstudio.js@v1.4.25/dist/unicornStudio.umd.js",i.onload=function(){window.UnicornStudio.isInitialized||(UnicornStudio.init(),window.UnicornStudio.isInitialized=!0)},(document.head || document.body).appendChild(i)}}();
     </script>
+    <script type="text/javascript">
+      // Immediately apply dark theme to prevent white flash
+      (function() {
+        try {
+          const storedTheme = localStorage.getItem('echoverse-theme');
+          const theme = storedTheme || 'dark';
+          const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+          
+          if (theme === 'dark' || (theme === 'system' && systemPrefersDark)) {
+            document.documentElement.classList.add('dark');
+          } else {
+            document.documentElement.classList.add('light');
+          }
+        } catch (e) {
+          // Fallback to dark mode if localStorage is not available
+          document.documentElement.classList.add('dark');
+        }
+      })();
+    </script>
     <style>
       /* CSS Variables for theme integration */
       :root {
@@ -16,6 +35,14 @@
         --foreground: 0 0% 98%;
         --primary: 252 87% 73%;
         --muted-foreground: 0 0% 63.9%;
+      }
+
+      /* Prevent white flash by ensuring dark background from start */
+      html, body {
+        margin: 0;
+        padding: 0;
+        background-color: hsl(var(--background));
+        color: hsl(var(--foreground));
       }
 
       /* Initial preloader styles */

@@ -289,10 +289,9 @@ export default function RoadmapGeneratorPage() {
                   <span className="font-semibold">Roadmap:</span> {selectedRoadmap.topic} ({selectedRoadmap.mermaid_code.length} chars)
                 </div>
                 <div className="mermaid-container" style={{ minHeight: '500px', width: '100%' }}>
-                  <MermaidDiagram definition={selectedRoadmap.mermaid_code} className="w-full h-full" />
                   <MermaidDiagram 
-                    definition={selectedRoadmap.mermaid_code} 
-                    key={selectedRoadmap.mermaid_code}
+                    diagram={selectedRoadmap.mermaid_code} 
+                    key={selectedRoadmap.id}
                     className="w-full h-full" 
                   />
                 </div>
@@ -327,12 +326,12 @@ export default function RoadmapGeneratorPage() {
             style={{ transform: 'translateY(20px)' }}
           >
             {isSidebarCollapsed ? (
-              <svg xmlns="http://www.w3.org/2000/svg\" width="16\" height="16\" viewBox="0 0 24 24\" fill="none\" stroke="currentColor\" strokeWidth="2\" strokeLinecap="round\" strokeLinejoin="round">
-                <polyline points="15 18 9 12 15 6"></polyline>
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <polyline points="9 18 15 12 9 6"></polyline>
               </svg>
             ) : (
               <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <polyline points="9 18 15 12 9 6"></polyline>
+                <polyline points="15 18 9 12 15 6"></polyline>
               </svg>
             )}
           </button>

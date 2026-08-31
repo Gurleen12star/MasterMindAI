@@ -82,6 +82,8 @@ export default function LearningPathsPage() {
 
   const loadHistoryItem = (item: LearningPath) => {
     setSelectedHistoryItem(item);
+    setTopic(item.topic);
+    setLevel(item.level);
     setGeneratedPath(item.markdown_content);
     setMermaidDiagram(item.mermaid_code);
     setShowHistoryDialog(false);

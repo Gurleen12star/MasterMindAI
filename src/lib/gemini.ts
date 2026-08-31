@@ -136,9 +136,10 @@ export async function generateLearningPathMermaid(topic: string, level: string, 
     2. Include 6-8 key learning milestones as nodes
     3. Show dependencies between topics with arrows
     4. Use simple node syntax like A[Node Label] --> B[Next Node]
-    5. Include difficulty progression from basic to advanced
-    6. Do NOT include any markdown formatting, code blocks, or explanations
-    7. Return ONLY valid Mermaid flowchart syntax
+    5. Node labels should only contain alphanumeric characters and spaces. No special characters like parentheses.
+    6. Include difficulty progression from basic to advanced
+    7. Do NOT include any markdown formatting, code blocks, or explanations
+    8. Return ONLY valid Mermaid flowchart syntax
     
     Example format:
     flowchart LR

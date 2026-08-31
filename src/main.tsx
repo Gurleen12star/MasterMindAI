@@ -5,6 +5,17 @@ import App from './App.tsx';
 import './index.css';
 import { ClerkSupabaseProvider } from './components/auth/ClerkSupabaseProvider.tsx';
 
+// Immediately apply dark theme to prevent white flash
+const storedTheme = localStorage.getItem('echoverse-theme');
+const theme = storedTheme || 'dark';
+const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+
+if (theme === 'dark' || (theme === 'system' && systemPrefersDark)) {
+  document.documentElement.classList.add('dark');
+} else {
+  document.documentElement.classList.add('light');
+}
+
 // Add console logs for debugging
 console.log('Starting application...');
 console.log('Environment variables loaded:', {
