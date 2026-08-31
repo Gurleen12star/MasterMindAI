@@ -29,15 +29,15 @@ export default function HeroSection() {
   }, []);
 
   return (
-    <section className="relative overflow-hidden pt-24 md:pt-32 bg-gradient-to-b from-background via-background/95 to-background/90">
+    <section className="relative overflow-visible pt-0 md:pt-0 bg-gradient-to-b from-background via-background/95 to-background/90">
       <div className="container px-4 max-w-[1200px] mx-auto">
-        <article className="hero-card">
+        <article className="hero-card mt-24 md:mt-32">
           <div className="hero-assets">
             <h3 className="hero-title">ECHOVERSE</h3>
             <img 
               src="robot.png"
               alt="Floating Icon"
-              className="foreground transition-transform duration-300"
+              className="foreground"
               style={{ width: "800px", height: "675px" }}
             />
           </div>
