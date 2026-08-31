@@ -166,12 +166,22 @@ export default function QuickSummariesPage() {
       });
     } catch (error) {
       console.error('Error generating audio:', error);
-      const errorMessage = error instanceof Error ? error.message : String(error);
-      toast({
-        title: 'Audio Generation Failed',
-        description: errorMessage,
-        variant: 'destructive',
-      });
+      
+      // Check if it's an API key related error
+      if (error instanceof Error && error.message.includes('Authentication failed')) {
+        toast({
+          title: 'ElevenLabs Authentication Error',
+          description: 'Please check your API key in the environment settings. Your account may need credits or the key might be invalid.',
+          variant: 'destructive',
+        });
+      } else {
+        const errorMessage = error instanceof Error ? error.message : String(error);
+        toast({
+          title: 'Audio Generation Failed',
+          description: errorMessage,
+          variant: 'destructive',
+        });
+      }
     } finally {
       setIsGeneratingAudio(false);
     }
@@ -205,11 +215,21 @@ export default function QuickSummariesPage() {
         });
       } catch (error) {
         console.error('Error regenerating audio:', error);
-        toast({
-          title: 'Voice Change Failed',
-          description: 'Failed to regenerate audio with new voice.',
-          variant: 'destructive',
-        });
+        
+        // Check if it's an API key related error
+        if (error instanceof Error && error.message.includes('Authentication failed')) {
+          toast({
+            title: 'ElevenLabs Authentication Error',
+            description: 'Please check your API key in the environment settings. Your account may need credits or the key might be invalid.',
+            variant: 'destructive',
+          });
+        } else {
+          toast({
+            title: 'Voice Change Failed',
+            description: 'Failed to regenerate audio with new voice.',
+            variant: 'destructive',
+          });
+        }
       } finally {
         setIsGeneratingAudio(false);
       }
