@@ -98,7 +98,6 @@ function App() {
         <CustomCursor />
         {renderContent()}
         <Toaster />
-        <div class="bg"></div>
         
         {/* Powered by Bolt Badge - Floating in bottom right */}
         <div className="fixed bottom-4 right-4 z-[60]">
