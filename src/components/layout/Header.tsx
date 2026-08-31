@@ -38,7 +38,7 @@ export default function Header() {
     >
       <div className="container flex h-20 items-center justify-center px-4 max-w-[1200px] mx-auto">
         <div className="relative mx-auto flex items-center justify-between w-full max-w-6xl rounded-2xl bg-background/60 backdrop-blur-md shadow-lg border border-border/5 px-6 py-4">
-        <a href="#" className="flex items-center gap-2 group">
+        <a href="#" className="flex items-center gap-2 group z-20">
           <div className="relative">
             <img src={logo} alt="EchoVerse Logo" className="h-12 w-12 object-contain" />
           </div>
@@ -48,7 +48,7 @@ export default function Header() {
         </a>
         
         {/* Desktop Navigation */}
-        <nav className="hidden md:block relative absolute left-1/2 -translate-x-1/2">
+        <nav className="absolute left-1/2 -translate-x-1/2 hidden md:block">
           <div className="flex items-center justify-center rounded-xl bg-muted/30 p-1 relative min-w-[400px]">
             {navItems.map((item) => (
               <a
@@ -79,7 +79,7 @@ export default function Header() {
           </div>
         </nav>
         
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-4 z-20">
           <Button 
             variant="ghost" 
             size="sm" 
