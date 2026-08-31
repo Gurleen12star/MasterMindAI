@@ -100,7 +100,7 @@ export default function FeaturesGrid() {
           
           <BentoBox gradient="purple" className="flex flex-col md:[grid-area:f] md:col-span-2 relative overflow-hidden group">
             <img
-              src="https://images.pexels.com/photos/8370504/pexels-photo-8370504.jpeg"
+              src="https://unsplash.com/photos/a-purple-background-with-a-bunch-of-different-icons-VJVOueYLZtg"
               alt="Premium Content"
               className="absolute inset-0 w-full h-full object-cover opacity-20 group-hover:scale-110 transition-transform duration-500"
             />
