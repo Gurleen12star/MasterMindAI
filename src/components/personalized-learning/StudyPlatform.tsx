@@ -76,19 +76,14 @@ const StudyPlatform = () => {
     const { user } = useAuth();
     const [modulo, setModulo] = useState<number>(studyPlatform.actModule);
     const [actualModuleRes, setActualModuleRes] = useState<string>("");
-    const [modulesGenerationSuccess, setModulesGenerationSuccess] = useState<boolean>(false);
     const [timeModule, setTimeModule] = useState<boolean>(false);
-    const hasFetchedModules = useRef<boolean>(false);
 
     const delay = (ms: number) => new Promise(res => setTimeout(res, ms));
 
     const handleGetModules = useCallback(async () => {
         if (!studyMaterial) return;
 
-        setModulesGenerationSuccess(false);
         let attempts = 0;
-        let success = false;
-        
         while (attempts < 5) {
             try {
                 const prompt = prompts.generateModules(studyMaterial);
@@ -99,8 +94,6 @@ const StudyPlatform = () => {
                 if (validateJSON(responseText)) {
                     addStoriesChat(generationHistory, setGenerationHistory, prompt, response.text());
                     setActualModuleRes(response.text());
-                    setModulesGenerationSuccess(true);
-                    success = true;
                     
                     // Save to database after modules are generated
                     if (user?.id) {
@@ -131,34 +124,17 @@ const StudyPlatform = () => {
                 console.error(error);
                 attempts++;
                 await delay(1000);
+            } finally {
+                setIntroduction({ ...introduction, isLoading: false });
+                setStudyPlatform({ ...studyPlatform, isGettingModels: true });
             }
         }
-        
-        // Update states after all attempts are complete
-        if (success) {
-            setIntroduction(prevState => ({ ...prevState, isLoading: false }));
-            setStudyPlatform(prevState => ({ ...prevState, isGettingModels: true }));
-        } else {
-            console.error('handleGetModules: All attempts failed, reverting to introduction');
-            setIntroduction(prevState => ({
-                ...prevState,
-                show: true,
-                isLoading: false,
-            }));
-            setStudyPlatform(prevState => ({
-                ...prevState,
-                show: false,
-                isGettingModels: false,
-            }));
-        }
-    }, [generationHistory, personality, setGenerationHistory, setIntroduction, setStudyPlatform, studyMaterial, user?.id, setCurrentSessionId]);
+    }, [generationHistory, introduction, personality, setGenerationHistory, setIntroduction, setStudyPlatform, studyMaterial, studyPlatform]);
 
     const handleGetModule = useCallback(async () => {
         if (studyPlatform.modulos.length === 0) return;
 
         let attempts = 0;
-        let success = false;
-        
         while (attempts < 5) {
             try {
                 const prompt = prompts.generateModule(studyPlatform.modulos[studyPlatform.actModule]);
@@ -168,7 +144,6 @@ const StudyPlatform = () => {
 
                 if (validateJSON(responseText)) {
                     generateModule(response.text(), studyPlatform, setStudyPlatform);
-                    success = true;
                     
                     // Update database after module content is generated
                     if (user?.id && currentSessionId) {
@@ -192,33 +167,27 @@ const StudyPlatform = () => {
                 console.error(error);
                 attempts++;
                 await delay(1000);
+            } finally {
+                setStudyPlatform(prevState => ({
+                    ...prevState,
+                    isLoading: false,
+                    isGettingModulo: false,
+                }));
             }
         }
-        
-        // Update loading states after all attempts complete
-        setStudyPlatform(prevState => ({
-            ...prevState,
-            isLoading: false,
-            isGettingModulo: false,
-        }));
-    }, [generationHistory, personality, setStudyPlatform, studyPlatform, user?.id, currentSessionId]);
+    }, [generationHistory, personality, setStudyPlatform, studyPlatform]);
 
     useEffect(() => {
-        if (introduction.isLoading && !hasFetchedModules.current) {
-            hasFetchedModules.current = true;
+        if (introduction.isLoading) {
             handleGetModules();
         }
     }, [handleGetModules, introduction.isLoading]);
 
     useEffect(() => {
-        // Only call generateModules if we have a successful response and actual content
-        if (studyPlatform.isGettingModels && studyPlatform.show === false && modulesGenerationSuccess && actualModuleRes && actualModuleRes.trim().length > 0) {
-            console.log('StudyPlatform: Calling generateModules with content length:', actualModuleRes.length);
-            generateModules(actualModuleRes, studyPlatform, setStudyPlatform, setIntroduction);
-        } else if (studyPlatform.isGettingModels && studyPlatform.show === false && !modulesGenerationSuccess) {
-            console.warn('StudyPlatform: Not calling generateModules - no successful response');
+        if (studyPlatform.isGettingModels && studyPlatform.show === false) {
+            generateModules(actualModuleRes, studyPlatform, setStudyPlatform);
         }
-    }, [actualModuleRes, modulesGenerationSuccess, setStudyPlatform, setIntroduction, studyPlatform]);
+    }, [actualModuleRes, generationHistory, setStudyPlatform, studyPlatform]);
 
     useEffect(() => {
         if (!studyPlatform.isGettingModulo && !studyPlatform.isLoading) {

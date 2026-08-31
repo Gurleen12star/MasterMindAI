@@ -12,14 +12,6 @@ export default function PersonalizedLearningPage() {
   const { introduction, studyPlatform } = useAppContext();
   const { isCollapsed } = useSidebar();
 
-  // Debug logging
-  console.log('PersonalizedLearningPage render:', {
-    'introduction.show': introduction.show,
-    'introduction.isLoading': introduction.isLoading,
-    'studyPlatform.show': studyPlatform.show,
-    'introduction.actPage': introduction.actPage
-  });
-
   return (
     <div className="flex h-full">
       {/* Learning Modules Sidebar - only show when study platform is active */}
@@ -35,39 +27,36 @@ export default function PersonalizedLearningPage() {
             <p className="text-muted-foreground">Create customized learning experiences powered by AI</p>
           </div>
 
-          <div className="relative min-h-[400px]">
-            {/* Show Introduction Loading */}
-            {introduction.isLoading && !studyPlatform.show && (
-              <motion.div
-                key="introduction-loading"
-                initial="initial"
-                animate="in"
-                exit="out"
-                variants={pageVariants(2)}
-                transition={pageTransition(1.5)}
-                className="w-full"
-              >
-                <IntroductionLoading />
-              </motion.div>
-            )}
+          <div className="relative">
+            <AnimatePresence mode='popLayout'>
+              {introduction.show && (
+                <motion.div
+                  key="introduction"
+                  initial="initial"
+                  animate="in"
+                  exit="out"
+                  variants={pageVariants(2)}
+                  transition={pageTransition(1.5)}
+                  className="w-full"
+                >
+                  <Introduction />
+                </motion.div>
+              )}
 
-            {/* Show Introduction */}
-            {introduction.show && !introduction.isLoading && !studyPlatform.show && (
-              <motion.div
-                key="introduction"
-                initial="initial"
-                animate="in"
-                exit="out"
-                variants={pageVariants(2)}
-                transition={pageTransition(1.5)}
-                className="w-full"
-              >
-                <Introduction />
-              </motion.div>
-            )}
+              {introduction.isLoading && (
+                <motion.div
+                  key="introduction-loading"
+                  initial="initial"
+                  animate="in"
+                  exit="out"
+                  variants={pageVariants(2)}
+                  transition={pageTransition(1.5)}
+                  className="w-full"
+                >
+                  <IntroductionLoading />
+                </motion.div>
+              )}
 
-            {/* Show Study Platform */}
-            {studyPlatform.show && (
               <motion.div
                 key="study-platform"
                 initial="initial"
@@ -75,28 +64,11 @@ export default function PersonalizedLearningPage() {
                 exit="out"
                 variants={pageVariants(2)}
                 transition={pageTransition(1.5)}
-                className="w-full"
+                className={`w-full ${studyPlatform.show ? "visible" : "invisible h-0 max-h-0 overflow-hidden"}`}
               >
                 <StudyPlatform />
               </motion.div>
-            )}
-
-            {/* Debug/Fallback content - only show if nothing else is showing */}
-            {!introduction.show && !introduction.isLoading && !studyPlatform.show && (
-              <div className="w-full p-8 text-center">
-                <h3 className="text-lg font-semibold text-muted-foreground mb-2">
-                  Loading Personalized Learning...
-                </h3>
-                <p className="text-sm text-muted-foreground">
-                  If this persists, please refresh the page.
-                </p>
-                <div className="mt-4 text-xs text-muted-foreground bg-muted p-4 rounded-lg">
-                  Debug: introduction.show={String(introduction.show)}, 
-                  introduction.isLoading={String(introduction.isLoading)}, 
-                  studyPlatform.show={String(studyPlatform.show)}
-                </div>
-              </div>
-            )}
+            </AnimatePresence>
           </div>
         </div>
       </div>

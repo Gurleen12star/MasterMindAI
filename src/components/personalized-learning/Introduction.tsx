@@ -1,456 +1,630 @@
 'use client';
 
-import React, { useEffect, useRef } from "react";
+import React, { useRef, useState } from "react";
+import { useAppContext } from "@/contexts/PersonalizedLearningContext";
 import { AnimatePresence, motion } from 'framer-motion';
 import Typed from "typed.js";
-import { useAppContext } from "@/contexts/PersonalizedLearningContext";
 import { pageTransition, pageVariants } from "@/lib/personalized-learning/utilFunctions";
-import { Button } from "@/components/ui/button";
+import { TeacherPersonality } from "@/types/personalized-learning";
 import { Input } from "@/components/ui/input";
-import { Card, CardContent } from "@/components/ui/card";
-import { 
-  Brain, 
-  Briefcase, 
-  MessageSquare, 
-  Sparkles, 
-  FlaskConical, 
-  Scale,
-  ArrowLeft,
-  ArrowRight,
-  Rocket
-} from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Label } from "@/components/ui/label";
+import { School, Book, Rocket } from "lucide-react";
 
-const Introduction = () => {
-    const { 
-        introduction, 
-        setIntroduction, 
-        userName, 
-        setUserName, 
-        personality, 
-        setPersonality, 
-        studyMaterial, 
-        setStudyMaterial 
-    } = useAppContext();
-    
-    const greetingEl = useRef<HTMLSpanElement>(null);
-    const questionEl = useRef<HTMLDivElement>(null);
-    const topicQuestionEl = useRef<HTMLDivElement>(null);
-
-    useEffect(() => {
-        if (introduction.actPage === 1 && !introduction.pages.page1.visited) {
-            const typed = new Typed(greetingEl.current, {
-                strings: [`Nice to meet you ${userName}.`],
-                typeSpeed: 50,
-                showCursor: false,
-                onComplete: () => {
-                    setTimeout(() => {
-                        const typed2 = new Typed(questionEl.current, {
-                            strings: ['What kind of teaching personality would you prefer?'],
-                            typeSpeed: 50,
-                            showCursor: false,
-                            onComplete: () => {
-                                setIntroduction(prevState => ({
-                                    ...prevState,
-                                    pages: {
-                                        ...prevState.pages,
-                                        page1: {
-                                            ...prevState.pages.page1,
-                                            input: true,
-                                            visited: true,
-                                        },
-                                    },
-                                }));
-                            },
-                        });
-                    }, 500);
-                },
-            });
-
-            return () => {
-                typed.destroy();
-            };
-        }
-    }, [introduction.actPage, introduction.pages.page1.visited, setIntroduction, userName]);
-
-    useEffect(() => {
-        if (introduction.actPage === 3 && !introduction.pages.page3.visited) {
-            const typed = new Typed(topicQuestionEl.current, {
-                strings: [
-                    'Now, share with me: what topic would you like to explore?',
-                    "I'm here to guide you on this learning journey.",
-                    'Please be concise. For example, you could say:',
-                ],
-                typeSpeed: 50,
-                showCursor: false,
-                onComplete: () => {
-                    setIntroduction(prevState => ({
-                        ...prevState,
-                        pages: {
-                            ...prevState.pages,
-                            page3: {
-                                ...prevState.pages.page3,
-                                input: true,
-                                visited: true,
-                            },
-                        },
-                    }));
-                },
-            });
-
-            return () => {
-                typed.destroy();
-            };
-        }
-    }, [introduction.actPage, introduction.pages.page3.visited, setIntroduction]);
-
-    const handlePersonalitySelect = (selectedPersonality: string) => {
-        setPersonality(selectedPersonality);
-        setIntroduction(prevState => ({
-            ...prevState,
-            pages: {
-                ...prevState.pages,
-                page1: {
-                    ...prevState.pages.page1,
-                    button: true,
-                },
-            },
-        }));
-    };
-
-    const handleNext = () => {
-        if (introduction.actPage === 1) {
-            setIntroduction(prevState => ({
-                ...prevState,
-                actPage: 2,
-            }));
-        } else if (introduction.actPage === 2) {
-            setIntroduction(prevState => ({
-                ...prevState,
-                actPage: 3,
-            }));
-        } else if (introduction.actPage === 3) {
-            setIntroduction(prevState => ({
-                ...prevState,
-                show: false,
-                isLoading: true,
-            }));
-        }
-    };
-
-    const handleBack = () => {
-        if (introduction.actPage === 2) {
-            setIntroduction(prevState => ({
-                ...prevState,
-                actPage: 1,
-            }));
-        } else if (introduction.actPage === 3) {
-            setIntroduction(prevState => ({
-                ...prevState,
-                actPage: 2,
-            }));
-        }
-    };
-
-    const personalityOptions = [
-        {
-            id: 'Formal',
-            name: 'Formal',
-            icon: Briefcase,
-            description: 'Professional and structured approach'
-        },
-        {
-            id: 'Informal',
-            name: 'Informal',
-            icon: MessageSquare,
-            description: 'Casual and conversational style'
-        },
-        {
-            id: 'Engraçado',
-            name: 'Playful',
-            icon: Sparkles,
-            description: 'Fun and engaging learning'
-        },
-        {
-            id: 'Sério',
-            name: 'Serious',
-            icon: FlaskConical,
-            description: 'Direct and focused approach'
-        },
-        {
-            id: 'Default',
-            name: 'Balanced',
-            icon: Scale,
-            description: 'Adaptive teaching style'
-        }
-    ];
+const CustomRadio = (props: any) => {
+    const { children, value, icon: Icon, labelText, ...otherProps } = props;
 
     return (
-        <div className="w-full max-w-4xl mx-auto">
-            <AnimatePresence mode='popLayout'>
-                {/* Page 1: Name Input and Personality Selection */}
-                {introduction.actPage === 1 && (
+        <div className="flex flex-col items-center justify-center group">
+            <Label
+                htmlFor={`radio-${value}`}
+                className="flex flex-col items-center justify-center p-6 cursor-pointer rounded-xl border-2 border-border/50 hover:border-primary/60 transition-all duration-200 group-has-[[data-state=checked]]:bg-primary/20 group-has-[[data-state=checked]]:border-primary/80 group-has-[[data-state=checked]]:shadow-md"
+            >
+                <div className="w-16 h-16 rounded-full bg-primary/20 flex items-center justify-center mb-2 shadow-inner-modern">
+                    <Icon className="h-8 w-8 text-primary" />
+                </div>
+                <RadioGroupItem value={value} id={`radio-${value}`} className="opacity-0 absolute" {...otherProps} />
+                <span className="block text-center font-semibold mt-2 mb-2">{labelText}</span>
+                {children}
+            </Label>
+        </div>
+    );
+};
+
+const Introduction = () => {
+    const { introduction, setIntroduction, userName, setUserName, personality, setPersonality, studyMaterial, setStudyMaterial } = useAppContext();
+    const [page, setPage] = useState<number>(introduction.actPage);
+    
+    const page1El = useRef<HTMLDivElement>(null);
+    const page2El = useRef<HTMLDivElement>(null);
+    const page3El = useRef<HTMLDivElement>(null);
+
+    return (
+        <div className="w-full h-full bg-background">
+            <div className="flex flex-col items-center justify-center gap-6 py-6 md:py-8 px-4 w-full min-h-[500px]">
+                <AnimatePresence mode='popLayout'>
                     <motion.div
-                        key="page1"
+                        key="introduction-logo"
                         initial="initial"
                         animate="in"
                         exit="out"
                         variants={pageVariants(2)}
-                        transition={pageTransition(1.5)}
+                        transition={pageTransition(2)}
                     >
-                        <Card className="overflow-hidden">
-                            <CardContent className="p-8 text-center">
-                                {/* Header */}
-                                <div className="mb-8">
-                                    <Brain className="h-16 w-16 mx-auto text-primary mb-4" />
-                                    <h1 className="text-3xl font-bold mb-2">Personalized Learning</h1>
-                                    <p className="text-muted-foreground">Create customized learning experiences powered by AI</p>
-                                </div>
+                        <div className="text-center mb-4">
+                            <School className="h-20 w-20 text-primary mx-auto mb-2" />
+                            <h2 className="text-2xl font-bold bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">Personalized Learning</h2>
+                        </div>
+                    </motion.div>
 
-                                {/* Name Input */}
-                                <div className="mb-8">
-                                    <label className="block text-sm font-medium mb-3">What's your name?</label>
+                    {page === 1 && (
+                        <motion.div
+                            key="page1"
+                            initial="initial"
+                            animate="in"
+                            exit="out"
+                            variants={pageVariants(2, 1)}
+                            transition={pageTransition(2)}
+                            onAnimationStart={() => {
+                                if (introduction.pages.page1.visited && userName) {
+                                    if (userName.length < 3) {
+                                        setIntroduction(prevState => ({
+                                            ...prevState,
+                                            pages: {
+                                                ...prevState.pages,
+                                                page1: {
+                                                    ...prevState.pages.page1,
+                                                    button: false,
+                                                },
+                                            },
+                                        }));
+                                        return;
+                                    }
+
+                                    setIntroduction(prevState => ({
+                                        ...prevState,
+                                        pages: {
+                                            ...prevState.pages,
+                                            page1: {
+                                                input: true,
+                                                button: true,
+                                                visited: true,
+                                            },
+                                        },
+                                    }));
+                                } else if (!introduction.pages.page1.visited && !userName) {
+                                    setIntroduction(prevState => ({
+                                        ...prevState,
+                                        pages: {
+                                            ...prevState.pages,
+                                            page1: {
+                                                ...prevState.pages.page1,
+                                                input: false,
+                                            },
+                                        },
+                                    }));
+                                } else {
+                                    setIntroduction(prevState => ({
+                                        ...prevState,
+                                        pages: {
+                                            ...prevState.pages,
+                                            page1: {
+                                                ...prevState.pages.page1,
+                                                input: false,
+                                            },
+                                        },
+                                    }));
+                                }
+                            }}
+                            onAnimationComplete={() => {
+                                if (introduction.pages.page1.visited) return;
+
+                                new Typed(page1El.current, {
+                                    strings: ['I am Gemini, and I will be your teacher during your learning journey. <br/>I\'m here to help you. But first, what should I call you?'],
+                                    typeSpeed: 25,
+                                    startDelay: 500,
+                                    showCursor: false,
+                                    onComplete: () => {
+                                        setIntroduction(prevState => ({
+                                            ...prevState,
+                                            pages: {
+                                                ...prevState.pages,
+                                                page1: {
+                                                    ...prevState.pages.page1,
+                                                    input: true,
+                                                },
+                                            },
+                                        }));
+                                    }
+                                });
+                            }}
+                            className="flex flex-col items-center justify-between gap-5 w-full"
+                        >
+                            <h2 className="text-3xl md:text-4xl font-semibold text-center bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">Hello</h2>
+
+                            {introduction.pages.page1.visited ? (
+                                <div className="text-[16px] text-foreground text-center">I am Gemini, and I will be your teacher during your learning journey. <br />I'm here to help you. But first, what should I call you?</div>
+                            ) : (
+                                <div ref={page1El} className="text-[16px] text-foreground text-center" />
+                            )}
+
+                            {introduction.pages.page1.input && (
+                                <motion.div
+                                    key="introduction-page-1-input"
+                                    initial="initial"
+                                    animate="in"
+                                    exit="out"
+                                    variants={pageVariants(2, 1)}
+                                    transition={pageTransition(2)}
+                                    onAnimationStart={() => {
+                                        setIntroduction(prevState => ({
+                                            ...prevState,
+                                            pages: {
+                                                ...prevState.pages,
+                                                page1: {
+                                                    ...prevState.pages.page1,
+                                                    button: false,
+                                                },
+                                            },
+                                        }));
+                                    }}
+                                    onAnimationComplete={() => {
+                                        if (userName.length > 2) {
+                                            setIntroduction(prevState => ({
+                                                ...prevState,
+                                                pages: {
+                                                    ...prevState.pages,
+                                                    page1: {
+                                                        ...prevState.pages.page1,
+                                                        button: true,
+                                                    },
+                                                },
+                                            }));
+                                        }
+                                    }}
+                                    className="flex items-center justify-center w-full"
+                                >
                                     <Input
-                                        type="text"
                                         placeholder="Enter your name"
+                                        className="max-w-[300px] rounded-xl shadow-md"
                                         value={userName}
-                                        onChange={(e) => setUserName(e.target.value)}
-                                        className="max-w-md mx-auto text-center"
-                                        onKeyPress={(e) => {
-                                            if (e.key === 'Enter' && userName.trim()) {
+                                        onChange={(e) => {
+                                            if (e.target.value.length > 2) {
                                                 setIntroduction(prevState => ({
                                                     ...prevState,
                                                     pages: {
                                                         ...prevState.pages,
                                                         page1: {
                                                             ...prevState.pages.page1,
-                                                            visited: true,
+                                                            button: true,
+                                                        },
+                                                    },
+                                                }));
+                                            } else {
+                                                setIntroduction(prevState => ({
+                                                    ...prevState,
+                                                    pages: {
+                                                        ...prevState.pages,
+                                                        page1: {
+                                                            ...prevState.pages.page1,
+                                                            button: false,
                                                         },
                                                     },
                                                 }));
                                             }
+                                            setUserName(e.target.value);
                                         }}
                                     />
-                                </div>
+                                </motion.div>
+                            )}
+                        </motion.div>
+                    )}
 
-                                {/* Dynamic Greeting */}
-                                {userName.trim() && (
-                                    <div className="mb-8 space-y-4">
-                                        <div className="text-lg">
-                                            <span ref={greetingEl} className="text-primary font-medium"></span>
-                                        </div>
-                                        <div ref={questionEl} className="text-muted-foreground"></div>
-                                    </div>
-                                )}
+                    {page === 2 && (
+                        <motion.div
+                            key="page2"
+                            initial="initial"
+                            animate="in"
+                            exit="out"
+                            variants={pageVariants(2, 1)}
+                            transition={pageTransition(2)}
+                            onAnimationStart={() => {
+                                if (introduction.pages.page2.visited && personality) {
+                                    setIntroduction(prevState => ({
+                                        ...prevState,
+                                        pages: {
+                                            ...prevState.pages,
+                                            page2: {
+                                                input: true,
+                                                button: true,
+                                                visited: true,
+                                            },
+                                        }
+                                    }));
+                                }
 
-                                {/* Personality Selection */}
-                                {introduction.pages.page1.input && (
-                                    <motion.div
-                                        initial={{ opacity: 0, y: 20 }}
-                                        animate={{ opacity: 1, y: 0 }}
-                                        transition={{ delay: 0.5 }}
-                                        className="space-y-6"
-                                    >
-                                        <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
-                                            {personalityOptions.map((option) => {
-                                                const IconComponent = option.icon;
-                                                return (
-                                                    <button
-                                                        key={option.id}
-                                                        onClick={() => handlePersonalitySelect(option.id)}
-                                                        className={`p-4 rounded-xl border-2 transition-all duration-300 hover:scale-105 ${
-                                                            personality === option.id
-                                                                ? 'border-primary bg-primary/10 shadow-lg'
-                                                                : 'border-border hover:border-primary/50'
-                                                        }`}
-                                                    >
-                                                        <div className="flex flex-col items-center space-y-2">
-                                                            <div className={`p-3 rounded-full ${
-                                                                personality === option.id
-                                                                    ? 'bg-primary text-primary-foreground'
-                                                                    : 'bg-muted text-muted-foreground'
-                                                            }`}>
-                                                                <IconComponent className="h-6 w-6" />
-                                                            </div>
-                                                            <span className="font-medium text-sm">{option.name}</span>
-                                                            <span className="text-xs text-muted-foreground text-center leading-tight">
-                                                                {option.description}
-                                                            </span>
-                                                        </div>
-                                                    </button>
-                                                );
-                                            })}
-                                        </div>
+                                if (!introduction.pages.page2.visited && !personality) {
+                                    setIntroduction(prevState => ({
+                                        ...prevState,
+                                        pages: {
+                                            ...prevState.pages,
+                                            page2: {
+                                                ...prevState.pages.page2,
+                                                input: false,
+                                            },
+                                        },
+                                    }));
+                                }
 
-                                        {introduction.pages.page1.button && (
-                                            <motion.div
-                                                initial={{ opacity: 0, y: 20 }}
-                                                animate={{ opacity: 1, y: 0 }}
-                                                transition={{ delay: 0.3 }}
-                                                className="flex justify-center pt-4"
-                                            >
-                                                <Button
-                                                    onClick={handleNext}
-                                                    className="gap-2 px-8 py-3"
-                                                    size="lg"
-                                                >
-                                                    Next
-                                                    <ArrowRight className="h-4 w-4" />
-                                                </Button>
-                                            </motion.div>
-                                        )}
-                                    </motion.div>
-                                )}
-                            </CardContent>
-                        </Card>
-                    </motion.div>
-                )}
+                                if (!introduction.pages.page2.visited && personality) {
+                                    setIntroduction(prevState => ({
+                                        ...prevState,
+                                        pages: {
+                                            ...prevState.pages,
+                                            page2: {
+                                                ...prevState.pages.page2,
+                                                visited: true,
+                                            },
+                                        },
+                                    }));
+                                }
+                            }}
+                            onAnimationComplete={() => {
+                                if (introduction.pages.page2.visited) return;
 
-                {/* Page 2: Confirmation */}
-                {introduction.actPage === 2 && (
-                    <motion.div
-                        key="page2"
-                        initial="initial"
-                        animate="in"
-                        exit="out"
-                        variants={pageVariants(2)}
-                        transition={pageTransition(1.5)}
-                    >
-                        <Card className="overflow-hidden">
-                            <CardContent className="p-8 text-center">
-                                <div className="mb-8">
-                                    <Rocket className="h-16 w-16 mx-auto text-primary mb-4" />
-                                    <h2 className="text-3xl font-bold text-primary mb-2">Excellent!</h2>
-                                    <p className="text-muted-foreground">Your learning preferences have been set</p>
-                                </div>
+                                new Typed(page2El.current, {
+                                    strings: [`Nice to meet you <span class="text-primary font-bold">${userName}</span>. <br/>What kind of teaching personality would you prefer?`],
+                                    typeSpeed: 25,
+                                    showCursor: false,
+                                    onComplete: () => {
+                                        setIntroduction(prevState => ({
+                                            ...prevState,
+                                            pages: {
+                                                ...prevState.pages,
+                                                page2: {
+                                                    ...prevState.pages.page2,
+                                                    input: true,
+                                                },
+                                            },
+                                        }));
+                                    }
+                                });
+                            }}
+                            className="flex flex-col items-center justify-between gap-12 w-full"
+                        >
+                            {introduction.pages.page2.visited ? (
+                                <div className="text-[16px] text-foreground text-center">Nice to meet you <span className="text-primary font-bold">{userName}</span>. <br />What kind of teaching personality would you prefer?</div>
+                            ) : (
+                                <div ref={page2El} className="text-[16px] text-foreground text-center" />
+                            )}
 
-                                <div className="bg-muted/30 rounded-lg p-6 mb-8">
-                                    <div className="space-y-4">
-                                        <div>
-                                            <span className="text-sm text-muted-foreground">Student:</span>
-                                            <p className="font-semibold text-lg">{userName}</p>
-                                        </div>
-                                        <div>
-                                            <span className="text-sm text-muted-foreground">Teaching Style:</span>
-                                            <div className="flex items-center justify-center gap-2 mt-1">
-                                                {(() => {
-                                                    const selected = personalityOptions.find(p => p.id === personality);
-                                                    const IconComponent = selected?.icon || Brain;
-                                                    return (
-                                                        <>
-                                                            <div className="p-2 rounded-full bg-primary text-primary-foreground">
-                                                                <IconComponent className="h-4 w-4" />
-                                                            </div>
-                                                            <span className="font-semibold">{selected?.name}</span>
-                                                        </>
-                                                    );
-                                                })()}
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div className="flex justify-between">
-                                    <Button variant="outline" onClick={handleBack} className="gap-2">
-                                        <ArrowLeft className="h-4 w-4" />
-                                        Back
-                                    </Button>
-                                    <Button onClick={handleNext} className="gap-2">
-                                        Continue
-                                        <ArrowRight className="h-4 w-4" />
-                                    </Button>
-                                </div>
-                            </CardContent>
-                        </Card>
-                    </motion.div>
-                )}
-
-                {/* Page 3: Topic Input */}
-                {introduction.actPage === 3 && (
-                    <motion.div
-                        key="page3"
-                        initial="initial"
-                        animate="in"
-                        exit="out"
-                        variants={pageVariants(2)}
-                        transition={pageTransition(1.5)}
-                    >
-                        <Card className="overflow-hidden">
-                            <CardContent className="p-8 text-center">
-                                <div className="mb-8">
-                                    <Rocket className="h-16 w-16 mx-auto text-primary mb-4" />
-                                    <h2 className="text-3xl font-bold text-primary mb-2">Excellent!</h2>
-                                </div>
-
-                                <div className="space-y-6 mb-8">
-                                    <div ref={topicQuestionEl} className="text-lg text-muted-foreground min-h-[24px]"></div>
-                                    
-                                    {introduction.pages.page3.input && (
-                                        <motion.div
-                                            initial={{ opacity: 0, y: 20 }}
-                                            animate={{ opacity: 1, y: 0 }}
-                                            transition={{ delay: 0.5 }}
-                                            className="space-y-4"
-                                        >
-                                            <div className="text-sm text-muted-foreground font-mono bg-muted/30 rounded-lg p-4">
-                                                'Ancient Egypt', 'Moon Landing', 'Brazilian History' and so on.
-                                            </div>
-                                            
-                                            <Input
-                                                type="text"
-                                                placeholder="e.g., Indian history"
-                                                value={studyMaterial}
-                                                onChange={(e) => {
-                                                    setStudyMaterial(e.target.value);
-                                                    setIntroduction(prevState => ({
-                                                        ...prevState,
-                                                        pages: {
-                                                            ...prevState.pages,
-                                                            page3: {
-                                                                ...prevState.pages.page3,
-                                                                button: e.target.value.trim().length > 0,
-                                                            },
+                            {introduction.pages.page2.input && (
+                                <motion.div
+                                    key="introduction-page-2-radio"
+                                    initial="initial"
+                                    animate="in"
+                                    exit="out"
+                                    variants={pageVariants(2, 1)}
+                                    transition={pageTransition(2)}
+                                    onAnimationStart={() => {
+                                        setIntroduction(prevState => ({
+                                            ...prevState,
+                                            pages: {
+                                                ...prevState.pages,
+                                                page2: {
+                                                    ...prevState.pages.page2,
+                                                    button: false,
+                                                },
+                                            },
+                                        }));
+                                    }}
+                                    onAnimationComplete={() => {
+                                        if (personality) {
+                                            setIntroduction(prevState => ({
+                                                ...prevState,
+                                                pages: {
+                                                    ...prevState.pages,
+                                                    page2: {
+                                                        ...prevState.pages.page2,
+                                                        button: true,
+                                                    },
+                                                },
+                                            }));
+                                        }
+                                    }}
+                                    className="flex items-center justify-center w-full"
+                                >
+                                    <div className="w-full max-w-xl">
+                                        <RadioGroup
+                                            className="grid grid-cols-2 gap-6 sm:grid-cols-3 lg:grid-cols-5"
+                                            value={personality}
+                                            onValueChange={(value) => {
+                                                setIntroduction(prevState => ({
+                                                    ...prevState,
+                                                    pages: {
+                                                        ...prevState.pages,
+                                                        page2: {
+                                                            ...prevState.pages.page2,
+                                                            button: true,
                                                         },
-                                                    }));
-                                                }}
-                                                className="max-w-md mx-auto text-center text-lg py-3"
-                                                onKeyPress={(e) => {
-                                                    if (e.key === 'Enter' && studyMaterial.trim()) {
-                                                        handleNext();
-                                                    }
-                                                }}
-                                            />
-                                        </motion.div>
-                                    )}
-                                </div>
-
-                                <div className="flex justify-between">
-                                    <Button variant="outline" onClick={handleBack} className="gap-2">
-                                        <ArrowLeft className="h-4 w-4" />
-                                        Back
-                                    </Button>
-                                    
-                                    {introduction.pages.page3.button && (
-                                        <motion.div
-                                            initial={{ opacity: 0, scale: 0.9 }}
-                                            animate={{ opacity: 1, scale: 1 }}
-                                            transition={{ delay: 0.3 }}
+                                                    },
+                                                }));
+                                                setPersonality(value as TeacherPersonality);
+                                            }}
                                         >
-                                            <Button 
-                                                onClick={handleNext}
-                                                className="gap-2 px-8 py-3"
-                                                size="lg"
-                                            >
-                                                Start Learning
-                                                <Rocket className="h-4 w-4" />
-                                            </Button>
-                                        </motion.div>
-                                    )}
-                                </div>
-                            </CardContent>
-                        </Card>
+                                            <CustomRadio value="Formal" icon={Book} labelText="Formal" />
+                                            <CustomRadio value="Informal" icon={Book} labelText="Informal" />
+                                            <CustomRadio value="Engraçado" icon={Book} labelText="Playful" />
+                                            <CustomRadio value="Sério" icon={Book} labelText="Serious" />
+                                            <CustomRadio value="Default" icon={Book} labelText="Balanced" />
+                                        </RadioGroup>
+                                    </div>
+                                </motion.div>
+                            )}
+                        </motion.div>
+                    )}
+
+                    {page === 3 && (
+                        <motion.div
+                            key="page3"
+                            initial="initial"
+                            animate="in"
+                            exit="out"
+                            variants={pageVariants(2, 1)}
+                            transition={pageTransition(2)}
+                            onAnimationStart={() => {
+                                if (introduction.pages.page3.visited && studyMaterial) {
+                                    if (studyMaterial.length < 5) {
+                                        setIntroduction(prevState => ({
+                                            ...prevState,
+                                            pages: {
+                                                ...prevState.pages,
+                                                page3: {
+                                                    ...prevState.pages.page3,
+                                                    button: false,
+                                                },
+                                            },
+                                        }));
+
+                                        return;
+                                    }
+
+                                    setIntroduction(prevState => ({
+                                        ...prevState,
+                                        pages: {
+                                            ...prevState.pages,
+                                            page3: {
+                                                input: true,
+                                                button: true,
+                                                visited: true,
+                                            },
+                                        },
+                                    }));
+                                }
+
+                                if (!introduction.pages.page3.visited && !studyMaterial) {
+                                    setIntroduction(prevState => ({
+                                        ...prevState,
+                                        pages: {
+                                            ...prevState.pages,
+                                            page3: {
+                                                ...prevState.pages.page3,
+                                                input: false,
+                                            },
+                                        },
+                                    }));
+                                }
+
+                                if (!introduction.pages.page3.visited && studyMaterial || introduction.pages.page3.visited && !studyMaterial) {
+                                    setIntroduction(prevState => ({
+                                        ...prevState,
+                                        pages: {
+                                            ...prevState.pages,
+                                            page3: {
+                                                ...prevState.pages.page3,
+                                                input: true,
+                                            },
+                                        },
+                                    }));
+                                }
+                            }}
+                            onAnimationComplete={() => {
+                                if (introduction.pages.page3.visited) return;
+
+                                new Typed(page3El.current, {
+                                    strings: [`Now, share with me: what topic would you like to explore? <br />I'm here to guide you on this learning journey. <br/>Please be concise. For example, you could say: <br/><code class="px-2 py-1 bg-muted text-foreground rounded-md text-sm">'Ancient Egypt', 'Moon Landing', 'Brazilian History' and so on.</code>`],
+                                    typeSpeed: 25,
+                                    showCursor: false,
+                                    onComplete: () => {
+                                        setIntroduction(prevState => ({
+                                            ...prevState,
+                                            pages: {
+                                                ...prevState.pages,
+                                                page3: {
+                                                    ...prevState.pages.page3,
+                                                    input: true,
+                                                },
+                                            },
+                                        }));
+                                    }
+                                });
+                            }}
+                                    className="flex flex-col items-center justify-center gap-8 w-full"
+                        >
+                            <div className="flex flex-col items-center justify-center gap-2">
+                                <Rocket className="h-16 w-16 text-primary" />
+                                <h2 className="text-3xl font-semibold text-center bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">Excellent!</h2>
+                            </div>
+
+                            {introduction.pages.page3.visited ? (
+                                <div className="text-[16px] text-foreground text-center w-full">Now, share with me: what topic would you like to explore? <br />I'm here to guide you on this learning journey. <br/>Please be concise. For example, you could say: <br/><code className="px-2 py-1 bg-muted text-foreground rounded-md text-sm">'Ancient Egypt', 'Moon Landing', 'Brazilian History' and so on.</code></div>
+                            ) : (
+                                <div ref={page3El} className="text-[16px] text-foreground text-center w-full" />
+                            )}
+
+                            {introduction.pages.page3.input && (
+                                <motion.div
+                                    key="introduction-page-3-input"
+                                    initial="initial"
+                                    animate="in"
+                                    exit="out"
+                                    variants={pageVariants(2, 1)}
+                                    transition={pageTransition(2)}
+                                    onAnimationStart={() => {
+                                        setIntroduction(prevState => ({
+                                            ...prevState,
+                                            pages: {
+                                                ...prevState.pages,
+                                                page3: {
+                                                    ...prevState.pages.page3,
+                                                    button: false,
+                                                },
+                                            },
+                                        }));
+                                    }}
+                                    onAnimationComplete={() => {
+                                        if (studyMaterial.length > 4) {
+                                            setIntroduction(prevState => ({
+                                                ...prevState,
+                                                pages: {
+                                                    ...prevState.pages,
+                                                    page3: {
+                                                        ...prevState.pages.page3,
+                                                        button: true,
+                                                    },
+                                                },
+                                            }));
+                                        }
+                                    }}
+                                    className="flex items-center justify-center w-full"
+                                >
+                                    <Input
+                                        placeholder="I want to learn about..."
+                                        className="max-w-[450px] rounded-xl shadow-md"
+                                        value={studyMaterial}
+                                        onChange={(e) => {
+                                            if (e.target.value.length > 4) {
+                                                setIntroduction(prevState => ({
+                                                    ...prevState,
+                                                    pages: {
+                                                        ...prevState.pages,
+                                                        page3: {
+                                                            ...prevState.pages.page3,
+                                                            button: true,
+                                                        },
+                                                    },
+                                                }));
+                                            } else {
+                                                setIntroduction(prevState => ({
+                                                    ...prevState,
+                                                    pages: {
+                                                        ...prevState.pages,
+                                                        page3: {
+                                                            ...prevState.pages.page3,
+                                                            button: false,
+                                                        },
+                                                    },
+                                                }));
+                                            }
+                                            setStudyMaterial(e.target.value);
+                                        }}
+                                    />
+                                </motion.div>
+                            )}
+                        </motion.div>
+                    )}
+
+                    <motion.div
+                        key="introduction-options"
+                        initial="initial"
+                        animate="in"
+                        exit="out"
+                        variants={pageVariants(2)}
+                        transition={pageTransition(2)}
+                        className="flex flex-col items-center justify-between gap-4 select-none w-full mt-6"
+                    >
+                        <div className="flex items-center justify-between gap-3 w-full">
+                            <motion.div
+                                initial="initial"
+                                animate="in"
+                                exit="out"
+                                variants={pageVariants(2)}
+                                transition={pageTransition(2)}
+                            >
+                                <Button
+                                    variant="outline"
+                                    className={`w-[143px] rounded-xl shadow-md ${page === 1 ? "invisible select-none" : "visible"}`}
+                                    onClick={() => {
+                                        setPage(page - 1);
+                                        setIntroduction(prevState => ({
+                                            ...prevState,
+                                            actPage: page - 1,
+                                            pages: {
+                                                ...prevState.pages,
+                                                [`page${page}`]: {
+                                                    ...prevState.pages[`page${page}`],
+                                                    input: false,
+                                                    button: false,
+                                                    visited: true,
+                                                },
+                                            }
+                                        }));
+                                    }}
+                                >
+                                    Back
+                                </Button>
+                            </motion.div>
+
+                            <motion.div
+                                initial="initial"
+                                animate="in"
+                                exit="out"
+                                variants={pageVariants(2)}
+                                transition={pageTransition(2)}
+                            >
+                                <Button
+                                    variant="default"
+                                    className="min-w-[143px] rounded-xl shadow-md"
+                                    disabled={!introduction.pages[`page${page}`].button}
+                                    onClick={() => {
+                                        if (page === 3) {
+                                            setIntroduction(prevState => ({
+                                                ...prevState,
+                                                show: false,
+                                                isLoading: true,
+                                            }));
+                                            return;
+                                        }
+
+                                        setPage(page + 1);
+                                        setIntroduction(prevState => ({
+                                            ...prevState,
+                                            actPage: page + 1,
+                                            pages: {
+                                                ...prevState.pages,
+                                                [`page${page}`]: {
+                                                    ...prevState.pages[`page${page}`],
+                                                    input: false,
+                                                    button: false,
+                                                    visited: true,
+                                                },
+                                            }
+                                        }));
+                                    }}
+                                >
+                                    {page === 3 ? "Start Learning" : "Next"}
+                                </Button>
+                            </motion.div>
+                        </div>
+                        <div className="flex items-center justify-center gap-4 select-none">
+                            <span className={`block w-12 h-2 rounded-full ${page === 1 ? "bg-primary" : "bg-primary/30"} transition-all`} />
+                            <span className={`block w-12 h-2 rounded-full ${page === 2 ? "bg-primary" : "bg-primary/30"} transition-all`} />
+                            <span className={`block w-12 h-2 rounded-full ${page === 3 ? "bg-primary" : "bg-primary/30"} transition-all`} />
+                        </div>
                     </motion.div>
-                )}
-            </AnimatePresence>
+                </AnimatePresence>
+            </div>
         </div>
     );
 };
