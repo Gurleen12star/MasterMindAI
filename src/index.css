@@ -358,7 +358,7 @@ div[style*="z-index: 999999"] {
 
 /* Hero Section Styles */
 .hero-card {
-  width: 100%;
+  width: 80%;
   max-width: 100%;
   aspect-ratio: 2 / 0.9;
   position: relative;
