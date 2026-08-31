@@ -197,6 +197,16 @@ div[style*="z-index: 999999"] {
   opacity: 0.9;
 }
 
+.hero-highlight {
+  display: inline-block;
+  background: linear-gradient(120deg, rgba(255, 140, 0, 0.2), rgba(255, 140, 0, 0.1));
+  padding: 0.1em 0.3em;
+  border-radius: 0.2em;
+  border: 1px solid rgba(255, 140, 0, 0.3);
+  box-shadow: 0 2px 10px rgba(255, 140, 0, 0.1);
+  transform: skew(-3deg);
+}
+
 .hero-content {
   min-height: 32%;
   position: absolute;
