@@ -14,6 +14,8 @@ import { supabaseClient } from '@/lib/supabase-admin';
 import { useToast } from '@/hooks/use-toast';
 import { Map, Loader2, FileText, BarChart as FlowChart, Maximize2, History, Clock } from 'lucide-react';
 import { useUser } from '@clerk/clerk-react';
+import { useSupabaseAuth } from '@/components/auth/ClerkSupabaseProvider';
+import { getUserIdForSupabase } from '@/lib/supabase-admin';
 
 type DifficultyLevel = 'beginner' | 'intermediate' | 'advanced';
 
@@ -29,6 +31,7 @@ interface LearningPath {
 export default function LearningPathsPage() {
   const { toast } = useToast();
   const { user } = useUser();
+  const { isSupabaseReady } = useSupabaseAuth();
   const [topic, setTopic] = useState('');
   const [level, setLevel] = useState<DifficultyLevel>('intermediate');
   const [additionalInfo, setAdditionalInfo] = useState('');
@@ -46,10 +49,11 @@ export default function LearningPathsPage() {
     
     setIsLoadingHistory(true);
     try {
+      const supabaseUserId = getUserIdForSupabase(user.id);
       const { data, error } = await supabaseClient
         .from('learning_paths')
         .select('*')
-        .eq('user_id', user.id)
+        .eq('user_id', supabaseUserId)
         .order('created_at', { ascending: false });
 
       if (error) throw error;
@@ -113,6 +117,7 @@ export default function LearningPathsPage() {
       // Save to database if user is authenticated
       if (user?.id) {
         try {
+          const supabaseUserId = getUserIdForSupabase(user.id);
           const { error } = await supabaseClient
             .from('learning_paths')
             .insert([{
@@ -120,7 +125,7 @@ export default function LearningPathsPage() {
               mermaid_code: diagram,
               markdown_content: path,
               level,
-              user_id: user.id
+              user_id: supabaseUserId
             }]);
 
           if (error) throw error;
@@ -224,12 +229,17 @@ export default function LearningPathsPage() {
               className="w-full"
               size="lg"
               onClick={handleGenerate}
-              disabled={isGenerating || !topic}
+              disabled={isGenerating || !topic || !isSupabaseReady}
             >
               {isGenerating ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                   Generating...
+                </>
+              ) : !isSupabaseReady ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Initializing Secure Connection...
                 </>
               ) : (
                 'Generate Learning Path'
