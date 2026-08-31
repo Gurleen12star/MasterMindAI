@@ -4,7 +4,7 @@ import { Link } from '@/components/ui/link';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
-import logo from '@/assets/logo.svg';
+import EchoVerseLogo from '@/components/ui/EchoVerseLogo';
 import {
   Compass,
   BookOpen,
@@ -149,10 +149,8 @@ export default function Sidebar({ onNavigate }: SidebarProps) {
           <div className="relative flex items-center flex-shrink-0">
             <Link href="/" className="flex items-center gap-2">
               <div className="relative">
-                <img 
-                  src={logo}
-                  alt="EchoVerse Logo" 
-                  className="object-contain transition-all duration-300 h-8 w-8 shadow-md rounded-lg" 
+                <EchoVerseLogo 
+                  className="object-contain transition-all duration-300 h-8 w-8 shadow-md rounded-lg text-primary" 
                 />
                 <div className="absolute inset-0 bg-primary/20 rounded-lg blur-sm opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
               </div>

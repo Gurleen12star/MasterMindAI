@@ -235,6 +235,79 @@
   animation-delay: 2s;
 }
 
+
+/* EchoVerse Logo Animation Styles */
+.path {
+  stroke-dasharray: 30;
+  animation: dash 5s infinite;
+}
+
+@keyframes dash {
+  to {
+    stroke-dashoffset: 300;
+  }
+}
+
+.c1, .c2, .c3 {
+  animation: one 1s infinite;
+}
+
+@keyframes one {
+  30% {
+    opacity: 0.5;
+  }
+}
+
+.c4, .c5, .c6 {
+  animation: two 1s infinite;
+}
+
+@keyframes two {
+  60% {
+    opacity: 0.5;
+  }
+}
+
+.c7, .c8, .c9, .c10 {
+  animation: three 1s infinite;
+}
+
+@keyframes three {
+  90% {
+    opacity: 0.5;
+  }
+}
+
+.lg-circle {
+  animation: scale-c 1.2s infinite;
+}
+
+@keyframes scale-c {
+  50% {
+    r: 2%;
+  }
+}
+
+.lg-middle {
+  animation: scale-b 1.2s infinite;
+}
+
+@keyframes scale-b {
+  20% {
+    r: 4%;
+  }
+}
+
+.lg-edge {
+  animation: scale-e 1.2s infinite;
+}
+
+@keyframes scale-e {
+  80% {
+    r: 2.8%;
+  }
+}
+
 /* Enhanced Mermaid Diagram Styles */
 .mermaid-diagram-wrapper {
   background: var(--mermaid-bg);

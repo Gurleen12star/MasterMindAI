@@ -4,7 +4,7 @@ import { useTheme } from '@/components/theme/ThemeProvider';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { Menu, Moon, Sun } from 'lucide-react';
-import logo from '@/assets/logo.png';
+import EchoVerseLogo from '@/components/ui/EchoVerseLogo';
 import { cn } from '@/lib/utils';
 
 const navItems = [
@@ -51,10 +51,8 @@ export default function Header() {
           
           <a href="#" className="flex items-center gap-2 group z-20 relative">
             <div className="relative flex items-center justify-center">
-              <img 
-                src={logo} 
-                alt="EchoVerse Logo" 
-                className="h-24 w-24 object-contain -my-8 transition-transform duration-300 group-hover:scale-105" 
+              <EchoVerseLogo 
+                className="h-24 w-24 -my-8 transition-transform duration-300 group-hover:scale-105 text-primary" 
               />
             </div>
             <span className="bg-gradient-to-r from-indigo-500 to-purple-500 bg-clip-text text-xl font-bold text-transparent hover:scale-105 transition-transform duration-300">

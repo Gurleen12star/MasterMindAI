@@ -1,7 +1,7 @@
 import { Github, Linkedin, Twitter, ArrowUpRight } from 'lucide-react';
 import { Separator } from '@/components/ui/separator';
 import { BentoBox } from '@/components/ui/BentoBox';
-import logo from '@/assets/logo.png';
+import EchoVerseLogo from '@/components/ui/EchoVerseLogo';
 
 export default function Footer() {
   return (
@@ -16,10 +16,8 @@ export default function Footer() {
           <div className="relative z-10 flex flex-col items-start justify-between gap-12 md:flex-row">
             <div className="flex flex-col items-start gap-6">
               <div className="flex items-center gap-3">
-                <img 
-                  src={logo} 
-                  alt="EchoVerse Logo" 
-                  className="h-20 w-20 object-contain -my-4" 
+                <EchoVerseLogo 
+                  className="h-20 w-20 -my-4 text-primary" 
                 />
                 <span className="bg-gradient-to-r from-indigo-500 to-purple-500 bg-clip-text text-2xl font-bold text-transparent">
                   EchoVerse
