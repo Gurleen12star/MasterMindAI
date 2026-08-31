@@ -17,8 +17,7 @@ import {
   LogOut,
   ChevronRight,
   ChevronLeft,
-  GraduationCap,
-  History
+  GraduationCap
 } from 'lucide-react';
 import { Button } from '../ui/button';
 
@@ -98,7 +97,6 @@ export default function Sidebar({ className }: SidebarProps) {
     { to: '/dashboard/summaries', icon: Wand2, label: 'Quick Summaries' },
     { to: '/dashboard/animation-studio', icon: Film, label: 'Animation Studio' },
     { to: '/dashboard/personalized-learning', icon: GraduationCap, label: 'Personalized Learning' },
-    { to: '/dashboard/personalized-learning-history', icon: History, label: 'Learning History' },
   ];
 
   const projects = [

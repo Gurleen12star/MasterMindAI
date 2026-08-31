@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { useAppContext } from '@/contexts/PersonalizedLearningContext';
 import { useSidebar } from '@/components/dashboard/SidebarContext';
 import { Button } from '@/components/ui/button';
@@ -10,7 +11,8 @@ import {
   Unlock,
   Award,
   ChevronLeft,
-  ChevronRight
+  ChevronRight,
+  History
 } from 'lucide-react';
 
 interface LearningModulesSidebarProps {
@@ -87,6 +89,16 @@ export default function LearningModulesSidebar({ className }: LearningModulesSid
       
       {/* Footer - Change Topic Button */}
       <div className="p-3 border-t border-white/10">
+        <Link to="/dashboard/personalized-learning-history">
+          <Button
+            variant="ghost"
+            size="sm"
+            className="w-full justify-start text-gray-400 hover:text-white hover:bg-white/5 mb-2"
+          >
+            <History className="mr-3 h-4 w-4" />
+            Learning History
+          </Button>
+        </Link>
         <Button
           variant="ghost"
           size="sm"

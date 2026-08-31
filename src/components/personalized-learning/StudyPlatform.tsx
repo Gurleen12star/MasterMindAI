@@ -238,7 +238,7 @@ const StudyPlatform = () => {
                             <div className="w-full">
                                 {/* Module Content */}
                                 <Card className="mb-6">
-                                    <ScrollArea className="h-[calc(100vh-400px)]">
+                                    <ScrollArea className="h-[calc(100vh-250px)]">
                                         <CardContent className="p-6 studyPlatform-content">
                                         {studyPlatform.modulos[studyPlatform.actModule] && 
                                          studyPlatform.modulos[studyPlatform.actModule].content && 
