@@ -106,26 +106,41 @@ export default function Header() {
               <span className="sr-only">Toggle theme</span>
             </Button>
             
-            <Button 
-              variant="ghost" 
-              size="sm" 
-              className="hidden md:flex hover:bg-primary/10 transition-all duration-300 relative rounded-xl font-medium"
-              onClick={() => window.location.href = isSignedIn ? '/dashboard' : '/login'}
-            >
-              {isSignedIn ? 'Dashboard' : 'Log in'}
-              <div className="absolute inset-0 bg-gradient-to-r from-primary/5 to-primary/10 opacity-0 hover:opacity-100 rounded-xl transition-opacity duration-300" />
-            </Button>
+            {!isSignedIn && (
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                className="hidden md:flex hover:bg-primary/10 transition-all duration-300 relative rounded-xl font-medium"
+                onClick={() => window.location.href = '/login'}
+              >
+                Log in
+                <div className="absolute inset-0 bg-gradient-to-r from-primary/5 to-primary/10 opacity-0 hover:opacity-100 rounded-xl transition-opacity duration-300" />
+              </Button>
+            )}
             
-            <Button 
-              size="sm" 
-              className="hidden md:flex bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 transition-all duration-300 shadow-lg hover:shadow-xl hover:shadow-primary/25 relative overflow-hidden group rounded-xl font-medium"
-              onClick={() => window.location.href = isSignedIn ? '/dashboard' : '/signup'}
-            >
-              <div className="absolute inset-0 bg-gradient-to-r from-white/10 to-white/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-              <span className="relative z-10">
-                {isSignedIn ? 'Go to Dashboard' : 'Get Started'}
-              </span>
-            </Button>
+            {isSignedIn ? (
+              <Button 
+                size="sm" 
+                className="hidden md:flex bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 transition-all duration-300 shadow-lg hover:shadow-xl hover:shadow-primary/25 relative overflow-hidden group rounded-xl font-medium"
+                onClick={() => window.location.href = '/dashboard'}
+              >
+                <div className="absolute inset-0 bg-gradient-to-r from-white/10 to-white/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                <span className="relative z-10">
+                  Go to Dashboard
+                </span>
+              </Button>
+            ) : (
+              <Button 
+                size="sm" 
+                className="hidden md:flex bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 transition-all duration-300 shadow-lg hover:shadow-xl hover:shadow-primary/25 relative overflow-hidden group rounded-xl font-medium"
+                onClick={() => window.location.href = '/signup'}
+              >
+                <div className="absolute inset-0 bg-gradient-to-r from-white/10 to-white/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                <span className="relative z-10">
+                  Get Started
+                </span>
+              </Button>
+            )}
           
             {/* Mobile Navigation */}
             <Sheet>
@@ -154,21 +169,33 @@ export default function Header() {
                   >
                     {theme === 'dark' ? 'Light Mode' : 'Dark Mode'}
                   </Button>
-                  <Button 
-                    variant="ghost" 
-                    size="sm" 
-                    className="justify-start px-0 hover:bg-primary/10 rounded-xl"
-                    onClick={() => window.location.href = isSignedIn ? '/dashboard' : '/login'}
-                  >
-                    {isSignedIn ? 'Dashboard' : 'Log in'}
-                  </Button>
-                  <Button 
-                    size="sm"
-                    className="bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 rounded-xl"
-                    onClick={() => window.location.href = isSignedIn ? '/dashboard' : '/signup'}
-                  >
-                    {isSignedIn ? 'Go to Dashboard' : 'Get Started'}
-                  </Button>
+                  {!isSignedIn && (
+                    <Button 
+                      variant="ghost" 
+                      size="sm" 
+                      className="justify-start px-0 hover:bg-primary/10 rounded-xl"
+                      onClick={() => window.location.href = '/login'}
+                    >
+                      Log in
+                    </Button>
+                  )}
+                  {isSignedIn ? (
+                    <Button 
+                      size="sm"
+                      className="bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 rounded-xl"
+                      onClick={() => window.location.href = '/dashboard'}
+                    >
+                      Go to Dashboard
+                    </Button>
+                  ) : (
+                    <Button 
+                      size="sm"
+                      className="bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 rounded-xl"
+                      onClick={() => window.location.href = '/signup'}
+                    >
+                      Get Started
+                    </Button>
+                  )}
                 </div>
               </SheetContent>
             </Sheet>

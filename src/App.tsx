@@ -98,6 +98,26 @@ function App() {
         <CustomCursor />
         {renderContent()}
         <Toaster />
+        
+        {/* Powered by Bolt Badge - Floating in bottom right */}
+        <div className="fixed bottom-4 right-4 z-[60]">
+          <a
+            href="https://bolt.new/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="group block transition-transform duration-300 hover:scale-105"
+            title="Powered by Bolt"
+          >
+            <div className="relative">
+              <img
+                src="/black_circle_360x360.svg"
+                alt="Powered by Bolt"
+                className="transition-all duration-300 rounded-full shadow-lg w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16 group-hover:shadow-xl group-hover:shadow-primary/25 backdrop-blur-sm"
+              />
+              <div className="absolute inset-0 rounded-full bg-gradient-to-r from-primary/10 to-purple-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+            </div>
+          </a>
+        </div>
       </div>
     </ThemeProvider>
   );

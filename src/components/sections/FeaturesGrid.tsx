@@ -11,9 +11,9 @@ import {
 export default function FeaturesGrid() {
   return (
     <section id="features" className="relative -mt-32 md:-mt-48 py-24 md:py-32 overflow-hidden">
-      {/* Blurred oval overlay effects */}
-      <div className="absolute -top-32 -right-32 w-96 h-96 rounded-full bg-gradient-to-br from-primary/8 via-primary/4 to-transparent blur-3xl opacity-60" />
-      <div className="absolute -bottom-32 -left-32 w-80 h-80 rounded-full bg-gradient-to-br from-blue-500/6 via-purple-500/4 to-transparent blur-3xl opacity-50" />
+      {/* Simplified overlay effects */}
+      <div className="absolute -top-32 -right-32 w-96 h-96 rounded-full bg-gradient-to-br from-primary/5 to-transparent opacity-40" />
+      <div className="absolute -bottom-32 -left-32 w-80 h-80 rounded-full bg-gradient-to-br from-blue-500/4 to-transparent opacity-30" />
       
       <div className="container relative z-10 px-4 max-w-[1200px] mx-auto">
         <div className="relative mx-auto max-w-5xl text-center mb-16">
@@ -25,116 +25,87 @@ export default function FeaturesGrid() {
           </p>
         </div>
         
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:[grid-template-areas:'a_b_b'_'a_c_d'_'e_f_f'] md:auto-rows-[28rem] relative">
-          <BentoBox gradient="purple" className="flex flex-col md:[grid-area:a] row-span-2 relative overflow-hidden group backdrop-blur-xl bg-background/30 border-2 border-primary/20 hover:border-primary/40 hover:bg-background/40 transition-all duration-500 bento-modern shadow-inner-modern rounded-3xl">
-            <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-primary/5 to-transparent opacity-60 group-hover:opacity-80 transition-opacity duration-500" />
-            <img
-              src="https://images.pexels.com/photos/8386440/pexels-photo-8386440.jpeg"
-              alt="AI Brain"
-              className="absolute inset-0 w-full h-full object-cover opacity-15 group-hover:scale-110 transition-transform duration-700"
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-background/90 via-background/50 to-transparent z-10" />
+        {/* Grid with vibrant color cards */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 auto-rows-auto relative">
+          {/* AI-Driven Content - Orange Pantone theme */}
+          <BentoBox gradient="purple" className="flex flex-col md:row-span-2 relative overflow-hidden group rounded-3xl min-h-[400px] border border-[hsl(var(--primary)/0.3)] bg-gradient-to-br from-[hsl(var(--primary)/0.9)] via-[hsl(var(--primary)/0.7)] to-[#F4D47C]/50 hover:from-[hsl(var(--primary)/1)] hover:via-[hsl(var(--primary)/0.8)] hover:to-[#F4D47C]/60 transition-all duration-300 shadow-lg shadow-[hsl(var(--primary)/0.2)]">
+            <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent" />
             <div className="relative z-20 p-8 h-full flex flex-col justify-end">
-              <div className="relative mb-6 inline-flex h-16 w-16 items-center justify-center rounded-2xl bg-primary/20 before:absolute before:inset-0 before:rounded-2xl before:bg-primary/10 before:animate-pulse shadow-lg">
-                <Brain className="h-8 w-8 text-primary" />
+              <div className="relative mb-6 inline-flex h-16 w-16 items-center justify-center rounded-2xl bg-white/20 backdrop-blur-sm shadow-lg">
+                <Brain className="h-8 w-8 text-white" />
               </div>
-              <h3 className="mb-4 text-3xl font-bold tracking-tight text-foreground">AI-Driven Content</h3>
-              <p className="text-muted-foreground text-lg leading-relaxed">
+              <h3 className="mb-4 text-3xl font-bold tracking-tight text-white">AI-Driven Content</h3>
+              <p className="text-white/90 text-lg leading-relaxed">
                 Discover personalized content recommendations powered by advanced AI algorithms that adapt to your learning style.
               </p>
             </div>
           </BentoBox>
           
-          <BentoBox gradient="blue" className="flex flex-col md:[grid-area:b] md:col-span-2 relative overflow-hidden group backdrop-blur-xl bg-background/30 border-2 border-primary/20 hover:border-primary/40 hover:bg-background/40 transition-all duration-500 bento-modern shadow-inner-modern rounded-3xl">
-            <div className="absolute inset-0 bg-gradient-to-br from-blue-500/10 via-blue-500/5 to-transparent opacity-60 group-hover:opacity-80 transition-opacity duration-500" />
-            <img
-              src="https://images.pexels.com/photos/7014766/pexels-photo-7014766.jpeg"
-              alt="Content Transformation"
-              className="absolute inset-0 w-full h-full object-cover opacity-15 group-hover:scale-110 transition-transform duration-700"
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-background/90 via-background/50 to-transparent z-10" />
+          {/* Multi-Modal Transformations - Midnight Green theme */}
+          <BentoBox gradient="blue" className="flex flex-col md:col-span-2 relative overflow-hidden group rounded-3xl min-h-[280px] border border-[#075058]/30 bg-gradient-to-br from-[#075058]/90 via-[#075058]/70 to-[#233038]/50 hover:from-[#075058] hover:via-[#075058]/80 hover:to-[#233038]/60 transition-all duration-300 shadow-lg shadow-[#075058]/20">
+            <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent" />
             <div className="relative z-20 p-8 h-full flex flex-col justify-end">
-              <div className="mb-6 inline-flex h-16 w-16 items-center justify-center rounded-2xl bg-blue-500/20 shadow-lg">
-                <Video className="h-8 w-8 text-blue-500" />
+              <div className="mb-6 inline-flex h-16 w-16 items-center justify-center rounded-2xl bg-white/20 backdrop-blur-sm shadow-lg">
+                <Video className="h-8 w-8 text-white" />
               </div>
-              <h3 className="mb-4 text-3xl font-bold tracking-tight text-foreground">Multi-Modal Transformations</h3>
-              <p className="text-muted-foreground text-lg leading-relaxed">
+              <h3 className="mb-4 text-3xl font-bold tracking-tight text-white">Multi-Modal Transformations</h3>
+              <p className="text-white/90 text-lg leading-relaxed">
                 Convert text to voice, video, and other formats instantly with our intelligent transformation tools.
               </p>
             </div>
           </BentoBox>
           
-          <BentoBox gradient="teal" className="flex flex-col md:[grid-area:c] relative overflow-hidden group backdrop-blur-xl bg-background/30 border-2 border-primary/20 hover:border-primary/40 hover:bg-background/40 transition-all duration-500 bento-modern shadow-inner-modern rounded-3xl">
-            <div className="absolute inset-0 bg-gradient-to-br from-teal-500/10 via-teal-500/5 to-transparent opacity-60 group-hover:opacity-80 transition-opacity duration-500" />
-            <img
-              src="https://images.pexels.com/photos/7376/startup-photos.jpg"
-              alt="Learning Dashboard"
-              className="absolute inset-0 w-full h-full object-cover opacity-15 group-hover:scale-110 transition-transform duration-700"
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-background/90 via-background/50 to-transparent z-10" />
+          {/* Custom Learning Dashboards - Sand Yellow theme */}
+          <BentoBox gradient="teal" className="flex flex-col relative overflow-hidden group rounded-3xl min-h-[280px] border border-[#F4D47C]/30 bg-gradient-to-br from-[#F4D47C]/90 via-[#F4D47C]/70 to-[#FDF6E3]/50 hover:from-[#F4D47C] hover:via-[#F4D47C]/80 hover:to-[#FDF6E3]/60 transition-all duration-300 shadow-lg shadow-[#F4D47C]/20">
+            <div className="absolute inset-0 bg-gradient-to-t from-black/10 via-transparent to-transparent" />
             <div className="relative z-20 p-8 h-full flex flex-col justify-end">
-              <div className="mb-6 inline-flex h-16 w-16 items-center justify-center rounded-2xl bg-teal-500/20 shadow-lg">
-                <LineChart className="h-8 w-8 text-teal-500" />
+              <div className="mb-6 inline-flex h-16 w-16 items-center justify-center rounded-2xl bg-black/10 backdrop-blur-sm shadow-lg">
+                <LineChart className="h-8 w-8 text-[#233038]" />
               </div>
-              <h3 className="mb-4 text-3xl font-bold tracking-tight text-foreground">Custom Learning Dashboards</h3>
-              <p className="text-muted-foreground text-lg leading-relaxed">
+              <h3 className="mb-4 text-3xl font-bold tracking-tight text-[#233038]">Custom Learning Dashboards</h3>
+              <p className="text-[#233038]/80 text-lg leading-relaxed">
                 Track your progress and optimize your learning path with customizable dashboards.
               </p>
             </div>
           </BentoBox>
           
-          <BentoBox gradient="green" className="flex flex-col md:[grid-area:d] relative overflow-hidden group backdrop-blur-xl bg-background/30 border-2 border-primary/20 hover:border-primary/40 hover:bg-background/40 transition-all duration-500 bento-modern shadow-inner-modern rounded-3xl">
-            <div className="absolute inset-0 bg-gradient-to-br from-green-500/10 via-green-500/5 to-transparent opacity-60 group-hover:opacity-80 transition-opacity duration-500" />
-            <img
-              src="https://images.pexels.com/photos/3861969/pexels-photo-3861969.jpeg"
-              alt="Language Translation"
-              className="absolute inset-0 w-full h-full object-cover opacity-15 group-hover:scale-110 transition-transform duration-700"
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-background/90 via-background/50 to-transparent z-10" />
+          {/* Instant Translation - Gunmetal theme */}
+          <BentoBox gradient="green" className="flex flex-col relative overflow-hidden group rounded-3xl min-h-[280px] border border-[#233038]/30 bg-gradient-to-br from-[#233038]/90 via-[#233038]/70 to-[#075058]/50 hover:from-[#233038] hover:via-[#233038]/80 hover:to-[#075058]/60 transition-all duration-300 shadow-lg shadow-[#233038]/20">
+            <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent" />
             <div className="relative z-20 p-8 h-full flex flex-col justify-end">
-              <div className="mb-6 inline-flex h-16 w-16 items-center justify-center rounded-2xl bg-green-500/20 shadow-lg">
-                <LanguagesIcon className="h-8 w-8 text-green-500" />
+              <div className="mb-6 inline-flex h-16 w-16 items-center justify-center rounded-2xl bg-white/20 backdrop-blur-sm shadow-lg">
+                <LanguagesIcon className="h-8 w-8 text-white" />
               </div>
-              <h3 className="mb-4 text-3xl font-bold tracking-tight text-foreground">Instant Translation</h3>
-              <p className="text-muted-foreground text-lg leading-relaxed">
+              <h3 className="mb-4 text-3xl font-bold tracking-tight text-white">Instant Translation</h3>
+              <p className="text-white/90 text-lg leading-relaxed">
                 Break language barriers with real-time translation across multiple languages.
               </p>
             </div>
           </BentoBox>
           
-          <BentoBox gradient="blue" className="flex flex-col md:[grid-area:e] relative overflow-hidden group backdrop-blur-xl bg-background/30 border-2 border-primary/20 hover:border-primary/40 hover:bg-background/40 transition-all duration-500 bento-modern shadow-inner-modern rounded-3xl">
-            <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/10 via-indigo-500/5 to-transparent opacity-60 group-hover:opacity-80 transition-opacity duration-500" />
-            <img
-              src="https://images.pexels.com/photos/8370752/pexels-photo-8370752.jpeg"
-              alt="Decentralized Storage"
-              className="absolute inset-0 w-full h-full object-cover opacity-15 group-hover:scale-110 transition-transform duration-700"
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-background/90 via-background/50 to-transparent z-10" />
+          {/* Decentralized Storage - Light Silver theme */}
+          <BentoBox gradient="blue" className="flex flex-col relative overflow-hidden group rounded-3xl min-h-[280px] border border-[#D3DBDD]/30 bg-gradient-to-br from-[#D3DBDD]/90 via-[#D3DBDD]/70 to-[#FDF6E3]/50 hover:from-[#D3DBDD] hover:via-[#D3DBDD]/80 hover:to-[#FDF6E3]/60 transition-all duration-300 shadow-lg shadow-[#D3DBDD]/20">
+            <div className="absolute inset-0 bg-gradient-to-t from-black/10 via-transparent to-transparent" />
             <div className="relative z-20 p-8 h-full flex flex-col justify-end">
-              <div className="mb-6 inline-flex h-16 w-16 items-center justify-center rounded-2xl bg-indigo-500/20 shadow-lg">
-                <MessageSquareText className="h-8 w-8 text-indigo-500" />
+              <div className="mb-6 inline-flex h-16 w-16 items-center justify-center rounded-2xl bg-black/10 backdrop-blur-sm shadow-lg">
+                <MessageSquareText className="h-8 w-8 text-[#233038]" />
               </div>
-              <h3 className="mb-4 text-3xl font-bold tracking-tight text-foreground">Decentralized Storage</h3>
-              <p className="text-muted-foreground text-lg leading-relaxed">
+              <h3 className="mb-4 text-3xl font-bold tracking-tight text-[#233038]">Decentralized Storage</h3>
+              <p className="text-[#233038]/80 text-lg leading-relaxed">
                 Secure your content with decentralized storage powered by Algorand and IPFS.
               </p>
             </div>
           </BentoBox>
           
-          <BentoBox gradient="purple" className="flex flex-col md:[grid-area:f] md:col-span-2 relative overflow-hidden group backdrop-blur-xl bg-background/30 border-2 border-primary/20 hover:border-primary/40 hover:bg-background/40 transition-all duration-500 bento-modern shadow-inner-modern rounded-3xl">
-            <div className="absolute inset-0 bg-gradient-to-br from-purple-500/10 via-purple-500/5 to-transparent opacity-60 group-hover:opacity-80 transition-opacity duration-500" />
-            <img
-              src="https://images.pexels.com/photos/2882566/pexels-photo-2882566.jpeg"
-              alt="Premium Content"
-              className="absolute inset-0 w-full h-full object-cover opacity-15 group-hover:scale-110 transition-transform duration-700"
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-background/90 via-background/50 to-transparent z-10" />
+          {/* Premium Content Gating - Mixed vibrant theme */}
+          <BentoBox gradient="purple" className="flex flex-col md:col-span-2 relative overflow-hidden group rounded-3xl min-h-[280px] border border-[hsl(var(--primary)/0.3)] bg-gradient-to-br from-[#075058]/90 via-[hsl(var(--primary)/0.7)] to-[#F4D47C]/50 hover:from-[#075058] hover:via-[hsl(var(--primary)/0.8)] hover:to-[#F4D47C]/60 transition-all duration-300 shadow-lg shadow-[hsl(var(--primary)/0.2)]">
+            <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent" />
             <div className="relative z-20 p-8 h-full flex flex-col justify-end">
-              <div className="mb-6 inline-flex h-16 w-16 items-center justify-center rounded-2xl bg-purple-500/20 shadow-lg">
-                <Lock className="h-8 w-8 text-purple-500" />
+              <div className="mb-6 inline-flex h-16 w-16 items-center justify-center rounded-2xl bg-white/20 backdrop-blur-sm shadow-lg">
+                <Lock className="h-8 w-8 text-white" />
               </div>
-              <h3 className="mb-4 text-3xl font-bold tracking-tight text-foreground">Premium Content Gating</h3>
-              <p className="text-muted-foreground text-lg leading-relaxed">
+              <h3 className="mb-4 text-3xl font-bold tracking-tight text-white">Premium Content Gating</h3>
+              <p className="text-white/90 text-lg leading-relaxed">
                 Monetize your expertise with customizable content access controls and subscriptions.
               </p>
             </div>
