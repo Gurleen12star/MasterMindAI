@@ -18,6 +18,9 @@ export default function MaintenanceBanner() {
         
         if (!error && data) {
           setIsMaintenanceMode(data.value.maintenanceMode || false);
+        } else if (error && error.code === 'PGRST116') {
+          // No system_settings row exists yet, default to maintenance mode disabled
+          setIsMaintenanceMode(false);
         }
       } catch (error) {
         console.error('Error checking maintenance status:', error);
