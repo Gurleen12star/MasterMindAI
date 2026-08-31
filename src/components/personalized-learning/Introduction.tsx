@@ -124,7 +124,7 @@ const Introduction = () => {
                                 if (introduction.pages.page1.visited) return;
 
                                 new Typed(page1El.current, {
-                                    strings: ['I am Gemini, and I will be your teacher during your learning journey. <br/>I\'m here to help you. But first, what should I call you?'],
+                                    strings: ['I am Echo, and I will be your teacher during your learning journey. <br/>I\'m here to help you. But first, what should I call you?'],
                                     typeSpeed: 25,
                                     startDelay: 500,
                                     showCursor: false,
