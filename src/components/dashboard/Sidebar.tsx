@@ -12,7 +12,6 @@ import {
   Search,
   Network,
   Wand2,
-  UserPlus,
   Film,
   BotMessageSquare,
   Folder,
@@ -101,7 +100,6 @@ export default function Sidebar({ className }: SidebarProps) {
     { to: '/dashboard/roadmap-generator', icon: Network, label: 'Roadmap Generator' },
     { to: '/dashboard/summaries', icon: Wand2, label: 'Quick Summaries' },
     { to: '/dashboard/animation-studio', icon: Film, label: 'Animation Studio' },
-    { to: '/dashboard/mentor-matching', icon: UserPlus, label: 'Mentor Matching' },
     { to: '/dashboard/convo-ai', icon: BotMessageSquare, label: 'Convo AI' },
     { to: '/dashboard/personalized-learning', icon: GraduationCap, label: 'Personalized Learning' },
   ];
