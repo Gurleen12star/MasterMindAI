@@ -76,13 +76,27 @@
 /* Enhanced Mermaid Diagram Styles */
 .mermaid-diagram-wrapper {
   background: radial-gradient(circle at center, var(--mermaid-bg), hsl(var(--background)));
-  padding: 2rem;
+  padding: 1.5rem;
   border-radius: var(--radius);
   box-shadow: 0 0 30px rgba(0, 0, 0, 0.2);
+  transition: all 0.3s ease;
 }
 
 .mermaid-render-area {
   filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.1));
+  transition: all 0.3s ease;
+}
+
+/* Dialog styles for fullscreen mermaid */
+[role="dialog"] .mermaid-diagram-wrapper {
+  background: transparent;
+  box-shadow: none;
+  padding: 0;
+}
+
+[role="dialog"] .mermaid-render-area {
+  transform-origin: center;
+  transform: scale(1.1);
 }
 
 /* Node Styles */

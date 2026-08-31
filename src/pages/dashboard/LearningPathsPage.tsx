@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
-import { Dialog, DialogContent } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -191,6 +191,7 @@ export default function LearningPathsPage() {
                     
                     <Dialog open={isFullscreen} onOpenChange={setIsFullscreen}>
                       <DialogContent className="max-w-[90vw] w-[90vw] h-[90vh] p-6">
+                        <DialogTitle>Learning Path Visualization</DialogTitle>
                         <div className="mermaid-diagram-wrapper h-full w-full flex items-center justify-center bg-gradient-to-br from-background to-background/95">
                           <MermaidDiagram 
                             definition={mermaidDiagram}
