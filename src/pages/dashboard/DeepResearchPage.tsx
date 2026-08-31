@@ -9,7 +9,7 @@ import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { useToast } from '@/hooks/use-toast';
 import { supabaseClient } from '@/lib/supabase-admin';
-import { useUser } from '@clerk/clerk-react';
+import { useUser, useSession } from '@clerk/clerk-react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import AnimatedLoadingText from '@/components/ui/AnimatedLoadingText';
@@ -66,7 +66,8 @@ interface DeepResearchHistory {
 
 export default function DeepResearchPage() {
   const { toast } = useToast();
-  const { user } = useUser();
+  const { user, isLoaded: isClerkLoaded } = useUser();
+  const { session } = useSession();
 
   const [isFullyAuthenticated, setIsFullyAuthenticated] = useState(false);
   const [topic, setTopic] = useState('');
@@ -81,50 +82,31 @@ export default function DeepResearchPage() {
   const [selectedHistoryItem, setSelectedHistoryItem] = useState<DeepResearchHistory | null>(null);
   const progressRef = useRef<HTMLDivElement>(null);
 
-  // **THE DEFINITIVE FIX: Listen to Supabase's auth state, not Clerk's.**
+  // **THE DEFINITIVE FIX: Rely on Clerk's loading state and session object directly.**
+  // This is the most reliable signal that the entire auth flow is complete.
   useEffect(() => {
-    // This is the only reliable way to know when the Supabase client is truly ready.
-    const { data: { subscription } } = supabaseClient.auth.onAuthStateChange((event, session) => {
-      if (event === 'SIGNED_IN' && session) {
-        setIsFullyAuthenticated(true);
-        console.log("✅ Supabase client has a confirmed SIGNED_IN session. Ready for requests.");
-      } else if (event === 'SIGNED_OUT') {
-        setIsFullyAuthenticated(false);
-        console.log("Supabase client session ended. Awaiting authentication.");
-      }
-    });
-
-    // On initial load, also check if a session already exists.
-    const checkInitialSession = async () => {
-        const { data: { session } } = await supabaseClient.auth.getSession();
-        if (session) {
-            setIsFullyAuthenticated(true);
-        }
-    };
-    checkInitialSession();
-
-    // Cleanup subscription on component unmount
-    return () => {
-      subscription.unsubscribe();
-    };
-  }, []);
-
+    if (isClerkLoaded && session) {
+      setIsFullyAuthenticated(true);
+      console.log("✅ Clerk is loaded and has a session. Auth is now considered fully ready.");
+    } else {
+      setIsFullyAuthenticated(false);
+    }
+  }, [isClerkLoaded, session]); // Dependencies on both Clerk's loaded status and session object.
 
   const saveResearchToHistory = async (researchData: ResearchResult) => {
     if (!isFullyAuthenticated) {
-      console.error("Save aborted: Supabase client is not authenticated.");
+      console.error("Save aborted: Authentication not confirmed.");
       toast({ title: 'Save Failed', description: 'Your session is not active. Please refresh.', variant: 'destructive' });
       return;
     }
 
     try {
-      // Because isFullyAuthenticated is true, this call is now safe.
-      const { data: { session }, error: sessionError } = await supabaseClient.auth.getSession();
-      if (sessionError || !session) {
-        throw new Error(sessionError?.message || "No active session found. Your session may have expired.");
+      const { data: { session: supabaseSession }, error: sessionError } = await supabaseClient.auth.getSession();
+      if (sessionError || !supabaseSession) {
+        throw new Error(sessionError?.message || "No active Supabase session found. Your session may have expired.");
       }
       
-      const supabaseUserId = session.user.id; 
+      const supabaseUserId = supabaseSession.user.id; 
       console.log(`Attempting to save research with Supabase UUID: ${supabaseUserId}`);
       
       const { error: saveError } = await supabaseClient
