@@ -19,133 +19,198 @@ interface ResearchProgress {
   sourcesFound?: number;
 }
 
-// Mock implementation for demonstration - replace with actual Firecrawl integration
-async function mockFirecrawlSearch(topic: string) {
-  // Simulate API delay
-  await new Promise(resolve => setTimeout(resolve, 1000));
-  
-  return {
-    success: true,
-    data: [
-      {
-        url: `https://example.com/article-1-${encodeURIComponent(topic)}`,
-        title: `Understanding ${topic}: A Comprehensive Guide`,
-        content: `This article provides an overview of ${topic}, covering fundamental concepts and recent developments.`
+// Real Firecrawl implementation
+async function firecrawlSearch(topic: string) {
+  const apiKey = Deno.env.get('FIRECRAWL_API_KEY');
+  if (!apiKey) {
+    throw new Error('FIRECRAWL_API_KEY environment variable is not set');
+  }
+
+  try {
+    const response = await fetch('https://api.firecrawl.dev/v1/search', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${apiKey}`,
       },
-      {
-        url: `https://example.com/article-2-${encodeURIComponent(topic)}`,
-        title: `${topic}: Latest Research and Trends`,
-        content: `Recent studies and industry trends related to ${topic}, including expert opinions and data analysis.`
+      body: JSON.stringify({
+        query: topic,
+        pageOptions: {
+          fetchPageContent: false,
+          includeHtml: false,
+        },
+        searchOptions: {
+          limit: 10,
+        },
+      }),
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(`Firecrawl search failed: ${response.status} - ${errorText}`);
+    }
+
+    const data = await response.json();
+    
+    if (!data.success) {
+      throw new Error(`Firecrawl search unsuccessful: ${data.error || 'Unknown error'}`);
+    }
+
+    return {
+      success: true,
+      data: data.data || [],
+    };
+  } catch (error) {
+    console.error('Firecrawl search error:', error);
+    throw error;
+  }
+}
+
+async function firecrawlExtract(urls: string[], prompt: string) {
+  const apiKey = Deno.env.get('FIRECRAWL_API_KEY');
+  if (!apiKey) {
+    throw new Error('FIRECRAWL_API_KEY environment variable is not set');
+  }
+
+  try {
+    const response = await fetch('https://api.firecrawl.dev/v1/batch/scrape', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${apiKey}`,
       },
-      {
-        url: `https://example.com/article-3-${encodeURIComponent(topic)}`,
-        title: `Practical Applications of ${topic}`,
-        content: `Real-world applications and case studies demonstrating the practical use of ${topic}.`
-      }
-    ]
-  };
+      body: JSON.stringify({
+        urls: urls,
+        formats: ['extract'],
+        extract: {
+          prompt: prompt,
+          schema: {
+            type: 'object',
+            properties: {
+              content: {
+                type: 'string',
+                description: 'Extracted content based on the prompt'
+              }
+            },
+            required: ['content']
+          }
+        },
+      }),
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(`Firecrawl extract failed: ${response.status} - ${errorText}`);
+    }
+
+    const data = await response.json();
+    
+    if (!data.success) {
+      throw new Error(`Firecrawl extract unsuccessful: ${data.error || 'Unknown error'}`);
+    }
+
+    return {
+      success: true,
+      data: data.data || [],
+    };
+  } catch (error) {
+    console.error('Firecrawl extract error:', error);
+    throw error;
+  }
 }
 
-async function mockFirecrawlExtract(url: string, prompt: string) {
-  // Simulate API delay
-  await new Promise(resolve => setTimeout(resolve, 800));
-  
-  const topicMatch = prompt.match(/about "([^"]+)"/);
-  const topic = topicMatch ? topicMatch[1] : 'the subject';
-  
-  return {
-    success: true,
-    data: [{
-      data: `Detailed information about ${topic} extracted from ${url}. This includes key facts, expert opinions, statistical data, and comprehensive analysis. The content covers various aspects including historical context, current applications, future trends, and practical implications. Research shows significant developments in this field with measurable impacts across multiple sectors.`
-    }]
-  };
+// Real Gemini implementation
+async function geminiAnalysis(prompt: string) {
+  const apiKey = Deno.env.get('GEMINI_API_KEY');
+  if (!apiKey) {
+    throw new Error('GEMINI_API_KEY environment variable is not set');
+  }
+
+  try {
+    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        contents: [{
+          parts: [{
+            text: prompt
+          }]
+        }],
+        generationConfig: {
+          responseMimeType: 'application/json',
+          temperature: 0.7,
+        },
+      }),
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(`Gemini API failed: ${response.status} - ${errorText}`);
+    }
+
+    const data = await response.json();
+    
+    if (!data.candidates || !data.candidates[0] || !data.candidates[0].content) {
+      throw new Error('Invalid response from Gemini API');
+    }
+
+    const responseText = data.candidates[0].content.parts[0].text;
+    
+    try {
+      return JSON.parse(responseText);
+    } catch (parseError) {
+      console.error('Failed to parse Gemini JSON response:', responseText);
+      throw new Error('Gemini returned invalid JSON');
+    }
+  } catch (error) {
+    console.error('Gemini analysis error:', error);
+    throw error;
+  }
 }
 
-async function mockGeminiAnalysis(prompt: string) {
-  // Simulate API delay
-  await new Promise(resolve => setTimeout(resolve, 1200));
-  
-  // Extract topic from prompt
-  const topicMatch = prompt.match(/initial topic "([^"]+)"/);
-  const topic = topicMatch ? topicMatch[1] : 'the subject';
-  
-  // Simulate analysis based on research depth
-  const findingsCount = (prompt.match(/\[Source:/g) || []).length;
-  const shouldContinue = findingsCount < 6; // Continue if we have fewer than 6 sources
-  
-  return {
-    summary: `Current research on ${topic} reveals significant insights across multiple dimensions. Key findings include technological advancements, market trends, and practical applications. The analysis shows both opportunities and challenges in this domain.`,
-    gaps: [
-      `What are the latest technological innovations in ${topic}?`,
-      `How does ${topic} impact different industry sectors?`,
-      `What are the future predictions and trends for ${topic}?`
-    ],
-    shouldContinue
-  };
-}
+async function geminiGenerateReport(prompt: string) {
+  const apiKey = Deno.env.get('GEMINI_API_KEY');
+  if (!apiKey) {
+    throw new Error('GEMINI_API_KEY environment variable is not set');
+  }
 
-async function mockGeminiFinalReport(prompt: string) {
-  // Simulate API delay
-  await new Promise(resolve => setTimeout(resolve, 2000));
-  
-  const topicMatch = prompt.match(/topic: "([^"]+)"/);
-  const topic = topicMatch ? topicMatch[1] : 'the subject';
-  
-  return `# Comprehensive Research Report: ${topic}
+  try {
+    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-pro:generateContent?key=${apiKey}`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        contents: [{
+          parts: [{
+            text: prompt
+          }]
+        }],
+        generationConfig: {
+          temperature: 0.8,
+          maxOutputTokens: 8192,
+        },
+      }),
+    });
 
-## Executive Summary
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(`Gemini API failed: ${response.status} - ${errorText}`);
+    }
 
-This comprehensive analysis of ${topic} provides an in-depth examination of current trends, technological developments, and future implications. Based on extensive research across multiple authoritative sources, this report synthesizes key findings and presents actionable insights.
+    const data = await response.json();
+    
+    if (!data.candidates || !data.candidates[0] || !data.candidates[0].content) {
+      throw new Error('Invalid response from Gemini API');
+    }
 
-## Key Findings
-
-### Current State
-- **Market Position**: ${topic} has shown significant growth and adoption across various sectors
-- **Technology Maturity**: Current implementations demonstrate both strengths and areas for improvement
-- **Industry Impact**: Measurable effects on productivity, efficiency, and innovation
-
-### Technological Developments
-- **Recent Innovations**: Latest advancements have addressed previous limitations
-- **Integration Capabilities**: Enhanced compatibility with existing systems
-- **Performance Metrics**: Improved benchmarks across key performance indicators
-
-### Market Analysis
-- **Growth Trends**: Consistent upward trajectory in adoption and investment
-- **Competitive Landscape**: Multiple players contributing to ecosystem development
-- **Economic Impact**: Quantifiable benefits for early adopters
-
-## Detailed Analysis
-
-### Technical Aspects
-The technical foundation of ${topic} demonstrates robust architecture and scalable implementation. Recent developments have focused on improving efficiency, reducing complexity, and enhancing user experience. Performance benchmarks indicate significant improvements over previous generations.
-
-### Industry Applications
-Across various sectors, ${topic} has proven its value through practical implementations. Case studies reveal consistent patterns of improved outcomes, reduced costs, and enhanced capabilities. Organizations report positive ROI and strategic advantages.
-
-### Future Outlook
-Projections indicate continued growth and evolution in the ${topic} space. Emerging trends suggest new applications and expanded capabilities. Investment patterns and research directions point toward sustained innovation and development.
-
-## Recommendations
-
-### Short-term Actions
-1. **Assessment**: Evaluate current capabilities and identify improvement opportunities
-2. **Planning**: Develop implementation roadmap aligned with organizational goals
-3. **Pilot Programs**: Initiate small-scale trials to validate approaches
-
-### Long-term Strategy
-1. **Investment**: Allocate resources for sustained development and adoption
-2. **Partnerships**: Establish relationships with key players in the ecosystem
-3. **Innovation**: Contribute to ongoing research and development efforts
-
-## Conclusion
-
-The research demonstrates that ${topic} represents a significant opportunity for organizations willing to invest in understanding and implementing relevant solutions. Success factors include strategic planning, appropriate resource allocation, and commitment to ongoing learning and adaptation.
-
-The evidence supports a positive outlook for continued development and adoption, with multiple pathways for value creation and competitive advantage.
-
-## Sources and References
-
-This report synthesizes information from multiple authoritative sources, including academic research, industry reports, expert analyses, and practical case studies. All findings are based on current data and established methodologies.`;
+    return data.candidates[0].content.parts[0].text;
+  } catch (error) {
+    console.error('Gemini report generation error:', error);
+    throw error;
+  }
 }
 
 // The main research function
@@ -187,8 +252,8 @@ async function runDeepResearch(
     });
 
     try {
-      // 1. Search for relevant information
-      const searchResult = await mockFirecrawlSearch(currentTopic);
+      // 1. Search for relevant information using Firecrawl
+      const searchResult = await firecrawlSearch(currentTopic);
 
       if (!searchResult.success || searchResult.data.length === 0) {
         progressCallback?.({
@@ -202,8 +267,8 @@ async function runDeepResearch(
       // Collect sources
       const newSources = searchResult.data.map((result: any) => ({
         url: result.url,
-        title: result.title,
-        description: result.content,
+        title: result.title || 'Untitled',
+        description: result.description || result.content || 'No description available',
       }));
       researchState.sources.push(...newSources);
 
@@ -214,19 +279,36 @@ async function runDeepResearch(
         sourcesFound: searchResult.data.length
       });
 
-      // 2. Extract detailed information from the top 3 search results
-      const urlsToCrawl = searchResult.data.slice(0, 3).map((result: any) => result.url);
+      // 2. Extract detailed information from the top 3-5 search results
+      const urlsToExtract = searchResult.data.slice(0, Math.min(5, searchResult.data.length)).map((result: any) => result.url);
 
-      for (const url of urlsToCrawl) {
-        const extractResult = await mockFirecrawlExtract(
-          url,
-          `Extract key facts, data, and expert opinions about "${currentTopic}". Be comprehensive and detailed.`
-        );
-        
-        if (extractResult.success && extractResult.data.length > 0) {
-          researchState.findings.push({ 
-            text: extractResult.data[0].data, 
-            source: url 
+      if (urlsToExtract.length > 0) {
+        try {
+          const extractResult = await firecrawlExtract(
+            urlsToExtract,
+            `Extract key facts, data, statistics, expert opinions, and comprehensive information about "${currentTopic}". Focus on factual content, research findings, and authoritative insights. Be detailed and thorough.`
+          );
+          
+          if (extractResult.success && extractResult.data.length > 0) {
+            extractResult.data.forEach((item: any, index: number) => {
+              if (item.extract && item.extract.content) {
+                researchState.findings.push({ 
+                  text: item.extract.content, 
+                  source: urlsToExtract[index] || 'Unknown source'
+                });
+              }
+            });
+          }
+        } catch (extractError) {
+          console.error('Extract error:', extractError);
+          // Continue with search results as fallback
+          searchResult.data.slice(0, 3).forEach((result: any) => {
+            if (result.content) {
+              researchState.findings.push({
+                text: result.content,
+                source: result.url
+              });
+            }
           });
         }
       }
@@ -238,39 +320,42 @@ async function runDeepResearch(
         depth: depth + 1
       });
 
-      const analysisPrompt = `
-        You are a research analyst. Based on the initial topic "${topic}" and the following findings, please perform an analysis.
+      const analysisPrompt = `You are a research analyst. Based on the initial topic "${topic}" and the following findings, please perform an analysis.
 
-        Current Findings:
-        ${researchState.findings.map(f => `[Source: ${f.source}]:\n${f.text}`).join('\n\n')}
+Current Findings:
+${researchState.findings.map(f => `[Source: ${f.source}]:\n${f.text}`).join('\n\n')}
 
-        Previous Summaries:
-        ${researchState.summaries.join('\n\n')}
+Previous Summaries:
+${researchState.summaries.join('\n\n')}
 
-        Your task is to:
-        1. Briefly summarize what has been learned so far about "${topic}".
-        2. Identify the most critical remaining knowledge gaps. These should be specific questions.
-        3. Decide if the research should continue. It should only stop if the topic is well-covered or the max depth is reached.
+Your task is to:
+1. Briefly summarize what has been learned so far about "${topic}".
+2. Identify the most critical remaining knowledge gaps. These should be specific questions or subtopics that need investigation.
+3. Decide if the research should continue. It should only stop if the topic is well-covered or if we've reached sufficient depth.
 
-        Respond in the following JSON format:
-        {
-          "summary": "A concise summary of the key findings.",
-          "gaps": ["gap 1 as a question", "gap 2 as a question", "..."],
-          "shouldContinue": true
-        }
-      `;
+Respond in the following JSON format:
+{
+  "summary": "A concise summary of the key findings so far.",
+  "gaps": ["specific gap 1 as a question", "specific gap 2 as a question", "specific gap 3 as a question"],
+  "shouldContinue": true
+}
 
-      const analysis = await mockGeminiAnalysis(analysisPrompt);
+Make sure the gaps are specific, actionable research questions that would add value to understanding "${topic}".`;
+
+      const analysis = await geminiAnalysis(analysisPrompt);
       
       researchState.summaries.push(analysis.summary);
+      
       // Add new, unique gaps to the list
-      analysis.gaps.forEach((gap: string) => {
-        if (!researchState.gaps.includes(gap)) {
-          researchState.gaps.push(gap);
-        }
-      });
+      if (analysis.gaps && Array.isArray(analysis.gaps)) {
+        analysis.gaps.forEach((gap: string) => {
+          if (!researchState.gaps.includes(gap) && gap.trim().length > 0) {
+            researchState.gaps.push(gap);
+          }
+        });
+      }
 
-      if (!analysis.shouldContinue) {
+      if (!analysis.shouldContinue || depth >= maxDepth - 1) {
         progressCallback?.({
           step: 'completion',
           message: 'Analysis indicates research is complete.',
@@ -286,7 +371,11 @@ async function runDeepResearch(
         message: `Error during research: ${e instanceof Error ? e.message : 'Unknown error'}`,
         depth: depth + 1
       });
-      break;
+      
+      // Continue with next gap if available, don't break entirely
+      if (researchState.gaps.length === 0) {
+        break;
+      }
     }
   }
 
@@ -297,18 +386,28 @@ async function runDeepResearch(
     depth: maxDepth
   });
 
-  const finalPrompt = `
-    Based on all the information gathered, write a comprehensive and detailed report on the topic: "${topic}".
-    Use the findings and summaries below. Structure the report logically with clear headings.
+  const finalPrompt = `Based on all the information gathered, write a comprehensive and detailed research report on the topic: "${topic}".
 
-    Findings:
-    ${researchState.findings.map(f => `[Source: ${f.source}]:\n${f.text}`).join('\n\n')}
+Use the findings and summaries below to create a well-structured report with clear headings, subheadings, and proper citations.
 
-    Summaries:
-    ${researchState.summaries.join('\n\n')}
-  `;
+Structure the report as follows:
+1. Executive Summary
+2. Key Findings
+3. Detailed Analysis (with subsections as appropriate)
+4. Implications and Applications
+5. Future Outlook
+6. Conclusion
+7. Sources and References
 
-  const finalReport = await mockGeminiFinalReport(finalPrompt);
+Findings:
+${researchState.findings.map((f, index) => `[${index + 1}] Source: ${f.source}\nContent: ${f.text}`).join('\n\n')}
+
+Research Summaries:
+${researchState.summaries.join('\n\n')}
+
+Make the report comprehensive, well-organized, and include proper citations using the source URLs provided. Use markdown formatting for better readability.`;
+
+  const finalReport = await geminiGenerateReport(finalPrompt);
 
   return {
     report: finalReport,
@@ -353,6 +452,22 @@ Deno.serve(async (req) => {
     // Validate maxDepth
     const validMaxDepth = Math.min(Math.max(1, parseInt(maxDepth) || 3), 5);
 
+    // Check for required environment variables
+    const requiredEnvVars = ['FIRECRAWL_API_KEY', 'GEMINI_API_KEY'];
+    const missingVars = requiredEnvVars.filter(varName => !Deno.env.get(varName));
+    
+    if (missingVars.length > 0) {
+      return new Response(JSON.stringify({ 
+        error: `Missing required environment variables: ${missingVars.join(', ')}` 
+      }), {
+        status: 500,
+        headers: {
+          ...corsHeaders,
+          'Content-Type': 'application/json'
+        },
+      });
+    }
+
     const researchResult = await runDeepResearch(topic, validMaxDepth);
 
     return new Response(JSON.stringify(researchResult), {
@@ -363,9 +478,22 @@ Deno.serve(async (req) => {
     });
   } catch (e) {
     console.error('Deep research error:', e);
-    return new Response(JSON.stringify({ 
-      error: e instanceof Error ? e.message : 'Internal server error' 
-    }), {
+    
+    // Provide more specific error messages
+    let errorMessage = 'Internal server error';
+    if (e instanceof Error) {
+      if (e.message.includes('FIRECRAWL_API_KEY')) {
+        errorMessage = 'Firecrawl API configuration error. Please check your API key.';
+      } else if (e.message.includes('GEMINI_API_KEY')) {
+        errorMessage = 'Gemini API configuration error. Please check your API key.';
+      } else if (e.message.includes('quota') || e.message.includes('limit')) {
+        errorMessage = 'API quota exceeded. Please try again later.';
+      } else {
+        errorMessage = e.message;
+      }
+    }
+    
+    return new Response(JSON.stringify({ error: errorMessage }), {
       status: 500,
       headers: {
         ...corsHeaders,
