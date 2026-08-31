@@ -110,7 +110,7 @@ export default function QuickSummariesPage() {
           
           // Upload PDF to Supabase Storage
           const { data, error } = await supabase.storage
-            .from('uploaded_documents') // Make sure this bucket exists!
+            .from('uploaded-documents') // Make sure this bucket exists!
             .upload(filePath, file, {
               cacheControl: '3600',
               upsert: false,
@@ -120,7 +120,7 @@ export default function QuickSummariesPage() {
           
           // Get public URL for the uploaded file
           const { data: urlData } = supabase.storage
-            .from('uploaded_documents')
+            .from('uploaded-documents')
             .getPublicUrl(filePath);
             
           if (urlData?.publicUrl) {
