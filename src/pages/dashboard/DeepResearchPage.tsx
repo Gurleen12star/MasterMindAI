@@ -341,6 +341,52 @@ export default function DeepResearchPage() {
             </div>
           )}
         </Card>
+        
+        {/* Context Menu */}
+        {contextMenu.visible && (
+          <div
+            ref={contextMenuRef}
+            className="fixed z-50 bg-background border border-border rounded-lg shadow-lg py-2 min-w-[160px]"
+            style={{
+              left: contextMenu.x,
+              top: contextMenu.y
+            }}
+          >
+            <button
+              onClick={handleCopy}
+              className="flex items-center gap-2 w-full px-3 py-2 text-sm hover:bg-accent hover:text-accent-foreground transition-colors"
+            >
+              <Copy className="h-4 w-4" />
+              Copy
+            </button>
+            <button
+              onClick={handleSelectAll}
+              className="flex items-center gap-2 w-full px-3 py-2 text-sm hover:bg-accent hover:text-accent-foreground transition-colors"
+            >
+              <MousePointer className="h-4 w-4" />
+              Select All
+            </button>
+            <button
+              onClick={handleSendToConvoAI}
+              className="flex items-center gap-2 w-full px-3 py-2 text-sm hover:bg-accent hover:text-accent-foreground transition-colors"
+            >
+              <FileText className="h-4 w-4" />
+              Send to Convo AI
+            </button>
+            <button
+              onClick={handleExpand}
+              disabled={isExpanding}
+              className="flex items-center gap-2 w-full px-3 py-2 text-sm hover:bg-accent hover:text-accent-foreground transition-colors disabled:opacity-50"
+            >
+              {isExpanding ? (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              ) : (
+                <Expand className="h-4 w-4" />
+              )}
+              Expand
+            </button>
+          </div>
+        )}
 
         <div className="xl:col-span-2">
           <Card className="p-6">

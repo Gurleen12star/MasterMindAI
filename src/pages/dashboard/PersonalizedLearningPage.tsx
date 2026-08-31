@@ -3,6 +3,7 @@ import { useAppContext } from '@/contexts/PersonalizedLearningContext';
 import { useSidebar } from '@/components/dashboard/SidebarContext';
 import { AnimatePresence, motion } from 'framer-motion';
 import { pageVariants, pageTransition } from '@/lib/personalized-learning/utilFunctions';
+import { Loader2 } from 'lucide-react';
 import Introduction from '@/components/personalized-learning/Introduction';
 import IntroductionLoading from '@/components/personalized-learning/IntroductionLoading';
 import StudyPlatform from '@/components/personalized-learning/StudyPlatform';
