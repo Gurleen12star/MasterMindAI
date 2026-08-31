@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import robotImage from '/robot.png';
+import robotImage from '@/assets/robot.png';
 
 export default function HeroSection() {
   useEffect(() => {
@@ -37,7 +37,7 @@ export default function HeroSection() {
             <h3 className="hero-title">ECHOVERSE</h3>
             <img 
               src={robotImage}
-              alt="EchoVerse Robot"
+              alt="EchoVerse AI Assistant"
               className="foreground"
             />
           </div>
