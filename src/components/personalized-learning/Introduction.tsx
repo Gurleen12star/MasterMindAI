@@ -10,7 +10,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
-import { School, Briefcase, MessageSquare, Sparkles, Flask, Scale, Rocket } from "lucide-react";
+import { School, Briefcase, MessageSquare, Sparkles, FlaskRound as Flask, Scale, Rocket } from "lucide-react";
 
 const CustomRadio = (props: any) => {
     const { children, value, icon: Icon, labelText, ...otherProps } = props;
