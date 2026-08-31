@@ -32,50 +32,75 @@ serve(async (req) => {
     }
 
     console.log('Creating Tavus conversation...');
-    const response = await fetch('https://api.tavus.io/v2/conversations', {
-      method: 'POST',
-      headers: {
-        'x-api-key': TAVUS_API_KEY,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        replica_id: replica_id,
-        persona_id: persona_id,
-        conversation_name: 'EchoVerse Custom Conversation',
-        conversational_context: context,
-        // Optional: set a longer duration, default is 4 minutes
-        max_call_duration: 600 // 10 minutes
-      }),
-    });
+    
+    // Create AbortController with timeout to prevent hanging requests
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 30000); // 30 second timeout
+    
+    try {
+      const response = await fetch('https://api.tavus.io/v2/conversations', {
+        method: 'POST',
+        headers: {
+          'x-api-key': TAVUS_API_KEY,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          replica_id: replica_id,
+          persona_id: persona_id,
+          conversation_name: 'EchoVerse Custom Conversation',
+          conversational_context: context,
+          // Optional: set a longer duration, default is 4 minutes
+          max_call_duration: 600 // 10 minutes
+        }),
+        signal: controller.signal,
+      });
 
-    if (!response.ok) {
-      const errorData = await response.text();
-      let errorMessage = `Tavus API error: ${response.statusText}`;
-      try {
-        const parsedError = JSON.parse(errorData);
-        errorMessage += `, ${JSON.stringify(parsedError)}`;
-      } catch (e) {
-        errorMessage += `, ${errorData}`;
+      clearTimeout(timeoutId);
+
+      if (!response.ok) {
+        const errorData = await response.text();
+        let errorMessage = `Tavus API error: ${response.statusText}`;
+        try {
+          const parsedError = JSON.parse(errorData);
+          errorMessage += `, ${JSON.stringify(parsedError)}`;
+        } catch (e) {
+          errorMessage += `, ${errorData}`;
+        }
+        throw new Error(errorMessage);
       }
-      throw new Error(errorMessage);
+
+      const data = await response.json();
+      console.log('Conversation created successfully');
+
+      return new Response(JSON.stringify({ 
+        conversation_url: data.conversation_url,
+        conversation_id: data.conversation_id 
+      }), {
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        status: 200,
+      });
+    } catch (fetchError) {
+      clearTimeout(timeoutId);
+      
+      // Handle specific types of network errors with user-friendly messages
+      if (fetchError.name === 'AbortError') {
+        throw new Error('Request to Tavus API timed out. Please try again later.');
+      } else if (fetchError.message.includes('fetch failed') || fetchError.message.includes('error sending request')) {
+        throw new Error('Unable to connect to Tavus API. Please check your internet connection and try again.');
+      } else if (fetchError.message.includes('DNS') || fetchError.message.includes('resolve')) {
+        throw new Error('DNS resolution failed for Tavus API. Please try again later.');
+      } else if (fetchError.message.includes('network')) {
+        throw new Error('Network error connecting to Tavus API. Please try again later.');
+      } else {
+        throw fetchError;
+      }
     }
-
-    const data = await response.json();
-    console.log('Conversation created successfully');
-
-    return new Response(JSON.stringify({ 
-      conversation_url: data.conversation_url,
-      conversation_id: data.conversation_id 
-    }), {
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      status: 200,
-    });
   } catch (error) {
     console.error('Error:', error.message);
     
     return new Response(JSON.stringify({ 
       error: error.message || 'An unexpected error occurred',
-      timeout: error.message.includes('timeout')
+      timeout: error.message.includes('timeout') || error.message.includes('timed out')
     }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       status: 500,
