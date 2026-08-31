@@ -12,7 +12,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { generateLearningPath, generateLearningPathMermaid } from '@/lib/gemini';
 import { supabaseClient } from '@/lib/supabase-admin';
 import { useToast } from '@/hooks/use-toast';
-import { Map, Loader2, FileText, BarChart as FlowChart, Maximize2, History, Clock } from 'lucide-react';
+import { BookOpen, Loader2, FileText, BarChart as FlowChart, Maximize2, History, Clock } from 'lucide-react';
 import { useUser } from '@clerk/clerk-react';
 import { useSupabaseAuth } from '@/components/auth/ClerkSupabaseProvider';
 import { getUserIdForSupabase } from '@/lib/supabase-admin';
@@ -163,7 +163,7 @@ export default function LearningPathsPage() {
     <div className="p-4 md:p-6 space-y-8">
       <div className="flex items-center gap-3">
         <div className="relative inline-flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10 before:absolute before:inset-0 before:rounded-lg before:bg-primary/5 before:animate-pulse">
-          <Map className="h-6 w-6 text-primary" />
+          <BookOpen className="h-6 w-6 text-primary" />
         </div>
         <div>
           <h1 className="text-2xl font-bold tracking-tight">Learning Paths</h1>

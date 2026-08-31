@@ -6,7 +6,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
 import {
   Compass,
-  Map,
+  BookOpen,
   Search,
   Network,
   Newspaper,
@@ -41,7 +41,7 @@ export default function Sidebar({ onNavigate }: SidebarProps) {
       section: 'Content Discovery & Learning',
       items: [
         { icon: Compass, label: 'Explore Hub', href: '/dashboard/explore' },
-        { icon: Map, label: 'Learning Paths', href: '/dashboard/paths' },
+        { icon: BookOpen, label: 'Learning Paths', href: '/dashboard/paths' },
         { icon: Search, label: 'Smart Search', href: '/dashboard/search' },
         { icon: Network, label: 'Knowledge Map', href: '/dashboard/knowledge-map' },
         { icon: Newspaper, label: 'Daily Digest', href: '/dashboard/digest', badge: 'New' }
