@@ -1,6 +1,8 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { BookOpen, Video, FileText, MessageSquare } from 'lucide-react';
+import { BookOpen, Video, FileText, MessageSquare, MoreVertical } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
 
 const activities = [
   {
@@ -9,6 +11,7 @@ const activities = [
     description: 'Completed Chapter 3: Neural Networks',
     icon: BookOpen,
     time: '2 hours ago',
+    status: 'completed'
   },
   {
     type: 'video',
@@ -16,6 +19,7 @@ const activities = [
     description: 'Watched 15 minutes',
     icon: Video,
     time: '4 hours ago',
+    status: 'in-progress'
   },
   {
     type: 'article',
@@ -23,6 +27,7 @@ const activities = [
     description: 'Read 5 minute article',
     icon: FileText,
     time: '6 hours ago',
+    status: 'completed'
   },
   {
     type: 'discussion',
@@ -30,15 +35,21 @@ const activities = [
     description: 'Posted a reply',
     icon: MessageSquare,
     time: '1 day ago',
+    status: 'new'
   },
 ];
 
 export default function RecentActivity() {
   return (
-    <Card>
-      <CardHeader>
+    <Card className="backdrop-blur-sm bg-card/50 border-border/40">
+      <CardHeader className="flex flex-row items-center justify-between">
+        <div>
         <CardTitle>Recent Activity</CardTitle>
         <CardDescription>Your learning activities from the past 24 hours</CardDescription>
+        </div>
+        <Button variant="ghost" size="icon">
+          <MoreVertical className="h-4 w-4" />
+        </Button>
       </CardHeader>
       <CardContent>
         <ScrollArea className="h-[400px] pr-4">
@@ -46,13 +57,27 @@ export default function RecentActivity() {
             {activities.map((activity, index) => (
               <div
                 key={index}
-                className="flex items-start gap-4 p-4 rounded-lg bg-accent/50"
+                className="group flex items-start gap-4 p-4 rounded-lg hover:bg-accent/50 transition-colors"
               >
-                <div className="p-2 rounded-lg bg-primary/10">
-                  <activity.icon className="h-4 w-4 text-primary" />
+                <div className="relative inline-flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10 before:absolute before:inset-0 before:rounded-lg before:bg-primary/5 before:animate-pulse">
+                  <activity.icon className="h-5 w-5 text-primary transition-transform duration-300 group-hover:scale-110" />
                 </div>
                 <div className="flex-1 space-y-1">
-                  <p className="font-medium">{activity.title}</p>
+                  <div className="flex items-center justify-between">
+                    <p className="font-medium">{activity.title}</p>
+                    <Badge
+                      variant={activity.status === 'completed' ? 'default' : 'secondary'}
+                      className={
+                        activity.status === 'in-progress'
+                          ? 'bg-yellow-500/10 text-yellow-500'
+                          : activity.status === 'new'
+                          ? 'bg-green-500/10 text-green-500'
+                          : ''
+                      }
+                    >
+                      {activity.status}
+                    </Badge>
+                  </div>
                   <p className="text-sm text-muted-foreground">
                     {activity.description}
                   </p>
