@@ -263,7 +263,12 @@ body .curzr-arrow-pointer {
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
-  opacity: 0.15;
+  opacity: 0.08;
+  transition: opacity 0.3s ease;
+}
+
+.navbar-bg-image:hover {
+  opacity: 0.12;
 }
 
 /* UnicornStudio Background Styles */
@@ -337,6 +342,21 @@ div[style*="z-index: 999999"] {
   filter: drop-shadow(0 10px 20px rgba(0, 0, 0, 0.1));
   min-height: 600px;
   overflow: hidden;
+  /* Add border gradient shine effect */
+  background: linear-gradient(var(--background), var(--background)) padding-box,
+              radial-gradient(100px 100px at calc(var(--x) * 1px) calc(var(--y) * 1px), 
+                hsl(var(--primary) / 0.8), 
+                hsl(var(--primary) / 0.4) 30%, 
+                transparent 70%) border-box;
+  border: 2px solid transparent;
+  transition: all 0.3s ease;
+}
+
+.hero-card:hover {
+  box-shadow: 
+    0 0 0 1px hsl(var(--primary) / 0.2),
+    0 20px 40px rgba(0, 0, 0, 0.15),
+    0 0 60px hsl(var(--primary) / 0.1);
 }
 
 .hero-assets {
@@ -530,6 +550,7 @@ body {
   padding: 0;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  font-feature-settings: "cv02", "cv03", "cv04", "cv11";
 }
 
 @layer base {
@@ -542,6 +563,30 @@ body {
 }
 
 @layer utilities {
+  .glass-effect {
+    @apply backdrop-blur-xl bg-background/80 border border-border/20 shadow-lg;
+  }
+  
+  .glass-effect-strong {
+    @apply backdrop-blur-2xl bg-background/90 border border-border/30 shadow-xl;
+  }
+  
+  .gradient-border {
+    background: linear-gradient(var(--background), var(--background)) padding-box,
+                linear-gradient(135deg, hsl(var(--primary)), hsl(var(--primary) / 0.5)) border-box;
+    border: 1px solid transparent;
+  }
+  
+  .shine-border {
+    position: relative;
+    background: linear-gradient(var(--background), var(--background)) padding-box,
+                radial-gradient(100px 100px at var(--mouse-x, 50%) var(--mouse-y, 50%), 
+                  hsl(var(--primary) / 0.8), 
+                  hsl(var(--primary) / 0.2) 50%, 
+                  transparent 80%) border-box;
+    border: 2px solid transparent;
+  }
+
   .app-container {
     @apply w-full flex flex-col h-screen bg-background transition-all duration-200;
   }
