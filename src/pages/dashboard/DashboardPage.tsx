@@ -8,6 +8,7 @@ import Sidebar from '@/components/dashboard/Sidebar';
 import RoadmapGeneratorPage from './RoadmapGeneratorPage';
 import LearningPathsPage from './LearningPathsPage';
 import ExploreHubPage from './ExploreHubPage';
+import QuickSummariesPage from './QuickSummariesPage';
 
 export default function DashboardPage() {
   const { user } = useUser();
@@ -48,6 +49,8 @@ export default function DashboardPage() {
                 return <LearningPathsPage />;
               case '/dashboard/explore':
                 return <ExploreHubPage />;
+              case '/dashboard/summaries':
+                return <QuickSummariesPage />;
               default:
                 return <ExploreHubPage />;
             }

@@ -1,6 +1,7 @@
 import { GoogleGenerativeAI } from '@google/generative-ai';
 
 const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
+const modelName = import.meta.env.VITE_GEMINI_MODEL || 'gemini-2.0-flash';
 
 if (!apiKey) {
   throw new Error('Missing Gemini API key environment variable');
@@ -8,9 +9,28 @@ if (!apiKey) {
 
 const genAI = new GoogleGenerativeAI(apiKey);
 
+export async function generateSummary(content: string, instructions?: string): Promise<string> {
+  try {
+    const model = genAI.getGenerativeModel({ model: modelName });
+    
+    const basePrompt = `Please create a comprehensive summary of the following content. Make it easy to understand and well-structured.`;
+    const customInstructions = instructions ? `\n\nAdditional instructions: ${instructions}` : '';
+    const fullPrompt = `${basePrompt}${customInstructions}\n\nContent to summarize:\n\n${content}`;
+    
+    console.log("Generating summary with model:", modelName);
+    const result = await model.generateContent(fullPrompt);
+    const response = result.response;
+    return response.text().trim();
+  } catch (error) {
+    console.error('Error generating summary with Gemini:', error);
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    throw new Error(`Failed to generate summary: ${errorMessage}`);
+  }
+}
+
 export async function generateRoadmapMermaid(topic: string): Promise<string> {
   try {
-    const model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash' });
+    const model = genAI.getGenerativeModel({ model: modelName });
     const escapedTopic = topic.replace(/"/g, '\\"').replace(/`/g, '\\`');
 
     const prompt = `Create a learning roadmap for \"${escapedTopic}\" using Mermaid flowchart syntax.
@@ -102,7 +122,7 @@ export async function generateRoadmapMermaid(topic: string): Promise<string> {
 
 export async function generateLearningPathMermaid(topic: string, level: 'beginner' | 'intermediate' | 'advanced', additionalInfo?: string): Promise<string> {
   try {
-    const model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash' });
+    const model = genAI.getGenerativeModel({ model: modelName });
     const escapedTopic = topic.replace(/"/g, '\\"').replace(/`/g, '\\`');
 
     const prompt = `Create a visual learning path for "${escapedTopic}" at ${level} level using Mermaid flowchart syntax.
@@ -172,7 +192,7 @@ export async function generateLearningPathMermaid(topic: string, level: 'beginne
 
 export async function generateLearningPath(topic: string, level: 'beginner' | 'intermediate' | 'advanced', additionalInfo?: string): Promise<string> {
   try {
-    const model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash' });
+    const model = genAI.getGenerativeModel({ model: modelName });
     const escapedTopic = topic.replace(/"/g, '\\"').replace(/`/g, '\\`');
     
     const prompt = `Create a detailed learning path for "${escapedTopic}" at ${level} level.
