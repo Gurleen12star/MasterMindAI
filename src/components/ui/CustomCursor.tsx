@@ -1,89 +1,116 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 export default function CustomCursor() {
   const cursorRef = useRef<HTMLDivElement>(null);
-  const isHoveringClickable = useRef(false);
+  const [isVisible, setIsVisible] = useState(true);
+  const [isHoveringClickable, setIsHoveringClickable] = useState(false);
 
   useEffect(() => {
     const cursor = cursorRef.current;
     if (!cursor) return;
 
+    let animationFrameId: number;
     let mouseX = 0;
     let mouseY = 0;
     let cursorX = 0;
     let cursorY = 0;
 
-    // Mouse move handler
-    const handleMouseMove = (e: MouseEvent) => {
-      mouseX = e.clientX;
-      mouseY = e.clientY;
-    };
-
-    // Animation loop for smooth cursor movement
-    const animateCursor = () => {
+    // Smooth cursor movement
+    const updateCursorPosition = () => {
       const dx = mouseX - cursorX;
       const dy = mouseY - cursorY;
       
       cursorX += dx * 0.1;
       cursorY += dy * 0.1;
       
-      if (cursor) {
-        cursor.style.transform = `translate(${cursorX}px, ${cursorY}px)`;
-      }
-      
-      requestAnimationFrame(animateCursor);
+      cursor.style.transform = `translate(${cursorX}px, ${cursorY}px)`;
+      animationFrameId = requestAnimationFrame(updateCursorPosition);
     };
 
-    // Check if element is clickable
-    const isClickableElement = (element: Element): boolean => {
-      const clickableSelectors = [
-        'a', 'button', 'input', 'select', 'textarea', 'label',
-        '[role="button"]', '[tabindex="0"]', '[data-interactive]',
-        '.cursor-pointer'
-      ];
+    // Mouse move handler
+    const handleMouseMove = (e: MouseEvent) => {
+      mouseX = e.clientX;
+      mouseY = e.clientY;
       
-      return clickableSelectors.some(selector => 
-        element.matches(selector) || element.closest(selector)
+      // Ensure cursor is visible when moving
+      setIsVisible(true);
+      
+      // Check if hovering over clickable elements
+      const target = e.target as HTMLElement;
+      const isClickable = target && (
+        target.tagName === 'BUTTON' ||
+        target.tagName === 'A' ||
+        target.tagName === 'INPUT' ||
+        target.tagName === 'SELECT' ||
+        target.tagName === 'TEXTAREA' ||
+        target.hasAttribute('role') && ['button', 'link'].includes(target.getAttribute('role') || '') ||
+        target.closest('button, a, input, select, textarea, [role="button"], [role="link"]') ||
+        getComputedStyle(target).cursor === 'pointer'
       );
+      
+      setIsHoveringClickable(isClickable);
     };
 
-    // Mouse over handler for clickable elements
-    const handleMouseOver = (e: MouseEvent) => {
-      const target = e.target as Element;
-      if (isClickableElement(target)) {
-        isHoveringClickable.current = true;
-        cursor?.classList.add('hovering-clickable');
+    // Mouse enter/leave handlers
+    const handleMouseEnter = () => setIsVisible(true);
+    const handleMouseLeave = () => setIsVisible(false);
+
+    // Start animation loop
+    updateCursorPosition();
+
+    // Add event listeners to document (works for all elements including modals)
+    document.addEventListener('mousemove', handleMouseMove, { passive: true });
+    document.addEventListener('mouseenter', handleMouseEnter);
+    document.addEventListener('mouseleave', handleMouseLeave);
+
+    // Ensure cursor is always visible in custom cursor mode
+    const ensureVisibility = () => {
+      if (document.documentElement.classList.contains('custom-cursor-enabled')) {
+        if (cursor) {
+          cursor.style.opacity = '1';
+          cursor.style.visibility = 'visible';
+          cursor.style.display = 'block';
+          cursor.style.pointerEvents = 'none';
+          cursor.style.zIndex = '9999999';
+        }
       }
     };
 
-    // Mouse out handler
-    const handleMouseOut = (e: MouseEvent) => {
-      const target = e.target as Element;
-      if (isClickableElement(target)) {
-        isHoveringClickable.current = false;
-        cursor?.classList.remove('hovering-clickable');
-      }
-    };
+    // Run visibility check immediately and periodically
+    ensureVisibility();
+    const visibilityInterval = setInterval(ensureVisibility, 500);
 
-    // Add event listeners
-    document.addEventListener('mousemove', handleMouseMove);
-    document.addEventListener('mouseover', handleMouseOver);
-    document.addEventListener('mouseout', handleMouseOut);
+    // Observer to watch for DOM changes (like modals opening)
+    const observer = new MutationObserver(() => {
+      ensureVisibility();
+    });
     
-    // Start animation
-    animateCursor();
+    observer.observe(document.body, {
+      childList: true,
+      subtree: true,
+      attributes: true,
+      attributeFilter: ['style', 'class']
+    });
 
     return () => {
+      cancelAnimationFrame(animationFrameId);
       document.removeEventListener('mousemove', handleMouseMove);
-      document.removeEventListener('mouseover', handleMouseOver);
-      document.removeEventListener('mouseout', handleMouseOut);
+      document.removeEventListener('mouseenter', handleMouseEnter);
+      document.removeEventListener('mouseleave', handleMouseLeave);
+      clearInterval(visibilityInterval);
+      observer.disconnect();
     };
   }, []);
+
+  // Don't render if custom cursor is disabled
+  if (!document.documentElement.classList.contains('custom-cursor-enabled')) {
+    return null;
+  }
 
   return (
     <div
       ref={cursorRef}
-      className="curzr-arrow-pointer"
+      className={`curzr-arrow-pointer ${isHoveringClickable ? 'hovering-clickable' : ''}`}
       style={{
         position: 'fixed',
         top: 0,
@@ -92,7 +119,10 @@ export default function CustomCursor() {
         height: '24px',
         pointerEvents: 'none',
         zIndex: 9999999,
-        willChange: 'transform'
+        opacity: isVisible ? 1 : 0,
+        visibility: isVisible ? 'visible' : 'hidden',
+        transition: 'opacity 0.2s ease',
+        willChange: 'transform',
       }}
     >
       <svg
@@ -104,15 +134,13 @@ export default function CustomCursor() {
       >
         <path
           className="outer"
-          d="M5.65376 12.3673H5.46026L5.31717 12.4976L0.500002 16.8829L0.500002 1.19841L11.7841 12.3673H5.65376Z"
+          d="M5.5 3.21V20.79L12.5 13.79L18.5 15.79L5.5 3.21Z"
           fill="currentColor"
         />
         <path
           className="inner"
-          d="M5.65376 12.3673H5.46026L5.31717 12.4976L0.500002 16.8829L0.500002 1.19841L11.7841 12.3673H5.65376Z"
+          d="M7.5 5.21V16.79L12.5 11.79L16.5 13.29L7.5 5.21Z"
           fill="white"
-          stroke="currentColor"
-          strokeWidth="1"
         />
       </svg>
     </div>
