@@ -1,25 +1,28 @@
 import { forwardRef } from 'react';
 import { cn } from '@/lib/utils';
 
-interface LinkProps extends React.AnchorHTMLAttributes<HTMLAnchorElement> {
+export interface LinkProps
+  extends React.AnchorHTMLAttributes<HTMLAnchorElement> {
   href: string;
   children: React.ReactNode;
 }
 
 const Link = forwardRef<HTMLAnchorElement, LinkProps>(
-  ({ className, href, children, ...props }, ref) => {
+  ({ className, children, ...props }, ref) => {
     const handleClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
       e.preventDefault();
-      window.history.pushState({}, '', href);
+      window.history.pushState({}, '', props.href);
       window.dispatchEvent(new PopStateEvent('popstate'));
     };
 
     return (
       <a
         ref={ref}
-        href={href}
+        className={cn(
+          'text-foreground hover:text-primary transition-colors',
+          className
+        )}
         onClick={handleClick}
-        className={cn(className)}
         {...props}
       >
         {children}

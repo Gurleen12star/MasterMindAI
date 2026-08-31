@@ -22,15 +22,6 @@ function App() {
   const { isLoaded, isSignedIn } = useAuth();
 
   useEffect(() => {
-    const handlePathChange = () => {
-      setCurrentPath(window.location.pathname);
-    };
-
-    window.addEventListener('popstate', handlePathChange);
-    return () => window.removeEventListener('popstate', handlePathChange);
-  }, []);
-
-  useEffect(() => {
     document.title = 'EchoVerse - AI-Powered Learning Hub';
     
     // Enable custom cursor by default
@@ -45,7 +36,14 @@ function App() {
     
     window.addEventListener('keydown', handleKeyDown);
     
+    const handlePathChange = () => {
+      setCurrentPath(window.location.pathname);
+    };
+
+    window.addEventListener('popstate', handlePathChange);
+    
     return () => {
+      window.removeEventListener('popstate', handlePathChange);
       window.removeEventListener('keydown', handleKeyDown);
     };
   }, []);
