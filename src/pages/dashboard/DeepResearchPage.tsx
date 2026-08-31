@@ -38,6 +38,19 @@ interface ResearchResult { report: string; sources: ResearchSource[]; summaries:
 interface ResearchProgress { step: string; message: string; depth: number; currentTopic?: string; sourcesFound?: number; }
 interface DeepResearchHistory { id: string; topic: string; report: string; sources: ResearchSource[]; summaries: string[]; total_findings: number; max_depth: number; created_at: string; }
 
+const mockProgressSteps: Omit<ResearchProgress, 'depth'>[] = [
+    { step: 'starting', message: 'Initializing deep research agent...' },
+    { step: 'searching', message: 'Scanning for initial data sources on the web...' },
+    { step: 'analyzing', message: 'Analyzing preliminary findings and identifying key vectors...' },
+    { step: 'searching', message: 'Executing deep search based on key vectors...' },
+    { step: 'extracting', message: 'Extracting and parsing content from high-relevance sources...' },
+    { step: 'analyzing', message: 'Identifying informational patterns and knowledge gaps...' },
+    { step: 'searching', message: 'Conducting targeted searches to bridge identified gaps...' },
+    { step: 'synthesizing', message: 'Synthesizing diverse findings into a coherent narrative...' },
+    { step: 'analyzing', message: 'Performing cross-validation of sources and facts...' },
+    { step: 'synthesizing', message: 'Structuring and compiling the final research report...' },
+];
+
 export default function DeepResearchPage() {
   const { toast } = useToast();
   const { user, session } = useAuth();
@@ -53,8 +66,52 @@ export default function DeepResearchPage() {
   const [isLoadingHistory, setIsLoadingHistory] = useState(false);
   const [selectedHistoryItem, setSelectedHistoryItem] = useState<DeepResearchHistory | null>(null);
   const progressRef = useRef<HTMLDivElement>(null);
+  const progressIndexRef = useRef(0);
+  const intervalRef = useRef<number | undefined>();
   
   const isFullyAuthenticated = !!session;
+
+  useEffect(() => {
+    const scrollToBottom = () => {
+      if (progressRef.current) {
+        progressRef.current.scrollTop = progressRef.current.scrollHeight;
+      }
+    };
+    
+    if (isResearching) {
+      progressIndexRef.current = 0;
+      setProgress([]);
+
+      const addNextStep = () => {
+        if (progressIndexRef.current < mockProgressSteps.length) {
+          const step = mockProgressSteps[progressIndexRef.current];
+          const depth = Math.min(maxDepth, Math.floor(progressIndexRef.current / (mockProgressSteps.length / maxDepth)) + 1);
+          setProgress(prev => [...prev, { ...step, depth }]);
+          progressIndexRef.current++;
+          scrollToBottom();
+        } else {
+            if (intervalRef.current) {
+                clearInterval(intervalRef.current);
+                intervalRef.current = undefined;
+            }
+        }
+      };
+
+      addNextStep(); // Show first step immediately
+
+      // Interval duration between 4 to 7 seconds.
+      const randomInterval = () => Math.random() * 3000 + 4000;
+      intervalRef.current = window.setInterval(addNextStep, randomInterval());
+
+    }
+
+    return () => {
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+        intervalRef.current = undefined;
+      }
+    };
+  }, [isResearching, maxDepth]);
 
   const saveResearchToHistory = async (researchData: ResearchResult) => {
     if (!isFullyAuthenticated || !user) return;
@@ -136,35 +193,27 @@ export default function DeepResearchPage() {
       return;
     }
 
-    setIsResearching(true);
     setResult(null);
-    setProgress([]);
     setSelectedHistoryItem(null);
     setActiveTab('progress');
+    setIsResearching(true);
 
     try {
-      setProgress([{ step: 'starting', message: 'Initializing deep research agent...', depth: 0 }]);
       const { data, error } = await supabase.functions.invoke('deep-research-agent', {
         body: { topic: topic.trim(), maxDepth: Math.min(Math.max(1, maxDepth), 5) },
       });
 
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+        intervalRef.current = undefined;
+      }
+
       if (error) throw new Error(error.message || 'Failed to start research');
       if (!data) throw new Error('No data received from research agent');
-      
-      const progressSteps: ResearchProgress[] = [
-        { step: 'searching', message: `Searching for information about "${topic}"...`, depth: 1, currentTopic: topic },
-        { step: 'extracting', message: 'Extracting content from relevant sources...', depth: 1, sourcesFound: data.sources?.length || 0 },
-        { step: 'analyzing', message: 'Analyzing findings and identifying knowledge gaps...', depth: 2 },
-        { step: 'synthesizing', message: 'Generating comprehensive research report...', depth: maxDepth },
-        { step: 'completed', message: `Research completed! Generated ${data.totalFindings || 0} findings from ${data.sources?.length || 0} sources.`, depth: maxDepth }
-      ];
 
-      for (const step of progressSteps) {
-        await new Promise(resolve => setTimeout(resolve, 800));
-        setProgress(prev => [...prev, step]);
-        if (progressRef.current) {
-          progressRef.current.scrollTop = progressRef.current.scrollHeight;
-        }
+      setProgress(prev => [...prev, { step: 'completed', message: `Research completed! Generated ${data.totalFindings || 0} findings from ${data.sources?.length || 0} sources.`, depth: maxDepth }]);
+      if (progressRef.current) {
+        progressRef.current.scrollTop = progressRef.current.scrollHeight;
       }
 
       setResult(data);
@@ -174,6 +223,10 @@ export default function DeepResearchPage() {
       await saveResearchToHistory(data);
 
     } catch (error) {
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+        intervalRef.current = undefined;
+      }
       console.error('Research error:', error);
       setProgress(prev => [...prev, { step: 'error', message: `Research failed: ${error instanceof Error ? error.message : 'Unknown error'}`, depth: 0 }]);
       toast({ title: 'Research Failed', description: error instanceof Error ? error.message : 'An unexpected error occurred.', variant: 'destructive' });
