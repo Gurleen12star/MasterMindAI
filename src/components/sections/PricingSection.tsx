@@ -93,9 +93,9 @@ export default function PricingSection() {
               key={plan.name}
               gradient={plan.gradient as any}
               className={cn(
-                "backdrop-blur-xl bg-background/30 border-2 transition-all duration-500 shadow-[0_8px_30px_rgb(0,0,0,0.12)] hover:shadow-[0_20px_40px_rgb(0,0,0,0.15)] rounded-3xl relative",
+                "backdrop-blur-xl bg-background/30 border-2 transition-all duration-500 bento-modern rounded-3xl relative",
                 plan.featured 
-                  ? "border-primary/40 ring-2 ring-primary/30 scale-105 shadow-[0_20px_40px_rgb(0,0,0,0.15)] hover:shadow-[0_25px_50px_rgb(0,0,0,0.2)]" 
+                  ? "border-primary/40 ring-2 ring-primary/30 scale-105" 
                   : "border-primary/20 hover:border-primary/30"
               )}
             >

@@ -6,7 +6,7 @@ export default function EarlyAdopterSection() {
   return (
     <section className="py-24 md:py-32 lg:py-40">
       <div className="container px-4 max-w-[1200px] mx-auto">
-        <BentoBox gradient="purple" className="mx-auto max-w-6xl overflow-hidden p-12 lg:p-16 backdrop-blur-xl bg-background/30 border-2 border-primary/30 shadow-[0_20px_50px_rgb(0,0,0,0.15)] hover:shadow-[0_30px_60px_rgb(0,0,0,0.2)] transition-all duration-500 rounded-3xl">
+        <BentoBox gradient="purple" className="mx-auto max-w-6xl overflow-hidden p-12 lg:p-16 backdrop-blur-xl bg-background/30 border-2 border-primary/30 bento-modern transition-all duration-500 rounded-3xl">
           <div className="absolute -right-32 -top-32 h-80 w-80 rounded-full bg-gradient-to-br from-indigo-500/20 to-purple-500/20 blur-3xl opacity-60" />
           <div className="absolute -bottom-24 -left-24 h-80 w-80 rounded-full bg-gradient-to-br from-purple-500/20 to-pink-500/20 blur-3xl opacity-60" />
           

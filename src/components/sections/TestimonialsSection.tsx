@@ -71,7 +71,7 @@ export default function TestimonialsSection() {
                 <div key={index} className="w-full flex-shrink-0 px-4">
                   <BentoBox 
                     gradient="blue" 
-                    className="mx-auto max-w-4xl backdrop-blur-xl bg-background/30 border-2 border-primary/20 hover:border-primary/30 transition-all duration-500 shadow-[0_8px_30px_rgb(0,0,0,0.12)] hover:shadow-[0_20px_40px_rgb(0,0,0,0.15)] rounded-3xl"
+                    className="mx-auto max-w-4xl backdrop-blur-xl bg-background/30 border-2 border-primary/20 hover:border-primary/30 transition-all duration-500 bento-modern rounded-3xl"
                   >
                     <div className="flex flex-col items-center text-center p-8">
                       <div className="relative mb-6">
