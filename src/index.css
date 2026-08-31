@@ -748,26 +748,6 @@ body {
   .project-box-footer {
     @apply flex justify-between items-center mt-6 pt-4 border-t;
   }
-
-  /* Demo card gradient with noise effect */
-  .demo-card-gradient {
-    position: relative;
-    background: radial-gradient(circle at 30% 20%, hsl(var(--primary) / 0.15), hsl(var(--primary) / 0.08) 40%, transparent 70%),
-                radial-gradient(circle at 70% 80%, hsl(var(--chart-2) / 0.1), transparent 50%),
-                linear-gradient(135deg, hsl(var(--background)), hsl(var(--muted) / 0.3));
-    filter: url(#grainy);
-    backdrop-filter: blur(0.5px);
-    border: 1px solid hsl(var(--border) / 0.5);
-    transition: all 0.3s ease;
-  }
-
-  .demo-card-gradient:hover {
-    background: radial-gradient(circle at 30% 20%, hsl(var(--primary) / 0.2), hsl(var(--primary) / 0.12) 40%, transparent 70%),
-                radial-gradient(circle at 70% 80%, hsl(var(--chart-2) / 0.15), transparent 50%),
-                linear-gradient(135deg, hsl(var(--background)), hsl(var(--muted) / 0.4));
-    border-color: hsl(var(--primary) / 0.3);
-    box-shadow: 0 8px 32px hsl(var(--primary) / 0.1);
-  }
 }
 
 /* Grainy gradient background */
