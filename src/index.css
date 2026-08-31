@@ -200,15 +200,11 @@ div[style*="z-index: 999999"] {
 .hero-card {
   width: 100%;
   max-width: 100%;
-  background-image: url('/src/assets/background.jpg');
-  background-size: cover;
-  background-position: center;
   aspect-ratio: 2 / 0.9;
   position: relative;
   border-radius: 2.5rem;
   min-height: 550px;
   overflow: hidden;
-  background: transparent;
 }
 
 .hero-assets {
@@ -216,7 +212,10 @@ div[style*="z-index: 999999"] {
   inset: 0;
   border-radius: 2.5rem;
   z-index: 0;
-  background: transparent;
+  background-image: url('/src/assets/background.jpg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
 }
 
 .hero-assets::before,
@@ -224,8 +223,12 @@ div[style*="z-index: 999999"] {
   content: "";
   position: absolute;
   inset: -50%;
-  background: transparent;
-  opacity: 0;
+  background: radial-gradient(
+    circle,
+    hsl(var(--primary) / 0.1) 0%,
+    transparent 70%
+  );
+  opacity: 0.5;
   animation: float-particle 10s infinite alternate;
 }
 
