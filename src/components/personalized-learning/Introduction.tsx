@@ -10,7 +10,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
-import { School, Book, Rocket } from "lucide-react";
+import { School, Briefcase, MessageSquare, Sparkles, Flask, Scale, Rocket } from "lucide-react";
 
 const CustomRadio = (props: any) => {
     const { children, value, icon: Icon, labelText, ...otherProps } = props;
@@ -356,11 +356,11 @@ const Introduction = () => {
                                                 setPersonality(value as TeacherPersonality);
                                             }}
                                         >
-                                            <CustomRadio value="Formal" icon={Book} labelText="Formal" />
-                                            <CustomRadio value="Informal" icon={Book} labelText="Informal" />
-                                            <CustomRadio value="Engraçado" icon={Book} labelText="Playful" />
-                                            <CustomRadio value="Sério" icon={Book} labelText="Serious" />
-                                            <CustomRadio value="Default" icon={Book} labelText="Balanced" />
+                            value="Formal" icon={Briefcase} labelText="Formal" />
+                            <CustomRadio value="Informal" icon={MessageSquare} labelText="Informal" />
+                            <CustomRadio value="Engraçado" icon={Sparkles} labelText="Playful" />
+                            <CustomRadio value="Sério" icon={Flask} labelText="Serious" />
+                            <CustomRadio value="Default" icon={Scale} labelText="Balanced" />
                                         </RadioGroup>
                                     </div>
                                 </motion.div>
