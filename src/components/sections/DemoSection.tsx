@@ -31,12 +31,10 @@ export default function DemoSection() {
         
         <div className="grid grid-cols-1 gap-8 lg:grid-cols-12">
           <div className="lg:col-span-5">
-            {/* Updated Card 1: Added relative, group and separated background layer */}
-            <BentoBox gradient="purple" className="relative group h-full border-2 border-primary/20 hover:border-primary/30 transition-all duration-500 bento-modern shadow-inner-modern rounded-3xl">
-              {/* Grainy Background Layer */}
-              <div className="absolute inset-0 rounded-3xl backdrop-blur-xl bg-background/30 [filter:url(#grainy)]" />
+            <BentoBox gradient="purple" className="relative group h-full border-2 border-primary/20 hover:border-primary/30 transition-all duration-500 bento-modern shadow-inner-modern rounded-3xl overflow-hidden">
+              {/* Grainy Gradient Background Layer */}
+              <div className="absolute inset-0 rounded-3xl backdrop-blur-xl bg-background/30 bg-gradient-to-br from-blue-950/20 to-transparent group-hover:from-blue-950/30 transition-all duration-500 [filter:url(#grainy)]" />
               
-              {/* All content is now in a relative container to sit on top of the background */}
               <div className="relative z-10 p-6 flex flex-col h-full">
                 <div className="flex items-center gap-4 mb-6">
                   <div className="relative inline-flex h-12 w-12 items-center justify-center rounded-xl bg-primary/20 before:absolute before:inset-0 before:rounded-xl before:bg-primary/10 before:animate-pulse shadow-lg">
@@ -61,12 +59,10 @@ export default function DemoSection() {
           </div>
           
           <div className="lg:col-span-7">
-            {/* Updated Card 2: Added relative, group and separated background layer */}
-            <BentoBox gradient="blue" className="relative group h-full border-2 border-primary/20 hover:border-primary/30 transition-all duration-500 bento-modern shadow-inner-modern rounded-3xl">
-              {/* Grainy Background Layer */}
-              <div className="absolute inset-0 rounded-3xl backdrop-blur-xl bg-background/30 [filter:url(#grainy)]" />
+            <BentoBox gradient="blue" className="relative group h-full border-2 border-primary/20 hover:border-primary/30 transition-all duration-500 bento-modern shadow-inner-modern rounded-3xl overflow-hidden">
+              {/* Grainy Gradient Background Layer */}
+              <div className="absolute inset-0 rounded-3xl backdrop-blur-xl bg-background/30 bg-gradient-to-br from-blue-950/20 to-transparent group-hover:from-blue-950/30 transition-all duration-500 [filter:url(#grainy)]" />
               
-              {/* All content is now in a relative container to sit on top of the background */}
               <div className="relative z-10 p-6 flex flex-col h-full">
                 <div className="flex items-center gap-4 mb-6">
                   <div className="relative inline-flex h-12 w-12 items-center justify-center rounded-xl bg-primary/20 before:absolute before:inset-0 before:rounded-xl before:bg-primary/10 before:animate-pulse shadow-lg">
