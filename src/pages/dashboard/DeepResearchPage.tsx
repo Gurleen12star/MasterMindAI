@@ -414,9 +414,33 @@ export default function DeepResearchPage() {
               </TabsContent>
 
               <TabsContent value="report">
+                {result?.report && (
+                  <div className="mb-6 p-6 bg-gradient-to-br from-primary/10 via-primary/5 to-transparent rounded-xl border border-primary/20">
+                    <div className="flex items-center gap-4 mb-4">
+                      <div className="relative inline-flex h-12 w-12 items-center justify-center rounded-xl bg-primary/20 before:absolute before:inset-0 before:rounded-xl before:bg-primary/10 before:animate-pulse">
+                        <FileText className="h-6 w-6 text-primary" />
+                      </div>
+                      <div>
+                        <h2 className="text-xl font-bold bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">
+                          Research Report: {topic}
+                        </h2>
+                        <p className="text-sm text-muted-foreground">
+                          Depth: {maxDepth} cycles • {result.sources.length} sources • {result.totalFindings} findings
+                        </p>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                      <CheckCircle className="h-3 w-3 text-green-500" />
+                      <span>Research completed successfully</span>
+                      <span>•</span>
+                      <Clock className="h-3 w-3" />
+                      <span>Generated on {new Date().toLocaleDateString()}</span>
+                    </div>
+                  </div>
+                )}
                 <ScrollArea className="h-[500px] w-full">
                   {result?.report ? (
-                    <div className="prose prose-neutral dark:prose-invert max-w-none">
+                    <div className="prose prose-neutral dark:prose-invert max-w-none research-report">
                       <ReactMarkdown remarkPlugins={[remarkGfm]}>
                         {result.report}
                       </ReactMarkdown>
