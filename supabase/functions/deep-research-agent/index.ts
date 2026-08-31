@@ -40,13 +40,7 @@ async function firecrawlSearch(topic: string) {
       },
       body: JSON.stringify({
         query: topic,
-        pageOptions: {
-          fetchPageContent: false,
-          includeHtml: false,
-        },
-        searchOptions: {
-          limit: 10,
-        },
+        limit: 10,
       }),
     });
 
