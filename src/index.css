@@ -360,7 +360,7 @@ div[style*="z-index: 999999"] {
 .hero-card {
   width: 100%;
   max-width: 100%;
-  aspect-ratio: 1 / 0.9;
+  aspect-ratio: 3 / 0.9;
   position: relative;
   border-radius: 4em;
   filter: drop-shadow(0 10px 20px rgba(0, 0, 0, 0.1));
