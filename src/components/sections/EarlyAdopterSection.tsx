@@ -4,24 +4,13 @@ import { Sparkles, Check } from 'lucide-react';
 
 export default function EarlyAdopterSection() {
   return (
-    <section className="py-24 px-4 md:px-6 lg:px-8 relative bg-gradient-to-br from-background via-muted/30 to-background">
-      {/* Animated Background Elements */}
-      <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute top-20 left-4 w-32 h-32 bg-primary/5 rounded-full blur-2xl animate-pulse"></div>
-        <div className="absolute bottom-20 right-4 w-24 h-24 bg-blue-500/5 rounded-full blur-2xl animate-pulse delay-1000"></div>
-        <div className="absolute top-1/2 left-8 w-16 h-16 bg-green-500/5 rounded-full blur-2xl animate-pulse delay-500"></div>
-        
-        {/* Grid pattern overlay */}
-        <div className="absolute inset-0 bg-grid-white opacity-[0.02]"></div>
-      </div>
+    <section className="relative py-24 md:py-32 lg:py-40 overflow-hidden">
+      {/* Blurred oval overlay effects */}
+      <div className="absolute top-20 -right-32 w-80 h-80 rounded-full bg-gradient-to-br from-indigo-500/8 via-purple-500/6 to-transparent blur-3xl opacity-60" />
+      <div className="absolute -bottom-32 -left-32 w-96 h-96 rounded-full bg-gradient-to-br from-pink-500/6 via-primary/4 to-transparent blur-3xl opacity-50" />
       
-      <div className="max-w-4xl mx-auto">
-        <motion.div
-          className="relative z-10"
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8 }}
-          viewport={{ once: true }}
+      <div className="container px-4 max-w-[1200px] mx-auto">
+        <BentoBox gradient="purple" className="mx-auto max-w-6xl overflow-hidden p-12 lg:p-16 backdrop-blur-xl bg-background/30 border-2 border-primary/30 bento-modern shadow-inner-modern transition-all duration-500 rounded-3xl">
           <div className="absolute -right-32 -top-32 h-80 w-80 rounded-full bg-gradient-to-br from-indigo-500/20 to-purple-500/20 blur-3xl opacity-60" />
           <div className="absolute -bottom-24 -left-24 h-80 w-80 rounded-full bg-gradient-to-br from-purple-500/20 to-pink-500/20 blur-3xl opacity-60" />
           

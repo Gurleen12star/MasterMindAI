@@ -40,45 +40,39 @@ const faqs = [
 
 export default function FAQSection() {
   return (
-    <section className="py-24 px-4 md:px-6 lg:px-8 relative bg-gradient-to-br from-background via-muted/30 to-background">
-      {/* Animated Background Elements */}
-      <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute top-20 left-4 w-32 h-32 bg-primary/5 rounded-full blur-2xl animate-pulse"></div>
-        <div className="absolute bottom-20 right-4 w-24 h-24 bg-blue-500/5 rounded-full blur-2xl animate-pulse delay-1000"></div>
-        <div className="absolute top-1/2 left-8 w-16 h-16 bg-green-500/5 rounded-full blur-2xl animate-pulse delay-500"></div>
-        
-        {/* Grid pattern overlay */}
-        <div className="absolute inset-0 bg-grid-white opacity-[0.02]"></div>
-      </div>
+    <section id="faq" className="relative py-16 md:py-24 lg:py-32 overflow-hidden">
+      {/* Blurred oval overlay effects */}
+      <div className="absolute top-16 -right-32 w-72 h-72 rounded-full bg-gradient-to-br from-teal-500/6 via-cyan-500/4 to-transparent blur-3xl opacity-50" />
+      <div className="absolute -bottom-16 -left-32 w-80 h-80 rounded-full bg-gradient-to-br from-primary/8 via-indigo-500/4 to-transparent blur-3xl opacity-60" />
       
-      <div className="max-w-4xl mx-auto">
-        <div className="text-center mb-16 relative z-10">
-          <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight mb-6">
-            <span className="bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">
-              Frequently Asked Questions
-            </span>
+      <div className="container px-4 max-w-[1200px] mx-auto">
+        <div className="mx-auto max-w-3xl text-center">
+          <h2 className="text-3xl font-bold tracking-tight md:text-4xl bg-clip-text text-transparent bg-gradient-to-r from-primary to-primary/70">
+            Frequently Asked Questions
           </h2>
-          <p className="text-muted-foreground text-lg">
+          <p className="mt-4 text-muted-foreground md:text-lg">
             Have questions about EchoVerse? We've got answers.
           </p>
         </div>
         
-        <Accordion type="single" collapsible className="w-full space-y-4 relative z-10">
-          {faqs.map((faq, index) => (
-            <AccordionItem 
-              key={index} 
-              value={`item-${index}`}
-              className="border-2 border-primary/20 rounded-xl bg-background/30 backdrop-blur-sm hover:border-primary/30 transition-all duration-300 shadow-lg hover:shadow-xl shadow-inner-modern px-6 py-2"
-            >
-              <AccordionTrigger className="text-left hover:no-underline py-6 text-lg font-semibold text-foreground hover:text-primary transition-colors duration-200">
-                {faq.question}
-              </AccordionTrigger>
-              <AccordionContent className="text-muted-foreground pb-6 text-base leading-relaxed">
-                {faq.answer}
-              </AccordionContent>
-            </AccordionItem>
-          ))}
-        </Accordion>
+        <div className="mt-12 mx-auto max-w-4xl">
+          <Accordion type="single" collapsible className="w-full space-y-4">
+            {faqs.map((faq, index) => (
+              <AccordionItem 
+                key={index} 
+                value={`item-${index}`}
+                className="border-2 border-primary/20 rounded-xl bg-background/30 backdrop-blur-sm hover:border-primary/30 transition-all duration-300 shadow-lg hover:shadow-xl shadow-inner-modern px-6 py-2"
+              >
+                <AccordionTrigger className="text-left hover:no-underline py-6 text-lg font-semibold text-foreground hover:text-primary transition-colors duration-200">
+                  {faq.question}
+                </AccordionTrigger>
+                <AccordionContent className="text-muted-foreground pb-6 text-base leading-relaxed">
+                  {faq.answer}
+                </AccordionContent>
+              </AccordionItem>
+            ))}
+          </Accordion>
+        </div>
         
         <div className="mt-12 text-center">
           <p className="text-muted-foreground">
