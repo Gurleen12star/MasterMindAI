@@ -77,6 +77,7 @@ const StudyPlatform = () => {
     const [modulo, setModulo] = useState<number>(studyPlatform.actModule);
     const [actualModuleRes, setActualModuleRes] = useState<string>("");
     const [timeModule, setTimeModule] = useState<boolean>(false);
+    const hasFetchedModules = useRef<boolean>(false);
 
     const delay = (ms: number) => new Promise(res => setTimeout(res, ms));
 
@@ -178,7 +179,8 @@ const StudyPlatform = () => {
     }, [generationHistory, personality, setStudyPlatform, studyPlatform]);
 
     useEffect(() => {
-        if (introduction.isLoading) {
+        if (introduction.isLoading && !hasFetchedModules.current) {
+            hasFetchedModules.current = true;
             handleGetModules();
         }
     }, [handleGetModules, introduction.isLoading]);
