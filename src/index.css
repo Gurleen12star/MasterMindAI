@@ -200,36 +200,25 @@ div[style*="z-index: 999999"] {
 .hero-highlight {
   display: inline-block;
   padding: 0;
-  position: relative;
-  color: hsl(var(--foreground));
-}
-
-.hero-highlight::after {
-  content: '';
-  position: absolute;
-  left: -4px;
-  top: -2px;
-  width: calc(100% + 8px);
-  height: calc(100% + 4px);
+  font-family: "Inter", sans-serif;
+  font-weight: bold;
+  color: #000;
+  background: transparent;
   border: 2px solid rgb(255, 98, 0);
-  z-index: -1;
-  transition: all 0.3s ease;
-}
-
-.hero-highlight:hover::after {
-  transform: scale(1.05);
-  border-width: 3px;
+  padding: 0.2em 0.4em;
+  position: relative; 
 }
 
 .hero-highlight::before {
   content: '';
   position: absolute;
-  left: calc(100% + 4px);
-  top: calc(100% - 4px);
+  left: 0;
+  bottom: -1.5em;
   width: 2px;
   height: 16px;
   background-color: rgb(255, 98, 0);
   animation: blink 1s infinite;
+  transform: translateX(50%);
 }
 
 @keyframes blink {

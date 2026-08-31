@@ -158,7 +158,7 @@ export default function HeroSection() {
             />
           </div>
           <div className="hero-content" style={{ zIndex: 3 }}>
-            <p className="text-3xl md:text-4xl lg:text-5xl font-bold">AI-Powered <span className="hero-highlight">Learning</span> Hub</p>
+            <p className="text-3xl md:text-4xl lg:text-5xl font-bold">AI Intelligence</p>
             <p className="text-lg md:text-xl lg:text-2xl opacity-100">Transform Your Learning Journey</p>
           </div>
         </article>
