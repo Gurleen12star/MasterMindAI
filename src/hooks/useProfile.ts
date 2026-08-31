@@ -28,11 +28,17 @@ export function useProfile() {
         .eq('user_id', user.id)
         .single();
 
-      if (error && error.code !== 'PGRST116') {
+      if (error) {
+        // If no profile exists (PGRST116), that's expected for new users
+        if (error.code === 'PGRST116') {
+          setProfile(null);
+          return;
+        }
+        // For other errors, throw to be caught below
         throw error;
       }
 
-      setProfile(data || null);
+      setProfile(data);
     } catch (error) {
       console.error('Error fetching profile:', error);
       toast({
