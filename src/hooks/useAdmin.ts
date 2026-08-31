@@ -84,7 +84,7 @@ export function useAdmin() {
 
   const setupInitialAdmin = async () => {
     if (!user?.id || !user?.email || user.email !== 'naik97059@gmail.com') {
-      return { error: new Error('Not authorized to be initial admin') };
+      return { error: 'Not authorized to be initial admin' };
     }
 
     try {
@@ -94,7 +94,7 @@ export function useAdmin() {
       const { data: existingProfile } = await supabase
         .from('student_profiles')
         .select('id')
-        .eq('user_id', user.id.toString())
+        .eq('user_id', user.id)
         .maybeSingle();
 
       if (existingProfile) {
@@ -102,13 +102,13 @@ export function useAdmin() {
         return await supabase
           .from('student_profiles')
           .update({ is_admin: true })
-          .eq('user_id', user.id.toString());
+          .eq('user_id', user.id);
       } else {
         // Create a basic profile with admin flag
         return await supabase
           .from('student_profiles')
           .insert({
-            user_id: user.id.toString(),
+            user_id: user.id,
             first_name: 'Admin',
             last_name: 'User',
             email: user.email,
@@ -123,7 +123,7 @@ export function useAdmin() {
       }
     } catch (error) {
       console.error('Error in setupInitialAdmin:', error);
-      return { error: error instanceof Error ? error : new Error('Unknown error in setupInitialAdmin') };
+      return { error };
     }
   };
 
