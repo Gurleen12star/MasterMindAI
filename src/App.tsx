@@ -50,7 +50,7 @@ function App() {
         return (
           <>
             <Header />
-            <main>
+            <main className="relative z-10">
               <HeroSection />
               <FeaturesGrid />
               <DemoSection />
@@ -67,7 +67,7 @@ function App() {
 
   return (
     <ThemeProvider defaultTheme="dark" storageKey="echoverse-theme">
-      <div className="min-h-screen bg-background antialiased overflow-x-hidden">
+      <div className="min-h-screen relative bg-transparent antialiased overflow-x-hidden">
         {renderContent()}
         <Toaster />
       </div>

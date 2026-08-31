@@ -46,6 +46,23 @@
   --y: 0;
 }
 
+/* UnicornStudio Background Styles */
+[data-us-project] {
+  position: fixed !important;
+  top: 0;
+  left: 0;
+  width: 100vw !important;
+  height: 100vh !important;
+  z-index: 0;
+}
+
+#root {
+  position: relative;
+  z-index: 1;
+  min-height: 100vh;
+  width: 100%;
+}
+
 @keyframes float-particle {
   0% {
     transform: translateY(0) translateX(0);
