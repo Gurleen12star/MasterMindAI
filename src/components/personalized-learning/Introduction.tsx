@@ -16,15 +16,15 @@ const CustomRadio = (props: any) => {
     const { children, value, icon: Icon, labelText, ...otherProps } = props;
 
     return (
-        <div className="flex flex-col items-center justify-center">
+        <div className="flex flex-col items-center justify-center group">
             <Label
                 htmlFor={`radio-${value}`}
-                className="flex flex-col items-center justify-center p-4 cursor-pointer rounded-lg border-2 border-transparent hover:border-primary transition-colors duration-200 data-[state=checked]:bg-primary/5 data-[state=checked]:border-primary"
+                className="flex flex-col items-center justify-center p-4 cursor-pointer rounded-lg border-2 border-transparent hover:border-primary/60 transition-colors duration-200 group-has-[[data-state=checked]]:bg-primary/10 group-has-[[data-state=checked]]:border-primary"
             >
                 <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center mb-2">
                     <Icon className="h-8 w-8 text-primary" />
                 </div>
-                <RadioGroupItem value={value} id={`radio-${value}`} className="sr-only" {...otherProps} />
+                <RadioGroupItem value={value} id={`radio-${value}`} className="opacity-0 absolute" {...otherProps} />
                 <span className="block text-center font-semibold mt-2 mb-2">{labelText}</span>
                 {children}
             </Label>
@@ -41,8 +41,8 @@ const Introduction = () => {
     const page3El = useRef<HTMLDivElement>(null);
 
     return (
-        <div className="fixed top-0 left-0 right-0 bottom-0 bg-background h-[100vh] w-full z-[999] overflow-y-auto">
-            <div className="flex flex-col items-center justify-between gap-12 p-10 max-sm:px-3 w-full min-h-[100vh]">
+        <div className="w-full h-full bg-background overflow-y-auto">
+            <div className="flex flex-col items-center justify-between gap-8 py-6 px-4 w-full min-h-[calc(100vh-200px)]">
                 <AnimatePresence mode='popLayout'>
                     <motion.div
                         key="introduction-logo"
@@ -335,7 +335,7 @@ const Introduction = () => {
                                     }}
                                     className="flex items-center justify-center w-full pt-[20px]"
                                 >
-                                    <div className="space-y-4 w-full max-w-xl">
+                                    <div className="w-full max-w-xl">
                                         <RadioGroup
                                             className="grid grid-cols-2 gap-4 md:grid-cols-5"
                                             value={personality}
@@ -542,7 +542,7 @@ const Introduction = () => {
                         exit="out"
                         variants={pageVariants(2)}
                         transition={pageTransition(2)}
-                        className="flex flex-col items-center justify-between gap-7 select-none w-full md:max-w-[90%]"
+                        className="flex flex-col items-center justify-between gap-4 select-none w-full mt-6"
                     >
                         <div className="flex items-center justify-between gap-3 w-full">
                             <motion.div

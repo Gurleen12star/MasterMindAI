@@ -1,29 +1,15 @@
 import { ChatHistoryType, ModuleType, PagesType, SetIntroductionType, SetStudyPlatformType, StudyPlatformType } from "@/types/personalized-learning";
 
 export const pageVariants = (durationStart: number, durationEnd?: number) => ({
-    initial: {
-        opacity: 0,
-        y: 20,
-        transition: {
-            duration: durationStart,
-        }
-    },
-    in: {
-        opacity: 1,
-        y: 0,
-    },
-    out: {
-        opacity: 0,
-        y: -20,
-        transition: {
-            duration: durationEnd,
-        }
-    }
+    initial: { opacity: 0, scale: 0.98 },
+    in: { opacity: 1, scale: 1 },
+    out: { opacity: 0, scale: 0.98 }
 });
 
 export const pageTransition = (duration: number) => ({
-    type: 'tween',
-    ease: 'easeInOut',
+    type: 'spring',
+    stiffness: 300,
+    damping: 30,
     duration,
 });
 

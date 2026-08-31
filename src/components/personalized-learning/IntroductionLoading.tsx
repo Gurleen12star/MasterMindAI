@@ -22,7 +22,7 @@ const IntroductionLoading = () => {
     }, []);
 
     return (
-        <div className="fixed top-0 left-0 right-0 bottom-0 bg-background h-[100vh] w-full flex flex-col items-center justify-center gap-6 overflow-y-auto p-10 z-[999]">
+        <div className="w-full h-full bg-background flex flex-col items-center justify-center gap-6 overflow-y-auto py-8">
             <AnimatePresence mode='popLayout'>
                 <motion.div
                     initial="initial"

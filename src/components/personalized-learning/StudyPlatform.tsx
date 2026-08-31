@@ -221,7 +221,7 @@ const StudyPlatform = () => {
             </div>
             
             {/* Main content */}
-            <div className="flex-1 lg:ml-64">
+            <div className="flex-1 lg:ml-64 pb-10">
                 {/* Header */}
                 <div className="sticky top-0 z-40 flex items-center justify-between h-16 px-4 border-b bg-background/95 backdrop-blur">
                     <div className="flex items-center">
@@ -248,7 +248,7 @@ const StudyPlatform = () => {
                         exit="out"
                         variants={pageVariants(2)}
                         transition={pageTransition(2)}
-                        className="relative p-6"
+                        className="p-6"
                     >
                         {studyPlatform.isLoading ? (
                             <StudyPlatformLoading />
