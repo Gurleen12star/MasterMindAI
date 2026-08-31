@@ -35,14 +35,14 @@ export default function Footer() {
               </p>
               <div className="flex items-center gap-6">
                 <a
-                  href="#"
+                  href="https://discord.gg/echoverse"
                   className="group flex items-center gap-2 text-sm text-muted-foreground transition-colors hover:text-foreground"
                 >
                   <span>Join Discord</span>
                   <ArrowUpRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
                 </a>
                 <a
-                  href="#"
+                  href="/docs"
                   className="group flex items-center gap-2 text-sm text-muted-foreground transition-colors hover:text-foreground"
                 >
                   <span>Documentation</span>
@@ -69,13 +69,13 @@ export default function Footer() {
               <div className="flex flex-col gap-4">
                 <h3 className="text-sm font-semibold tracking-wide text-foreground">Company</h3>
                 <div className="flex flex-col gap-3">
-                  <a href="#" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
+                  <a href="/about" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
                     About
                   </a>
-                  <a href="#" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
+                  <a href="/blog" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
                     Blog
                   </a>
-                  <a href="#" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
+                  <a href="/careers" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
                     Careers
                   </a>
                 </div>
@@ -83,13 +83,13 @@ export default function Footer() {
               <div className="flex flex-col gap-4">
                 <h3 className="text-sm font-semibold tracking-wide text-foreground">Legal</h3>
                 <div className="flex flex-col gap-3">
-                  <a href="#" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
+                  <a href="/privacy" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
                     Privacy
                   </a>
-                  <a href="#" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
+                  <a href="/terms" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
                     Terms
                   </a>
-                  <a href="#" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
+                  <a href="/cookie-policy" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
                     Cookie Policy
                   </a>
                 </div>
@@ -105,21 +105,21 @@ export default function Footer() {
             </p>
             <div className="flex items-center gap-6">
               <a
-                href="#"
+                href="https://twitter.com/echoverse_ai"
                 className="text-muted-foreground/80 transition-all duration-300 hover:text-foreground hover:scale-110"
               >
                 <Twitter className="h-5 w-5" />
                 <span className="sr-only">Twitter</span>
               </a>
               <a
-                href="#"
+                href="https://linkedin.com/company/echoverse-ai"
                 className="text-muted-foreground/80 transition-all duration-300 hover:text-foreground hover:scale-110"
               >
                 <Linkedin className="h-5 w-5" />
                 <span className="sr-only">LinkedIn</span>
               </a>
               <a
-                href="#"
+                href="https://github.com/echoverse-ai"
                 className="text-muted-foreground/80 transition-all duration-300 hover:text-foreground hover:scale-110"
               >
                 <Github className="h-5 w-5" />

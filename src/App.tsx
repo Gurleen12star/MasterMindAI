@@ -16,6 +16,13 @@ import FAQSection from '@/components/sections/FAQSection';
 import { Toaster } from '@/components/ui/toaster';
 import LoginPage from '@/pages/auth/LoginPage';
 import SignupPage from '@/pages/auth/SignupPage';
+import AboutPage from '@/pages/AboutPage';
+import BlogPage from '@/pages/BlogPage';
+import CareersPage from '@/pages/CareersPage';
+import PrivacyPage from '@/pages/PrivacyPage';
+import TermsPage from '@/pages/TermsPage';
+import CookiePolicyPage from '@/pages/CookiePolicyPage';
+import DocsPage from '@/pages/DocsPage';
 import DashboardPage from '@/pages/dashboard/DashboardPage';
 import ScrollReveal from '@/components/ui/ScrollReveal';
 
@@ -94,6 +101,13 @@ function App() {
             <Route path="/" element={<Homepage />} />
             <Route path="/login" element={<LoginPage />} />
             <Route path="/signup" element={<SignupPage />} />
+            <Route path="/about" element={<AboutPage />} />
+            <Route path="/blog" element={<BlogPage />} />
+            <Route path="/careers" element={<CareersPage />} />
+            <Route path="/privacy" element={<PrivacyPage />} />
+            <Route path="/terms" element={<TermsPage />} />
+            <Route path="/cookie-policy" element={<CookiePolicyPage />} />
+            <Route path="/docs" element={<DocsPage />} />
             <Route path="/dashboard/*" element={
               <ProtectedRoute>
                 <DashboardPage />
