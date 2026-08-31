@@ -453,6 +453,7 @@ div[style*="z-index: 999999"] {
     min-height: 25%;
   }
 }
+
 @media (max-width: 768px) {
   .hero-card {
     min-height: 400px;
@@ -681,7 +682,6 @@ body {
     gap: 2rem;
   }
 
-
   .text-gradient {
     @apply bg-gradient-to-r from-purple-400 to-indigo-500 bg-clip-text text-transparent;
   }
@@ -754,6 +754,7 @@ html {
   stroke: var(--mermaid-edge-color);
   stroke-width: 2px;
 }
+
 .mermaid-render-area .edgePath .arrowhead {
   fill: var(--mermaid-edge-color);
 }
@@ -773,7 +774,10 @@ html {
   fill: var(--mermaid-purple-darker);
   stroke: var(--mermaid-purple);
 }
-.mermaid-render-area .classPurple .label { fill: var(--mermaid-node-text-color); }
+
+.mermaid-render-area .classPurple .label {
+  fill: var(--mermaid-node-text-color);
+}
 
 /* Green Node */
 .mermaid-render-area .classGreen > rect,
@@ -783,7 +787,10 @@ html {
   fill: var(--mermaid-green-darker);
   stroke: var(--mermaid-green);
 }
-.mermaid-render-area .classGreen .label { fill: var(--mermaid-node-text-color); }
+
+.mermaid-render-area .classGreen .label {
+  fill: var(--mermaid-node-text-color);
+}
 
 /* Yellow Node */
 .mermaid-render-area .classYellow > rect,
@@ -793,7 +800,10 @@ html {
   fill: var(--mermaid-yellow-darker);
   stroke: var(--mermaid-yellow);
 }
-.mermaid-render-area .classYellow .label { fill: var(--mermaid-node-text-color); }
+
+.mermaid-render-area .classYellow .label {
+  fill: var(--mermaid-node-text-color);
+}
 
 /* Blue Node */
 .mermaid-render-area .classBlue > rect,
@@ -803,7 +813,10 @@ html {
   fill: var(--mermaid-blue-darker);
   stroke: var(--mermaid-blue);
 }
-.mermaid-render-area .classBlue .label { fill: var(--mermaid-node-text-color); }
+
+.mermaid-render-area .classBlue .label {
+  fill: var(--mermaid-node-text-color);
+}
 
 /* Orange Node */
 .mermaid-render-area .classOrange > rect,
@@ -813,7 +826,10 @@ html {
   fill: var(--mermaid-orange-darker);
   stroke: var(--mermaid-orange);
 }
-.mermaid-render-area .classOrange .label { fill: var(--mermaid-node-text-color); }
+
+.mermaid-render-area .classOrange .label {
+  fill: var(--mermaid-node-text-color);
+}
 
 /* If you have a specific container for the roadmap, ensure it has a dark background */
 .roadmap-display-container { /* Assuming you might wrap the <MermaidDiagram> component */
