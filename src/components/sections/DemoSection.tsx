@@ -1,32 +1,8 @@
 import { useState } from 'react';
-import { motion } from 'framer-motion';
 import { BentoBox } from '@/components/ui/BentoBox';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
-import { FileText, Headphones, Video, Wand2, Sparkles, Play } from 'lucide-react';
-
-const demoFeatures = [
-  {
-    title: 'AI-Powered Summaries',
-    description: 'Get instant, comprehensive summaries of any topic with our advanced AI technology.',
-    icon: FileText
-  },
-  {
-    title: 'Audio Learning',
-    description: 'Convert any content to high-quality audio for learning on the go.',
-    icon: Headphones
-  },
-  {
-    title: 'Visual Learning',
-    description: 'Generate engaging videos and animations to enhance your understanding.',
-    icon: Video
-  },
-  {
-    title: 'Smart Roadmaps',
-    description: 'Create personalized learning paths tailored to your goals and pace.',
-    icon: Wand2
-  }
-];
+import { FileText, Headphones, Video, Wand2, Sparkles } from 'lucide-react';
 
 export default function DemoSection() {
   const [isPlaying, setIsPlaying] = useState(false);

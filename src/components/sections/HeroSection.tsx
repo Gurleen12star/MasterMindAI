@@ -1,7 +1,4 @@
 import { useEffect, useRef, useState } from 'react';
-import { motion } from 'framer-motion';
-import { Button } from '@/components/ui/button';
-import { Play, Sparkles } from 'lucide-react';
 import robotImage from '../../assets/robott.png';
 
 // Add type declaration for UnicornStudio

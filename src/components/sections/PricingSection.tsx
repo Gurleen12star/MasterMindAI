@@ -229,3 +229,5 @@ export default function PricingSection() {
     </section>
   );
 }
+
+export default PricingSection
