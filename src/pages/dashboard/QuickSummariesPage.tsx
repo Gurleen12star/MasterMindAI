@@ -40,6 +40,7 @@ export default function QuickSummariesPage() {
   const [isGeneratingAudio, setIsGeneratingAudio] = useState(false);
   const [selectedVoice, setSelectedVoice] = useState(AVAILABLE_VOICES[0].id);
   const [isPlaying, setIsPlaying] = useState(false);
+  const [isMuted, setIsMuted] = useState(false);
   const audioRef = useRef<HTMLAudioElement>(null);
 
   const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -100,6 +101,9 @@ export default function QuickSummariesPage() {
     }
 
     setIsGenerating(true);
+    // Clear audio when generating new summary
+    setAudioUrl(null);
+    setIsPlaying(false);
     try {
       const generatedSummary = await generateSummary(content, instructions);
       setSummary(generatedSummary);
@@ -123,6 +127,72 @@ export default function QuickSummariesPage() {
     }
   };
 
+  const handleGenerateAudio = async () => {
+    if (!summary) {
+      toast({
+        title: 'Summary Required',
+        description: 'Please generate a summary first before converting to audio.',
+        variant: 'destructive',
+      });
+      return;
+    }
+
+    setIsGeneratingAudio(true);
+    try {
+      const audioUrl = await generateAudio({
+        text: summary,
+        voiceId: selectedVoice,
+      });
+      setAudioUrl(audioUrl);
+      toast({
+        title: 'Audio Generated',
+        description: 'Your summary has been converted to audio!',
+      });
+    } catch (error) {
+      console.error('Error generating audio:', error);
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      toast({
+        title: 'Audio Generation Failed',
+        description: errorMessage,
+        variant: 'destructive',
+      });
+    } finally {
+      setIsGeneratingAudio(false);
+    }
+  };
+
+  const handlePlayPause = () => {
+    if (!audioRef.current) return;
+    
+    if (isPlaying) {
+      audioRef.current.pause();
+    } else {
+      audioRef.current.play();
+    }
+  };
+
+  const handleMuteToggle = () => {
+    if (!audioRef.current) return;
+    
+    audioRef.current.muted = !audioRef.current.muted;
+    setIsMuted(audioRef.current.muted);
+  };
+
+  const handleDownloadAudio = () => {
+    if (!audioUrl) return;
+
+    const a = document.createElement('a');
+    a.href = audioUrl;
+    a.download = 'summary-audio.mp3';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+
+    toast({
+      title: 'Download Started',
+      description: 'Audio file is being downloaded.',
+    });
+  };
   const handleCopySummary = async () => {
     if (!summary) return;
     
@@ -286,6 +356,25 @@ export default function QuickSummariesPage() {
                   <Button
                     variant="outline"
                     size="sm"
+                    onClick={handleGenerateAudio}
+                    disabled={isGeneratingAudio}
+                    className="gap-2"
+                  >
+                    {isGeneratingAudio ? (
+                      <>
+                        <Loader2 className="h-4 w-4 animate-spin" />
+                        <AnimatedLoadingText message="Converting..." />
+                      </>
+                    ) : (
+                      <>
+                        <Volume2 className="h-4 w-4" />
+                        To Audio
+                      </>
+                    )}
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
                     onClick={handleCopySummary}
                     className="gap-2"
                   >
@@ -338,6 +427,77 @@ export default function QuickSummariesPage() {
                 </div>
               )}
             </ScrollArea>
+
+            {/* Audio Player */}
+            {audioUrl && (
+              <div className="mt-4 p-4 bg-accent/50 rounded-lg border border-primary/20">
+                <div className="flex items-center justify-between mb-3">
+                  <h4 className="font-medium text-foreground flex items-center gap-2">
+                    <Volume2 className="h-4 w-4" />
+                    Audio Summary
+                  </h4>
+                  <Select value={selectedVoice} onValueChange={setSelectedVoice}>
+                    <SelectTrigger className="w-40">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {AVAILABLE_VOICES.map((voice) => (
+                        <SelectItem key={voice.id} value={voice.id}>
+                          {voice.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                
+                <div className="flex items-center gap-3">
+                  <Button
+                    variant="outline"
+                    size="icon"
+                    onClick={handlePlayPause}
+                    className="h-10 w-10"
+                  >
+                    {isPlaying ? (
+                      <Pause className="h-4 w-4" />
+                    ) : (
+                      <Play className="h-4 w-4" />
+                    )}
+                  </Button>
+                  
+                  <Button
+                    variant="outline"
+                    size="icon"
+                    onClick={handleMuteToggle}
+                    className="h-10 w-10"
+                  >
+                    {isMuted ? (
+                      <VolumeX className="h-4 w-4" />
+                    ) : (
+                      <Volume2 className="h-4 w-4" />
+                    )}
+                  </Button>
+                  
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={handleDownloadAudio}
+                    className="gap-2"
+                  >
+                    <Download className="h-4 w-4" />
+                    Download MP3
+                  </Button>
+                  
+                  <audio
+                    ref={audioRef}
+                    src={audioUrl}
+                    onPlay={() => setIsPlaying(true)}
+                    onPause={() => setIsPlaying(false)}
+                    onEnded={() => setIsPlaying(false)}
+                    className="hidden"
+                  />
+                </div>
+              </div>
+            )}
           </div>
         </Card>
       </div>
