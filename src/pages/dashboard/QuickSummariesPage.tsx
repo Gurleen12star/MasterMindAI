@@ -14,6 +14,7 @@ import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import AnimatedLoadingText from '@/components/ui/AnimatedLoadingText';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { 
   Wand2, 
   Upload, 
@@ -27,8 +28,12 @@ import {
   Volume2,
   Play,
   Pause,
-  VolumeX,
-  RotateCcw
+  VolumeX, 
+  RotateCcw,
+  History,
+  Trash2,
+  Calendar,
+  Save
 } from 'lucide-react';
 
 export default function QuickSummariesPage() {
@@ -55,6 +60,151 @@ export default function QuickSummariesPage() {
   const [pdfFileSize, setPdfFileSize] = useState<string>('');
   const [pdfUploadProgress, setPdfUploadProgress] = useState<number>(0);
   const [isUploading, setIsUploading] = useState<boolean>(false);
+  
+  // History state
+  const [showHistoryDialog, setShowHistoryDialog] = useState<boolean>(false);
+  const [summaryHistory, setSummaryHistory] = useState<any[]>([]);
+  const [isLoadingHistory, setIsLoadingHistory] = useState<boolean>(false);
+  const [title, setTitle] = useState<string>('');
+
+  // Fetch summary history
+  const fetchSummaryHistory = async () => {
+    if (!user?.id) return;
+    
+    try {
+      setIsLoadingHistory(true);
+      
+      const { data, error } = await supabase
+        .from('summaries')
+        .select('*')
+        .eq('user_id', user.id)
+        .order('created_at', { ascending: false });
+        
+      if (error) throw error;
+      
+      setSummaryHistory(data || []);
+    } catch (error) {
+      console.error('Error fetching summaries:', error);
+      toast({
+        title: 'Error',
+        description: 'Failed to load your summary history',
+        variant: 'destructive',
+      });
+    } finally {
+      setIsLoadingHistory(false);
+    }
+  };
+  
+  // Load summary from history
+  const loadSummary = (historySummary: any) => {
+    // Set all relevant fields from the history item
+    setSummary(historySummary.generated_summary);
+    setTitle(historySummary.title);
+    setInstructions(historySummary.instructions || '');
+    
+    if (historySummary.pdf_url) {
+      setPdfFileUrl(historySummary.pdf_url);
+      setUploadedFileName(historySummary.pdf_url.split('/').pop());
+      setActiveTab('upload');
+      setContent('');
+    } else if (historySummary.original_content) {
+      setContent(historySummary.original_content);
+      setPdfFileUrl(null);
+      setUploadedFileName(null);
+      setActiveTab('text');
+    }
+    
+    if (historySummary.audio_url) {
+      setAudioUrl(historySummary.audio_url);
+    } else {
+      setAudioUrl(null);
+    }
+    
+    setShowHistoryDialog(false);
+    
+    toast({
+      title: 'Summary Loaded',
+      description: 'Summary has been loaded from history',
+    });
+  };
+  
+  // Delete summary from history
+  const deleteSummary = async (id: string) => {
+    try {
+      const { error } = await supabase
+        .from('summaries')
+        .delete()
+        .eq('id', id);
+        
+      if (error) throw error;
+      
+      // Update history list
+      setSummaryHistory(summaryHistory.filter(s => s.id !== id));
+      
+      toast({
+        title: 'Summary Deleted',
+        description: 'Summary has been deleted from your history',
+      });
+    } catch (error) {
+      console.error('Error deleting summary:', error);
+      toast({
+        title: 'Delete Failed',
+        description: 'Failed to delete summary from history',
+        variant: 'destructive',
+      });
+    }
+  };
+  
+  // Save summary to database
+  const saveSummary = async () => {
+    if (!summary || !user?.id) return;
+    
+    if (!title.trim()) {
+      toast({
+        title: 'Title Required',
+        description: 'Please enter a title for your summary',
+        variant: 'destructive',
+      });
+      return;
+    }
+    
+    try {
+      const summaryData = {
+        user_id: user.id,
+        title: title.trim(),
+        original_content: content || null,
+        pdf_url: pdfFileUrl || null,
+        instructions: instructions || null,
+        generated_summary: summary,
+        audio_url: audioUrl || null,
+      };
+      
+      const { data, error } = await supabase
+        .from('summaries')
+        .insert([summaryData])
+        .select();
+        
+      if (error) throw error;
+      
+      toast({
+        title: 'Summary Saved',
+        description: 'Your summary has been saved to your history',
+      });
+      
+      // Update history if dialog is open
+      if (showHistoryDialog) {
+        fetchSummaryHistory();
+      }
+      
+    } catch (error) {
+      console.error('Error saving summary:', error);
+      toast({
+        title: 'Save Failed',
+        description: 'Failed to save summary to history',
+        variant: 'destructive',
+      });
+    }
+  };
 
   const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -192,7 +342,7 @@ export default function QuickSummariesPage() {
         const { data, error } = await supabase.functions.invoke('gemini-pdf-summarizer', {
           body: { 
             pdfUrl: pdfFileUrl, 
-            prompt: instructions || "Please summarize this document concisely while capturing the key points."
+            prompt: instructions || "Please summarize this document concisely while capturing the key points." 
           },
         });
         
@@ -429,15 +579,33 @@ export default function QuickSummariesPage() {
   return (
     <div className="p-4 md:p-6 space-y-8">
       <div className="flex items-center gap-3">
-        <div className="relative inline-flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10 before:absolute before:inset-0 before:rounded-lg before:bg-primary/5 before:animate-pulse">
-          <Wand2 className="h-6 w-6 text-primary" />
+        <div className="flex items-center gap-3 flex-1">
+          <div className="relative inline-flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10 before:absolute before:inset-0 before:rounded-lg before:bg-primary/5 before:animate-pulse">
+            <Wand2 className="h-6 w-6 text-primary" />
+          </div>
+          <div>
+            <h1 className="text-2xl font-bold tracking-tight">Quick Summaries</h1>
+            <p className="text-muted-foreground">
+              Upload documents or paste content to get AI-powered summaries with audio playback
+            </p>
+          </div>
         </div>
-        <div>
-          <h1 className="text-2xl font-bold tracking-tight">Quick Summaries</h1>
-          <p className="text-muted-foreground">
-            Upload documents or paste content to get AI-powered summaries with audio playback
-          </p>
-        </div>
+        {user && (
+          <div className="flex items-center gap-2">
+            <Button 
+              variant="outline" 
+              size="sm" 
+              onClick={() => {
+                fetchSummaryHistory();
+                setShowHistoryDialog(true);
+              }}
+              className="gap-2"
+            >
+              <History className="h-4 w-4" />
+              View History
+            </Button>
+          </div>
+        )}
       </div>
 
       <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
@@ -588,7 +756,27 @@ export default function QuickSummariesPage() {
             <div className="flex items-center justify-between">
               <h3 className="text-lg font-medium flex items-center gap-2">
                 <FileText className="h-5 w-5" />
-                Generated Summary
+                Generated Summary 
+                {user && summary && (
+                  <div className="ml-2 flex items-center gap-2">
+                    <input
+                      type="text"
+                      value={title}
+                      onChange={(e) => setTitle(e.target.value)}
+                      placeholder="Enter title to save"
+                      className="text-sm px-2 py-1 rounded border border-border bg-background"
+                    />
+                    <Button 
+                      variant="outline" 
+                      size="sm" 
+                      onClick={saveSummary}
+                      className="gap-1"
+                    >
+                      <Save className="h-3.5 w-3.5" />
+                      Save
+                    </Button>
+                  </div>
+                )}
               </h3>
               {summary && (
                 <div className="flex gap-2">
@@ -795,6 +983,81 @@ export default function QuickSummariesPage() {
         </Card>
       </div>
 
+      {/* History Dialog */}
+      <Dialog open={showHistoryDialog} onOpenChange={setShowHistoryDialog}>
+        <DialogContent className="max-w-4xl max-h-[90vh] flex flex-col">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <History className="h-5 w-5" />
+              Summary History
+            </DialogTitle>
+          </DialogHeader>
+          
+          <div className="flex-1 overflow-hidden">
+            <ScrollArea className="h-[60vh] w-full pr-4">
+              {isLoadingHistory ? (
+                <div className="flex items-center justify-center py-12">
+                  <Loader2 className="h-8 w-8 animate-spin text-primary" />
+                  <span className="ml-2">Loading your summaries...</span>
+                </div>
+              ) : summaryHistory.length > 0 ? (
+                <div className="space-y-4">
+                  {summaryHistory.map((item) => (
+                    <Card key={item.id} className="p-4 hover:bg-accent/50 transition-colors cursor-pointer">
+                      <div className="flex items-start justify-between">
+                        <div 
+                          className="flex-1 cursor-pointer" 
+                          onClick={() => loadSummary(item)}
+                        >
+                          <h4 className="font-medium">
+                            {item.title}
+                            {item.pdf_url && (
+                              <Badge variant="outline" className="ml-2">
+                                PDF
+                              </Badge>
+                            )}
+                            {item.audio_url && (
+                              <Badge variant="outline" className="ml-2">
+                                Audio
+                              </Badge>
+                            )}
+                          </h4>
+                          <p className="text-sm text-muted-foreground line-clamp-2 mt-1">
+                            {item.generated_summary.substring(0, 150)}...
+                          </p>
+                          <div className="flex items-center text-xs text-muted-foreground mt-2">
+                            <Calendar className="h-3 w-3 mr-1" />
+                            {new Date(item.created_at).toLocaleString()}
+                          </div>
+                        </div>
+                        <div className="flex items-center">
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => deleteSummary(item.id)}
+                            className="text-destructive hover:text-destructive hover:bg-destructive/10"
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      </div>
+                    </Card>
+                  ))}
+                </div>
+              ) : (
+                <div className="flex flex-col items-center justify-center py-12 text-center">
+                  <FileText className="h-12 w-12 text-muted-foreground opacity-50 mb-4" />
+                  <h3 className="font-medium mb-2">No saved summaries yet</h3>
+                  <p className="text-muted-foreground max-w-md">
+                    Generate a summary and save it to see your history here.
+                  </p>
+                </div>
+              )}
+            </ScrollArea>
+          </div>
+        </DialogContent>
+      </Dialog>
+
       {/* Tips Section */}
       <Card className="p-6 bg-gradient-to-r from-primary/5 via-primary/3 to-transparent border-primary/10 rounded-2xl">
         <div className="flex items-start gap-3">
@@ -806,10 +1069,10 @@ export default function QuickSummariesPage() {
               <li>• Use specific instructions to tailor the summary to your needs</li>
               <li>• For academic papers, mention "include methodology and conclusions"</li>
               <li>• For business documents, try "focus on key decisions and action items"</li>
-              <li>• When summarizing PDFs, the system can understand diagrams and tables</li>
               <li>• Choose different voices to match your preference for audio content</li>
-              <li>• Audio generation uses ElevenLabs AI for high-quality voice synthesis</li>
               <li>• Changing voice will automatically regenerate audio with the new voice</li>
+              <li>• Save your summaries with a title to access them later from your history</li>
+              <li>• Access your saved summaries by clicking the "View History" button</li>
             </ul>
           </div>
         </div>
