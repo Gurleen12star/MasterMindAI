@@ -205,9 +205,9 @@ export default function DocsPage() {
                         Sign up using your email or social media accounts. Complete the quick onboarding process to help us understand your learning preferences.
                       </p>
                       <div className="not-prose bg-muted/30 p-4 rounded-lg">
-                        <code className="text-sm">
-                          <span className="text-green-600">// Visit the signup page</span><br />
-                          https://echoverse.ai/signup
+                        <code className="text-sm whitespace-pre-wrap">
+{`// Visit the signup page
+https://echoverse.ai/signup`}
                         </code>
                       </div>
 
@@ -291,11 +291,11 @@ export default function DocsPage() {
                       </ol>
 
                       <div className="not-prose bg-muted/30 p-4 rounded-lg">
-                        <code className="text-sm">
-                          <span className="text-green-600">// Example research query</span><br />
-                          Topic: "Quantum Computing Applications in Medicine"<br />
-                          Depth: 3<br />
-                          <span className="text-blue-600">// This will generate a comprehensive report with verified sources</span>
+                        <code className="text-sm whitespace-pre-wrap">
+{`// Example research query
+Topic: "Quantum Computing Applications in Medicine"
+Depth: 3
+// This will generate a comprehensive report with verified sources`}
                         </code>
                       </div>
                     </div>
@@ -331,7 +331,7 @@ export default function DocsPage() {
                         Include your API key in all requests as a header:
                       </p>
                       <div className="not-prose bg-muted/30 p-4 rounded-lg">
-                        <code className="text-sm">
+                        <code className="text-sm whitespace-pre-wrap">
                           Authorization: Bearer YOUR_API_KEY
                         </code>
                       </div>
@@ -344,19 +344,19 @@ export default function DocsPage() {
                         For client-side applications, use our SDK to handle JWT authentication:
                       </p>
                       <div className="not-prose bg-muted/30 p-4 rounded-lg">
-                        <code className="text-sm">
-                          <span className="text-purple-600">import</span> { EchoVerseClient } <span className="text-purple-600">from</span> <span className="text-green-600">'@echoverse/client'</span>;<br /><br />
+                        <code className="text-sm whitespace-pre-wrap">
+{`import { EchoVerseClient } from '@echoverse/client';
 
-                          <span className="text-purple-600">const</span> client = <span className="text-purple-600">new</span> EchoVerseClient({<br />
-                          &nbsp;&nbsp;environment: <span className="text-green-600">'production'</span><br />
-                          });<br /><br />
+const client = new EchoVerseClient({
+  environment: 'production'
+});
 
-                          <span className="text-purple-600">const</span> login = <span className="text-purple-600">async</span> () => {<br />
-                          &nbsp;&nbsp;<span className="text-purple-600">await</span> client.auth.signIn({<br />
-                          &nbsp;&nbsp;&nbsp;&nbsp;email: <span className="text-green-600">'user@example.com'</span>,<br />
-                          &nbsp;&nbsp;&nbsp;&nbsp;password: <span className="text-green-600">'password'</span><br />
-                          &nbsp;&nbsp;});<br />
-                          };
+const login = async () => {
+  await client.auth.signIn({
+    email: 'user@example.com',
+    password: 'password'
+  });
+};`}
                         </code>
                       </div>
                     </div>
