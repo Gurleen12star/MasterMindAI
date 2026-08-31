@@ -52,7 +52,7 @@ export default function TestimonialsSection() {
   }, [nextTestimonial]);
 
   return (
-    <section className="py-24 relative overflow-hidden bg-background">
+    <section className="relative py-16 md:py-24 overflow-hidden">
       {/* Blurred oval overlay effects */}
       <div className="absolute top-10 -right-32 w-72 h-72 rounded-full bg-gradient-to-br from-green-500/6 via-emerald-500/4 to-transparent blur-3xl opacity-50" />
       <div className="absolute -bottom-10 -left-32 w-80 h-80 rounded-full bg-gradient-to-br from-primary/8 via-blue-500/4 to-transparent blur-3xl opacity-60" />

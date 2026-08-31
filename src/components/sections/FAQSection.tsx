@@ -40,10 +40,10 @@ const faqs = [
 
 export default function FAQSection() {
   return (
-    <section className="py-24 relative overflow-hidden bg-background">
-      <div className="absolute inset-0 bg-grid-white opacity-[0.02]"></div>
-      
-      {/* Background decoration */}
+    <section id="faq" className="relative py-16 md:py-24 lg:py-32 overflow-hidden">
+      {/* Blurred oval overlay effects */}
+      <div className="absolute top-16 -right-32 w-72 h-72 rounded-full bg-gradient-to-br from-teal-500/6 via-cyan-500/4 to-transparent blur-3xl opacity-50" />
+      <div className="absolute -bottom-16 -left-32 w-80 h-80 rounded-full bg-gradient-to-br from-primary/8 via-indigo-500/4 to-transparent blur-3xl opacity-60" />
       
       <div className="container px-4 max-w-[1200px] mx-auto">
         <div className="mx-auto max-w-3xl text-center">
