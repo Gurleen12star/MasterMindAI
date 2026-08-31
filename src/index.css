@@ -38,6 +38,8 @@
   --cursor-color-default: hsl(var(--foreground));
   --cursor-color-clickable: hsl(var(--primary));
   --cursor-size: 24px;
+  --cursor-transition-duration: 0.2s;
+  --cursor-transition-timing: ease;
 
   /* Navbar Animation */
   --nav-bg: rgba(255, 255, 255, 0.9);
@@ -105,27 +107,16 @@
 
 .curzr-arrow-pointer .outer {
   fill: var(--cursor-color-default);
-  transition: fill 0.2s ease;
+  transition: fill var(--cursor-transition-duration) var(--cursor-transition-timing);
 }
 
-/* Change cursor color for clickable elements */
-.custom-cursor-enabled a:hover ~ .curzr-arrow-pointer .outer,
-.custom-cursor-enabled button:hover ~ .curzr-arrow-pointer .outer,
-.custom-cursor-enabled [role="button"]:hover ~ .curzr-arrow-pointer .outer,
-.custom-cursor-enabled input:hover ~ .curzr-arrow-pointer .outer,
-.custom-cursor-enabled select:hover ~ .curzr-arrow-pointer .outer,
-.custom-cursor-enabled textarea:hover ~ .curzr-arrow-pointer .outer {
-  fill: var(--cursor-color-default);
-  transition: fill 0.2s ease;
-}
-
-/* Change cursor color for clickable elements */
-.custom-cursor-enabled a:hover ~ .curzr-arrow-pointer .outer,
-.custom-cursor-enabled button:hover ~ .curzr-arrow-pointer .outer,
-.custom-cursor-enabled [role="button"]:hover ~ .curzr-arrow-pointer .outer,
-.custom-cursor-enabled input:hover ~ .curzr-arrow-pointer .outer,
-.custom-cursor-enabled select:hover ~ .curzr-arrow-pointer .outer,
-.custom-cursor-enabled textarea:hover ~ .curzr-arrow-pointer .outer {
+/* Interactive elements cursor color change */
+.custom-cursor-enabled a:hover + .curzr-arrow-pointer .outer,
+.custom-cursor-enabled button:hover + .curzr-arrow-pointer .outer,
+.custom-cursor-enabled [role="button"]:hover + .curzr-arrow-pointer .outer,
+.custom-cursor-enabled input:hover + .curzr-arrow-pointer .outer,
+.custom-cursor-enabled select:hover + .curzr-arrow-pointer .outer,
+.custom-cursor-enabled textarea:hover + .curzr-arrow-pointer .outer {
   fill: var(--cursor-color-clickable);
 }
 
