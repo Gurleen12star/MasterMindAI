@@ -25,7 +25,6 @@ import { useToast } from "@/hooks/use-toast";
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm'; 
 import { ChevronDown } from 'lucide-react';
-import { generateAudio } from "@/lib/elevenlabs";
 
 interface ExpandedContent {
   originalText: string;
@@ -222,15 +221,19 @@ const StudyPlatform = () => {
                 ? allHtmlContent.substring(0, maxTextLength) + "... (content trimmed for audio)"
                 : allHtmlContent;
 
-            // Generate audio using ElevenLabs
-            const blobUrl = await generateAudio({
-                text: trimmedContent,
-                voiceId: 'EXAVITQu4vr4xnSDxMaL', // Bella voice
+            // Call Supabase Edge Function for ElevenLabs TTS
+            const response = await supabase.functions.invoke('elevenlabs-tts', {
+                body: {
+                    text: trimmedContent,
+                    voiceId: 'EXAVITQu4vr4xnSDxMaL', // Bella voice
+                },
             });
+
+            if (response.error) throw new Error(response.error.message);
             
-            // Fetch the blob from the URL
-            const response = await fetch(blobUrl);
-            const blob = await response.blob();
+            // Convert response data to a blob and create URL
+            const audioBlob = new Blob([response.data], { type: 'audio/mpeg' });
+            const blobUrl = URL.createObjectURL(audioBlob);
             
             // Set module ID to track which module this audio belongs to
             const moduleId = `module-${studyPlatform.actModule}`;
@@ -246,7 +249,7 @@ const StudyPlatform = () => {
                     // Upload to Supabase Storage
                     const { data: storageData, error: storageError } = await supabase.storage
                         .from('learning_audio')
-                        .upload(`${user.id}/${fileName}`, blob, {
+                        .upload(`${user.id}/${fileName}`, audioBlob, {
                             contentType: 'audio/mpeg',
                             upsert: true
                         });
@@ -314,8 +317,22 @@ const StudyPlatform = () => {
         } catch (error) {
             console.error('Error generating audio:', error);
             toast({
+            // Enhanced error handling for different types of errors from Edge Function
+            let errorMessage = "An unexpected error occurred during audio generation.";
+            if (error instanceof Error) {
+                if (error.message.includes('ELEVENLABS_API_KEY')) {
+                    errorMessage = 'ElevenLabs API key is not configured in Supabase secrets.';
+                } else if (error.message.includes('Authentication failed')) {
+                    errorMessage = 'ElevenLabs authentication failed. Check your API key and account credits.';
+                } else if (error.message.includes('rate limit')) {
+                    errorMessage = 'ElevenLabs rate limit exceeded. Please try again later.';
+                } else {
+                    errorMessage = error.message;
+                }
+            }
+            
                 title: "Audio Generation Failed",
-                description: error instanceof Error ? error.message : "An unexpected error occurred",
+                description: errorMessage,
                 variant: "destructive"
             });
         } finally {
