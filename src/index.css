@@ -44,6 +44,7 @@
   /* Hero Section Variables */
   --x: 0;
   --y: 0;
+  --smog-color: rgba(255, 255, 255, 0.02);
 }
 
 /* Hero Section Styles */
@@ -62,12 +63,40 @@
   inset: 0;
   border-radius: 4em;
   z-index: 0;
+  overflow: hidden;
   background: linear-gradient(
     135deg,
     hsl(var(--primary) / 0.2),
     hsl(var(--primary) / 0.05) 40%,
     hsl(var(--secondary) / 0.1)
   );
+}
+
+.hero-assets::before {
+  content: '';
+  position: absolute;
+  inset: -50%;
+  background: radial-gradient(
+    circle at center,
+    var(--smog-color) 0%,
+    transparent 70%
+  );
+  opacity: 0.4;
+  filter: blur(60px);
+  transform: scale(2);
+}
+
+.hero-assets::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    ellipse at top,
+    var(--smog-color) 0%,
+    transparent 50%
+  );
+  opacity: 0.6;
+  filter: blur(40px);
 }
 
 .hero-assets img.foreground {
