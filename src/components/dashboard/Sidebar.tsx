@@ -16,7 +16,8 @@ import {
   User,
   LogOut,
   ChevronRight,
-  ChevronLeft
+  ChevronLeft,
+  GraduationCap
 } from 'lucide-react';
 import { Button } from '../ui/button';
 
@@ -95,6 +96,7 @@ export default function Sidebar({ className }: SidebarProps) {
     { to: '/dashboard/roadmap-generator', icon: Network, label: 'Roadmap Generator' },
     { to: '/dashboard/summaries', icon: Wand2, label: 'Quick Summaries' },
     { to: '/dashboard/animation-studio', icon: Film, label: 'Animation Studio' },
+    { to: '/dashboard/personalized-learning', icon: GraduationCap, label: 'Personalized Learning' },
   ];
 
   const projects = [

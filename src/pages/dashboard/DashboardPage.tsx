@@ -16,6 +16,7 @@ import DeepResearchPage from './DeepResearchPage';
 import ProfileSetupPage from './ProfileSetupPage';
 import ProfilePage from './ProfilePage';
 import AnimationStudioPage from './AnimationStudioPage';
+import PersonalizedLearningPage from './PersonalizedLearningPage';
 
 function DashboardContent() {
   const { user } = useAuth();
@@ -82,6 +83,11 @@ function DashboardContent() {
             <Route path="animation-studio" element={
               <ProfileGuard>
                 <AnimationStudioPage />
+              </ProfileGuard>
+            } />
+            <Route path="personalized-learning" element={
+              <ProfileGuard>
+                <PersonalizedLearningPage />
               </ProfileGuard>
             } />
             
