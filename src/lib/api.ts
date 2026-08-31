@@ -70,7 +70,12 @@ export async function generateVideo(
             body: JSON.stringify({
               ref: 'main',
               inputs: {
-                video_id: videoId
+                video_id: videoId,
+                topic: topic.trim(),
+                description: description.trim(),
+                subject,
+                difficulty_level: difficultyLevel
+
               }
             })
           }
