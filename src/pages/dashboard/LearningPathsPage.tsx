@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
+import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -10,7 +11,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { generateLearningPath, generateLearningPathMermaid } from '@/lib/gemini';
 import { MermaidDiagram } from '@/components/ui/mermaid-diagram';
 import { useToast } from '@/hooks/use-toast';
-import { Map, Loader2, FileText, BarChart as FlowChart } from 'lucide-react';
+import { Map, Loader2, FileText, BarChart as FlowChart, Maximize2 } from 'lucide-react';
 
 type DifficultyLevel = 'beginner' | 'intermediate' | 'advanced';
 
@@ -22,6 +23,7 @@ export default function LearningPathsPage() {
   const [isGenerating, setIsGenerating] = useState(false);
   const [generatedPath, setGeneratedPath] = useState<string | null>(null);
   const [mermaidDiagram, setMermaidDiagram] = useState<string | null>(null);
+  const [isFullscreen, setIsFullscreen] = useState(false);
 
   const handleGenerate = async () => {
     if (!topic) {
@@ -169,12 +171,35 @@ export default function LearningPathsPage() {
             <TabsContent value="visual">
               <ScrollArea className="h-[600px] px-4">
                 {mermaidDiagram ? (
-                  <div className="mermaid-diagram-wrapper transform hover:scale-[1.02] transition-transform duration-300">
-                    <MermaidDiagram 
-                      definition={mermaidDiagram} 
-                      className="w-full min-h-[400px] flex items-center justify-center" 
-                    />
-                  </div>
+                  <>
+                    <div className="relative">
+                      <Button
+                        variant="outline"
+                        size="icon"
+                        className="absolute top-2 right-2 z-10"
+                        onClick={() => setIsFullscreen(true)}
+                      >
+                        <Maximize2 className="h-4 w-4" />
+                      </Button>
+                      <div className="mermaid-diagram-wrapper transform hover:scale-[1.02] transition-transform duration-300">
+                        <MermaidDiagram 
+                          definition={mermaidDiagram} 
+                          className="w-full min-h-[400px] flex items-center justify-center" 
+                        />
+                      </div>
+                    </div>
+                    
+                    <Dialog open={isFullscreen} onOpenChange={setIsFullscreen}>
+                      <DialogContent className="max-w-[90vw] w-[90vw] h-[90vh] p-6">
+                        <div className="mermaid-diagram-wrapper h-full w-full flex items-center justify-center bg-gradient-to-br from-background to-background/95">
+                          <MermaidDiagram 
+                            definition={mermaidDiagram}
+                            className="w-full h-full"
+                          />
+                        </div>
+                      </DialogContent>
+                    </Dialog>
+                  </>
                 ) : (
                   <div className="flex items-center justify-center h-full text-muted-foreground">
                     {isGenerating ? (
