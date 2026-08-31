@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import robotImage from '../../assets/robott.png';
 
 // Add type declaration for UnicornStudio
@@ -12,6 +12,7 @@ declare global {
 }
 
 export default function HeroSection() {
+  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const heroCardRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -116,9 +117,12 @@ export default function HeroSection() {
   }, []);
 
   return (
-    <section className="relative overflow-hidden pt-24 pb-48 md:pt-32 md:pb-64 bg-gradient-to-b from-background via-background/95 to-transparent">
-      <div className="container px-4 max-w-[1200px] mx-auto">
-        <article className="hero-card" ref={heroCardRef}>
+    <section className="relative min-h-screen flex items-center justify-center px-4 py-20 overflow-hidden">
+      <div className="container mx-auto max-w-7xl">
+        <div 
+          className="hero-card"
+          ref={heroCardRef}
+        >
           <div 
             data-us-project="1gY80LcIkYtWkoIA4cVK" 
             className="unicorn-studio-bg" 
@@ -164,7 +168,7 @@ export default function HeroSection() {
             <p className="text-3xl md:text-4xl lg:text-5xl font-bold">AI-Powered Learning Hub</p>
             <p className="text-lg md:text-xl lg:text-2xl opacity-100">Transform Your Learning Journey</p>
           </div>
-        </article>
+        </div>
       </div>
     </section>
   );
