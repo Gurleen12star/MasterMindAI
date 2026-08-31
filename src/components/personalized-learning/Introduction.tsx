@@ -52,13 +52,6 @@ const Introduction = () => {
                         variants={pageVariants(2)}
                         transition={pageTransition(2)}
                     >
-                        <div className="text-center mb-6">
-                            <div className="relative inline-block">
-                                <div className="absolute inset-0 rounded-full bg-primary/10 blur-xl transform scale-150 opacity-70"></div>
-                                <School className="h-20 w-20 text-primary mx-auto mb-2 relative z-10" />
-                            </div>
-                            <h2 className="text-2xl font-bold bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">Personalized Learnings</h2>
-                        </div>
                     </motion.div>
 
                     {page === 1 && (
