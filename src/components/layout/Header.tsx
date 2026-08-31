@@ -2,7 +2,8 @@ import { useState, useEffect } from 'react';
 import { useAuth } from '@clerk/clerk-react';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
-import { Menu, Sparkles } from 'lucide-react';
+import { Menu } from 'lucide-react';
+import logo from '@/assets/logo.png';
 import { cn } from '@/lib/utils';
 
 const navItems = [
@@ -39,8 +40,7 @@ export default function Header() {
         <div className="relative mx-auto flex items-center justify-between w-full max-w-6xl rounded-2xl bg-background/60 backdrop-blur-md shadow-lg border border-border/5 px-6 py-4">
         <a href="#" className="flex items-center gap-2 group">
           <div className="relative">
-            <Sparkles className="h-6 w-6 text-primary animate-[pulse_3s_ease-in-out_infinite]" />
-            <div className="absolute inset-0 bg-primary/20 blur-lg rounded-full group-hover:scale-150 transition-transform duration-500" />
+            <img src={logo} alt="EchoVerse Logo" className="h-8 w-8 object-contain" />
           </div>
           <span className="bg-gradient-to-r from-indigo-500 to-purple-500 bg-clip-text text-xl font-bold text-transparent hover:scale-105 transition-transform">
             EchoVerse
