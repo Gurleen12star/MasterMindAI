@@ -6,6 +6,7 @@ import { Menu } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import DashboardHeader from '@/components/dashboard/DashboardHeader';
 import Sidebar from '@/components/dashboard/Sidebar';
+import { SidebarProvider, useSidebar } from '@/components/dashboard/SidebarContext';
 import ProfileGuard from '@/components/dashboard/ProfileGuard';
 import RoadmapGeneratorPage from './RoadmapGeneratorPage';
 import LearningPathsPage from './LearningPathsPage';
@@ -15,16 +16,17 @@ import DeepResearchPage from './DeepResearchPage';
 import ProfileSetupPage from './ProfileSetupPage';
 import ProfilePage from './ProfilePage';
 
-export default function DashboardPage() {
+function DashboardContent() {
   const { user } = useAuth();
   const location = useLocation();
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
+  const { isCollapsed } = useSidebar();
 
   return (
     <div className="flex min-h-screen bg-background">
       <Sidebar className="hidden md:flex md:fixed" />
       
-      <div className="flex-1 flex flex-col md:ml-64">
+      <div className={`flex-1 flex flex-col transition-all duration-300 ${isCollapsed ? 'md:ml-16' : 'md:ml-64'}`}>
         <DashboardHeader>
           <Sheet open={isMobileSidebarOpen} onOpenChange={setIsMobileSidebarOpen}>
             <SheetTrigger asChild>
@@ -88,5 +90,13 @@ export default function DashboardPage() {
         </main>
       </div>
     </div>
+  );
+}
+
+export default function DashboardPage() {
+  return (
+    <SidebarProvider>
+      <DashboardContent />
+    </SidebarProvider>
   );
 }
