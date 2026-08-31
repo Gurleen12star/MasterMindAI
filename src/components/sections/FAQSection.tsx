@@ -43,7 +43,7 @@ export default function FAQSection() {
     <section id="faq" className="py-16 md:py-24 lg:py-32">
       <div className="container px-4 max-w-[1200px] mx-auto">
         <div className="mx-auto max-w-3xl text-center">
-          <h2 className="text-3xl font-bold tracking-tight md:text-4xl">
+          <h2 className="text-3xl font-bold tracking-tight md:text-4xl bg-clip-text text-transparent bg-gradient-to-r from-primary to-primary/70">
             Frequently Asked Questions
           </h2>
           <p className="mt-4 text-muted-foreground md:text-lg">
@@ -51,14 +51,18 @@ export default function FAQSection() {
           </p>
         </div>
         
-        <div className="mt-12 mx-auto max-w-3xl">
-          <Accordion type="single" collapsible className="w-full">
+        <div className="mt-12 mx-auto max-w-4xl">
+          <Accordion type="single" collapsible className="w-full space-y-4">
             {faqs.map((faq, index) => (
-              <AccordionItem key={index} value={`item-${index}`}>
-                <AccordionTrigger className="text-left">
+              <AccordionItem 
+                key={index} 
+                value={`item-${index}`}
+                className="border-2 border-primary/20 rounded-xl bg-background/30 backdrop-blur-sm hover:border-primary/30 transition-all duration-300 shadow-lg hover:shadow-xl px-6 py-2"
+              >
+                <AccordionTrigger className="text-left hover:no-underline py-6 text-lg font-semibold text-foreground hover:text-primary transition-colors duration-200">
                   {faq.question}
                 </AccordionTrigger>
-                <AccordionContent className="text-muted-foreground">
+                <AccordionContent className="text-muted-foreground pb-6 text-base leading-relaxed">
                   {faq.answer}
                 </AccordionContent>
               </AccordionItem>
@@ -71,7 +75,7 @@ export default function FAQSection() {
             Still have questions? Contact our support team at{" "}
             <a
               href="mailto:support@echoverse.ai"
-              className="text-primary hover:underline"
+              className="text-primary hover:text-primary/80 transition-colors duration-200 font-medium"
             >
               support@echoverse.ai
             </a>

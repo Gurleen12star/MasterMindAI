@@ -55,27 +55,34 @@ export default function TestimonialsSection() {
     <section className="py-16 md:py-24">
       <div className="container px-4 max-w-[1200px] mx-auto">
         <div className="mx-auto max-w-5xl text-center mb-16">
-          <h2 className="text-3xl font-bold tracking-tight md:text-4xl">
+          <h2 className="text-3xl font-bold tracking-tight md:text-4xl bg-clip-text text-transparent bg-gradient-to-r from-primary to-primary/70">
             What Our Users Say
           </h2>
           <p className="mt-4 text-muted-foreground md:text-lg">
             Join thousands of satisfied users who have transformed their learning journey.
           </p>
-          <div className="overflow-hidden">
+          
+          <div className="overflow-hidden mt-12">
             <div
-              className="flex transition-transform duration-500 ease-in-out"
+              className="flex transition-transform duration-700 ease-in-out"
               style={{ transform: `translateX(-${activeIndex * 100}%)` }}
             >
               {testimonials.map((testimonial, index) => (
                 <div key={index} className="w-full flex-shrink-0 px-4">
-                  <BentoBox gradient="blue" className="mx-auto max-w-3xl">
-                    <div className="flex flex-col items-center text-center">
-                      <Quote className="h-10 w-10 text-primary/50" />
-                      <p className="mt-4 text-lg md:text-xl">
+                  <BentoBox 
+                    gradient="blue" 
+                    className="mx-auto max-w-4xl backdrop-blur-xl bg-background/30 border-2 border-primary/20 hover:border-primary/30 transition-all duration-500 shadow-[0_8px_30px_rgb(0,0,0,0.12)] hover:shadow-[0_20px_40px_rgb(0,0,0,0.15)] rounded-3xl"
+                  >
+                    <div className="flex flex-col items-center text-center p-8">
+                      <div className="relative mb-6">
+                        <Quote className="h-12 w-12 text-primary/60" />
+                        <div className="absolute -top-2 -right-2 h-6 w-6 rounded-full bg-primary/20 animate-pulse" />
+                      </div>
+                      <p className="mt-4 text-lg md:text-xl leading-relaxed text-foreground font-medium">
                         "{testimonial.content}"
                       </p>
-                      <div className="mt-6 flex items-center gap-4">
-                        <div className="h-12 w-12 overflow-hidden rounded-full">
+                      <div className="mt-8 flex items-center gap-4">
+                        <div className="h-14 w-14 overflow-hidden rounded-full ring-2 ring-primary/20 shadow-lg">
                           <img
                             src={testimonial.image}
                             alt={testimonial.author}
@@ -83,7 +90,7 @@ export default function TestimonialsSection() {
                           />
                         </div>
                         <div className="text-left">
-                          <p className="font-medium">{testimonial.author}</p>
+                          <p className="font-semibold text-foreground">{testimonial.author}</p>
                           <p className="text-sm text-muted-foreground">
                             {testimonial.role}
                           </p>
@@ -96,26 +103,26 @@ export default function TestimonialsSection() {
             </div>
           </div>
           
-          <div className="mt-8 flex items-center justify-center gap-4">
+          <div className="mt-8 flex items-center justify-center gap-6">
             <Button
               variant="outline"
               size="icon"
               onClick={prevTestimonial}
-              className="h-8 w-8"
+              className="h-10 w-10 rounded-full border-2 border-primary/20 hover:border-primary/40 hover:bg-primary/10 transition-all duration-300 shadow-lg"
             >
-              <ChevronLeft className="h-4 w-4" />
+              <ChevronLeft className="h-5 w-5" />
               <span className="sr-only">Previous</span>
             </Button>
             
-            <div className="flex gap-2">
+            <div className="flex gap-3">
               {testimonials.map((_, index) => (
                 <button
                   key={index}
                   className={cn(
-                    "h-2 w-2 rounded-full transition-colors",
+                    "h-3 w-3 rounded-full transition-all duration-300 shadow-sm",
                     index === activeIndex
-                      ? "bg-primary"
-                      : "bg-primary/20 hover:bg-primary/40"
+                      ? "bg-primary scale-125 shadow-lg shadow-primary/30"
+                      : "bg-primary/30 hover:bg-primary/50 hover:scale-110"
                   )}
                   onClick={() => setActiveIndex(index)}
                 />
@@ -126,9 +133,9 @@ export default function TestimonialsSection() {
               variant="outline"
               size="icon"
               onClick={nextTestimonial}
-              className="h-8 w-8"
+              className="h-10 w-10 rounded-full border-2 border-primary/20 hover:border-primary/40 hover:bg-primary/10 transition-all duration-300 shadow-lg"
             >
-              <ChevronRight className="h-4 w-4" />
+              <ChevronRight className="h-5 w-5" />
               <span className="sr-only">Next</span>
             </Button>
           </div>

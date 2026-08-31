@@ -87,30 +87,32 @@ export default function PricingSection() {
           </p>
         </div>
         
-        <div className="relative mt-16 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="relative mt-16 grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-4">
           {pricingPlans.map((plan) => (
             <BentoBox
               key={plan.name}
               gradient={plan.gradient as any}
               className={cn(
-                "backdrop-blur-xl bg-background/20 border border-primary/10 hover:border-primary/20 transition-all duration-300",
-                plan.featured && "border-primary/30 ring-1 ring-primary/20 scale-105 shadow-xl"
+                "backdrop-blur-xl bg-background/30 border-2 transition-all duration-500 shadow-[0_8px_30px_rgb(0,0,0,0.12)] hover:shadow-[0_20px_40px_rgb(0,0,0,0.15)] rounded-3xl relative",
+                plan.featured 
+                  ? "border-primary/40 ring-2 ring-primary/30 scale-105 shadow-[0_20px_40px_rgb(0,0,0,0.15)] hover:shadow-[0_25px_50px_rgb(0,0,0,0.2)]" 
+                  : "border-primary/20 hover:border-primary/30"
               )}
             >
               {plan.featured && (
-                <div className="absolute -top-4 left-0 right-0 mx-auto w-fit rounded-full bg-primary/90 px-4 py-1.5 text-xs font-semibold text-primary-foreground shadow-lg backdrop-blur-sm">
+                <div className="absolute -top-4 left-0 right-0 mx-auto w-fit rounded-full bg-gradient-to-r from-primary to-primary/80 px-6 py-2 text-sm font-semibold text-primary-foreground shadow-lg backdrop-blur-sm">
                   Most Popular
                 </div>
               )}
               
-              <div>
-                <div className="flex items-center justify-between">
-                  <h3 className="text-xl font-bold">{plan.name}</h3>
-                  <span className="text-xs font-medium text-muted-foreground bg-primary/10 px-2 py-1 rounded-full">
+              <div className="p-6">
+                <div className="flex items-center justify-between mb-4">
+                  <h3 className="text-xl font-bold text-foreground">{plan.name}</h3>
+                  <span className="text-xs font-medium text-muted-foreground bg-primary/10 px-3 py-1.5 rounded-full border border-primary/20">
                     {plan.highlight}
                   </span>
                 </div>
-                <div className="mt-4 flex items-baseline">
+                <div className="mt-6 flex items-baseline">
                   <span className="text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-primary to-primary/70">
                     {plan.price}
                   </span>
@@ -120,15 +122,15 @@ export default function PricingSection() {
                     </span>
                   )}
                 </div>
-                <p className="mt-2 text-base text-muted-foreground">
+                <p className="mt-3 text-base text-muted-foreground leading-relaxed">
                   {plan.description}
                 </p>
               </div>
               
-              <ul className="mt-8 space-y-4">
+              <ul className="mt-6 space-y-4 px-6">
                 {plan.features.map((feature) => (
                   <li key={feature} className="flex items-center gap-3">
-                    <div className="flex-shrink-0 h-5 w-5 rounded-full bg-primary/10 flex items-center justify-center">
+                    <div className="flex-shrink-0 h-5 w-5 rounded-full bg-primary/20 flex items-center justify-center shadow-sm">
                       <Check className="h-3 w-3 text-primary" />
                     </div>
                     <span className="text-sm text-muted-foreground">{feature}</span>
@@ -136,15 +138,15 @@ export default function PricingSection() {
                 ))}
               </ul>
               
-              <div className="mt-10">
+              <div className="mt-8 p-6 pt-0">
                 <Button
                   className={cn(
-                    "w-full transition-all duration-300",
+                    "w-full transition-all duration-300 rounded-xl h-12 font-semibold",
                     plan.featured
-                      ? "bg-primary/90 hover:bg-primary shadow-lg hover:shadow-primary/25"
-                      : "bg-primary/10 hover:bg-primary/20 text-primary"
+                      ? "bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 shadow-lg hover:shadow-xl hover:shadow-primary/25"
+                      : "bg-primary/10 hover:bg-primary/20 text-primary border-2 border-primary/20 hover:border-primary/30"
                   )}
-                 onClick={() => window.location.href = '/signup'}
+                  onClick={() => window.location.href = '/signup'}
                 >
                   {plan.cta}
                 </Button>
