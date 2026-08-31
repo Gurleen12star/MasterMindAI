@@ -6,7 +6,6 @@
   font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
   font-weight: 400;
-  /* Custom cursor is now class-based for better accessibility */
 
   --background: 0 0% 100%;
   --foreground: 0 0% 3.9%;
@@ -58,7 +57,7 @@
 
   /* Mermaid Diagram Styles */
   --mermaid-bg: #111827; /* Dark gray, almost black */
-  --mermaid-node-text-color: #F9FAFB; /* Light gray / Off-white */
+  --mermaid-node-text-color: hsl(var(--foreground)); /* Dynamic text color */
   --mermaid-edge-color: #9CA3AF; /* Lighter gray for edges */
   
   --mermaid-purple: hsl(var(--chart-1));
@@ -75,21 +74,23 @@
 
 /* Enhanced Mermaid Diagram Styles */
 .mermaid-diagram-wrapper {
-  background: radial-gradient(circle at center, var(--mermaid-bg), hsl(var(--background)));
+  background: var(--mermaid-bg);
   padding: 1.5rem;
   border-radius: var(--radius);
   box-shadow: 0 0 30px rgba(0, 0, 0, 0.2);
   transition: all 0.3s ease;
+  pointer-events: auto;
 }
 
 .mermaid-render-area {
   filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.1));
   transition: all 0.3s ease;
+  pointer-events: none;
 }
 
 /* Dialog styles for fullscreen mermaid */
 [role="dialog"] .mermaid-diagram-wrapper {
-  background: transparent;
+  background: var(--mermaid-bg);
   box-shadow: none;
   padding: 0;
 }
@@ -186,7 +187,7 @@
   width: var(--cursor-size);
   height: var(--cursor-size);
   pointer-events: none;
-  z-index: 9999;
+  z-index: 999999;
   top: 0;
   left: 0;
   will-change: transform;
@@ -681,7 +682,7 @@ html {
 
 .mermaid-render-area .node .label,
 .mermaid-render-area .node tspan {
-  fill: var(--mermaid-node-text-color) !important; /* Ensure text color is applied */
+  fill: hsl(var(--foreground)) !important; /* Dynamic text color */
   font-family: inherit;
   font-size: 14px;
 }
