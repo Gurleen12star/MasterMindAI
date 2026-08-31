@@ -200,9 +200,6 @@ div[style*="z-index: 999999"] {
 .hero-card {
   width: 100%;
   max-width: 100%;
-  background-image: url('/src/assets/background.jpg');
-  background-size: cover;
-  background-position: center;
   aspect-ratio: 2 / 0.9;
   position: relative;
   border-radius: 2.5rem;
@@ -379,6 +376,10 @@ div[style*="z-index: 999999"] {
 body {
   background-color: hsl(var(--background));
   color: hsl(var(--foreground));
+  background-image: url('/src/assets/background.jpg');
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
   margin: 0;
   padding: 0;
   -webkit-font-smoothing: antialiased;
