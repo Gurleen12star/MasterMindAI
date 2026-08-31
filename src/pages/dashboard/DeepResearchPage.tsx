@@ -32,37 +32,11 @@ import {
   Trash2
 } from 'lucide-react';
 
-interface ResearchSource {
-  url: string;
-  title: string;
-  description: string;
-}
-
-interface ResearchResult {
-  report: string;
-  sources: ResearchSource[];
-  summaries: string[];
-  totalFindings: number;
-}
-
-interface ResearchProgress {
-  step: string;
-  message: string;
-  depth: number;
-  currentTopic?: string;
-  sourcesFound?: number;
-}
-
-interface DeepResearchHistory {
-  id: string;
-  topic: string;
-  report: string;
-  sources: ResearchSource[];
-  summaries: string[];
-  total_findings: number;
-  max_depth: number;
-  created_at: string;
-}
+// Interfaces remain the same
+interface ResearchSource { url: string; title: string; description: string; }
+interface ResearchResult { report: string; sources: ResearchSource[]; summaries: string[]; totalFindings: number; }
+interface ResearchProgress { step: string; message: string; depth: number; currentTopic?: string; sourcesFound?: number; }
+interface DeepResearchHistory { id: string; topic: string; report: string; sources: ResearchSource[]; summaries: string[]; total_findings: number; max_depth: number; created_at: string; }
 
 export default function DeepResearchPage() {
   const { toast } = useToast();
@@ -83,7 +57,7 @@ export default function DeepResearchPage() {
   const progressRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    // This logic correctly enables the UI button at the earliest possible moment.
+    // This correctly enables the UI button once Clerk has a session.
     if (isClerkLoaded && clerkSession) {
       setIsFullyAuthenticated(true);
       console.log("✅ Clerk is loaded and has a session. UI is now enabled.");
@@ -92,36 +66,41 @@ export default function DeepResearchPage() {
     }
   }, [isClerkLoaded, clerkSession]);
 
-  const getSupabaseSessionWithRetry = async () => {
-    let { data: { session }, error } = await supabaseClient.auth.getSession();
-    
-    // If the first attempt fails, it's likely the race condition. Wait and retry once.
-    if (error || !session) {
-      console.warn("Initial getSession failed. Retrying after a short delay to resolve race condition...");
-      await new Promise(resolve => setTimeout(resolve, 250));
-      const { data: { session: retrySession }, error: retryError } = await supabaseClient.auth.getSession();
-      
-      if (retryError || !retrySession) {
-        throw new Error(retryError?.message || "No active Supabase session found. Your session may have expired.");
-      }
-      return retrySession;
+  // **THE DEFINITIVE FIX: A helper function to proactively refresh the Supabase token.**
+  const ensureFreshSupabaseToken = async () => {
+    if (!clerkSession) {
+      throw new Error("Clerk session not found.");
     }
-    return session;
+    try {
+      const supabaseToken = await clerkSession.getToken({ template: 'supabase' });
+      if (!supabaseToken) {
+        throw new Error("Could not get Supabase token from Clerk.");
+      }
+      // Manually set the session on the Supabase client to ensure it's fresh.
+      await supabaseClient.auth.setSession({
+        access_token: supabaseToken,
+        refresh_token: supabaseToken, // Using the same token is acceptable here
+      });
+      console.log("Supabase token has been refreshed proactively.");
+    } catch (error) {
+      console.error("Failed to refresh Supabase token:", error);
+      throw new Error("Failed to sync authentication session.");
+    }
   };
 
   const saveResearchToHistory = async (researchData: ResearchResult) => {
-    if (!isFullyAuthenticated) {
-      console.error("Save aborted: Authentication not confirmed.");
-      toast({ title: 'Save Failed', description: 'Your session is not active. Please refresh.', variant: 'destructive' });
-      return;
-    }
+    if (!isFullyAuthenticated) return;
 
     try {
-      const supabaseSession = await getSupabaseSessionWithRetry();
-      const supabaseUserId = supabaseSession.user.id;
-      console.log(`Attempting to save research with Supabase UUID: ${supabaseUserId}`);
+      await ensureFreshSupabaseToken(); // Pre-flight check
       
-      const { error: saveError } = await supabaseClient
+      const { data: { session: supabaseSession } } = await supabaseClient.auth.getSession();
+      if (!supabaseSession) throw new Error("No active Supabase session after refresh.");
+      
+      const supabaseUserId = supabaseSession.user.id;
+      console.log(`Saving research with fresh Supabase UUID: ${supabaseUserId}`);
+
+      const { error } = await supabaseClient
         .from('deep_research_history')
         .insert([{
           user_id: supabaseUserId,
@@ -133,18 +112,14 @@ export default function DeepResearchPage() {
           max_depth: maxDepth
         }]);
 
-      if (saveError) throw saveError;
+      if (error) throw error;
       
       console.log('✅ Deep research saved successfully!');
-      toast({ title: 'Research Saved', description: 'Your research has been successfully saved to your account.' });
+      toast({ title: 'Research Saved', description: 'Your research has been saved.' });
 
     } catch (error) {
       console.error('An unexpected error occurred during save:', error);
-      toast({
-        title: 'Save Failed',
-        description: error instanceof Error ? error.message : 'An unexpected error occurred.',
-        variant: 'destructive',
-      });
+      toast({ title: 'Save Failed', description: error instanceof Error ? error.message : 'An unexpected error occurred.', variant: 'destructive' });
     }
   };
 
@@ -153,7 +128,11 @@ export default function DeepResearchPage() {
     
     setIsLoadingHistory(true);
     try {
-      const session = await getSupabaseSessionWithRetry();
+      await ensureFreshSupabaseToken(); // Pre-flight check
+
+      const { data: { session } } = await supabaseClient.auth.getSession();
+      if (!session) throw new Error("No active session to fetch history.");
+
       const { data, error } = await supabaseClient
         .from('deep_research_history')
         .select('*')
@@ -172,12 +151,7 @@ export default function DeepResearchPage() {
 
   const loadHistoryItem = (item: DeepResearchHistory) => {
     setSelectedHistoryItem(item);
-    setResult({
-      report: item.report,
-      sources: item.sources,
-      summaries: item.summaries,
-      totalFindings: item.total_findings
-    });
+    setResult({ report: item.report, sources: item.sources, summaries: item.summaries, totalFindings: item.total_findings });
     setTopic(item.topic);
     setMaxDepth(item.max_depth);
     setShowHistoryDialog(false);
@@ -187,6 +161,7 @@ export default function DeepResearchPage() {
   const deleteHistoryItem = async (id: string) => {
     if (!isFullyAuthenticated) return;
     try {
+      await ensureFreshSupabaseToken(); // Pre-flight check
       const { error } = await supabaseClient.from('deep_research_history').delete().eq('id', id);
       if (error) throw error;
       setResearchHistory(prev => prev.filter(item => item.id !== id));
@@ -255,12 +230,8 @@ export default function DeepResearchPage() {
 
   const handleCopyReport = async () => {
     if (!result?.report) return;
-    try {
-      await navigator.clipboard.writeText(result.report);
-      toast({ title: 'Copied to Clipboard' });
-    } catch (error) {
-      toast({ title: 'Copy Failed', variant: 'destructive' });
-    }
+    try { await navigator.clipboard.writeText(result.report); toast({ title: 'Copied to Clipboard' }); } 
+    catch (error) { toast({ title: 'Copy Failed', variant: 'destructive' }); }
   };
 
   const handleDownloadReport = () => {
@@ -292,7 +263,6 @@ export default function DeepResearchPage() {
 
   return (
     <div className="p-4 md:p-6 space-y-8">
-       {/* ... Your JSX remains unchanged ... */}
       <div className="flex items-center gap-3">
         <div className="relative inline-flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10">
           <Search className="h-6 w-6 text-primary" />
@@ -368,7 +338,6 @@ export default function DeepResearchPage() {
         </div>
       </div>
       
-      {/* ... Rest of JSX is unchanged ... */}
       <Dialog open={showHistoryDialog} onOpenChange={setShowHistoryDialog}>
         <DialogContent className="max-w-4xl max-h-[80vh]">
           <DialogHeader><DialogTitle className="flex items-center gap-2"><History className="h-5 w-5" /> Deep Research History</DialogTitle><DialogDescription>Your previously completed research reports</DialogDescription></DialogHeader>
