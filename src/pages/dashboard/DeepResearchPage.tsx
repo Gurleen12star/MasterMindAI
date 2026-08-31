@@ -10,7 +10,6 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } f
 import { useToast } from '@/hooks/use-toast';
 import { supabaseClient } from '@/lib/supabase-admin';
 import { useUser, useSession } from '@clerk/clerk-react';
-import { getUserIdForSupabase } from '@/lib/supabase-admin';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import AnimatedLoadingText from '@/components/ui/AnimatedLoadingText';
@@ -68,9 +67,8 @@ interface DeepResearchHistory {
 export default function DeepResearchPage() {
   const { toast } = useToast();
   const { user, isLoaded: isClerkLoaded } = useUser();
-  const { session } = useSession(); // **FIX: Added useSession hook**
+  const { session } = useSession();
 
-  // **FIX: This is our new "source of truth" for readiness**
   const [isFullyAuthenticated, setIsFullyAuthenticated] = useState(false);
 
   const [topic, setTopic] = useState('');
@@ -85,22 +83,16 @@ export default function DeepResearchPage() {
   const [selectedHistoryItem, setSelectedHistoryItem] = useState<DeepResearchHistory | null>(null);
   const progressRef = useRef<HTMLDivElement>(null);
 
-  // **FIX: This useEffect hook is the core of the race condition fix**
   useEffect(() => {
-    // We wait until Clerk is fully loaded AND has an active session.
-    // The session becomes active only after the Supabase client has been
-    // fully initialized with the token from Clerk.
     if (isClerkLoaded && session) {
       setIsFullyAuthenticated(true);
       console.log("✅ Authentication is fully confirmed. It is now safe to make database requests.");
     } else {
       setIsFullyAuthenticated(false);
     }
-  }, [session, isClerkLoaded]); // Dependency array ensures this runs when auth state changes
-
+  }, [session, isClerkLoaded]);
 
   const saveResearchToHistory = async (researchData: ResearchResult) => {
-    // This function is now self-contained and guarded
     if (!isFullyAuthenticated || !user) {
       console.warn("Save aborted: Authentication is not fully ready or user is missing.");
       toast({
@@ -112,13 +104,20 @@ export default function DeepResearchPage() {
     }
 
     try {
-      console.log('Attempting to save deep research for user:', user.id);
-      const supabaseUserId = getUserIdForSupabase(user.id);
+      // **FINAL FIX: Get the correct Supabase User UUID before inserting**
+      const { data: { user: supabaseUser }, error: userError } = await supabaseClient.auth.getUser();
+
+      if (userError || !supabaseUser) {
+        throw new Error(`Could not retrieve Supabase user. Please try again. Error: ${userError?.message}`);
+      }
+      
+      const supabaseUserId = supabaseUser.id; 
+      console.log(`Attempting to save research with Supabase UUID: ${supabaseUserId}`);
       
       const { error: saveError } = await supabaseClient
         .from('deep_research_history')
         .insert([{
-          user_id: supabaseUserId,
+          user_id: supabaseUserId, // Use the correct UUID
           topic: topic.trim(),
           report: researchData.report,
           sources: researchData.sources || [],
@@ -128,7 +127,6 @@ export default function DeepResearchPage() {
         }]);
 
       if (saveError) {
-        // The 42501 error was happening here. It should now be resolved.
         console.error('Database save error:', saveError);
         toast({
           title: 'Failed to Save',
@@ -136,7 +134,7 @@ export default function DeepResearchPage() {
           variant: 'destructive',
         });
       } else {
-        console.log('Deep research saved successfully');
+        console.log('✅ Deep research saved successfully!');
         toast({
           title: 'Research Saved',
           description: 'Your research has been successfully saved to your account.',
@@ -146,23 +144,24 @@ export default function DeepResearchPage() {
       console.error('An unexpected error occurred during save:', error);
       toast({
         title: 'Save Failed',
-        description: 'An unexpected error occurred while saving to your account.',
+        description: error instanceof Error ? error.message : 'An unexpected error occurred while saving.',
         variant: 'destructive',
       });
     }
   };
-
 
   const fetchResearchHistory = async () => {
     if (!isFullyAuthenticated || !user?.id) return;
     
     setIsLoadingHistory(true);
     try {
-      const supabaseUserId = getUserIdForSupabase(user.id);
+        const { data: { user: supabaseUser }, error: userError } = await supabaseClient.auth.getUser();
+        if (userError || !supabaseUser) throw userError;
+
       const { data, error } = await supabaseClient
         .from('deep_research_history')
         .select('*')
-        .eq('user_id', supabaseUserId)
+        .eq('user_id', supabaseUser.id) // Use correct UUID for fetching
         .order('created_at', { ascending: false });
 
       if (error) throw error;
@@ -171,7 +170,7 @@ export default function DeepResearchPage() {
       console.error('Error fetching history:', error);
       toast({
         title: 'Error',
-        description: 'Failed to load research history',
+        description: 'Failed to load research history.',
         variant: 'destructive',
       });
     } finally {
@@ -213,14 +212,13 @@ export default function DeepResearchPage() {
       console.error('Error deleting history item:', error);
       toast({
         title: 'Error',
-        description: 'Failed to delete history item',
+        description: 'Failed to delete history item.',
         variant: 'destructive',
       });
     }
   };
 
   const handleStartResearch = async () => {
-    // **FIX: The primary guard clause that prevents the race condition**
     if (!isFullyAuthenticated) {
         toast({
             title: 'Authentication Required',
@@ -285,7 +283,6 @@ export default function DeepResearchPage() {
         description: `Generated comprehensive report on "${topic}" with ${data.sources?.length || 0} sources.`,
       });
       
-      // **FIX: Call the refactored, safe save function**
       await saveResearchToHistory(data);
 
     } catch (error) {
@@ -420,7 +417,6 @@ export default function DeepResearchPage() {
                 </p>
               </div>
             </div>
-            {/* **FIX: Button state is now driven by isFullyAuthenticated** */}
             <Button
               onClick={handleStartResearch}
               disabled={isResearching || !topic.trim() || !isFullyAuthenticated}
