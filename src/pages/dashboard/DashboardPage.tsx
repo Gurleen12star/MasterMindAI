@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { useUser } from '@clerk/clerk-react';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { Menu } from 'lucide-react';
