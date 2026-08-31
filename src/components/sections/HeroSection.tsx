@@ -69,8 +69,8 @@ export default function HeroSection() {
             />
           </div>
           <div className="hero-content" style={{ zIndex: 3 }}>
-            <p className="text-3xl md:text-4xl lg:text-5xl font-bold text-white drop-shadow-lg">Your Universe of Knowledge, Reimagined by AI.</p>
-            <p className="text-lg md:text-xl lg:text-2xl text-white/90 drop-shadow-md">From deep research to dynamic content, master any subject your way.</p>
+            <p className="text-2xl md:text-3xl lg:text-4xl font-bold text-white drop-shadow-lg">Your Universe of Knowledge, Reimagined by AI.</p>
+            <p className="text-sm md:text-base lg:text-lg text-white/90 drop-shadow-md">From deep research to dynamic content, master any subject your way.</p>
           </div>
         </div>
       </div>

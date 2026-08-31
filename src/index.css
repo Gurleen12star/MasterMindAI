@@ -487,11 +487,11 @@ div[style*="z-index: 999999"] {
 .hero-content {
   min-height: 32%;
   position: absolute;
-  bottom: 0;
+  bottom: 3%;
   width: 100%;
   color: hsl(var(--foreground));
   display: grid;
-  gap: 0.2rem;
+  gap: 0.5rem;
   place-items: center;
   align-content: center;
   padding-bottom: 0.5rem;
@@ -515,7 +515,7 @@ div[style*="z-index: 999999"] {
 
 @media (max-width: 768px) {
   .hero-card {
-    min-height: 400px;
+    min-height: 350px;
     border-radius: 2em;
   }
   .hero-assets {
@@ -524,7 +524,8 @@ div[style*="z-index: 999999"] {
   .hero-content {
     flex-direction: column;
     align-items: center;
-    bottom: 10%;
+    bottom: 8%;
+    padding: 0 1rem;
   }
 }
 
