@@ -15,27 +15,9 @@ export const pageTransition = (duration: number) => ({
 
 export const validateJSON = (text: string): boolean => {
     try {
-        if (!text || typeof text !== 'string') {
-            return false;
-        }
-        
         const jsonStart = text.indexOf('[');
         const jsonEnd = text.lastIndexOf(']');
-        
-        // Check if brackets exist and are in correct order
-        if (jsonStart === -1 || jsonEnd === -1 || jsonStart >= jsonEnd) {
-            return false;
-        }
-        
-        const cleanedString = text.slice(jsonStart, jsonEnd + 1)
-            .replace(/[\n\r\t\b\f]/g, '')
-            .replace(/[\x00-\x1F\x7F-\x9F]/g, '')
-            .replace(/\u00A0/g, ''); // Remove non-breaking spaces
-            
-        if (!cleanedString || cleanedString.length < 2) {
-            return false;
-        }
-        
+        const cleanedString = text.slice(jsonStart, jsonEnd + 1).replace(/[\n\r\t\b\f]/g, '').replace(/[\x00-\x1F\x7F-\x9F]/g, '');
         const parsed = JSON.parse(cleanedString);
         return parsed && typeof parsed === 'object';
     } catch (e) {
@@ -76,27 +58,9 @@ export const addStoriesChat = (
 };
 
 export const cleanAndConvertPlanoEstudo = (planoEstudoString: string) => {
-    if (!planoEstudoString || typeof planoEstudoString !== 'string') {
-        throw new Error('Invalid input: planoEstudoString must be a non-empty string');
-    }
-    
     const jsonStart = planoEstudoString.indexOf('[');
     const jsonEnd = planoEstudoString.lastIndexOf(']');
-    
-    // Check if brackets exist and are in correct order
-    if (jsonStart === -1 || jsonEnd === -1 || jsonStart >= jsonEnd) {
-        throw new Error('Invalid JSON format: Missing or malformed brackets');
-    }
-    
-    const cleanedString = planoEstudoString.slice(jsonStart, jsonEnd + 1)
-        .replace(/[\n\r\t\b\f]/g, '')
-        .replace(/[\x00-\x1F\x7F-\x9F]/g, '')
-        .replace(/\u00A0/g, ''); // Remove non-breaking spaces
-        
-    if (!cleanedString || cleanedString.length < 2) {
-        throw new Error('Invalid JSON format: Empty or too short after cleaning');
-    }
-    
+    const cleanedString = planoEstudoString.slice(jsonStart, jsonEnd + 1).replace(/[\n\r\t\b\f]/g, '').replace(/[\x00-\x1F\x7F-\x9F]/g, '');
     const planoEstudo = JSON.parse(cleanedString);
 
     return planoEstudo;
