@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -6,8 +6,12 @@ import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { useToast } from '@/hooks/use-toast';
 import { supabaseClient } from '@/lib/supabase-admin';
+import { useUser } from '@clerk/clerk-react';
+import { useSupabaseAuth } from '@/components/auth/ClerkSupabaseProvider';
+import { getUserIdForSupabase } from '@/lib/supabase-admin';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import AnimatedLoadingText from '@/components/ui/AnimatedLoadingText';
@@ -25,7 +29,9 @@ import {
   Sparkles,
   Brain,
   Target,
-  Zap
+  Zap,
+  History,
+  Trash2
 } from 'lucide-react';
 
 interface ResearchSource {
@@ -49,15 +55,98 @@ interface ResearchProgress {
   sourcesFound?: number;
 }
 
+interface DeepResearchHistory {
+  id: string;
+  topic: string;
+  report: string;
+  sources: ResearchSource[];
+  summaries: string[];
+  total_findings: number;
+  max_depth: number;
+  created_at: string;
+}
+
 export default function DeepResearchPage() {
   const { toast } = useToast();
+  const { user } = useUser();
+  const { isSupabaseReady } = useSupabaseAuth();
   const [topic, setTopic] = useState('');
   const [maxDepth, setMaxDepth] = useState(3);
   const [isResearching, setIsResearching] = useState(false);
   const [result, setResult] = useState<ResearchResult | null>(null);
   const [progress, setProgress] = useState<ResearchProgress[]>([]);
   const [activeTab, setActiveTab] = useState('report');
+  const [showHistoryDialog, setShowHistoryDialog] = useState(false);
+  const [researchHistory, setResearchHistory] = useState<DeepResearchHistory[]>([]);
+  const [isLoadingHistory, setIsLoadingHistory] = useState(false);
+  const [selectedHistoryItem, setSelectedHistoryItem] = useState<DeepResearchHistory | null>(null);
   const progressRef = useRef<HTMLDivElement>(null);
+
+  const fetchResearchHistory = async () => {
+    if (!user?.id) return;
+    
+    setIsLoadingHistory(true);
+    try {
+      const supabaseUserId = getUserIdForSupabase(user.id);
+      const { data, error } = await supabaseClient
+        .from('deep_research_history')
+        .select('*')
+        .eq('user_id', supabaseUserId)
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+      setResearchHistory(data || []);
+    } catch (error) {
+      console.error('Error fetching history:', error);
+      toast({
+        title: 'Error',
+        description: 'Failed to load research history',
+        variant: 'destructive',
+      });
+    } finally {
+      setIsLoadingHistory(false);
+    }
+  };
+
+  const loadHistoryItem = (item: DeepResearchHistory) => {
+    setSelectedHistoryItem(item);
+    setResult({
+      report: item.report,
+      sources: item.sources,
+      summaries: item.summaries,
+      totalFindings: item.total_findings
+    });
+    setTopic(item.topic);
+    setMaxDepth(item.max_depth);
+    setShowHistoryDialog(false);
+    setActiveTab('report');
+  };
+
+  const deleteHistoryItem = async (id: string) => {
+    if (!user?.id) return;
+
+    try {
+      const { error } = await supabaseClient
+        .from('deep_research_history')
+        .delete()
+        .eq('id', id);
+
+      if (error) throw error;
+
+      setResearchHistory(prev => prev.filter(item => item.id !== id));
+      toast({
+        title: 'Deleted',
+        description: 'Research history item deleted successfully',
+      });
+    } catch (error) {
+      console.error('Error deleting history item:', error);
+      toast({
+        title: 'Error',
+        description: 'Failed to delete history item',
+        variant: 'destructive',
+      });
+    }
+  };
 
   const handleStartResearch = async () => {
     if (!topic.trim()) {
@@ -72,6 +161,7 @@ export default function DeepResearchPage() {
     setIsResearching(true);
     setResult(null);
     setProgress([]);
+    setSelectedHistoryItem(null);
     setActiveTab('progress');
 
     try {
@@ -142,6 +232,33 @@ export default function DeepResearchPage() {
 
       setResult(data);
       setActiveTab('report');
+
+      // Save to database if user is authenticated
+      if (user?.id) {
+        try {
+          const supabaseUserId = getUserIdForSupabase(user.id);
+          const { error: saveError } = await supabaseClient
+            .from('deep_research_history')
+            .insert([{
+              user_id: supabaseUserId,
+              topic: topic.trim(),
+              report: data.report,
+              sources: data.sources || [],
+              summaries: data.summaries || [],
+              total_findings: data.totalFindings || 0,
+              max_depth: maxDepth
+            }]);
+
+          if (saveError) throw saveError;
+        } catch (error) {
+          console.error('Error saving to database:', error);
+          toast({
+            title: 'Warning',
+            description: 'Research completed but failed to save to history',
+            variant: 'destructive',
+          });
+        }
+      }
 
       toast({
         title: 'Research Complete',
@@ -233,12 +350,26 @@ export default function DeepResearchPage() {
         <div className="relative inline-flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10 before:absolute before:inset-0 before:rounded-lg before:bg-primary/5 before:animate-pulse">
           <Search className="h-6 w-6 text-primary" />
         </div>
-        <div>
+        <div className="flex-1">
           <h1 className="text-2xl font-bold tracking-tight">Deep Research</h1>
           <p className="text-muted-foreground">
             AI-powered autonomous research agent that searches, analyzes, and synthesizes information
           </p>
         </div>
+        {user && (
+          <Button
+            variant="outline"
+            size="sm"
+            className="gap-2"
+            onClick={() => {
+              fetchResearchHistory();
+              setShowHistoryDialog(true);
+            }}
+          >
+            <History className="h-4 w-4" />
+            View History
+          </Button>
+        )}
       </div>
 
       <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
@@ -285,7 +416,7 @@ export default function DeepResearchPage() {
 
             <Button
               onClick={handleStartResearch}
-              disabled={isResearching || !topic.trim()}
+              disabled={isResearching || !topic.trim() || !isSupabaseReady}
               className="w-full gap-2"
               size="lg"
             >
@@ -293,6 +424,11 @@ export default function DeepResearchPage() {
                 <>
                   <Loader2 className="h-4 w-4 animate-spin" />
                   <AnimatedLoadingText message="Researching..." />
+                </>
+              ) : !isSupabaseReady ? (
+                <>
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                  Initializing Secure Connection...
                 </>
               ) : (
                 <>
@@ -317,6 +453,12 @@ export default function DeepResearchPage() {
                   <div className="text-xs text-muted-foreground">Findings</div>
                 </div>
               </div>
+              {selectedHistoryItem && (
+                <div className="text-xs text-muted-foreground text-center pt-2 border-t border-border/20">
+                  <Clock className="inline h-3 w-3 mr-1" />
+                  From history: {new Date(selectedHistoryItem.created_at).toLocaleDateString()}
+                </div>
+              )}
             </div>
           )}
         </Card>
@@ -506,6 +648,85 @@ export default function DeepResearchPage() {
         </div>
       </div>
 
+      {/* History Dialog */}
+      <Dialog open={showHistoryDialog} onOpenChange={setShowHistoryDialog}>
+        <DialogContent className="max-w-4xl max-h-[80vh]">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <History className="h-5 w-5" />
+              Deep Research History
+            </DialogTitle>
+            <DialogDescription>
+              Your previously completed research reports
+            </DialogDescription>
+          </DialogHeader>
+          
+          <ScrollArea className="h-[500px] pr-4">
+            {isLoadingHistory ? (
+              <div className="flex items-center justify-center py-8">
+                <Loader2 className="h-8 w-8 animate-spin" />
+              </div>
+            ) : researchHistory.length > 0 ? (
+              <div className="space-y-4">
+                {researchHistory.map((item) => (
+                  <Card
+                    key={item.id}
+                    className="p-4 hover:bg-accent/50 transition-colors"
+                  >
+                    <div className="flex items-start justify-between gap-4">
+                      <div className="flex-1 cursor-pointer" onClick={() => loadHistoryItem(item)}>
+                        <h4 className="font-medium mb-2">{item.topic}</h4>
+                        <div className="flex items-center gap-4 text-sm text-muted-foreground mb-2">
+                          <span className="flex items-center gap-1">
+                            <Globe className="h-3 w-3" />
+                            {item.sources.length} sources
+                          </span>
+                          <span className="flex items-center gap-1">
+                            <FileText className="h-3 w-3" />
+                            {item.total_findings} findings
+                          </span>
+                          <span className="flex items-center gap-1">
+                            <Target className="h-3 w-3" />
+                            Depth {item.max_depth}
+                          </span>
+                        </div>
+                        <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                          <Clock className="h-3 w-3" />
+                          {new Date(item.created_at).toLocaleDateString()} at {new Date(item.created_at).toLocaleTimeString()}
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => loadHistoryItem(item)}
+                        >
+                          Load
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => deleteHistoryItem(item.id)}
+                          className="text-destructive hover:text-destructive"
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    </div>
+                  </Card>
+                ))}
+              </div>
+            ) : (
+              <div className="text-center py-8 text-muted-foreground">
+                <History className="mx-auto h-12 w-12 opacity-50 mb-2" />
+                <p>No research history found</p>
+                <p className="text-sm">Complete your first research to see it here</p>
+              </div>
+            )}
+          </ScrollArea>
+        </DialogContent>
+      </Dialog>
+
       {/* Tips Section */}
       <Card className="p-6 bg-gradient-to-r from-primary/5 via-primary/3 to-transparent border-primary/10">
         <div className="flex items-start gap-3">
@@ -518,6 +739,7 @@ export default function DeepResearchPage() {
               <li>• The agent autonomously searches, extracts, analyzes, and synthesizes information</li>
               <li>• Each research cycle identifies knowledge gaps and explores them systematically</li>
               <li>• Final reports include citations and are structured for easy reading</li>
+              <li>• Your research history is automatically saved and can be accessed anytime</li>
               <li>• Best for academic research, market analysis, and comprehensive topic exploration</li>
             </ul>
           </div>
