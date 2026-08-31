@@ -167,20 +167,26 @@ export default function LearningPathsPage() {
             </TabsContent>
             
             <TabsContent value="visual">
-              <ScrollArea className="h-[600px]">
+              <ScrollArea className="h-[600px] px-4">
                 {mermaidDiagram ? (
-                  <div className="p-4 bg-muted rounded-lg">
-                    <MermaidDiagram definition={mermaidDiagram} className="w-full" />
+                  <div className="mermaid-diagram-wrapper transform hover:scale-[1.02] transition-transform duration-300">
+                    <MermaidDiagram 
+                      definition={mermaidDiagram} 
+                      className="w-full min-h-[400px] flex items-center justify-center" 
+                    />
                   </div>
                 ) : (
                   <div className="flex items-center justify-center h-full text-muted-foreground">
                     {isGenerating ? (
                       <div className="flex flex-col items-center gap-2">
                         <Loader2 className="h-8 w-8 animate-spin" />
-                        <p>Generating visual diagram...</p>
+                        <p className="animate-pulse">Creating your visual learning journey...</p>
                       </div>
                     ) : (
-                      <p>Visual representation will appear here</p>
+                      <div className="text-center space-y-2">
+                        <FlowChart className="h-12 w-12 mx-auto text-muted-foreground/50" />
+                        <p>Your visual learning path will appear here</p>
+                      </div>
                     )}
                   </div>
                 )}

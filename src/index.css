@@ -73,6 +73,89 @@
   --mermaid-orange-darker: hsl(25 84% 45%);
 }
 
+/* Enhanced Mermaid Diagram Styles */
+.mermaid-diagram-wrapper {
+  background: radial-gradient(circle at center, var(--mermaid-bg), hsl(var(--background)));
+  padding: 2rem;
+  border-radius: var(--radius);
+  box-shadow: 0 0 30px rgba(0, 0, 0, 0.2);
+}
+
+.mermaid-render-area {
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.1));
+}
+
+/* Node Styles */
+.mermaid-render-area .node rect,
+.mermaid-render-area .node circle,
+.mermaid-render-area .node ellipse,
+.mermaid-render-area .node polygon,
+.mermaid-render-area .node path {
+  stroke-width: 2px;
+  transition: all 0.3s ease;
+}
+
+.mermaid-render-area .node:hover rect,
+.mermaid-render-area .node:hover circle,
+.mermaid-render-area .node:hover ellipse,
+.mermaid-render-area .node:hover polygon,
+.mermaid-render-area .node:hover path {
+  filter: brightness(1.1);
+  transform: translateY(-2px);
+}
+
+/* Edge Styles */
+.mermaid-render-area .edgePath path.path {
+  stroke-width: 2px;
+  transition: all 0.3s ease;
+}
+
+.mermaid-render-area .edgePath:hover path.path {
+  stroke-width: 3px;
+  filter: brightness(1.2);
+}
+
+/* Class-specific styles */
+.mermaid-render-area .classPurple rect,
+.mermaid-render-area .classPurple circle,
+.mermaid-render-area .classPurple path {
+  fill: var(--mermaid-purple-darker);
+  stroke: var(--mermaid-purple);
+  filter: drop-shadow(0 4px 6px rgba(var(--primary), 0.2));
+}
+
+.mermaid-render-area .classGreen rect,
+.mermaid-render-area .classGreen circle,
+.mermaid-render-area .classGreen path {
+  fill: var(--mermaid-green-darker);
+  stroke: var(--mermaid-green);
+  filter: drop-shadow(0 4px 6px rgba(var(--chart-2), 0.2));
+}
+
+.mermaid-render-area .classYellow rect,
+.mermaid-render-area .classYellow circle,
+.mermaid-render-area .classYellow path {
+  fill: var(--mermaid-yellow-darker);
+  stroke: var(--mermaid-yellow);
+  filter: drop-shadow(0 4px 6px rgba(var(--chart-3), 0.2));
+}
+
+.mermaid-render-area .classBlue rect,
+.mermaid-render-area .classBlue circle,
+.mermaid-render-area .classBlue path {
+  fill: var(--mermaid-blue-darker);
+  stroke: var(--mermaid-blue);
+  filter: drop-shadow(0 4px 6px rgba(var(--chart-4), 0.2));
+}
+
+.mermaid-render-area .classOrange rect,
+.mermaid-render-area .classOrange circle,
+.mermaid-render-area .classOrange path {
+  fill: var(--mermaid-orange-darker);
+  stroke: var(--mermaid-orange);
+  filter: drop-shadow(0 4px 6px rgba(var(--chart-5), 0.2));
+}
+
 /* Custom Cursor Styles - Now opt-in with class .custom-cursor-enabled */
 .custom-cursor-enabled {
   cursor: none;
@@ -654,7 +737,6 @@ html {
   stroke: var(--mermaid-orange);
 }
 .mermaid-render-area .classOrange .label { color: var(--mermaid-node-text-color); }
-
 
 /* If you have a specific container for the roadmap, ensure it has a dark background */
 .roadmap-display-container { /* Assuming you might wrap the <MermaidDiagram> component */
