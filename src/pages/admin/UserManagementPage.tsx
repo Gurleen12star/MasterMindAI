@@ -64,6 +64,16 @@ export default function UserManagementPage() {
       setIsLoading(true);
       setUsers([]);
 
+      // First check our admin status to debug issues
+      const { data: debugData, error: debugError } = await supabase
+        .rpc('debug_admin_status');
+        
+      if (debugError) {
+        console.error('Error checking admin status:', debugError);
+      } else {
+        console.log('Admin status debug info:', debugData);
+      }
+
       const { data, error } = await supabase
         .from('student_profiles')
         .select('id, user_id, first_name, last_name, email, is_admin, created_at')
@@ -72,6 +82,7 @@ export default function UserManagementPage() {
       if (error) throw error;
 
       setUsers(data || []);
+      console.log(`Fetched ${data?.length} users`);
     } catch (error) {
       console.error('Error fetching users:', error);
       toast({
@@ -178,10 +189,12 @@ export default function UserManagementPage() {
             <div className="flex items-center gap-2">
               <Label htmlFor="show-admins" className="text-sm">Admins Only</Label>
               <Switch 
-                id="show-admins" 
+                id="show-admins"
+                checked={searchQuery === '' && filteredUsers.length !== users.length}
                 onCheckedChange={(checked) => {
                   if (checked) {
                     setFilteredUsers(users.filter(user => user.is_admin));
+                    setSearchQuery('');
                   } else {
                     setFilteredUsers(users);
                   }
@@ -197,7 +210,10 @@ export default function UserManagementPage() {
             <div className="flex items-center justify-between">
               <div>
                 <CardTitle>User Accounts</CardTitle>
-                <CardDescription>{users.length} total users</CardDescription>
+                <CardDescription>
+                  {filteredUsers.length} user{filteredUsers.length !== 1 ? 's' : ''} displayed 
+                  {filteredUsers.length !== users.length ? ` (of ${users.length} total)` : ''}
+                </CardDescription>
               </div>
             </div>
           </CardHeader>
