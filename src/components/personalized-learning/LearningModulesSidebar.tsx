@@ -32,8 +32,13 @@ export default function LearningModulesSidebar({ className }: LearningModulesSid
     <div className={`w-64 h-full bg-[#1E1E1E] flex flex-col ${className}`}>
       {/* Header */}
       <div className="p-4">
-        <h3 className="text-sm font-semibold tracking-wider text-gray-300 uppercase">
+        <h3 className="text-sm font-semibold tracking-wider text-gray-300 uppercase flex items-center gap-2">
           Learning Modules
+          {studyPlatform.modulos.filter(m => m.audioUrl).length > 0 && (
+            <span className="text-xs text-primary bg-primary/20 px-2 py-0.5 rounded-full">
+              {studyPlatform.modulos.filter(m => m.audioUrl).length} with audio
+            </span>
+          )}
         </h3>
         <p className="text-xs text-gray-500 mt-1">
           {studyPlatform.modulos.length} modules available
@@ -55,10 +60,10 @@ export default function LearningModulesSidebar({ className }: LearningModulesSid
               onClick={() => {
                 if (!modulo.isOpen) return;
                 setStudyPlatform(prevState => ({
-                  ...prevState,
-                  actModule: index,
-                  isGettingModulo: true,
-                  isLoading: true,
+                ...prevState,
+                actModule: index,
+                isGettingModulo: true,
+                isLoading: true,
                 }));
               }}
               title={modulo.title}
@@ -79,7 +84,12 @@ export default function LearningModulesSidebar({ className }: LearningModulesSid
               {/* Progress indicator */}
               {modulo.isOpen && (
                 <div className="ml-auto">
-                  <div className="w-2 h-2 rounded-full bg-green-500"></div>
+                  <div className="flex items-center gap-1.5">
+                    {modulo.audioUrl && (
+                      <div className="w-2 h-2 rounded-full bg-primary"></div>
+                    )}
+                    <div className="w-2 h-2 rounded-full bg-green-500"></div>
+                  </div>
                 </div>
               )}
             </button>

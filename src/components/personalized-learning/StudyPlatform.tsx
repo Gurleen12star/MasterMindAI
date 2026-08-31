@@ -189,6 +189,70 @@ const StudyPlatform = () => {
         }
     };
 
+    const handleMuteToggle = () => {
+        if (!audioRef.current) return;
+        
+        audioRef.current.muted = !audioRef.current.muted;
+        setIsMuted(audioRef.current.muted);
+    };
+
+    // Force sync module audio URL with database
+    const syncAudioWithDatabase = async (moduleIndex: number, audioUrl: string) => {
+        if (!user?.id || !currentSessionId) return;
+        
+        try {
+            console.log(`Syncing audio URL for module ${moduleIndex} to database...`);
+            
+            // First get the current state from the database to avoid race conditions
+            const { data: currentSession, error: fetchError } = await supabase
+                .from('personalized_learning_sessions')
+                .select('modules_data')
+                .eq('id', currentSessionId)
+                .single();
+            
+            if (fetchError) {
+                throw fetchError;
+            }
+            
+            if (!currentSession || !currentSession.modules_data) {
+                throw new Error('Session data not found');
+            }
+            
+            // Make a deep copy of the modules data
+            const updatedModules = JSON.parse(JSON.stringify(currentSession.modules_data));
+            
+            // Ensure the module exists and update its audioUrl
+            if (updatedModules[moduleIndex]) {
+                updatedModules[moduleIndex].audioUrl = audioUrl;
+                
+                // Update the database with the modified modules data
+                const { error: updateError } = await supabase
+                    .from('personalized_learning_sessions')
+                    .update({ modules_data: updatedModules })
+                    .eq('id', currentSessionId);
+                
+                if (updateError) {
+                    throw updateError;
+                }
+                
+                console.log(`Successfully synced audio URL for module ${moduleIndex}`);
+                
+                // Update local state with the new modules data
+                setStudyPlatform(prev => ({
+                    ...prev,
+                    modulos: updatedModules
+                }));
+            }
+        } catch (error) {
+            console.error('Error syncing audio URL with database:', error);
+            toast({
+                title: "Sync Error",
+                description: "Failed to sync audio with database. Refresh may be needed to persist audio.",
+                variant: "destructive"
+            });
+        }
+    };
+
     // Extract plain text from HTML content
     const extractPlainText = (html: string): string => {
         const tempDiv = document.createElement('div');
@@ -269,28 +333,20 @@ const StudyPlatform = () => {
                         setAudioUrl(publicUrlData.publicUrl);
                         
                         // Revoke the temporary blob URL to free memory
-                        URL.revokeObjectURL(blobUrl);
+                        if (blobUrl) URL.revokeObjectURL(blobUrl);
                         
                         // Update module data with audio URL
-                        if (currentSessionId) {
-                            const updatedModulos = [...studyPlatform.modulos];
-                            if (!updatedModulos[studyPlatform.actModule].audioUrl) {
-                                updatedModulos[studyPlatform.actModule].audioUrl = publicUrlData.publicUrl;
-                                
-                                // Update in database
-                                await supabase
-                                    .from('personalized_learning_sessions')
-                                    .update({
-                                        modules_data: updatedModulos,
-                                    })
-                                    .eq('id', currentSessionId);
-                                
-                                setStudyPlatform(prev => ({
-                                    ...prev,
-                                    modulos: updatedModulos
-                                }));
-                            }
-                        }
+                        const updatedModulos = [...studyPlatform.modulos];
+                        updatedModulos[studyPlatform.actModule].audioUrl = publicUrlData.publicUrl;
+                        
+                        // Update local state first for immediate feedback
+                        setStudyPlatform(prev => ({
+                            ...prev,
+                            modulos: updatedModulos
+                        }));
+                        
+                        // Then sync with database
+                        syncAudioWithDatabase(studyPlatform.actModule, publicUrlData.publicUrl);
                     } else {
                         // If we can't get the public URL, fallback to the blob URL
                         setAudioUrl(blobUrl);
@@ -352,13 +408,6 @@ const StudyPlatform = () => {
         }
     };
 
-    const handleMuteToggle = () => {
-        if (!audioRef.current) return;
-        
-        audioRef.current.muted = !audioRef.current.muted;
-        setIsMuted(audioRef.current.muted);
-    };
-
     const handleTimeUpdate = () => {
         if (!audioRef.current) return;
         setCurrentTime(audioRef.current.currentTime);
@@ -399,8 +448,10 @@ const StudyPlatform = () => {
     useEffect(() => {
         if (studyPlatform.modulos[studyPlatform.actModule]?.audioUrl) {
             setAudioUrl(studyPlatform.modulos[studyPlatform.actModule].audioUrl);
+            console.log(`Loading saved audio for module ${studyPlatform.actModule}:`, studyPlatform.modulos[studyPlatform.actModule].audioUrl);
             setActiveModuleId(`module-${studyPlatform.actModule}`);
         } else {
+            console.log(`No audio URL found for module ${studyPlatform.actModule}`);
             setAudioUrl(null);
         }
         setIsPlaying(false);
@@ -601,6 +652,7 @@ const StudyPlatform = () => {
                                                  <div
                                                      ref={contentRef}
                                                      className="studyPlatform-content-wrapper"
+                                                     data-module={`module-${studyPlatform.actModule}`}
                                                      onMouseUp={handleSelection}
                                                      onMouseDown={() => setSelectedText("")}
                                                  >
