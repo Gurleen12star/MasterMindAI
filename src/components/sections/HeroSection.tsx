@@ -30,7 +30,7 @@ export default function HeroSection() {
   }, []);
 
   return (
-    <section className="relative overflow-hidden pt-24 md:pt-32 bg-gradient-to-b from-background via-background/95 to-background/90">
+    <section className="relative overflow-hidden pt-24 md:pt-32 pb-32 md:pb-48 bg-gradient-to-b from-background via-background/95 to-background/90">
       <div className="absolute inset-0 overflow-hidden">
         {[...Array(20)].map((_, i) => (
           <div
