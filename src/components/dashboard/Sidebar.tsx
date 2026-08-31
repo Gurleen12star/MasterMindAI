@@ -1,5 +1,5 @@
 import { useAuth } from '@/components/auth/SupabaseAuthProvider';
-import { useState, useEffect } from 'react';
+import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useSidebar } from './SidebarContext';
 import EchoVerseLogo from '@/components/ui/EchoVerseLogo';
@@ -15,8 +15,7 @@ import {
   User,
   LogOut,
   ChevronRight,
-  Menu,
-  X
+  ChevronLeft
 } from 'lucide-react';
 import { Button } from '../ui/button';
 
@@ -104,25 +103,23 @@ export default function Sidebar({ className }: SidebarProps) {
   ];
 
   return (
-    <div className={`${isCollapsed ? 'w-16' : 'w-64'} h-screen bg-[#111111] text-white flex-col border-r border-white/10 transition-all duration-300 ${className}`}>
-      <div className={`${isCollapsed ? 'p-3' : 'p-5'} border-b border-white/10 flex items-center justify-between`}>
-        {!isCollapsed ? (
-        <Link to="/dashboard" className="flex items-center gap-3">
+    <div className={`${isCollapsed ? 'w-16' : 'w-64'} h-screen bg-[#111111] text-white flex flex-col border-r border-white/10 transition-all duration-300 ease-in-out ${className}`}>
+      <div className={`${isCollapsed ? 'p-3' : 'p-5'} border-b border-white/10 flex items-center ${isCollapsed ? 'justify-center' : 'justify-between'} relative`}>
+        {/* Brand / Logo */}
+        <Link to="/dashboard" className={`${isCollapsed ? 'flex items-center justify-center' : 'flex items-center gap-3'}`}>
           <EchoVerseLogo className="h-8 w-8 text-primary" />
-          <span className="text-lg font-bold">EchoVerse</span>
+          {!isCollapsed && <span className="text-lg font-bold">EchoVerse</span>}
         </Link>
-        ) : (
-          <Link to="/dashboard" className="flex items-center justify-center w-full">
-            <EchoVerseLogo className="h-8 w-8 text-primary" />
-          </Link>
-        )}
+
+        {/* Toggle Button */}
         <Button
           variant="ghost"
           size="icon"
           onClick={() => setIsCollapsed(!isCollapsed)}
-          className="h-8 w-8 text-gray-400 hover:text-white ml-auto"
+          className={`h-8 w-8 text-gray-400 hover:text-white transition-colors duration-200 ${isCollapsed ? 'absolute right-2 top-1/2 -translate-y-1/2' : 'ml-auto'}`}
+          aria-label={isCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
         >
-          {isCollapsed ? <Menu className="h-4 w-4" /> : <X className="h-4 w-4" />}
+          {isCollapsed ? <ChevronRight className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />}
         </Button>
       </div>
       
