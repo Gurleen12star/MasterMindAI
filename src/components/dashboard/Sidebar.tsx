@@ -48,13 +48,13 @@ export default function Sidebar() {
   return (
     <div className="w-64 h-screen bg-card/50 backdrop-blur-sm border-r border-border/40 flex flex-col">
       <div className="p-6">
-        <a href="/" className="flex items-center gap-2 group">
+        <a href="/" className="flex items-center gap-2 group relative">
           <div className="relative flex items-center justify-center">
-            <img src="/robot.png" alt="EchoVerse Logo" className="h-24 w-24 object-contain -my-8" />
+            <img src="/logo.png" alt="EchoVerse Logo" className="h-24 w-24 object-contain -my-8" />
           </div>
-          <h2 className="bg-gradient-to-r from-indigo-500 to-purple-500 bg-clip-text text-xl font-bold text-transparent hover:scale-105 transition-transform">
+          <span className="bg-gradient-to-r from-indigo-500 to-purple-500 bg-clip-text text-xl font-bold text-transparent hover:scale-105 transition-transform">
             EchoVerse
-          </h2>
+          </span>
         </a>
       </div>
       
