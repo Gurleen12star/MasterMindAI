@@ -12,10 +12,8 @@ export default function DashboardPage() {
   return (
     <div className="flex h-screen bg-background">
       <Sidebar />
-      
       <div className="flex-1 flex flex-col">
         <DashboardHeader />
-        
         <main className="flex-1 overflow-y-auto">
           {path === '/dashboard/roadmap-generator' ? (
             <RoadmapGeneratorPage />
@@ -101,10 +99,10 @@ export default function DashboardPage() {
                 </div>
               </div>
             </div>
-          )}
             </div>
           )}
         </main>
+      </div>
     </div>
   );
 }
