@@ -22,7 +22,7 @@ const IntroductionLoading = () => {
     }, []);
 
     return (
-        <div className="w-full h-full bg-background flex flex-col items-center justify-center gap-6 py-6 min-h-[300px]">
+        <div className="w-full flex flex-col items-center justify-center gap-6 py-12 min-h-[400px]">
             <AnimatePresence mode='popLayout'>
                 <motion.div
                     initial="initial"
@@ -30,10 +30,13 @@ const IntroductionLoading = () => {
                     exit="out"
                     variants={pageVariants(2)}
                     transition={pageTransition(2)}
-                    className="flex flex-col items-center justify-center gap-4"
+                    className="flex flex-col items-center justify-center gap-6"
                 >
-                    <Loader2 className="h-16 w-16 text-primary animate-spin" />
-                    <div ref={infoEl} className="text-lg text-primary font-medium text-center min-h-[24px]" />
+                    <div className="relative">
+                        <div className="absolute inset-0 rounded-full bg-primary/10 blur-2xl transform scale-150 opacity-70"></div>
+                        <Loader2 className="h-16 w-16 text-primary animate-spin relative z-10" />
+                    </div>
+                    <div ref={infoEl} className="text-lg bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent font-medium text-center min-h-[24px]" />
                 </motion.div>
             </AnimatePresence>
         </div>

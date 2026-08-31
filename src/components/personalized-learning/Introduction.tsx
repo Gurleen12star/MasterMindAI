@@ -19,9 +19,9 @@ const CustomRadio = (props: any) => {
         <div className="flex flex-col items-center justify-center group">
             <Label
                 htmlFor={`radio-${value}`}
-                className="flex flex-col items-center justify-center p-6 cursor-pointer rounded-xl border-2 border-border/50 hover:border-primary/60 transition-all duration-200 group-has-[[data-state=checked]]:bg-primary/20 group-has-[[data-state=checked]]:border-primary/80 group-has-[[data-state=checked]]:shadow-md"
+                className="flex flex-col items-center justify-center p-6 cursor-pointer rounded-xl border-2 border-border/50 hover:border-primary/60 transition-all duration-200 group-has-[[data-state=checked]]:bg-primary/20 group-has-[[data-state=checked]]:border-primary/80 group-has-[[data-state=checked]]:shadow-lg group-has-[[data-state=checked]]:shadow-primary/20 hover:transform hover:scale-105 transition-transform"
             >
-                <div className="w-16 h-16 rounded-full bg-primary/20 flex items-center justify-center mb-2 shadow-inner-modern">
+                <div className="w-16 h-16 rounded-full bg-gradient-to-br from-primary/30 to-primary/10 flex items-center justify-center mb-2 shadow-inner-modern">
                     <Icon className="h-8 w-8 text-primary" />
                 </div>
                 <RadioGroupItem value={value} id={`radio-${value}`} className="opacity-0 absolute" {...otherProps} />
@@ -41,8 +41,8 @@ const Introduction = () => {
     const page3El = useRef<HTMLDivElement>(null);
 
     return (
-        <div className="w-full h-full bg-background">
-            <div className="flex flex-col items-center justify-center gap-6 py-6 md:py-8 px-4 w-full min-h-[500px]">
+        <div className="w-full">
+            <div className="flex flex-col items-center justify-center gap-6 py-8 md:py-10 px-4 w-full min-h-[500px]">
                 <AnimatePresence mode='popLayout'>
                     <motion.div
                         key="introduction-logo"
@@ -52,8 +52,11 @@ const Introduction = () => {
                         variants={pageVariants(2)}
                         transition={pageTransition(2)}
                     >
-                        <div className="text-center mb-4">
-                            <School className="h-20 w-20 text-primary mx-auto mb-2" />
+                        <div className="text-center mb-6">
+                            <div className="relative inline-block">
+                                <div className="absolute inset-0 rounded-full bg-primary/10 blur-xl transform scale-150 opacity-70"></div>
+                                <School className="h-20 w-20 text-primary mx-auto mb-2 relative z-10" />
+                            </div>
                             <h2 className="text-2xl font-bold bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">Personalized Learning</h2>
                         </div>
                     </motion.div>
@@ -187,7 +190,7 @@ const Introduction = () => {
                                 >
                                     <Input
                                         placeholder="Enter your name"
-                                        className="max-w-[300px] rounded-xl shadow-md"
+                                        className="max-w-[300px] rounded-xl shadow-lg border-primary/20 focus:border-primary/50 focus:ring-2 focus:ring-primary/20"
                                         value={userName}
                                         onChange={(e) => {
                                             if (e.target.value.length > 2) {
@@ -501,7 +504,7 @@ const Introduction = () => {
                                 >
                                     <Input
                                         placeholder="I want to learn about..."
-                                        className="max-w-[450px] rounded-xl shadow-md"
+                                        className="max-w-[450px] rounded-xl shadow-lg border-primary/20 focus:border-primary/50 focus:ring-2 focus:ring-primary/20"
                                         value={studyMaterial}
                                         onChange={(e) => {
                                             if (e.target.value.length > 4) {
@@ -585,7 +588,7 @@ const Introduction = () => {
                             >
                                 <Button
                                     variant="default"
-                                    className="min-w-[143px] rounded-xl shadow-md"
+                                    className="min-w-[143px] rounded-xl shadow-lg hover:shadow-primary/25 hover:scale-105 transition-transform duration-200"
                                     disabled={!introduction.pages[`page${page}`].button}
                                     onClick={() => {
                                         if (page === 3) {
@@ -618,9 +621,9 @@ const Introduction = () => {
                             </motion.div>
                         </div>
                         <div className="flex items-center justify-center gap-4 select-none">
-                            <span className={`block w-12 h-2 rounded-full ${page === 1 ? "bg-primary" : "bg-primary/30"} transition-all`} />
-                            <span className={`block w-12 h-2 rounded-full ${page === 2 ? "bg-primary" : "bg-primary/30"} transition-all`} />
-                            <span className={`block w-12 h-2 rounded-full ${page === 3 ? "bg-primary" : "bg-primary/30"} transition-all`} />
+                            <span className={`block w-12 h-2 rounded-full ${page === 1 ? "bg-primary scale-110 shadow-md shadow-primary/40" : "bg-primary/30"} transition-all duration-300`} />
+                            <span className={`block w-12 h-2 rounded-full ${page === 2 ? "bg-primary scale-110 shadow-md shadow-primary/40" : "bg-primary/30"} transition-all duration-300`} />
+                            <span className={`block w-12 h-2 rounded-full ${page === 3 ? "bg-primary scale-110 shadow-md shadow-primary/40" : "bg-primary/30"} transition-all duration-300`} />
                         </div>
                     </motion.div>
                 </AnimatePresence>

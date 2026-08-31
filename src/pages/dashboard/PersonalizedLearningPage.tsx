@@ -7,6 +7,7 @@ import Introduction from '@/components/personalized-learning/Introduction';
 import IntroductionLoading from '@/components/personalized-learning/IntroductionLoading';
 import StudyPlatform from '@/components/personalized-learning/StudyPlatform';
 import LearningModulesSidebar from '@/components/personalized-learning/LearningModulesSidebar';
+import { Card } from '@/components/ui/card';
 
 export default function PersonalizedLearningPage() {
   const { introduction, studyPlatform } = useAppContext();
@@ -24,10 +25,10 @@ export default function PersonalizedLearningPage() {
         <div className="p-4 md:p-6">
           <div className="mb-6">
             <h1 className="text-2xl font-bold tracking-tight">Personalized Learning</h1>
-            <p className="text-muted-foreground">Create customized learning experiences powered by AI</p>
+            <p className="text-muted-foreground">Experience interactive AI-powered learning journeys tailored just for you</p>
           </div>
 
-          <div className="relative">
+          <Card className="relative overflow-hidden border-primary/10 shadow-md p-6 backdrop-blur-sm bg-card/80">
             <AnimatePresence mode='popLayout'>
               {introduction.show && (
                 <motion.div
@@ -69,7 +70,7 @@ export default function PersonalizedLearningPage() {
                 <StudyPlatform />
               </motion.div>
             </AnimatePresence>
-          </div>
+          </Card>
         </div>
       </div>
     </div>
