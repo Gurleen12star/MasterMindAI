@@ -71,19 +71,27 @@ export default function AnimationStudioPage() {
       console.error('Error loading video history:', error);
       let errorMessage = 'Failed to load video history';
       let errorTitle = 'Error';
+      let actionText = 'Try Again';
       
       if (error instanceof Error) {
         errorMessage = error.message;
         
-        // Provide more specific titles for different error types
-        if (error.message.includes('configuration') || error.message.includes('not configured')) {
+        // Provide more specific titles and actions for different error types
+        if (error.message.includes('CORS')) {
+          errorTitle = 'CORS Configuration Required';
+          actionText = 'Configure CORS';
+        } else if (error.message.includes('configuration') || error.message.includes('not configured')) {
           errorTitle = 'Configuration Error';
+          actionText = 'Check Configuration';
         } else if (error.message.includes('network') || error.message.includes('connect')) {
           errorTitle = 'Connection Error';
+          actionText = 'Check Connection';
         } else if (error.message.includes('permission') || error.message.includes('Access denied')) {
           errorTitle = 'Permission Error';
+          actionText = 'Check Permissions';
         } else if (error.message.includes('not found')) {
           errorTitle = 'Resource Not Found';
+          actionText = 'Check Configuration';
         }
       }
       
@@ -91,6 +99,13 @@ export default function AnimationStudioPage() {
         title: errorTitle,
         description: errorMessage,
         variant: 'destructive',
+        action: error instanceof Error && error.message.includes('CORS') ? {
+          altText: actionText,
+          onClick: () => {
+            // Open Appwrite console in new tab
+            window.open('https://cloud.appwrite.io/', '_blank');
+          },
+        } : undefined,
       });
     }
   };
