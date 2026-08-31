@@ -74,8 +74,10 @@ const pricingPlans = [
 
 export default function PricingSection() {
   return (
-    <section id="pricing" className="relative py-16 md:py-24 lg:py-32 overflow-hidden">
-      {/* Blurred oval overlay effects */}
+    <section className="py-24 relative overflow-hidden bg-background">
+      <div className="absolute inset-0 bg-grid-white opacity-[0.02]"></div>
+      
+      {/* Background decoration */}
       <div className="absolute -top-20 -right-40 w-88 h-88 rounded-full bg-gradient-to-br from-orange-500/6 via-red-500/4 to-transparent blur-3xl opacity-50" />
       <div className="absolute -bottom-20 -left-40 w-96 h-96 rounded-full bg-gradient-to-br from-primary/8 via-purple-500/4 to-transparent blur-3xl opacity-60" />
       
