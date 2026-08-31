@@ -354,6 +354,8 @@ export default function QuickSummariesPage() {
               <li>• For academic papers, mention "include methodology and conclusions"</li>
               <li>• For business documents, try "focus on key decisions and action items"</li>
               <li>• PDF support is coming soon - currently supports text files only</li>
+              <li>• Audio generation uses ElevenLabs AI for high-quality voice synthesis</li>
+              <li>• Choose different voices to match your preference for audio content</li>
             </ul>
           </div>
         </div>
