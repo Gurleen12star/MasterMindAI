@@ -35,10 +35,10 @@ export default function HeroSection() {
           <div className="hero-assets">
             <h3 className="hero-title">ECHOVERSE</h3>
             <img 
-              src="https://images.pexels.com/photos/8566472/pexels-photo-8566472.jpeg"
+              src="robot.png"
               alt="Floating Icon"
               className="foreground transition-transform duration-300"
-              style={{ width: "auto", height: "100%" }}
+              style={{ width: "800px", height: "675px" }}
             />
           </div>
           <div className="hero-content">
