@@ -175,13 +175,14 @@ export const addStoriesChat = (
 export const cleanAndConvertPlanoEstudo = (planoEstudoString: string) => {
     console.log('cleanAndConvertPlanoEstudo: Starting with string length:', planoEstudoString?.length);
     
-    if (!planoEstudoString || typeof planoEstudoString !== 'string') {
-        throw new Error('Invalid input: planoEstudoString must be a non-empty string');
+    if (!planoEstudoString || typeof planoEstudoString !== 'string' || planoEstudoString.trim().length === 0) {
+        console.error('cleanAndConvertPlanoEstudo: Invalid input - empty or non-string value');
+        throw new Error('Invalid input: planoEstudoString must be a non-empty string. Received: ' + (typeof planoEstudoString) + ' with length: ' + (planoEstudoString?.length || 'undefined'));
     }
 
     // First validate that we can extract valid JSON
     if (!validateJSON(planoEstudoString)) {
-        console.error('cleanAndConvertPlanoEstudo: Validation failed for string:', planoEstudoString.substring(0, 500));
+        console.error('cleanAndConvertPlanoEstudo: JSON validation failed for string:', planoEstudoString.substring(0, 500));
         throw new Error('Invalid JSON format detected - no valid array structure found');
     }
 
@@ -189,6 +190,7 @@ export const cleanAndConvertPlanoEstudo = (planoEstudoString: string) => {
     const cleanedString = extractAndCleanJsonString(planoEstudoString);
     
     if (!cleanedString) {
+        console.error('cleanAndConvertPlanoEstudo: No cleaned string could be extracted');
         throw new Error('No valid JSON content found in the provided string after validation passed');
     }
 
@@ -219,8 +221,15 @@ export const generateModules = (
     studyPlatform: StudyPlatformType,
     setStudyPlatform: SetStudyPlatformType,
 ) => {
+    // Add validation to ensure model contains content
+    if (!model || typeof model !== 'string' || model.trim().length === 0) {
+        console.error('generateModules: Invalid model response - empty or non-string');
+        return;
+    }
+    
     try {
         console.log('generateModules: Processing model response...');
+        console.log('generateModules: Model response length:', model.length);
         const cleanedModules = cleanAndConvertPlanoEstudo(model);
         const newModules = addPropertiesToModules(cleanedModules);
         console.log('generateModules: Successfully generated', newModules.length, 'modules');
@@ -236,8 +245,8 @@ export const generateModules = (
     } catch (error) {
         console.error('Error generating modules:', error);
         console.error('Model response that caused error:', model);
-        // Handle the error gracefully - you might want to show an error message to the user
-        // For now, we'll just log it and not crash the application
+        // Handle the error gracefully by reverting to introduction
+        console.warn('generateModules: Reverting to introduction due to error');
     }
 };
 
@@ -246,8 +255,15 @@ export const generateModule = (
     studyPlatform: StudyPlatformType,
     setStudyPlatform: SetStudyPlatformType,
 ) => {
+    // Add validation to ensure model contains content
+    if (!model || typeof model !== 'string' || model.trim().length === 0) {
+        console.error('generateModule: Invalid model response - empty or non-string');
+        return;
+    }
+    
     try {
         console.log('generateModule: Processing model response...');
+        console.log('generateModule: Model response length:', model.length);
         const cleanedModule = cleanAndConvertPlanoEstudo(model);
         console.log('generateModule: Successfully parsed module content');
         
@@ -269,6 +285,7 @@ export const generateModule = (
         console.error('Error generating module:', error);
         console.error('Model response that caused error:', model);
         // Handle the error gracefully
+        console.warn('generateModule: Error processing module content');
     }
 };
 
