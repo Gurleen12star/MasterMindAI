@@ -4,6 +4,7 @@ import { Link } from '@/components/ui/link';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
+import logo from '@/assets/logo.png';
 import {
   Compass,
   BookOpen,
@@ -105,7 +106,7 @@ export default function Sidebar({ onNavigate }: SidebarProps) {
           <div className="relative flex items-center">
             <Link href="/" className="block">
               <img 
-                src="/src/assets/logo.png" 
+                src={logo}
                 alt="EchoVerse Logo" 
                 className={`object-contain transition-all duration-300 ${
                   isCollapsed ? 'h-12 w-12' : 'h-16 w-16'
