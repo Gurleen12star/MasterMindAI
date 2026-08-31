@@ -68,6 +68,7 @@
   overflow: visible;
   position: relative;
   padding: 1rem 0;
+  background-color: transparent;
 }
 
 .mermaid-render-area {
@@ -84,6 +85,93 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  background-color: transparent !important;
+}
+
+/* Force SVG visibility and override prose styles */
+.mermaid svg {
+  background-color: transparent !important;
+  width: 100% !important;
+  height: auto !important;
+  min-height: 400px !important;
+  display: block !important;
+  margin: 0 !important;
+  max-width: none !important;
+}
+
+/* Override prose styles for mermaid text elements */
+.prose .mermaid svg text,
+.prose .mermaid svg tspan,
+.mermaid svg text,
+.mermaid svg tspan {
+  fill: hsl(var(--foreground)) !important;
+  font-family: inherit !important;
+  font-size: 14px !important;
+  color: hsl(var(--foreground)) !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  line-height: 1 !important;
+}
+
+/* Override prose styles for mermaid paths */
+.prose .mermaid svg path,
+.mermaid svg path {
+  stroke: hsl(var(--foreground)) !important;
+  stroke-width: 2px !important;
+  fill: none !important;
+  margin: 0 !important;
+}
+
+/* Override prose styles for mermaid shapes */
+.prose .mermaid svg rect,
+.prose .mermaid svg circle,
+.prose .mermaid svg ellipse,
+.prose .mermaid svg polygon,
+.mermaid svg rect,
+.mermaid svg circle,
+.mermaid svg ellipse,
+.mermaid svg polygon {
+  fill: hsl(var(--primary)) !important;
+  stroke: hsl(var(--border)) !important;
+  stroke-width: 2px !important;
+  margin: 0 !important;
+}
+
+/* Prevent prose from affecting mermaid containers */
+.prose .mermaid-diagram-wrapper,
+.prose .mermaid-render-area,
+.prose .mermaid {
+  all: revert !important;
+  background-color: transparent !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  max-width: none !important;
+  width: 100% !important;
+}
+
+/* Override any prose max-width constraints */
+.prose .mermaid-diagram-wrapper {
+  max-width: none !important;
+  width: 100% !important;
+}
+
+/* Ensure mermaid elements don't inherit prose typography */
+.mermaid * {
+  font-family: inherit !important;
+  line-height: 1 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+/* Specific fixes for dark mode prose */
+.dark .prose .mermaid svg text,
+.dark .prose .mermaid svg tspan {
+  fill: hsl(var(--foreground)) !important;
+  color: hsl(var(--foreground)) !important;
+}
+
+.dark .prose .mermaid svg path {
+  stroke: hsl(var(--foreground)) !important;
 }
 
 /* Style zoom controls */

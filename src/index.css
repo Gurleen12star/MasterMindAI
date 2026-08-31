@@ -127,6 +127,57 @@
   border: 1px solid hsl(var(--border));
 }
 
+/* Force mermaid to override all prose styles */
+.not-prose .mermaid,
+.not-prose .mermaid *,
+.not-prose .mermaid svg,
+.not-prose .mermaid svg * {
+  all: revert !important;
+}
+
+/* Re-apply essential mermaid styles */
+.not-prose .mermaid {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 100% !important;
+  min-height: 400px !important;
+  background-color: transparent !important;
+}
+
+.not-prose .mermaid svg {
+  background-color: transparent !important;
+  width: 100% !important;
+  height: auto !important;
+  min-height: 400px !important;
+  display: block !important;
+  margin: 0 !important;
+  max-width: none !important;
+}
+
+.not-prose .mermaid svg text,
+.not-prose .mermaid svg tspan {
+  fill: hsl(var(--foreground)) !important;
+  font-family: inherit !important;
+  font-size: 14px !important;
+  color: hsl(var(--foreground)) !important;
+}
+
+.not-prose .mermaid svg path {
+  stroke: hsl(var(--foreground)) !important;
+  stroke-width: 2px !important;
+  fill: none !important;
+}
+
+.not-prose .mermaid svg rect,
+.not-prose .mermaid svg circle,
+.not-prose .mermaid svg ellipse,
+.not-prose .mermaid svg polygon {
+  fill: hsl(var(--primary)) !important;
+  stroke: hsl(var(--border)) !important;
+  stroke-width: 2px !important;
+}
+
 .mermaid-render-area {
   filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.05));
   transition: all 0.3s ease;

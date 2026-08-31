@@ -90,6 +90,40 @@ export async function generateLearningPath(topic: string, level: string, additio
   }
 }
 
+function cleanMermaidCode(code: string): string {
+  // Remove markdown code block formatting
+  let cleaned = code.replace(/```mermaid\s*/gi, '').replace(/```\s*$/g, '');
+  
+  // Remove any extra whitespace and line breaks at the start/end
+  cleaned = cleaned.trim();
+  
+  // Ensure it starts with a valid Mermaid declaration
+  if (!cleaned.toLowerCase().startsWith('flowchart') && 
+      !cleaned.toLowerCase().startsWith('graph')) {
+    cleaned = 'flowchart LR\n' + cleaned;
+  }
+  
+  // Remove any duplicate flowchart/graph declarations
+  const lines = cleaned.split('\n');
+  const filteredLines = [];
+  let hasFlowchartDeclaration = false;
+  
+  for (const line of lines) {
+    const trimmedLine = line.trim().toLowerCase();
+    if (trimmedLine.startsWith('flowchart') || trimmedLine.startsWith('graph')) {
+      if (!hasFlowchartDeclaration) {
+        filteredLines.push(line);
+        hasFlowchartDeclaration = true;
+      }
+      // Skip duplicate declarations
+    } else {
+      filteredLines.push(line);
+    }
+  }
+  
+  return filteredLines.join('\n').trim();
+}
+
 export async function generateLearningPathMermaid(topic: string, level: string, additionalInfo?: string): Promise<string> {
   try {
     const generativeModel = getModel();
@@ -98,19 +132,46 @@ export async function generateLearningPathMermaid(topic: string, level: string, 
     ${additionalInfo ? `Additional context: ${additionalInfo}` : ''}
     
     Requirements:
-    1. Use flowchart LR syntax
-    2. Include 6-8 key learning milestones
-    3. Show dependencies between topics
-    4. Use appropriate node shapes
-    5. Include difficulty progression
+    1. Start with "flowchart LR" (Left to Right layout)
+    2. Include 6-8 key learning milestones as nodes
+    3. Show dependencies between topics with arrows
+    4. Use simple node syntax like A[Node Label] --> B[Next Node]
+    5. Include difficulty progression from basic to advanced
+    6. Do NOT include any markdown formatting, code blocks, or explanations
+    7. Return ONLY valid Mermaid flowchart syntax
     
-    Return ONLY the mermaid code, no explanations or markdown formatting.`;
+    Example format:
+    flowchart LR
+        A[Basics] --> B[Fundamentals]
+        B --> C[Intermediate]
+        C --> D[Advanced]
+    
+    Return ONLY the mermaid flowchart code with no additional text or formatting.`;
     
     const result = await generativeModel.generateContent(prompt);
     const response = await result.response;
-    return response.text().trim();
+    const rawCode = response.text();
+    
+    // Clean and validate the generated code
+    const cleanedCode = cleanMermaidCode(rawCode);
+    
+    // Basic validation - ensure it has valid structure
+    if (!cleanedCode || cleanedCode.length < 20) {
+      throw new Error('Generated diagram is too short or empty');
+    }
+    
+    return cleanedCode;
   } catch (error) {
-    handleGeminiError(error);
+    console.error('Error generating learning path mermaid:', error);
+    
+    // Return a fallback diagram instead of throwing
+    return `flowchart LR
+    A[Start Learning ${topic}] --> B[Learn Basics]
+    B --> C[Practice Fundamentals]
+    C --> D[Intermediate Concepts]
+    D --> E[Advanced Topics]
+    E --> F[Real Projects]
+    F --> G[Master ${topic}]`;
   }
 }
 
@@ -121,18 +182,45 @@ export async function generateRoadmapMermaid(topic: string): Promise<string> {
     const prompt = `Create a detailed learning roadmap for "${topic}" using Mermaid flowchart syntax.
     
     Requirements:
-    1. Use flowchart LR syntax
-    2. Include major topics and subtopics
-    3. Show clear progression path
-    4. Use appropriate node shapes
+    1. Start with "flowchart LR" (Left to Right layout)
+    2. Include major topics and subtopics as nodes
+    3. Show clear progression path with arrows
+    4. Use simple node syntax like A[Node Label] --> B[Next Node]
     5. Include branching paths where relevant
+    6. Do NOT include any markdown formatting, code blocks, or explanations
+    7. Return ONLY valid Mermaid flowchart syntax
     
-    Return ONLY the mermaid flowchart code, no explanations or markdown formatting.`;
+    Example format:
+    flowchart LR
+        A[Start] --> B[Fundamentals]
+        B --> C[Intermediate]
+        C --> D[Advanced]
+        
+    Return ONLY the mermaid flowchart code with no additional text or formatting.`;
     
     const result = await generativeModel.generateContent(prompt);
     const response = await result.response;
-    return response.text().trim();
+    const rawCode = response.text();
+    
+    // Clean and validate the generated code
+    const cleanedCode = cleanMermaidCode(rawCode);
+    
+    // Basic validation - ensure it has valid structure
+    if (!cleanedCode || cleanedCode.length < 20) {
+      throw new Error('Generated roadmap is too short or empty');
+    }
+    
+    return cleanedCode;
   } catch (error) {
-    handleGeminiError(error);
+    console.error('Error generating roadmap mermaid:', error);
+    
+    // Return a fallback diagram instead of throwing
+    return `flowchart LR
+    A[Start ${topic}] --> B[Fundamentals]
+    B --> C[Core Concepts]
+    C --> D[Intermediate Skills]
+    D --> E[Advanced Topics]
+    E --> F[Specialization]
+    F --> G[Expert Level]`;
   }
 }

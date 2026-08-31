@@ -47,7 +47,16 @@ export default function LearningPathsPage() {
 
   const fetchLearningPathHistory = async () => {
     if (!user?.id) return;
-    
+
+    if (!isSupabaseReady) {
+      toast({
+        title: 'Connection not ready',
+        description: 'Please wait a moment for the database connection to be established.',
+        variant: 'destructive',
+      });
+      return;
+    }
+
     setIsLoadingHistory(true);
     try {
       const supabaseUserId = getUserIdForSupabase(user.id);
@@ -153,6 +162,30 @@ export default function LearningPathsPage() {
       toast({
         title: 'Generation Failed',
         description: errorMessage,
+        variant: 'destructive',
+      });
+    } finally {
+      setIsGenerating(false);
+    }
+  };
+
+  const regenerateDiagram = async () => {
+    if (!topic) return;
+    
+    setIsGenerating(true);
+    try {
+      const diagram = await generateLearningPathMermaid(topic, level, additionalInfo);
+      setMermaidDiagram(diagram);
+      
+      toast({
+        title: 'Diagram Regenerated',
+        description: 'The visual diagram has been regenerated successfully!',
+      });
+    } catch (error) {
+      console.error('Error regenerating diagram:', error);
+      toast({
+        title: 'Regeneration Failed',
+        description: 'Failed to regenerate the diagram. Please try again.',
         variant: 'destructive',
       });
     } finally {
@@ -285,59 +318,43 @@ export default function LearningPathsPage() {
               </ScrollArea>
             </TabsContent>
             
-            <TabsContent value="visual">
-              <ScrollArea className="h-[400px] md:h-[600px] px-4">
-                {mermaidDiagram ? (
-                  <>
-                    <div className="relative">
-                      <Button
-                        variant="outline"
-                        size="icon"
-                        className="absolute top-2 right-2 z-10"
-                        onClick={() => setIsFullscreen(true)}
-                      >
-                        <Maximize2 className="h-4 w-4" />
-                      </Button>
-                      <div className="mermaid-diagram-wrapper transform hover:scale-[1.02] transition-transform duration-300">
-                        <MermaidDiagram 
-                          definition={mermaidDiagram} 
-                          key={mermaidDiagram}
-                          className="w-full min-h-[400px] flex items-center justify-center" 
-                        />
-                      </div>
+            <TabsContent value="visual" className="h-[70vh] xl:h-auto">
+              <Card className="h-full w-full flex flex-col relative">
+                <div className="flex-grow relative">
+                  {isGenerating && !mermaidDiagram && (
+                    <div className="absolute inset-0 flex flex-col items-center justify-center bg-background/50 z-10">
+                      <Loader2 className="h-8 w-8 animate-spin text-primary" />
+                      <AnimatedLoadingText message="Crafting your visual roadmap..." />
                     </div>
-                    
-                    <Dialog open={isFullscreen} onOpenChange={setIsFullscreen}>
-                      <DialogContent className="max-w-[90vw] w-[90vw] h-[90vh] p-6 custom-cursor-enabled">
-                        <DialogTitle>Learning Path Visualization</DialogTitle>
-                        <DialogHeader>
-                        </DialogHeader>
-                        <div className="mermaid-diagram-wrapper h-full w-full flex items-center justify-center bg-gradient-to-br from-background to-background/95">
-                          <MermaidDiagram 
-                            definition={mermaidDiagram}
-                            key={mermaidDiagram}
-                            className="w-full h-full"
-                          />
+                  )}
+                  {mermaidDiagram ? (
+                    <MermaidDiagram
+                      diagram={mermaidDiagram}
+                      onRegenerate={regenerateDiagram}
+                      isGenerating={isGenerating}
+                      className="absolute inset-0"
+                    />
+                  ) : (
+                    !isGenerating && (
+                      <div className="flex items-center justify-center h-full text-muted-foreground">
+                        <div className="text-center space-y-2">
+                          <FlowChart className="h-12 w-12 mx-auto text-muted-foreground/50" />
+                          <p>Your visual learning path will appear here</p>
                         </div>
-                      </DialogContent>
-                    </Dialog>
-                  </>
-                ) : (
-                  <div className="flex items-center justify-center h-full text-muted-foreground">
-                    {isGenerating ? (
-                      <div className="flex flex-col items-center gap-2">
-                        <Loader2 className="h-8 w-8 animate-spin" />
-                        <AnimatedLoadingText message="Crafting your visual roadmap..." />
                       </div>
-                    ) : (
-                      <div className="text-center space-y-2">
-                        <FlowChart className="h-12 w-12 mx-auto text-muted-foreground/50" />
-                        <p>Your visual learning path will appear here</p>
-                      </div>
-                    )}
-                  </div>
-                )}
-              </ScrollArea>
+                    )
+                  )}
+                </div>
+                <Button
+                  onClick={() => setIsFullscreen(true)}
+                  className="absolute bottom-4 right-4 z-20"
+                  variant="outline"
+                  size="icon"
+                  disabled={!mermaidDiagram}
+                >
+                  <Maximize2 className="h-4 w-4" />
+                </Button>
+              </Card>
             </TabsContent>
           </Tabs>
         </Card>
@@ -387,6 +404,27 @@ export default function LearningPathsPage() {
               </div>
             )}
           </ScrollArea>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={isFullscreen} onOpenChange={setIsFullscreen}>
+        <DialogContent className="w-full max-w-none h-full max-h-none flex flex-col p-0">
+          <DialogHeader className="p-4 border-b">
+            <DialogTitle>Learning Path Diagram</DialogTitle>
+            <DialogDescription>
+              Topic: {selectedHistoryItem?.topic || topic}
+            </DialogDescription>
+          </DialogHeader>
+          <div className="flex-grow relative">
+            {mermaidDiagram && (
+              <MermaidDiagram
+                diagram={mermaidDiagram}
+                onRegenerate={regenerateDiagram}
+                isGenerating={isGenerating}
+                className="absolute inset-0"
+              />
+            )}
+          </div>
         </DialogContent>
       </Dialog>
     </div>
