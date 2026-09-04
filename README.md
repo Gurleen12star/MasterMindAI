@@ -18,13 +18,7 @@
 
 ---
 
-## 📺 Full Video Demo
 
-<div align="center">
-  <a href="https://youtu.be/pWWWoXKhBbU?si=uS_TJVLQHVaHGCt9">
-    <img src="https://img.youtube.com/vi/pWWWoXKhBbU/maxresdefault.jpg" alt="MasterMindAI Full Video Demo" width="800" style="border-radius: 12px; box-shadow: 0 4px 8px rgba(0,0,0,0.1);">
-  </a>
-</div>
 
 ---
 
